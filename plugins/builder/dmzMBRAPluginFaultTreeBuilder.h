@@ -39,7 +39,7 @@ namespace dmz {
 
          // Message Observer Interface
          void receive_message (
-            const MessageType &Msg,
+            const Message &Msg,
             const UInt32 MessageSendHandle,
             const Handle TargetObserverHandle,
             const Data *InData,
@@ -127,14 +127,14 @@ namespace dmz {
          Handle _threatAttrHandle;
          Handle _vulnerabilityAttrHandle;
          ObjectAttributeCalculator *_vulnerabilityCalc;
-         MessageType _componentAddMessage;
-         MessageType _componentEditMessage;
-         MessageType _componentDeleteMessage;
-         MessageType _threatAddMessage;
-         MessageType _threatEditMessage;
-         MessageType _threatDeleteMessage;
-         MessageType _logicAndMessage;
-         MessageType _logicOrMessage;
+         Message _componentAddMessage;
+         Message _componentEditMessage;
+         Message _componentDeleteMessage;
+         Message _threatAddMessage;
+         Message _threatEditMessage;
+         Message _threatDeleteMessage;
+         Message _logicAndMessage;
+         Message _logicOrMessage;
          ObjectType _componentType;
          ObjectType _threatType;
          ObjectType _logicType;

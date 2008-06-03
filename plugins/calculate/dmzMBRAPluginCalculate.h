@@ -41,8 +41,8 @@ namespace dmz {
          QtModuleMainWindow *_mainWindowModule;
          String _mainWindowModuleName;
          Handle _channel;
-         MessageType _calculateOnMessage;
-         MessageType _calculateOffMessage;
+         Message _calculateOnMessage;
+         Message _calculateOffMessage;
          Handle _target;
          QString _title;
          QDockWidget *_dock;

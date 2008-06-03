@@ -64,8 +64,8 @@ namespace dmz {
          Handle _riskSumReducedHandle;
          Handle _vulnerabilitySumHandle;
          Handle _vulnerabilitySumReducedHandle;
-         MessageType _calculateOnMessage;
-         MessageType _calculateOffMessage;
+         Message _calculateOnMessage;
+         Message _calculateOffMessage;
          Handle _target;
          QString _title;
          QDockWidget *_dock;

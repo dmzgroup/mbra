@@ -120,7 +120,7 @@ dmz::MBRAPluginFileToolBar::shutdown_plugin () {
 // Message Observer Interface
 void
 dmz::MBRAPluginFileToolBar::receive_message (
-      const MessageType &Type,
+      const Message &Type,
       const Handle MessageSendHandle,
       const Handle TargetObserverHandle,
       const Data *InData,
@@ -366,7 +366,7 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
       if (Value & QMessageBox::Save) { _slot_file_export (); }
    }        
 
-   _cleanUpObjMsg.send_message (_target, 0, 0);
+   _cleanUpObjMsg.send (_target, 0, 0);
    _undo.reset ();
 }
 
@@ -400,7 +400,7 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
          Config archiveConfig;
          global.lookup_all_config_merged ("dmz", archiveConfig);
          
-         _cleanUpObjMsg.send_message (_target, 0, 0);
+         _cleanUpObjMsg.send (_target, 0, 0);
          
          _undo.reset ();
          

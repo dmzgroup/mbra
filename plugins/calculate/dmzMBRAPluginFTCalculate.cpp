@@ -152,12 +152,12 @@ dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
       
       Data data;
       data.store_float64 (_budgetAttrHandle, 0, _ui.budgetSpinBox->value ());
-      _calculateOnMessage.send_message (_target, &data, 0);
+      _calculateOnMessage.send (_target, &data, 0);
    }
    else {
       
       Data data;
-      _calculateOffMessage.send_message (_target, &data, 0);
+      _calculateOffMessage.send (_target, &data, 0);
    }
 }
 
@@ -169,7 +169,7 @@ dmz::MBRAPluginFTCalculate::_slot_update_budget (int budget) {
 
       Data data;
       data.store_float64 (_budgetAttrHandle, 0, Float64 (budget));
-      _calculateOnMessage.send_message (_target, &data, 0);
+      _calculateOnMessage.send (_target, &data, 0);
    }
 }
 

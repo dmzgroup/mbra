@@ -13,7 +13,7 @@ function receive (self, type, data)
          dmz.object.activate (handle)
          local outData = dmz.data.new ()
          outData:store_handle ("object", 1, handle)
-         self.editMessage:send_message ("dmzMBRAPluginNodeProperties", outData)
+         self.editMessage:send ("dmzMBRAPluginNodeProperties", outData)
       end
       dmz.undo.stop_record (undoHandle)
    end
@@ -23,9 +23,9 @@ function new (config, name)
 
    local self = {
       log = dmz.log.new ("lua." .. name),
-      message = config:lookup_message_type ("message.name", "CreateObjectMessage"),
+      message = config:lookup_message ("message.name", "CreateObjectMessage"),
       editMessage =
-         config:lookup_message_type ("edit.name", "EditObjectAttributesMessage"),
+         config:lookup_message ("edit.name", "EditObjectAttributesMessage"),
       obs = dmz.message_observer.new (name),
    }
 

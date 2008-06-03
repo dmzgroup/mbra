@@ -96,12 +96,12 @@ dmz::MBRAPluginCalculate::_slot_calculate (bool on) {
    if (on) {
       
       Data data;
-      _calculateOnMessage.send_message (_target, &data, 0);
+      _calculateOnMessage.send (_target, &data, 0);
    }
    else {
       
       Data data;
-      _calculateOffMessage.send_message (_target, &data, 0);
+      _calculateOffMessage.send (_target, &data, 0);
    }
 }
 

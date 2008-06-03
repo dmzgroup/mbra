@@ -43,7 +43,7 @@ namespace dmz {
 
          // Message Observer Interface
          virtual void receive_message (
-            const MessageType &Type,
+            const Message &Type,
             const Handle MessageSendHandle,
             const Handle TargetObserverHandle,
             const Data *InData,
@@ -88,8 +88,8 @@ namespace dmz {
          String _mainWindowModuleName;
          Handle _archive;
          Undo _undo;
-         MessageType _cleanUpObjMsg;
-         MessageType _openFileMsg;
+         Message _cleanUpObjMsg;
+         Message _openFileMsg;
          Handle _fileHandle;
          Handle _target;
          String _suffix;

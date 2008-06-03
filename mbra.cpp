@@ -79,7 +79,7 @@ main (int argc, char *argv[]) {
 
    if (!qtApp.start_application ()) {
 
-      if (argc > 1) { qtApp.send_message_to_running_application (argv[1]); }
+      if (argc > 1) { qtApp.send_to_running_application (argv[1]); }
       return 0; // Application is already running so just bail out now -rb
    }
 #else

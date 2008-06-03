@@ -36,13 +36,13 @@ function new (config, name)
    local self = {
       log = dmz.log.new ("lua." .. name),
       selectMessage =
-         config:lookup_message_type ("message.select.name", "SelectMoveObjectMessage"),
+         config:lookup_message ("message.select.name", "SelectMoveObjectMessage"),
       unselectMessage =
-         config:lookup_message_type (
+         config:lookup_message (
             "message.unselect.name",
             "UnselectMoveObjectMessage"),
       moveMessage =
-         config:lookup_message_type ("message.move.name", "MoveSelectedObjectMessage"),
+         config:lookup_message ("message.move.name", "MoveSelectedObjectMessage"),
       obs = dmz.message_observer.new (name),
    }
 

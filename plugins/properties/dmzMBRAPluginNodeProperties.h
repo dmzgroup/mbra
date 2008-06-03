@@ -35,7 +35,7 @@ namespace dmz {
 
          // Message Observer Interface
          void receive_message (
-            const MessageType &Msg,
+            const Message &Msg,
             const UInt32 MessageSendHandle,
             const Handle TargetObserverHandle,
             const Data *InData,
@@ -87,7 +87,7 @@ namespace dmz {
          Handle _eliminationCostAttrHandle;
          Handle _consequenceAttrHandle;
          Handle _flowAttrHandle;
-         MessageType _editObjectMessageType;
+         Message _editObjectMessage;
          Mask _flowForwardMask;
          Mask _flowReverseMask;
          ObjectAttributeCalculator *_degreeCalc;

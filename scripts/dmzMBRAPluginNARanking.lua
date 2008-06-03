@@ -98,9 +98,9 @@ function new (config, name)
       overlayState = dmz.definitions.lookup_state ("NA_Node_Overlay"),
       log = dmz.log.new ("lua." .. name),
       rankMessage =
-         config:lookup_message_type ("message.rank.name", "NARankObjectsMessage"),
+         config:lookup_message ("message.rank.name", "NARankObjectsMessage"),
       hideMessage =
-         config:lookup_message_type ("message.rank.name", "NAHideObjectsMessage"),
+         config:lookup_message ("message.rank.name", "NAHideObjectsMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       list = {},

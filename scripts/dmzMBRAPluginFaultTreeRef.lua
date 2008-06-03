@@ -327,9 +327,9 @@ function new (config, name)
       start_plugin = start_plugin,
       stop_plugin = stop_plugin,
       startWorkMessage =
-         config:lookup_message_type ("message.start.name", "FTStartWorkMessage"),
+         config:lookup_message ("message.start.name", "FTStartWorkMessage"),
       stopWorkMessage =
-         config:lookup_message_type ("message.stop.name", "FTStopWorkMessage"),
+         config:lookup_message ("message.stop.name", "FTStopWorkMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       index = {},

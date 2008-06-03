@@ -101,13 +101,13 @@ dmz::MBRAPluginNodeProperties::remove_plugin (const Plugin *PluginPtr) {
 // Message Observer Interface
 void
 dmz::MBRAPluginNodeProperties::receive_message (
-      const MessageType &Msg,
+      const Message &Msg,
       const UInt32 MessageSendHandle,
       const Handle TargetObserverHandle,
       const Data *InData,
       Data *outData) {
 
-   if (Msg == _editObjectMessageType) {
+   if (Msg == _editObjectMessage) {
 
       if (InData && _objectModule) {
 
@@ -421,14 +421,14 @@ dmz::MBRAPluginNodeProperties::_init (Config &local) {
          "NA_Link_Flow",
          context);
    
-   _editObjectMessageType =
+   _editObjectMessage =
       config_create_message_type (
          "message.edit",
          local,
          "EditObjectAttributesMessage",
          context);
 
-   subscribe_to_message (_editObjectMessageType);
+   subscribe_to_message (_editObjectMessage);
    
    _defs.lookup_state (
       config_to_string ("mask.flowForward", local, "NA_Flow_Forward"),

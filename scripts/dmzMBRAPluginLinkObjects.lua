@@ -43,7 +43,7 @@ function receive_end (self, type, data)
             if linkHandle then
                local outData = dmz.data.new ()
                outData:store_handle ("object", 1, linkHandle)
-               self.editMessage:send_message ("dmzMBRAPluginNodeProperties", outData)
+               self.editMessage:send ("dmzMBRAPluginNodeProperties", outData)
             end
             dmz.undo.stop_record (undoHandle)
          end
@@ -66,15 +66,15 @@ function new (config, name)
       firstHandle = dmz.object.create ("na_tool_link_node"),
       secondHandle = dmz.object.create ("na_tool_link_node"),
       startMessage =
-         config:lookup_message_type ("message.first.name", "FirstLinkObjectMessage"),
+         config:lookup_message ("message.first.name", "FirstLinkObjectMessage"),
       updateMessage =
-         config:lookup_message_type ("message.update.name", "UpdateLinkPositionMessage"),
+         config:lookup_message ("message.update.name", "UpdateLinkPositionMessage"),
       endMessage =
-         config:lookup_message_type ("message.second.name", "SecondLinkObjectMessage"),
+         config:lookup_message ("message.second.name", "SecondLinkObjectMessage"),
       failedMessage =
-         config:lookup_message_type ("message.failed.name", "FailedLinkObjectsMessage"),
+         config:lookup_message ("message.failed.name", "FailedLinkObjectsMessage"),
       editMessage =
-         config:lookup_message_type ("message.edit.name", "EditObjectAttributesMessage"),
+         config:lookup_message ("message.edit.name", "EditObjectAttributesMessage"),
       obs = dmz.message_observer.new (name),
    }
 
