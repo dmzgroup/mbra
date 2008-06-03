@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+   <resource file="./data/mbra.rcc"/>
+   <searchPath prefix="./stylesheets" path=":/StyleSheets"/>
+   <searchPath prefix="./images" path=":/Images"/>
+   <!-- devel paths -->
+   <searchPath prefix="stylesheets" path="./assets/StyleSheets"/>
+   <searchPath prefix="images" path="./assets/Images"/>
+   <!-- end devel paths -->
+   <config file="config/runtime.xml"/>
+   <config file="config/common.xml"/>
+   <config file="config/input.xml"/>
+   <config file="config/lua.xml"/>
+   <config file="config/tools.xml"/>
+   <config file="config/networkAnalysis.xml"/>
+   <config file="config/faultTree.xml"/>
+   <config file="config/mbra.xml"/>
+<!--   <stylesheet file="stylesheets:MBRA.qss"/> -->
+</manifest>

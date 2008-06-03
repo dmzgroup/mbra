@@ -1,0 +1,8 @@
+#!/bin/sh
+
+<<<<<<< .mine
+rm -f mbra.rcc
+../depend/bin/rcc -name "mbra" -binary -o mbra.rcc mbra.qrc
+=======
+rm mbra.rcc
+../depend/bin/rcc -name "mbra" -binary -o mbra.rcc mbra.qrc>>>>>>> .r26

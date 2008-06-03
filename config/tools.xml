@@ -1,0 +1,210 @@
+<dmz>
+<plugins>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="CreateObjectEvent"/>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="DestroyObjectEvent"/>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="LinkObjectsEvent"/>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="UnlinkObjectsEvent"/>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="DefaultEvent"/>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="FTDefaultEvent"/>
+</plugins>
+<dmzLuaModuleBasic>
+   <instance name="dmzMBRAPluginCreateObject"/>
+   <instance name="dmzMBRAPluginDestroyObject"/>
+   <instance name="dmzMBRAPluginLinkObjects"/>
+   <instance name="dmzMBRAPluginUnlinkObjects"/>
+   <instance name="dmzMBRAPluginMoveObject"/>
+</dmzLuaModuleBasic>
+<CreateObjectEvent>
+   <input>
+      <channel name="NA_Create_Object_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginCreateObject"/>
+   <converter type="2D" start="first">
+      <state name="first" type="basic">
+         <condition button="1" action="released" result="object" next="first"/>
+         <condition button="1" action="released" message="CreateObjectMessage">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+   </converter>
+</CreateObjectEvent>
+<DestroyObjectEvent>
+   <input>
+      <channel name="NA_Destroy_Object_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginDestroyObject"/>
+   <converter type="2D">
+      <state name="first" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="DestroyObjectMessage">
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+   </converter>
+</DestroyObjectEvent>
+<LinkObjectsEvent>
+   <input>
+      <channel name="NA_Link_Objects_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginLinkObjects"/>
+   <deactivate message="FailedLinkObjectsMessage"/>
+   <converter type="2D">
+      <state name="start" type="basic">
+         <condition
+               button="1"
+               action="pressed"
+               result="object"
+               message="FirstLinkObjectMessage"
+               next="update_test">
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+      <state name="update_test" type="basic">
+         <condition
+               button="1"
+               action="released"
+               message="UpdateLinkPositionMessage"
+               next="update_two_clicks">
+            <attribute type="position" name="position"/>
+         </condition>
+         <condition
+               button="1"
+               action="moved"
+               message="UpdateLinkPositionMessage"
+               next="update_drag">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+      <state name="update_two_clicks" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="SecondLinkObjectMessage"
+               next="start">
+            <attribute type="object" name="object"/>
+         </condition>
+         <condition
+               button="1"
+               action="released"
+               message="FailedLinkObjectsMessage"
+               next="start"/>
+         <condition
+               action="moved"
+               message="UpdateLinkPositionMessage">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+      <state name="update_drag" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="SecondLinkObjectMessage"
+               next="start">
+            <attribute type="object" name="object"/>
+         </condition>
+         <condition
+               button="1"
+               action="released"
+               message="FailedLinkObjectsMessage"
+               next="start"/>
+         <condition button="1" action="moved" message="UpdateLinkPositionMessage">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+   </converter>
+</LinkObjectsEvent>
+<UnlinkObjectsEvent>
+   <input>
+      <channel name="NA_Unlink_Objects_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginUnlinkObjects"/>
+   <converter type="2D">
+      <state name="first" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="UnlinkObjectsMessage">
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+   </converter>
+</UnlinkObjectsEvent>
+<DefaultEvent>
+   <input>
+      <channel name="NA_Default_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginMoveObject"/>
+   <converter type="2D">
+      <state name="start" type="basic">
+         <condition
+               button="1"
+               action="pressed"
+               result="object"
+               message="SelectMoveObjectMessage"
+               next="default_test">
+            <attribute type="position" name="position"/>
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+      <state name="default_test" type="basic">
+         <condition button="1" action="released" message="UnselectMoveObjectMessage"/>
+         <condition
+               button="1"
+               action="released"
+               message="EditObjectAttributesMessage"
+               next="start">
+            <target name="dmzMBRAPluginNodeProperties"/>
+            <attribute type="object" name="object"/>
+         </condition>
+         <condition action="moved" message="MoveSelectedObjectMessage" next="move_object">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+      <state name="move_object" type="basic">
+         <condition
+               button="1"
+               action="released"
+               message="UnselectMoveObjectMessage"
+               next="start">
+         </condition>
+         <condition action="moved" message="MoveSelectedObjectMessage">
+            <attribute type="position" name="position"/>
+         </condition>
+      </state>
+   </converter>
+</DefaultEvent>
+<FTDefaultEvent>
+   <input>
+      <channel name="FaultTreeChannel"/>
+      <source name="FTCanvas"/>
+   </input>
+   <target name="FTComponentRootMenu"/>
+   <target name="FTComponentMenu"/>
+   <target name="FTThreatMenu"/>
+   <target name="FTLogicMenu"/>
+   <converter type="2D" start="first">
+      <state name="first" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="ShowObjectMenuMessage">
+            <attribute type="position" name="position"/>
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+   </converter>
+</FTDefaultEvent>
+</dmz>
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dmz>
+   <plugins>
+      <plugin name="dmzMBRAPluginFileToolBar"/>
+      <plugin name="dmzMBRAPluginModeToolBar"/>
+   </plugins>
+   <dmzMBRAPluginFileToolBar>
+      <toolBar movable="False" floatable="False">
+         <!-- <widget windowTitle="File">
+            <stylesheet file="stylesheets:FileButton.qss"/>
+         </widget> -->
+      </toolBar>
+      <open text="Open" statusTip="Open Exercise">
+         <icon>
+            <image file="images:Button_File.png"/>
+         </icon>
+      </open>
+      <export text="Export" statusTip="Export Exercise">
+         <icon>
+            <image file="images:Button_Export.png"/>
+         </icon>
+      </export>
+      <undo text="Undo" statusTip="Undo">
+         <icon>
+            <image file="images:Button_Undo.png"/>
+         </icon>
+      </undo>
+      <redo text="Redo" statusTip="Redo">
+         <icon>
+            <image file="images:Button_Redo.png"/>
+         </icon>
+      </redo>
+      <clear text="Clear" statusTip="Clear">
+         <icon>
+            <image file="images:Button_Reset.png"/>
+         </icon>
+      </clear>
+   </dmzMBRAPluginFileToolBar>
+   <dmzMBRAPluginModeToolBar>
+      <toolBar movable="False" floatable="False">
+         <widget windowTitle="Mode"/>
+      </toolBar>
+      <networkAnalysis>
+         <button text="Network"/>
+      </networkAnalysis>
+      <faultTree>
+         <button text="Fault Tree"/>
+      </faultTree>
+   </dmzMBRAPluginModeToolBar>
+</dmz>

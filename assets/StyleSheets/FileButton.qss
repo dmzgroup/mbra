@@ -1,0 +1,22 @@
+/* Set File Menu button style. */
+/* All icons for small File Buttons should be set to 24x24 px */
+
+QToolButton {
+     Min-width: 28px;
+     Min-height: 28px;
+     Max-width: 28px;
+     Max-height: 28px;
+     background-color: rgb(150,150,150);
+     border-style: outset;
+     border-width: 2px;
+     border-radius: 8px;
+     border-color: rgb(120,120,120);
+}
+
+QToolButton:pressed, QToolButton:on {
+    background-color: qlineargradient(x1: 1, y0: 1, x2: 1, y2: 1, stop: 0 rgb(40,120,40), stop: 0.4 rgb(80,180,80), stop: 0.6 rgb(80,180,80), stop: 1 rgb(130,230,130)) no repeat;
+     border-style: inset;
+     border-color: rgb(120,120,120);
+     padding-top: 2px;
+     padding-left: 2px;
+}

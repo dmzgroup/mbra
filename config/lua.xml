@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<plugins>
+   <plugin name="dmzLuaModuleBasic"/>
+   <plugin name="dmzQtPluginLuaProfiler"/>
+</plugins>
+<dmzLuaModuleBasic>
+   <path name="./scripts/?.lua"/>
+   <path name="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>
+   <extensions>
+      <plugin name="dmzLuaExtInput"/>
+      <plugin name="dmzLuaExtObject"/>
+      <plugin name="dmzLuaExtPick"/>
+      <plugin name="dmzQtExtLuaConsole"/>
+   </extensions>
+   <instance name="dmzMBRAPluginNARanking"/>
+   <instance name="dmzMBRAPluginNALinkObject"/>
+   <instance name="dmzMBRAPluginFaultTree" file="dmzMBRAPluginFaultTreeOpt.lua"/>
+   <instance name="dmzMBRAPluginLayerActive"/>
+</dmzLuaModuleBasic>
+</dmz>

@@ -1,0 +1,72 @@
+8
+
+dir
+42
+https://svndmz.nps.edu/mbra
+https://svndmz.nps.edu/mbra
+
+
+
+2008-05-27T12:26:13.348097Z
+42
+rebarker
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+a0e6382d-3f47-0410-b408-f41d79b12b27
+
+Images
+dir
+
+mbra.qrc
+file
+
+
+
+
+2008-05-28T16:55:28.000000Z
+3d6a75e39b24a2d145690f6eade5a651
+2008-05-27T12:26:13.348097Z
+42
+rebarker
+
+mbra.rcc
+file
+
+
+
+
+2008-05-28T16:55:28.000000Z
+315e1c46b20a431d628ef774e614de72
+2008-05-27T12:26:13.348097Z
+42
+rebarker
+has-props
+
+StyleSheets
+dir
+
+go.sh
+file
+
+
+
+
+2008-04-29T17:50:46.000000Z
+79105c2ff14ac40940d8c56fb92f131c
+2008-04-28T11:05:56.771137Z
+25
+shillcock
+has-props
+

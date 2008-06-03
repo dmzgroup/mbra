@@ -1,0 +1,5 @@
+/* Set File Menu button style. */
+
+QWidget {
+     Background-color: rgb(60,60,60);
+}

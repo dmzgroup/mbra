@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mbra</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>DocIcon.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+		</dict>
+	</array>
+   <key>CFBundleShortVersionString</key>
+	<string>$(majorVersion).$(minorVersion).$(bugVersion) $(releaseType)</string>
+   <key>CFBundleVersion</key>
+	<string>$(buildVersion)</string>
+	<key>CFBundleExecutable</key>
+	<string>mbra</string>
+	<key>CFBundleGetInfoString</key>
+	<string>$(appName) $(majorVersion).$(minorVersion).$(bugVersion) $(releaseType) $(buildVersion)</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon.icns</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>mbra</string>
+</dict>
+</plist>

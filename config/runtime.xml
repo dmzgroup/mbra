@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<runtime>
+   <time>
+      <frequency value="128.0"/>
+   </time>
+   <states>
+      <state name="NA_Node_Overlay"/>
+      <state name="NA_Flow_Forward"/>
+      <state name="NA_Flow_Reverse"/>
+      <state name="FT_Logic_And"/>
+      <state name="FT_Logic_Or"/>
+      <state name="FT_Threat_Level_0"/>
+      <state name="FT_Threat_Level_1"/>
+      <state name="FT_Threat_Level_2"/>
+      <state name="FT_Threat_Level_3"/>
+      <state name="FT_Threat_Level_4"/>
+      <state name="FT_Threat_Level_5"/>
+      <state name="FT_Threat_Level_6"/>
+      <state name="FT_Threat_Level_7"/>
+      <state name="FT_Threat_Level_8"/>
+      <state name="FT_Threat_Level_9"/>
+      <state name="FT_Threat_Level_10"/>
+   </states>
+   <types>
+      <object name="canvas_layer"/>
+      <object name="layer" parent="canvas_layer">
+         <dmzQtPluginCanvasLayer/>
+      </object>
+      <object name="root_layer" parent="layer">
+         <dmzQtPluginCanvasLayer/>
+      </object>
+      <object name="na_tool_link_node">
+         <NACanvasObject/>
+      </object>
+      <object name="na_link_attribute">
+         <NACanvasObject/>
+         <NACanvasObjectBasic>
+            <items>
+               <group name="overlay">
+                  <image file="NA_ResultsOverlayLinks.svg">
+                     <translate x="0" y="-38"/>
+                  </image>
+                  <text name="number">
+                     <textColor>
+                        <string value="white"/>
+                     </textColor>
+                     <enableBackground value="false"/>
+                     <translate x="20" y="-20"/>
+                     <scale x="2.0" y="2.0"/>
+                  </text>
+               </group>
+            </items>
+            <text>
+               <item name="number" attribute="NA_Node_Rank"/>
+            </text>
+            <switch>
+               <state name="NA_Node_Overlay" group="overlay">
+                  <item name="overlay"/>
+               </state>
+            </switch>
+         </NACanvasObjectBasic>
+      </object>
+      <object name="na_node">
+         <NACanvasObject/>
+         <NACanvasObjectBasic>
+            <items>
+               <image name="node" file="NA_Node.svg">
+                  <translate x="-10" y="-10"/>
+               </image>
+               <group name="overlay">
+                  <image file="NA_ResultsOverlay.svg">
+                     <translate x="-19.5" y="-37.5"/>
+                  </image>
+                  <text name="number">
+                     <textColor>
+                        <string value="white"/>
+                     </textColor>
+                     <enableBackground value="false"/>
+                     <translate x="20" y="-20"/>
+                     <scale x="2.0" y="2.0"/>
+                  </text>
+               </group>
+               <text name="name">
+                  <textColor>
+                     <string value="white"/>
+                     <alpha value="0.75"/>
+                  </textColor>
+                  <outlineColor>
+                     <string value="black"/>
+                     <alpha value="0.75"/>
+                  </outlineColor>
+                  <backgroundColor>
+                     <string value="black"/>
+                     <alpha value="0.75"/>
+                  </backgroundColor>
+                  <translate x="50" y="0"/>
+               </text>
+            </items>
+            <text>
+               <item name="number" attribute="NA_Node_Rank"/>
+               <item name="name" attribute="NA_Node_Name"/>
+            </text>
+            <switch>
+               <state>
+                  <item name="node"/>
+                  <item name="name"/>
+               </state>
+               <state name="NA_Node_Overlay" group="overlay">
+                  <item name="overlay"/>
+               </state>
+               <!-- <flag attribute="NA_Node_Overlay">
+                  <item name="overlay"/>
+               </flag> -->
+            </switch>
+         </NACanvasObjectBasic>
+      </object>
+      <object name="ft_node"/>
+      <object name="ft_component_root" parent="ft_node">
+         <FTCanvasObject/>
+         <FTCanvasObjectBasic>
+            <items>
+               <group name="component">
+                  <image file="FT_ComponentBox.svg">
+                     <translate x="-70" y="-16"/>
+                  </image>
+                  <text name="name">
+                     <textColor>
+                        <string value="black"/>
+                     </textColor>
+                     <alignment value="center"/>
+                     <enableBackground value="false"/>
+                  </text>
+               </group>
+            </items>
+            <text>
+               <item name="name" attribute="FT_Name"/>
+            </text>
+            <switch>
+               <state>
+                  <item name="component"/>
+               </state>
+            </switch>
+         </FTCanvasObjectBasic>
+      </object>
+      <object name="ft_component" parent="ft_component_root"/>
+      <object name="ft_threat" parent="ft_node">
+         <FTCanvasObject/>
+          <FTCanvasObjectBasic>
+             <items>
+                <group name="threat">
+                   <image file="FT_ThreatBox.svg">
+                      <translate x="-70" y="-16"/>
+                   </image>
+                   <image name="e1" file="FT_ThreatFillGreen.svg">
+                      <translate x="-64" y="0"/>
+                   </image>
+                   <image name="e2" file="FT_ThreatFillGreen.svg">
+                      <translate x="-51" y="0"/>
+                   </image>
+                   <image name="e3" file="FT_ThreatFillGreen.svg">
+                      <translate x="-38" y="0"/>
+                   </image>
+                   <image name="e4" file="FT_ThreatFillGreen.svg">
+                      <translate x="-25" y="0"/>
+                   </image>
+                   <image name="e5" file="FT_ThreatFillGreen.svg">
+                      <translate x="-12" y="0"/>
+                   </image>
+                   <image name="e6" file="FT_ThreatFillGreen.svg">
+                      <translate x="1" y="0"/>
+                   </image>
+                   <image name="e7" file="FT_ThreatFillGreen.svg">
+                      <translate x="14" y="0"/>
+                   </image>
+                   <image name="e8" file="FT_ThreatFillGreen.svg">
+                      <translate x="27" y="0"/>
+                   </image>
+                   <image name="e9" file="FT_ThreatFillGreen.svg">
+                      <translate x="40" y="0"/>
+                   </image>
+                   <image name="e10" file="FT_ThreatFillGreen.svg">
+                      <translate x="53" y="0"/>
+                   </image>
+                   <image name="s1" file="FT_ThreatFillSolid.svg">
+                      <translate x="-64" y="0"/>
+                   </image>
+                   <image name="s2" file="FT_ThreatFillSolid.svg">
+                      <translate x="-51" y="0"/>
+                   </image>
+                   <image name="s3" file="FT_ThreatFillSolid.svg">
+                      <translate x="-38" y="0"/>
+                   </image>
+                   <image name="s4" file="FT_ThreatFillSolid.svg">
+                      <translate x="-25" y="0"/>
+                   </image>
+                   <image name="s5" file="FT_ThreatFillSolid.svg">
+                      <translate x="-12" y="0"/>
+                   </image>
+                   <image name="s6" file="FT_ThreatFillSolid.svg">
+                      <translate x="1" y="0"/>
+                   </image>
+                   <image name="s7" file="FT_ThreatFillSolid.svg">
+                      <translate x="14" y="0"/>
+                   </image>
+                   <image name="s8" file="FT_ThreatFillSolid.svg">
+                      <translate x="27" y="0"/>
+                   </image>
+                   <image name="s9" file="FT_ThreatFillSolid.svg">
+                      <translate x="40" y="0"/>
+                   </image>
+                   <image name="s10" file="FT_ThreatFillSolid.svg">
+                      <translate x="53" y="0"/>
+                   </image>
+                   <text name="name">
+                      <textColor>
+                         <string value="black"/>
+                      </textColor>
+                      <alignment value="center"/>
+                      <enableBackground value="false"/>
+                      <translate x="8" y="-6"/>
+                   </text>
+                </group>
+             </items>
+             <text>
+                <item name="name" attribute="FT_Name"/>
+             </text>
+             <switch>
+                <state>
+                   <item name="threat"/>
+                </state>
+                <state group="level">
+                   <item name="e1"/>
+                   <item name="e2"/>
+                   <item name="e3"/>
+                   <item name="e4"/>
+                   <item name="e5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_1">
+                   <item name="s1"/>
+                   <item name="e2"/>
+                   <item name="e3"/>
+                   <item name="e4"/>
+                   <item name="e5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_2">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="e3"/>
+                   <item name="e4"/>
+                   <item name="e5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_3">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="e4"/>
+                   <item name="e5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_4">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="e5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_5">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="e6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_6">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="s6"/>
+                   <item name="e7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_7">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="s6"/>
+                   <item name="s7"/>
+                   <item name="e8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_8">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="s6"/>
+                   <item name="s7"/>
+                   <item name="s8"/>
+                   <item name="e9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_9">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="s6"/>
+                   <item name="s7"/>
+                   <item name="s8"/>
+                   <item name="s9"/>
+                   <item name="e10"/>
+                </state>
+                <state group="level" name="FT_Threat_Level_10">
+                   <item name="s1"/>
+                   <item name="s2"/>
+                   <item name="s3"/>
+                   <item name="s4"/>
+                   <item name="s5"/>
+                   <item name="s6"/>
+                   <item name="s7"/>
+                   <item name="s8"/>
+                   <item name="s9"/>
+                   <item name="s10"/>
+                </state>
+             </switch>
+          </FTCanvasObjectBasic>         
+      </object>
+      <object name="ft_logic" parent="ft_node">
+         <FTCanvasObject/>
+          <FTCanvasObjectBasic>
+             <items>
+                <group name="and">
+                   <image file="FT_LogicAnd.svg">
+                      <translate x="-20" y="-20"/>
+                   </image>
+                   <text>
+                      <text value="And"/>
+                      <textColor>
+                         <string value="black"/>
+                      </textColor>
+                      <alignment value="center"/>
+                      <enableBackground value="false"/>
+                   </text>
+                </group>
+                <group name="or">
+                   <image file="FT_LogicOr.svg">
+                      <translate x="-20" y="-20"/>
+                   </image>
+                   <text>
+                      <text value="Or"/>
+                      <textColor>
+                         <string value="black"/>
+                      </textColor>
+                      <alignment value="center"/>
+                      <enableBackground value="false"/>
+                   </text>
+                </group>
+             </items>
+             <switch>
+                <state group="logic" name="FT_Logic_And"><item name="and"/></state>
+                <state group="logic" name="FT_Logic_Or"><item name="or"/></state>
+             </switch>
+          </FTCanvasObjectBasic>
+      </object>
+   </types>
+</runtime>
+</dmz>

@@ -1,0 +1,26 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+   <file>StyleSheets/MBRA.qss</file>
+   <file>StyleSheets/ActionButton.qss</file>
+   <file>StyleSheets/FileButton.qss</file>
+   <file>Images/IconFiles/AppIconMBRA_32x32.png</file>
+   <file>Images/Button_Calc.png</file>
+   <file>Images/Button_Export.png</file>
+   <file>Images/Button_File.png</file>
+   <file>Images/Button_LinkAdd.png</file>
+   <file>Images/Button_LinkDel.png</file>
+   <file>Images/Button_NodeAdd.png</file>
+   <file>Images/Button_NodeDel.png</file>
+   <file>Images/Button_Redo.png</file>
+   <file>Images/Button_Undo.png</file>
+   <file>Images/Button_Reset.png</file>
+   <file>Images/Button_Help.png</file>
+   <file>Images/Button_ArrowLft.png</file>
+   <file>Images/Button_ArrowRt.png</file>
+   <file>Images/Button_ArrowUp.png</file>
+   <file>Images/Button_ArrowDn.png</file>
+   <file>Images/Button_ArrowsZoomExtents.png</file>
+   <file>Images/Button_ZoomOut.png</file>
+   <file>Images/Button_ZoomIn.png</file>
+</qresource>
+</RCC>

@@ -1,0 +1,9 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginModeToolBar"
+lmk.set_type "plugin"
+lmk.add_files {"dmzMBRAModeForm.ui",}
+lmk.add_files ({"dmzMBRAPluginModeToolBar.h",},{src="moc"})
+lmk.add_files {"dmzMBRAPluginModeToolBar.cpp",}
+lmk.add_libs {"dmzQtUtil","dmzArchiveUtil","dmzKernel",}
+lmk.add_preqs {"dmzQtFramework","dmzArchiveFramework","dmzInputFramework",}
+lmkQt.add_libs {"QtCore","QtGui",}

@@ -1,0 +1,31 @@
+<ui version="4.0" >
+ <class>calculateForm</class>
+ <widget class="QWidget" name="calculateForm" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>256</width>
+    <height>82</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QToolButton" name="calculateButton" />
+   </item>
+   <item>
+    <widget class="QLabel" name="infoLabel" >
+     <property name="text" >
+      <string>Calculate &amp; Identify
+Critical Nodes</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

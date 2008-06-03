@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dmz>
+   <plugins>
+      <plugin name="dmzQtModuleCanvasBasic" unique="FTCanvas" delete="false"/>
+      <plugin name="dmzQtPluginCanvasZoomPan" unique="FTCanvasZoom"/>
+      <plugin name="dmzQtPluginCanvasObject" unique="FTCanvasObject"/>
+      <plugin name="dmzQtPluginCanvasArchive" unique="FTCanvasArchive"/>
+      <plugin name="dmzQtPluginRenderPick2d" unique="FTRenderPick2d"/>
+      <plugin name="dmzQtPluginMenuToMessage" unique="FTComponentRootMenu"/>
+      <plugin name="dmzQtPluginMenuToMessage" unique="FTComponentMenu"/>
+      <plugin name="dmzQtPluginMenuToMessage" unique="FTThreatMenu"/>
+      <plugin name="dmzQtPluginMenuToMessage" unique="FTLogicMenu"/>
+      <plugin name="dmzMBRAPluginFaultTreeBuilder"/>
+      <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
+      <plugin name="dmzMBRAPluginFTTable" delete="false"/>
+      <plugin name="dmzMBRAPluginFTCalculate" delete="false"/>
+   </plugins>
+   <FTCanvas>
+      <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
+      <channel name="FaultTreeChannel"/>
+   </FTCanvas>
+   <FTCanvasObject>
+      <plugins>
+         <plugin name="dmzQtPluginCanvasObjectBasic" unique="FTCanvasObjectBasic"/>
+      </plugins>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <FTCanvasObjectBasic>
+         <defaults zValue="1" itemIgnoresTransformations="false"/>
+         <module>
+            <canvas name="FTCanvas"/>
+         </module>
+      </FTCanvasObjectBasic>
+   </FTCanvasObject>
+   <FTCanvasZoom>
+      <scrollDelta value="10"/>
+      <!-- <zoom min="0.1" max="5" step="1.5" default="1.0"/> -->
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <zoomIn>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Zoom In" statusTip="Zoom In">
+            <icon>
+               <image file="images:Button_ZoomIn.png"/>
+            </icon>
+         </action>
+      </zoomIn>
+      <zoomOut>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Zoom Out" statusTip="Zoom Out">
+            <icon>
+               <image file="images:Button_ZoomOut.png"/>
+            </icon>
+         </action>
+      </zoomOut>
+      <zoomAll>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Zoom Extents" statusTip="Zoom Extents">
+            <icon>
+               <image file="images:Button_ArrowsZoomExtents.png"/>
+            </icon>
+         </action>
+      </zoomAll>
+      <panLeft>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Pan Left" statusTip="Pan Left">
+            <icon>
+               <image file="images:Button_ArrowLft.png"/>
+            </icon>
+         </action>
+      </panLeft>
+      <panRight>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Pan Right" statusTip="Pan Right">
+            <icon>
+               <image file="images:Button_ArrowRt.png"/>
+            </icon>
+         </action>
+      </panRight>
+      <panUp>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Pan Up" statusTip="Pan Up">
+            <icon>
+               <image file="images:Button_ArrowUp.png"/>
+            </icon>
+         </action>
+      </panUp>
+      <panDown>
+         <button>
+            <iconSize width="16" height="16"/>
+         </button>
+         <action text="Pan Down" statusTip="Pan Down">
+            <icon>
+               <image file="images:Button_ArrowDn.png"/>
+            </icon>
+         </action>
+      </panDown>
+   </FTCanvasZoom>
+   <FTCanvasArchive>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+   </FTCanvasArchive>
+   <FTRenderPick2d>
+      <source name="FTCanvas"/>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+   </FTRenderPick2d>
+   <FTComponentRootMenu>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <source name="FTCanvas"/>
+      <menu>
+         <item text="Add Component" message="FTComponentAddMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Add Threat" message="FTThreatAddMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Edit" message="FTComponentEditMessage" separator="true">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Reset Fault Tree" message="FTComponentDeleteMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+      </menu>  
+      <object>
+         <type name="ft_component_root"/>
+      </object>
+   </FTComponentRootMenu>
+   <FTComponentMenu>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <source name="FTCanvas"/>
+      <menu>
+         <item text="Add Component" message="FTComponentAddMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Add Threat" message="FTThreatAddMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Edit" message="FTComponentEditMessage" separator="true">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Delete" message="FTComponentDeleteMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+      </menu>  
+      <object>
+         <type name="ft_component"/>
+      </object>
+   </FTComponentMenu>
+   <FTThreatMenu>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <source name="FTCanvas"/>
+      <menu>
+         <item text="Edit" message="FTThreatEditMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="Delete" message="FTThreatDeleteMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+      </menu>  
+      <object>
+         <type name="ft_threat"/>
+      </object>
+   </FTThreatMenu>
+   <FTLogicMenu>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+      <source name="FTCanvas"/>
+      <menu>
+         <item text="AND" message="FTLogicAndMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+         <item text="OR" message="FTLogicOrMessage">
+            <target name="dmzMBRAPluginFaultTreeBuilder"/>
+         </item>
+      </menu>  
+      <object>
+         <type name="ft_logic"/>
+      </object>
+   </FTLogicMenu>
+   <dmzMBRAPluginFaultTreeBuilder>
+      <module>
+         <canvas name="FTCanvas"/>
+         <pick name="FTCanvas"/>
+      </module>
+      <vulnerability>
+         <operator type="multiply">
+            <const value="100.0"/>
+            <operator type="subtract">
+               <const value="1.0"/>
+               <operator type="divide">
+                  <attribute name="FT_Threat_Allocation"/>
+                  <attribute name="FT_Threat_Elimination_Cost"/>
+               </operator>
+            </operator>
+         </operator>
+      </vulnerability>
+   </dmzMBRAPluginFaultTreeBuilder>   
+   <dmzMBRAPluginFaultTreeAutoLayout>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+   </dmzMBRAPluginFaultTreeAutoLayout>
+   <dmzMBRAPluginFTTable>
+      <vulnerability>
+         <operator type="multiply">
+            <const value="100.0"/>
+            <operator type="subtract">
+               <const value="1.0"/>
+               <operator type="divide">
+                  <attribute name="FT_Threat_Allocation"/>
+                  <attribute name="FT_Threat_Elimination_Cost"/>
+               </operator>
+            </operator>
+         </operator>
+      </vulnerability>
+      <dockWidget title="Fault Tree Threat Data Table"/>
+   </dmzMBRAPluginFTTable>
+   <dmzMBRAPluginFTCalculate>
+      <!-- <widget>
+         <stylesheet file="stylesheets:ActionButton.qss"/>
+      </widget> -->
+      <caclulateButton autoRaise="True">
+         <button>
+            <iconSize width="32" height="32"/>
+         </button>
+         <action text="Calculate" checkable="true">
+            <icon>
+               <image file="images:Button_Calc.png"/>
+            </icon>
+         </action>
+      </caclulateButton>
+   </dmzMBRAPluginFTCalculate>
+</dmz>
+

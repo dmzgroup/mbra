@@ -1,0 +1,12 @@
+require "lmkQt"
+lmkQt.set_name ("mbra")
+lmk.set_type ("exe")
+lmk.add_files {"mbra.cpp",}
+lmk.add_files ({"mbra.rc"},{win32 = true})
+lmk.add_libs {"dmzQtLogObserver", "dmzQtUtil", "dmzApplication", "dmzXML", "dmzKernel",}
+lmk.add_preqs {"dmzFoundation",}
+lmkQt.add_libs {"QtCore", "QtGui"}
+lmk.add_vars ({localLibPaths = "-framework CoreFoundation"},{macos = true})
+lmk.add_vars ({
+   localLibPaths="/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"},
+{win32=true, opt=true})

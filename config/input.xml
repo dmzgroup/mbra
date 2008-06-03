@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dmz>
+<plugins>
+   <plugin name="dmzInputModuleBasic"/>
+   <plugin name="dmzInputPluginKeyEventToMessage"/>
+</plugins>
+<dmzInputPluginKeyEventToMessage>
+   <channel>
+      <converter key="u">
+         <target name="dmzPluginUndoDump" message="DumpUndoStackMessage"/>
+      </converter>
+      <converter key="L">
+         <target name="dmzQtExtLuaConsole" message="DMZ_Show_Lua_Console"/>
+      </converter>
+      <converter key="P">
+         <target name="dmzQtPluginLuaProfiler" message="DMZ_Show_Lua_Profiler"/>
+      </converter>
+   </channel>
+</dmzInputPluginKeyEventToMessage>
+</dmz>

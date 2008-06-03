@@ -1,0 +1,13 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginFaultTreeBuilder"
+lmk.set_type "plugin"
+lmk.add_files {"dmzMBRAThreatProperties.ui","dmzMBRAComponentProperties.ui",}
+lmk.add_files {"dmzMBRAPluginFaultTreeBuilder.cpp",}
+lmk.add_libs {"dmzObjectUtil","dmzKernel",}
+lmk.add_preqs {
+   "dmzFoundation",
+   "dmzQtFramework",
+   "dmzRenderFramework",
+   "dmzObjectFramework",
+}
+lmkQt.add_libs {"QtCore","QtGui",}

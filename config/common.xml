@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<dmzFileCacheLocal>
+   <path value="./data"/>
+   <path value="./scripts"/>
+   <!-- devel paths -->
+   <path value="./assets/Images"/>
+   <!-- end devel paths -->
+</dmzFileCacheLocal>
+<plugins>
+   <plugin name="dmzQtModuleMainWindowBasic"/>
+   <plugin name="dmzArchiveModuleBasic"/>
+   <plugin name="dmzArchivePluginAutoLoad"/>
+   <plugin name="dmzArchivePluginAutoSave"/>
+   <plugin name="dmzObjectPluginArchive"/>
+   <plugin name="dmzArchivePluginUndo"/>
+   <plugin name="dmzObjectModuleBasic"/>
+   <plugin name="dmzObjectPluginUndo"/>
+   <plugin name="dmzObjectPluginCleanup"/>
+   <plugin name="dmzRenderModulePickBasic"/>
+<!--   <plugin name="dmzObjectPluginDump"/>
+   <plugin name="dmzPluginMsgDump"/> -->
+   <plugin name="dmzPluginUndoDump"/>
+</plugins>
+<dmzObjectPluginArchive>
+   <archive>
+      <objects>
+         <type name="na_tool_link_node"/>
+      </objects>
+      <attribute name="Last_Network_Value" contains="True"/>
+      <attribute name="NA_Node_Rank">
+         <mask name="text"/>
+      </attribute>
+      <attribute name="FT_Threat_Allocation">
+         <mask name="scalar"/>
+      </attribute>
+      <state name="NA_Node_Overlay"/>
+      <state name="FT_Threat_Level_0"/>
+      <state name="FT_Threat_Level_1"/>
+      <state name="FT_Threat_Level_2"/>
+      <state name="FT_Threat_Level_3"/>
+      <state name="FT_Threat_Level_4"/>
+      <state name="FT_Threat_Level_5"/>
+      <state name="FT_Threat_Level_6"/>
+      <state name="FT_Threat_Level_7"/>
+      <state name="FT_Threat_Level_8"/>
+      <state name="FT_Threat_Level_9"/>
+      <state name="FT_Threat_Level_10"/>
+   </archive>
+</dmzObjectPluginArchive>
+<dmzObjectPluginCleanup>
+   <cleanup>
+      <type name="na_node"/>
+      <type name="ft_node"/>
+      <type name="canvas_layer"/>
+   </cleanup>
+</dmzObjectPluginCleanup>
+<dmzQtModuleMainWindowBasic>
+   <window title="MBRA" icon="images:IconFiles/AppIconMBRA_32x32.png"/>
+   <input>
+      <channel name="NetworkAnalysisChannel"/>
+      <channel name="FaultTreeChannel"/>
+   </input>
+   <!-- <showUnifiedTitleAndToolBar value="true"/> -->
+</dmzQtModuleMainWindowBasic>
+</dmz>

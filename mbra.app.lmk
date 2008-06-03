@@ -1,0 +1,132 @@
+require "app"
+lmk.set_name ("mbraapp")
+lmk.add_vars {
+   appName = "MBRA",
+   majorVersion = "1",
+   minorVersion = "0",
+   bugVersion = "0",
+   releaseType = "alpha 1",
+   aboutImage = "images:IconFiles/AppIconMBRA_128x128.png",
+}
+lmk.add_files ({"version.xml",}, {src="version"})
+lmk.add_files {"MBRA.app"}
+lmk.add_preqs {
+   "scripts",
+   "mbra",
+   "dmzArchiveModuleBasic",
+   "dmzArchivePluginAutoLoad",
+   "dmzArchivePluginAutoSave",
+   "dmzArchivePluginUndo",
+   "dmzInputModuleBasic",
+   "dmzInputPluginMouseEventToMessage",
+   "dmzLuaExtInput",
+   "dmzLuaExtObject",
+   "dmzLuaExtPick",
+   "dmzLuaModuleBasic",
+   "dmzLuaPluginReset",
+   "dmzMBRAPluginCalculate",
+   "dmzMBRAPluginFTCalculate",
+   "dmzMBRAPluginFaultTreeAutoLayout",
+   "dmzMBRAPluginFaultTreeBuilder",
+   "dmzMBRAPluginFTTable",
+   "dmzMBRAPluginFileToolBar",
+   "dmzMBRAPluginModeToolBar",
+   "dmzMBRAPluginNodeProperties",
+   "dmzMBRAPluginNodeTable",
+   "dmzObjectModuleBasic",
+   "dmzObjectPluginArchive",
+   "dmzObjectPluginCleanup",
+   "dmzObjectPluginDump",
+   "dmzPluginMsgDump",
+   "dmzPluginUndoDump",
+   "dmzObjectPluginUndo",
+   "dmzQtModuleCanvasBasic",
+   "dmzQtModuleMainWindowBasic",
+   "dmzQtPluginButtonToChannel",
+   "dmzQtPluginCanvasArchive",
+   "dmzQtPluginCanvasAutoLink",
+   "dmzQtPluginCanvasLayer",
+   "dmzQtPluginCanvasLink",
+   "dmzQtPluginCanvasObject",
+   "dmzQtPluginCanvasObjectBasic",
+   "dmzQtPluginCanvasZoomPan",
+   "dmzQtPluginMenuToMessage",
+   "dmzQtPluginRenderPick2d",
+   "dmzQtUtil",
+   "dmzRenderModulePickBasic",
+   "dmzRenderUtil",
+   "dmzApplication",
+   "dmzArchiveUtil",
+   "dmzFileCacheLocal",
+   "dmzInputEvents",
+   "dmzInputUtil",
+   "dmzKernel",
+   "dmzLuaKernel",
+   "dmzObjectUtil",
+   "dmzQtCanvasView",
+   "dmzQtLogObserver",
+   "dmzXML",
+   "expat",
+   "lua",
+-- dev plugins
+   "dmzQtExtLuaConsole",
+   "dmzQtPluginLuaProfiler",
+   "dmzInputPluginKeyEventToMessage",
+}
+
+app.set_app ("mbra")
+
+app.set_plist ("Info.plist")
+
+app.add_icons {"AppIcon.icns", "DocIcon.icns"}
+
+app.add_config {
+   "$(localTmpDir)/version.xml",
+   "config/common.xml",
+   "config/faultTree.xml",
+   "config/input.xml",
+   "config/lua.xml",
+   "config/manifest.xml",
+   "config/mbra.xml",
+   "config/networkAnalysis.xml",
+   "config/runtime.xml",
+   "config/tmp.xml",
+   "config/tools.xml",
+}
+
+app.add_data {
+   "mbra/mbra.rcc",
+   "mbra/Images/FT_ComponentBox.svg",
+   "mbra/Images/FT_LogicAnd.svg",
+   "mbra/Images/FT_LogicOr.svg",
+   "mbra/Images/FT_ThreatBox.svg",
+   "mbra/Images/FT_ThreatFillGreen.svg",
+   "mbra/Images/FT_ThreatFillSolid.svg",
+   "mbra/Images/NA_Node.svg",
+   "mbra/Images/NA_ResultsOverlay.svg",
+   "mbra/Images/NA_ResultsOverlayLinks.svg",
+}
+
+app.add_scripts {
+   "scripts/dmzMBRAPluginNARanking.lua",
+   "scripts/dmzMBRAPluginNALinkObject.lua",
+   "scripts/dmzMBRAPluginFaultTreeRef.lua",
+   "scripts/dmzMBRAPluginFaultTreeOpt.lua",
+   "scripts/dmzMBRAPluginCreateObject.lua",
+   "scripts/dmzMBRAPluginDestroyObject.lua",
+   "scripts/dmzMBRAPluginLinkObjects.lua",
+   "scripts/dmzMBRAPluginMoveObject.lua",
+   "scripts/dmzMBRAPluginUnlinkObjects.lua",
+   "scripts/dmzMBRAPluginLayerActive.lua",
+}
+
+lmk.add_vars ({
+   installPaths = {
+      {"QtCore.framework/Versions/4/QtCore", "@executable_path/../Frameworks/Qt/QtCore"},
+      {"QtGui.framework/Versions/4/QtGui", "@executable_path/../Frameworks/Qt/QtGui"},
+      {"QtXml.framework/Versions/4/QtXml", "@executable_path/../Frameworks/Qt/QtXml"},
+      {"QtSvg.framework/Versions/4/QtSvg", "@executable_path/../Frameworks/Qt/QtSvg"},
+      {"QtOpenGL.framework/Versions/4/QtOpenGL", "@executable_path/../Frameworks/Qt/QtOpenGL"},
+   },
+}
+,{opt = true})
