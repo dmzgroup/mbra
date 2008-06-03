@@ -95,16 +95,16 @@ app.add_config {
 }
 
 app.add_data {
-   "mbra/mbra.rcc",
-   "mbra/Images/FT_ComponentBox.svg",
-   "mbra/Images/FT_LogicAnd.svg",
-   "mbra/Images/FT_LogicOr.svg",
-   "mbra/Images/FT_ThreatBox.svg",
-   "mbra/Images/FT_ThreatFillGreen.svg",
-   "mbra/Images/FT_ThreatFillSolid.svg",
-   "mbra/Images/NA_Node.svg",
-   "mbra/Images/NA_ResultsOverlay.svg",
-   "mbra/Images/NA_ResultsOverlayLinks.svg",
+   "assets/mbra.rcc",
+   "assets/Images/FT_ComponentBox.svg",
+   "assets/Images/FT_LogicAnd.svg",
+   "assets/Images/FT_LogicOr.svg",
+   "assets/Images/FT_ThreatBox.svg",
+   "assets/Images/FT_ThreatFillGreen.svg",
+   "assets/Images/FT_ThreatFillSolid.svg",
+   "assets/Images/NA_Node.svg",
+   "assets/Images/NA_ResultsOverlay.svg",
+   "assets/Images/NA_ResultsOverlayLinks.svg",
 }
 
 app.add_scripts {

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dmz>
 <dmzFileCacheLocal>
-   <path value="./data"/>
-   <path value="./scripts"/>
+   <path value="data"/>
+   <path value="scripts"/>
    <!-- devel paths -->
-   <path value="./assets/Images"/>
+   <path value="assets/Images"/>
    <!-- end devel paths -->
 </dmzFileCacheLocal>
 <plugins>
