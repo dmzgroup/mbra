@@ -4,6 +4,7 @@
    <file>StyleSheets/ActionButton.qss</file>
    <file>StyleSheets/FileButton.qss</file>
    <file>Images/IconFiles/AppIconMBRA_32x32.png</file>
+   <file>Images/IconFiles/AppIconMBRA_128x128.png</file>
    <file>Images/Button_Calc.png</file>
    <file>Images/Button_Export.png</file>
    <file>Images/Button_File.png</file>
