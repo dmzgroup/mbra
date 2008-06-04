@@ -64,31 +64,34 @@ dmz::MBRAPluginFaultTreeBuilder::~MBRAPluginFaultTreeBuilder () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginFaultTreeBuilder::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginFaultTreeBuilder::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_canvasModule) {
+   if (Mode == PluginDiscoverAdd) {
+      
+      if (!_canvasModule) {
 
-      _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
+         _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
+      }
+
+      if (!_mainWindowModule) {
+
+         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
+      }
    }
-   
-   if (!_mainWindowModule) {
+   else if (Mode == PluginDiscoverRemove) {
+      
+      if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
 
-      _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-   }
-}
+         _canvasModule = 0;
+      }
 
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-void
-dmz::MBRAPluginFaultTreeBuilder::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
-         
-      _canvasModule = 0;
-   }
-   
-   if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
-         
-      _mainWindowModule = 0;
+         _mainWindowModule = 0;
+      }
    }
 }
 

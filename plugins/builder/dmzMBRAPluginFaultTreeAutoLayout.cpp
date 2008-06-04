@@ -44,47 +44,42 @@ dmz::MBRAPluginFaultTreeAutoLayout::~MBRAPluginFaultTreeAutoLayout () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginFaultTreeAutoLayout::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginFaultTreeAutoLayout::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_canvasModule) {
+   if (Mode == PluginDiscoverAdd) {
+      
+      if (!_canvasModule) {
 
-      _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
+         _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
 
-      if (_canvasModule) {
-         
-         QGraphicsScene *scene (_canvasModule->get_scene ());
+         if (_canvasModule) {
 
-         if (scene) {
+            QGraphicsScene *scene (_canvasModule->get_scene ());
 
-            _pathItem = new QGraphicsPathItem ();
+            if (scene) {
 
-            if (_pathItem) {
+               _pathItem = new QGraphicsPathItem ();
 
-               _pathItem->setZValue (-1.0);
-               
-               scene->addItem (_pathItem);
+               if (_pathItem) {
+
+                  _pathItem->setZValue (-1.0);
+
+                  scene->addItem (_pathItem);
+               }
             }
          }
       }
    }
-}
-
-
-void
-dmz::MBRAPluginFaultTreeAutoLayout::start_plugin () {
-
-//   if (!_root) { _root = _create_root (); }
-}
-
-
-void
-dmz::MBRAPluginFaultTreeAutoLayout::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
-
-      if (_pathItem) { delete _pathItem; _pathItem = 0; }
+   else if (Mode == PluginDiscoverRemove) {
       
-      _canvasModule = 0;
+      if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
+
+         if (_pathItem) { delete _pathItem; _pathItem = 0; }
+
+         _canvasModule = 0;
+      }
    }
 }
 

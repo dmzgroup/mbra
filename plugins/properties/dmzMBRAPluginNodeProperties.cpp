@@ -45,55 +45,40 @@ dmz::MBRAPluginNodeProperties::~MBRAPluginNodeProperties () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginNodeProperties::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginNodeProperties::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_objectModule) {
+   if (Mode == PluginDiscoverAdd) {
+      
+      if (!_objectModule) {
 
-      _objectModule = ObjectModule::cast (PluginPtr, _objectModuleName);
+         _objectModule = ObjectModule::cast (PluginPtr, _objectModuleName);
 
-      if (_objectModule && _degreeCalc) {
+         if (_objectModule && _degreeCalc) {
 
-         _degreeCalc->store_object_module (_objectModule);
+            _degreeCalc->store_object_module (_objectModule);
+         }
+      }
+
+      if (!_mainWindowModule) {
+
+         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
       }
    }
-   
-   if (!_mainWindowModule) {
-
-      _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-   }
-}
-
-
-void
-dmz::MBRAPluginNodeProperties::start_plugin () {
-
-}
-
-
-void
-dmz::MBRAPluginNodeProperties::stop_plugin () {
-
-}
-
-
-void
-dmz::MBRAPluginNodeProperties::shutdown_plugin () {
-
-}
-
-
-void
-dmz::MBRAPluginNodeProperties::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_objectModule && (_objectModule == ObjectModule::cast (PluginPtr))) {
-         
-      _objectModule = 0;
-      if (_degreeCalc) { _degreeCalc->store_object_module (0); }
-   }
-   
-   if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+   else if (Mode == PluginDiscoverRemove) {
       
-      _mainWindowModule = 0;
+      if (_objectModule && (_objectModule == ObjectModule::cast (PluginPtr))) {
+
+         _objectModule = 0;
+         if (_degreeCalc) { _degreeCalc->store_object_module (0); }
+      }
+
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+
+         _mainWindowModule = 0;
+      }
    }
 }
 

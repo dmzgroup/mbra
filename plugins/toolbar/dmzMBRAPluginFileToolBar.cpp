@@ -56,64 +56,64 @@ dmz::MBRAPluginFileToolBar::~MBRAPluginFileToolBar () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginFileToolBar::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginFileToolBar::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_archiveModule) {
-   
-      _archiveModule = ArchiveModule::cast (PluginPtr, _archiveModuleName);
-   }
+   if (Mode == PluginDiscoverAdd) {
+      
+      if (!_archiveModule) {
 
-   if (!_mainWindowModule) {
+         _archiveModule = ArchiveModule::cast (PluginPtr, _archiveModuleName);
+      }
 
-      _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
+      if (!_mainWindowModule) {
 
-      if (_mainWindowModule && _aboutAction) {
+         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
 
-         QMenuBar *menu = _mainWindowModule->get_menu_bar ();
+         if (_mainWindowModule && _aboutAction) {
 
-         if (menu) {
+            QMenuBar *menu = _mainWindowModule->get_menu_bar ();
+
+            if (menu) {
 
 #if defined(__APPLE__) || defined(MACOSX)
-            QMenu *appMenu = menu->addMenu ("Application Menu");
+               QMenu *appMenu = menu->addMenu ("Application Menu");
 #else
-            _aboutAction->setText ("About");
-            QMenu *appMenu = menu->addMenu ("Help");
+               _aboutAction->setText ("About");
+               QMenu *appMenu = menu->addMenu ("Help");
 #endif
-            if (appMenu) { appMenu->addAction (_aboutAction); }
+               if (appMenu) { appMenu->addAction (_aboutAction); }
+            }
          }
-      }
 
-      if (_mainWindowModule && _toolBar) {
+         if (_mainWindowModule && _toolBar) {
 
-         _mainWindowModule->add_tool_bar (_toolBar);
+            _mainWindowModule->add_tool_bar (_toolBar);
 
-         QWidget *widget (_mainWindowModule->get_widget ());
+            QWidget *widget (_mainWindowModule->get_widget ());
 
-         if (!_startFile.isEmpty () && widget) {
+            if (!_startFile.isEmpty () && widget) {
 
-            QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
-            widget->setWindowTitle (name);
+               QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
+               widget->setWindowTitle (name);
+            }
          }
       }
    }
-}
+   else if (Mode == PluginDiscoverRemove) {
+      
+      if (_archiveModule && (_archiveModule == ArchiveModule::cast (PluginPtr))) {
 
+         _archiveModule = 0;
+      }
 
-void
-dmz::MBRAPluginFileToolBar::start_plugin () {
+      if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-}
-
-
-void
-dmz::MBRAPluginFileToolBar::stop_plugin () {
-
-}
-
-
-void
-dmz::MBRAPluginFileToolBar::shutdown_plugin () {
-
+         _mainWindowModule->remove_tool_bar (_toolBar);
+         _mainWindowModule = 0;
+      }
+   }
 }
 
 
@@ -154,22 +154,6 @@ dmz::MBRAPluginFileToolBar::receive_message (
             _load_file (fileName.get_buffer ());
          }
       }
-   }
-}
-
-
-void
-dmz::MBRAPluginFileToolBar::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_archiveModule && (_archiveModule == ArchiveModule::cast (PluginPtr))) {
-
-      _archiveModule = 0;
-   }
-
-   if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
-      
-      _mainWindowModule->remove_tool_bar (_toolBar);
-      _mainWindowModule = 0;
    }
 }
 
