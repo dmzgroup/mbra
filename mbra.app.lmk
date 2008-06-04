@@ -111,7 +111,7 @@ app.add_scripts {
    "scripts/dmzMBRAPluginNARanking.lua",
    "scripts/dmzMBRAPluginNALinkObject.lua",
    "scripts/dmzMBRAPluginFaultTreeRef.lua",
-   "scripts/dmzMBRAPluginFaultTreeOpt.lua",
+   "scripts/dmzMBRAPluginFaultTree.lua",
    "scripts/dmzMBRAPluginCreateObject.lua",
    "scripts/dmzMBRAPluginDestroyObject.lua",
    "scripts/dmzMBRAPluginLinkObjects.lua",

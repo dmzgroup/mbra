@@ -15,7 +15,7 @@
    </extensions>
    <instance name="dmzMBRAPluginNARanking"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
-   <instance name="dmzMBRAPluginFaultTree" file="dmzMBRAPluginFaultTreeOpt.lua"/>
+   <instance name="dmzMBRAPluginFaultTree"/>
    <instance name="dmzMBRAPluginLayerActive"/>
 </dmzLuaModuleBasic>
 </dmz>
