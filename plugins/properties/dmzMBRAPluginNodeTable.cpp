@@ -150,35 +150,38 @@ dmz::MBRAPluginNodeTable::~MBRAPluginNodeTable () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginNodeTable::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginNodeTable::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_mainWindowModule) {
+   if (Mode == PluginDiscoverAdd) {
+      
+      if (!_mainWindowModule) {
 
-      _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
+         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
 
-      if (_mainWindowModule) {
+         if (_mainWindowModule) {
 
-         _dock = new QDockWidget (_title, this);
-         _dock->setObjectName (get_plugin_name ().get_buffer ());
-         _dock->setAllowedAreas (Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+            _dock = new QDockWidget (_title, this);
+            _dock->setObjectName (get_plugin_name ().get_buffer ());
+            _dock->setAllowedAreas (Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
-         _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
-//            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+            _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
+   //            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 
-         _mainWindowModule->add_dock_widget (_channel, Qt::BottomDockWidgetArea, _dock);
-         _dock->setWidget (this);
+            _mainWindowModule->add_dock_widget (_channel, Qt::BottomDockWidgetArea, _dock);
+            _dock->setWidget (this);
+         }
       }
    }
-}
-
-
-void
-dmz::MBRAPluginNodeTable::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+   else if (Mode == PluginDiscoverRemove) {
       
-      _mainWindowModule->remove_dock_widget (_channel, _dock);
-      _mainWindowModule = 0;
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+
+         _mainWindowModule->remove_dock_widget (_channel, _dock);
+         _mainWindowModule = 0;
+      }
    }
 }
 

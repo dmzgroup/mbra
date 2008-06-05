@@ -40,57 +40,64 @@ dmz::MBRAPluginModeToolBar::~MBRAPluginModeToolBar () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginModeToolBar::discover_plugin (const Plugin *PluginPtr) {
+dmz::MBRAPluginModeToolBar::update_plugin_state (
+      const PluginStateEnum State,
+      const UInt32 Level) {
 
-   if (!_inputModule) {
+   if (State == PluginStateStart) {
 
-      _inputModule = InputModule::cast (PluginPtr, _inputModuleName);
-      
-      if (_inputModule) {
-         
-         _inputModule->create_channel (_networkAnalysisChannel);
-         _inputModule->create_channel (_faultTreeChannel);
-         
-         _inputModule->set_channel_state (_faultTreeChannel, False);
-         _inputModule->set_channel_state (_networkAnalysisChannel, False);
-      }
-   }
-   
-   if (!_mainWindowModule) {
+      if (!_currentChannel) {
 
-      _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-
-      if (_mainWindowModule && _toolBar) {
-
-         _mainWindowModule->add_tool_bar (_toolBar);
+         _ui.networkButton->click ();
       }
    }
 }
 
 
 void
-dmz::MBRAPluginModeToolBar::start_plugin () {
+dmz::MBRAPluginModeToolBar::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-   if (!_currentChannel) {
+   if (Mode == PluginDiscoverAdd) {
       
-      _ui.networkButton->click ();
+      if (!_inputModule) {
+
+         _inputModule = InputModule::cast (PluginPtr, _inputModuleName);
+
+         if (_inputModule) {
+
+            _inputModule->create_channel (_networkAnalysisChannel);
+            _inputModule->create_channel (_faultTreeChannel);
+
+            _inputModule->set_channel_state (_faultTreeChannel, False);
+            _inputModule->set_channel_state (_networkAnalysisChannel, False);
+         }
+      }
+
+      if (!_mainWindowModule) {
+
+         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
+
+         if (_mainWindowModule && _toolBar) {
+
+            _mainWindowModule->add_tool_bar (_toolBar);
+         }
+      }
    }
-}
-
-
-void
-dmz::MBRAPluginModeToolBar::remove_plugin (const Plugin *PluginPtr) {
-
-   if (_inputModule && (_inputModule == InputModule::cast (PluginPtr))) {
-         
-      _inputModule = 0;
-   }
-   
-   if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+   else if (Mode == PluginDiscoverRemove) {
       
-      _mainWindowModule->remove_tool_bar (_toolBar);
-      _toolBar->setParent (0);
-      _mainWindowModule = 0;
+      if (_inputModule && (_inputModule == InputModule::cast (PluginPtr))) {
+
+         _inputModule = 0;
+      }
+
+      if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+
+         _mainWindowModule->remove_tool_bar (_toolBar);
+         _toolBar->setParent (0);
+         _mainWindowModule = 0;
+      }
    }
 }
 
