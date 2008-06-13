@@ -34,17 +34,17 @@ SolidCompression=yes
 Name: english; MessagesFile: compiler:Default.isl
 
 [Tasks]
-Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Languages: 
+Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Languages:
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Icons]
-Name: {group}\{#AppName}; Filename: {app}\bin\{#AppExeName}; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Tasks: 
+Name: {group}\{#AppName}; Filename: {app}\bin\{#AppExeName}; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Tasks:
 Name: {group}\{cm:UninstallProgram,{#AppName}}; Filename: {uninstallexe}
-Name: {userdesktop}\{#AppName}; Filename: {app}\bin\{#AppExeName}; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Languages: 
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#AppName}; Filename: {app}\bin\{#AppExeName}; Tasks: quicklaunchicon; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Languages: 
+Name: {userdesktop}\{#AppName}; Filename: {app}\bin\{#AppExeName}; Tasks: desktopicon; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Languages:
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#AppName}; Filename: {app}\bin\{#AppExeName}; Tasks: quicklaunchicon; WorkingDir: {app}; IconFilename: {app}\bin\{#AppExeName}; Languages:
 
 [Run]
-Filename: {app}\bin\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent; Tasks: ; Languages: 
+Filename: {app}\bin\{#AppExeName}; Description: {cm:LaunchProgram,{#AppName}}; Flags: nowait postinstall skipifsilent; Tasks: ; Languages:
 
 [Registry]
 Root: HKLM; Subkey: Software\DMZ\{#AppName}; ValueType: string; ValueName: workingDir; ValueData: {app}; Flags: uninsdeletekey
@@ -53,7 +53,7 @@ Root: HKCR; Subkey: mbra.file\DefaultIcon; ValueType: string; ValueData: {app}\b
 Root: HKCR; Subkey: mbra.file\shell\open\command; ValueType: string; ValueData: "{app}\bin\mbra.exe ""%1"""; Flags: uninsdeletekey
 
 [Files]
-Source: ..\..\..\..\bin\win32-{#BuildMode}\MBRA.app\*; DestDir: {app}; Flags: recursesubdirs
+Source: ..\..\..\bin\win32-{#BuildMode}\MBRA.app\*; DestDir: {app}; Flags: recursesubdirs
 Source: {#QtDir}\bin\QtCore4.dll; DestDir: {app}\bin
 Source: {#QtDir}\bin\QtGui4.dll; DestDir: {app}\bin
 Source: {#QtDir}\bin\QtOpenGL4.dll; DestDir: {app}\bin
