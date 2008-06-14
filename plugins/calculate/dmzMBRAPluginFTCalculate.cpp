@@ -130,19 +130,19 @@ dmz::MBRAPluginFTCalculate::update_object_scalar (
    }
    else if (AttributeHandle == _riskSumHandle) {
 
-      _ui.riskLabel->setNum (int (Value));
+      _ui.riskLabel->setText (QString::number (Value));
    }
    else if (AttributeHandle == _riskSumReducedHandle) {
 
-      _ui.riskReducedLabel->setNum (int (Value));
+      _ui.riskReducedLabel->setText (QString::number (Value));
    }
    else if (AttributeHandle == _vulnerabilitySumHandle) {
 
-      _ui.vulnerabilityLabel->setNum (int (Value));
+      _ui.vulnerabilityLabel->setText (QString::number (Value));
    }
    else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
 
-      _ui.vulnerabilityReducedLabel->setNum (int (Value));
+      _ui.vulnerabilityReducedLabel->setText (QString::number (Value));
    }
 }
 

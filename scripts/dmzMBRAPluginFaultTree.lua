@@ -7,7 +7,7 @@ local VulnerabilitySumHandle = dmz.handle.new ("FT_Vulnerability_Sum_Value")
 local VulnerabilitySumReducdedHandle = dmz.handle.new (
    "FT_Vulnerability_Sum_Reduced_Value")
 local RiskSumHandle = dmz.handle.new ("FT_Risk_Sum_Value")
-local RiskSumReducdedHandle = dmz.handle.new ("FT_Risk_Sum_Reduced_Value")
+local RiskSumReducedHandle = dmz.handle.new ("FT_Risk_Sum_Reduced_Value")
 local AllocationHandle = dmz.handle.new ("FT_Threat_Allocation")
 local FTLinkHandle = dmz.handle.new ("FT_Link")
 local FTLogicLinkHandle = dmz.handle.new ("FT_Logic_Link")
@@ -265,6 +265,15 @@ local function calculate_sub_risk (objectList, control)
    return tvSum * consequenceSum, tvSum
 end
 
+local function new_risk_is_less (newRisk, oldRisk)
+   local result = false
+   if not oldRisk then result = true
+   elseif (newRisk < oldRisk) and not dmz.math.is_zero (newRisk - oldRisk) then
+      result = true
+   end
+   return result
+end
+
 local function create_risk_closure (
       self,
       risk,
@@ -297,7 +306,7 @@ local function create_risk_closure (
       if not control then
          riskResult = false
          if first and second and firstOrigAllocation and secondOrigAllocation then
-            if not self.risk or risk < self.risk then
+            if new_risk_is_less (risk, self.risk) then
                self.risk = risk
                self.vulnerability = vulnerability
                if self.root then
@@ -305,7 +314,7 @@ local function create_risk_closure (
                      self.root,
                      VulnerabilitySumReducdedHandle,
                      self.vulnerability)
-                  dmz.object.scalar (self.root, RiskSumReducdedHandle, self.risk)
+                  dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
                end
                dmz.object.scalar (first.handle, AllocationHandle, first.allocation)
                dmz.object.scalar (second.handle, AllocationHandle, second.allocation)
@@ -314,14 +323,15 @@ local function create_risk_closure (
                second.allocation = secondOrigAllocation
             end
          else 
+            self.risk = risk
             if self.root then
-               self.risk = risk
                self.vulnerability = vulnerability
                dmz.object.scalar (
                   self.root,
                   VulnerabilitySumHandle,
                   self.vulnerability)
                dmz.object.scalar (self.root, RiskSumHandle, self.risk)
+               dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
             end
          end
       end
@@ -411,8 +421,17 @@ local function work (self)
          if self.allocate_budget then
             self:allocate_budget ()
             self.allocate_budget = nil
+            local risk = 0
+            local vulnerability = 0
+            local calcCount = 0
+            self.risk_func = create_risk_closure (
+               self,
+               risk,
+               vulnerability,
+               create_control_matrix (#self.index),
+               calcCount)
+         else self.risk_func = nil
          end
-         self.risk_func = nil
       end
    end
    if not self.risk_func then self.risk_func = create_test_risk_closure (self) end
