@@ -326,8 +326,8 @@ dmz::MBRAPluginFileToolBar::_slot_undo () {
    _undo.do_next (UndoTypeUndo);
 
    // when pressing on the tool button associated with this action the status bar
-   // text is not getting updated properly. This code get a pointer to the widget
-   // currently under the mouse point. If it happens to be the widget associated
+   // text is not getting updated properly. This code gets a pointer to the widget
+   // currently under the mouse pointer. If it happens to be the widget associated
    // with the action we manually tell the main window widget to update its status
    // bar message. But when this slot is called from the keyboard we don't want this
    // same behavior. That is why we check if the widget is the one under the mouse.
