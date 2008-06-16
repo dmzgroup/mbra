@@ -192,6 +192,7 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
       }
 
       _undoAction->setStatusTip (tip);
+//      _undoAction->showStatusText (_mainWindowModule ? _mainWindowModule->get_widget () : 0);
    }
 
    if (_redoAction) {
@@ -209,6 +210,7 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
       }
       
       _redoAction->setStatusTip (tip);
+//      _redoAction->showStatusText (_mainWindowModule ? _mainWindowModule->get_widget () : 0);
    }
 }
 
