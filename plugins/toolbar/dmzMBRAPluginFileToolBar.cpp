@@ -192,7 +192,6 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
       }
 
       _undoAction->setStatusTip (tip);
-//      _undoAction->showStatusText (_mainWindowModule ? _mainWindowModule->get_widget () : 0);
    }
 
    if (_redoAction) {
@@ -210,7 +209,6 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
       }
       
       _redoAction->setStatusTip (tip);
-//      _redoAction->showStatusText (_mainWindowModule ? _mainWindowModule->get_widget () : 0);
    }
 }
 
@@ -324,7 +322,35 @@ void
 dmz::MBRAPluginFileToolBar::_slot_undo () {
 
    _appState.push_mode (ApplicationModeUndoing);
+
    _undo.do_next (UndoTypeUndo);
+
+   // when pressing on the tool button associated with this action the status bar
+   // text is not getting updated properly. This code get a pointer to the widget
+   // currently under the mouse point. If it happens to be the widget associated
+   // with the action we manually tell the main window widget to update its status
+   // bar message. But when this slot is called from the keyboard we don't want this
+   // same behavior. That is why we check if the widget is the one under the mouse.
+   // This same check is done in _slot_redo
+   
+   if (_undoAction && _mainWindowModule) {
+
+      QWidget *mouseWidget (QApplication::widgetAt (QCursor::pos ()));
+      
+      if (mouseWidget) {
+         
+         QList<QWidget *> widgetList (_undoAction->associatedWidgets ());
+
+         foreach (QWidget *widget, widgetList) {
+
+            if (widget == mouseWidget) {
+
+               _undoAction->showStatusText (_mainWindowModule->get_widget ());
+            }
+         }
+      }
+   }
+   
    _appState.pop_mode ();
 }
 
@@ -333,7 +359,27 @@ void
 dmz::MBRAPluginFileToolBar::_slot_redo () {
 
    _appState.push_mode (ApplicationModeUndoing);
+
    _undo.do_next (UndoTypeRedo);
+
+   if (_redoAction && _mainWindowModule) {
+      
+      QWidget *mouseWidget (QApplication::widgetAt (QCursor::pos ()));
+      
+      if (mouseWidget) {
+         
+         QList<QWidget *> widgetList (_redoAction->associatedWidgets ());
+
+         foreach (QWidget *widget, widgetList) {
+
+            if (widget == mouseWidget) {
+
+               _redoAction->showStatusText (_mainWindowModule->get_widget ());
+            }
+         }
+      }
+   }
+
    _appState.pop_mode ();
 }
 
