@@ -23,7 +23,9 @@ dmz::MBRAPluginNodeProperties::MBRAPluginNodeProperties (
       _objectModuleName (),
       _mainWindowModule (0),
       _mainWindowModuleName (),
+      _created (False),
       _objectAttrHandle (0),
+      _createdAttrHandle (0),
       _nameAttrHandle (0),
       _descriptionAttrHandle (0),
       _eliminationCostAttrHandle (0),
@@ -100,6 +102,11 @@ dmz::MBRAPluginNodeProperties::receive_message (
 
          if (InData->lookup_handle (_objectAttrHandle, 0, objHandle)) {
 
+            _created = False;
+            Handle createdHandle (0);
+            InData->lookup_handle (_createdAttrHandle, 0, createdHandle);
+            if (createdHandle) { _created = True; }
+
             qApp->processEvents ();
 
             if (_objectModule->is_object (objHandle)) {
@@ -148,6 +155,7 @@ dmz::MBRAPluginNodeProperties::_edit_node (const Handle ObjectHandle) {
 
          _update_node (ObjectHandle, ns);
       }
+      else if (_created) { _objectModule->destroy_object (ObjectHandle); }
    }
 }
 
@@ -201,6 +209,7 @@ dmz::MBRAPluginNodeProperties::_edit_link (const Handle LinkHandle) {
 
          _update_link (LinkHandle, ls);
       }
+      else if (_created) { _objectModule->unlink_objects (LinkHandle); }
    }
 }
 
@@ -374,6 +383,9 @@ dmz::MBRAPluginNodeProperties::_init (Config &local) {
 
    _objectAttrHandle =
       config_to_named_handle ("attribute.object.name", local, "object", context);
+
+   _createdAttrHandle =
+      config_to_named_handle ("attribute.created.name", local, "created", context);
 
    _nameAttrHandle =
       config_to_named_handle ("attribute.node.name", local, "NA_Node_Name", context);

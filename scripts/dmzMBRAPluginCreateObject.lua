@@ -13,9 +13,12 @@ function receive (self, type, data)
          dmz.object.activate (handle)
          local outData = dmz.data.new ()
          outData:store_handle ("object", 1, handle)
+         outData:store_handle ("created", 1, handle)
          self.editMessage:send ("dmzMBRAPluginNodeProperties", outData)
       end
-      dmz.undo.stop_record (undoHandle)
+      if dmz.object.is_object (handle) then dmz.undo.stop_record (undoHandle)
+      else dmz.undo.abort_record (undoHandle)
+      end
    end
 end
 

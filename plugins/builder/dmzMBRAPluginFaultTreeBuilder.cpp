@@ -241,18 +241,26 @@ dmz::MBRAPluginFaultTreeBuilder::_component_add (const Handle Parent) {
 
    if (objMod && Parent) {
 
+      Boolean edited (False);
+
       const Handle UndoHandle (_undo.start_record ("Add Component"));
 
       Handle object (objMod->create_object (_componentType, ObjectLocal));
 
       if (object) {
 
-         _component_edit (object);
-         objMod->activate_object (object);
-         objMod->link_objects (_linkAttrHandle, Parent, object);
+         edited = _component_edit (object);
+
+         if (edited) {
+
+            objMod->activate_object (object);
+            objMod->link_objects (_linkAttrHandle, Parent, object);
+         }
+         else { objMod->destroy_object (object); }
       }
 
-      _undo.stop_record (UndoHandle);
+      if (edited) { _undo.stop_record (UndoHandle); }
+      else { _undo.abort_record (UndoHandle); }
    }
 }
 
@@ -352,6 +360,8 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
 
    if (objMod && Parent) {
 
+      Boolean edited (False);
+
       const Handle UndoHandle (_undo.start_record ("Add Threat"));
 
       Handle object (objMod->create_object (_threatType, ObjectLocal));
@@ -361,13 +371,18 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
          objMod->store_scalar (object, _threatAttrHandle, 1.0);
          objMod->store_scalar (object, _vulnerabilityAttrHandle, 0.0);
 
-         _threat_edit (object);
+         edited = _threat_edit (object);
 
-         objMod->activate_object (object);
-         objMod->link_objects (_linkAttrHandle, Parent, object);
+         if (edited) {
+
+            objMod->activate_object (object);
+            objMod->link_objects (_linkAttrHandle, Parent, object);
+         }
+         else { objMod->destroy_object (object); }
       }
 
-      _undo.stop_record (UndoHandle);
+      if (edited) { _undo.stop_record (UndoHandle); }
+      else { _undo.abort_record (UndoHandle); }
    }
 }
 

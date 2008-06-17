@@ -82,8 +82,10 @@ namespace dmz {
          ObjectModule *_objectModule;
          String _objectModuleName;
          QtModuleMainWindow *_mainWindowModule;
+         Boolean _created;
          String _mainWindowModuleName;
          Handle _objectAttrHandle;
+         Handle _createdAttrHandle;
          Handle _nameAttrHandle;
          Handle _descriptionAttrHandle;
          Handle _eliminationCostAttrHandle;
