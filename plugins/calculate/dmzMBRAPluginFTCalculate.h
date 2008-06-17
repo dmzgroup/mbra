@@ -16,15 +16,15 @@ class QDockWidget;
 namespace dmz {
 
    class QtModuleMainWindow;
-   
-   
+
+
    class MBRAPluginFTCalculate :
       public QWidget,
       public Plugin,
       public ObjectObserverUtil {
 
       Q_OBJECT
-      
+
       public:
          MBRAPluginFTCalculate (const PluginInfo &Info, Config &local);
          ~MBRAPluginFTCalculate ();
@@ -51,7 +51,7 @@ namespace dmz {
       protected slots:
          void _slot_calculate (bool On);
          void _slot_update_budget (int budget);
-         
+
       protected:
          void _update_budget ();
          void _init (Config &local);
@@ -73,7 +73,7 @@ namespace dmz {
          QDockWidget *_dock;
          Ui::calculateForm _ui;
          HashTableHandleTemplate<Float64> _ecTable;
-         
+
       private:
          MBRAPluginFTCalculate ();
          MBRAPluginFTCalculate (const MBRAPluginFTCalculate &);

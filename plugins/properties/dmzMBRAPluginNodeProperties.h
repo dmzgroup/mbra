@@ -17,7 +17,7 @@ namespace dmz {
    class ObjectModule;
    class QtModuleMainWindow;
 
-         
+
    class MBRAPluginNodeProperties :
          public Plugin,
          public MessageObserver {
@@ -34,7 +34,7 @@ namespace dmz {
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
-         
+
          // Message Observer Interface
          void receive_message (
             const Message &Msg,
@@ -45,35 +45,35 @@ namespace dmz {
 
       protected:
          struct NodeStruct {
-            
+
             QString name;
             QString description;
             Float64 eliminationCost;
             Float64 consequence;
             QString degree;
-            
+
             NodeStruct () : eliminationCost (0.0), consequence (0.0) {;}
          };
-         
+
          struct LinkStruct {
-         
+
             QString name;
             Float64 eliminationCost;
             Float64 consequence;
             QString flow;
-            
+
             LinkStruct () : eliminationCost (0.0), consequence (0.0) {;}
          };
-         
+
          void _edit_node (const Handle ObjectHandle);
          void _edit_link (const Handle LinkHandle);
-         
+
          void _get_node (const Handle ObjectHandle, NodeStruct &ns);
          void _get_link (const Handle LinkHandle, LinkStruct &ls);
-         
+
          void _update_node (const Handle ObjectHandle, const NodeStruct &Ns);
          void _update_link (const Handle LinkHandle, const LinkStruct &Ls);
-         
+
          void _init (Config &local);
 
          Log _log;
@@ -93,7 +93,7 @@ namespace dmz {
          Mask _flowForwardMask;
          Mask _flowReverseMask;
          ObjectAttributeCalculator *_degreeCalc;
-         
+
       private:
          MBRAPluginNodeProperties ();
          MBRAPluginNodeProperties (const MBRAPluginNodeProperties &);

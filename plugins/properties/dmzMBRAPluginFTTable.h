@@ -27,7 +27,7 @@ namespace dmz {
          public ObjectObserverUtil {
 
       Q_OBJECT
-      
+
       public:
          MBRAPluginFTTable (const PluginInfo &Info, Config &local);
          ~MBRAPluginFTTable ();
@@ -66,13 +66,13 @@ namespace dmz {
 
       protected slots:
          void _item_changed (QStandardItem *item);
-      
+
       protected:
          typedef QList<QStandardItem *> QStandardItemList;
 
          virtual void _store_object_module (ObjectModule &objMod);
          virtual void _remove_object_module (ObjectModule &objMod);
-         
+
          void _init (Config &local);
 
          Log _log;
@@ -97,7 +97,7 @@ namespace dmz {
          HashTableHandleTemplate<QStandardItemList> _rowTable;
          Boolean _ignoreChange;
          ObjectAttributeCalculator *_vcalc; // Vulnerability Calculator
-         
+
       private:
          MBRAPluginFTTable ();
          MBRAPluginFTTable (const MBRAPluginFTTable &);

@@ -42,9 +42,9 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       _aboutAction (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
-   
+
    _init (local, global);
-   
+
    update_current_undo_names (0, 0);
 }
 
@@ -61,7 +61,7 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
       const Plugin *PluginPtr) {
 
    if (Mode == PluginDiscoverAdd) {
-      
+
       if (!_archiveModule) {
 
          _archiveModule = ArchiveModule::cast (PluginPtr, _archiveModuleName);
@@ -102,7 +102,7 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
       }
    }
    else if (Mode == PluginDiscoverRemove) {
-      
+
       if (_archiveModule && (_archiveModule == ArchiveModule::cast (PluginPtr))) {
 
          _archiveModule = 0;
@@ -150,7 +150,7 @@ dmz::MBRAPluginFileToolBar::receive_message (
             else if (Button & QMessageBox::Cancel) { fileName.flush (); }
          }
 
-         if (fileName) { 
+         if (fileName) {
 
             _load_file (fileName.get_buffer ());
          }
@@ -179,7 +179,7 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
       const String *NextRedoName) {
 
    if (_undoAction) {
-      
+
       QString tip ("Undo");
 
       if (NextUndoName) {
@@ -196,7 +196,7 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
    }
 
    if (_redoAction) {
-      
+
       QString tip ("Redo");
 
       if (NextRedoName) {
@@ -208,7 +208,7 @@ dmz::MBRAPluginFileToolBar::update_current_undo_names (
 
          _redoAction->setEnabled (False);
       }
-      
+
       _redoAction->setStatusTip (tip);
    }
 }
@@ -227,7 +227,7 @@ dmz::MBRAPluginFileToolBar::exit_requested (
          "Do you want to save your changes?",
          QMessageBox::Save | QMessageBox::Discard,
          QMessageBox::Save));
- 
+
       if (Value & QMessageBox::Save) { _slot_file_export (); }
    }
 
@@ -239,7 +239,7 @@ void
 dmz::MBRAPluginFileToolBar::_slot_file_load () {
 
    if (_archiveModule) {
-      
+
       QString fileName =
          QFileDialog::getOpenFileName (
             _mainWindowModule ? _mainWindowModule->get_widget () : 0,
@@ -256,7 +256,7 @@ void
 dmz::MBRAPluginFileToolBar::_slot_file_export () {
 
    if (_archiveModule) {
-      
+
       QString fileName =
          QFileDialog::getSaveFileName (
             _mainWindowModule ? _mainWindowModule->get_widget () : 0,
@@ -287,7 +287,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
          FILE *file = open_file (qPrintable (fileName), "wb");
 
          if (file) {
-            
+
             _appStateDirty = False;
 
             StreamFile out (file);
@@ -296,9 +296,9 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
 
             write_xml_header (out);
             format_config_to_xml (config, out);
-            
+
             QString msg (QString ("File exported as: ") + fileName);
-            
+
             _log.info << qPrintable (msg) << endl;
 
             if (_mainWindowModule) {
@@ -309,7 +309,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
             }
 
             close_file (file);
-            
+
             _appState.set_default_directory (qPrintable (fileName));
          }
 
@@ -333,13 +333,13 @@ dmz::MBRAPluginFileToolBar::_slot_undo () {
    // bar message. But when this slot is called from the keyboard we don't want this
    // same behavior. That is why we check if the widget is the one under the mouse.
    // This same check is done in _slot_redo
-   
+
    if (_undoAction && _mainWindowModule) {
 
       QWidget *mouseWidget (QApplication::widgetAt (QCursor::pos ()));
-      
+
       if (mouseWidget) {
-         
+
          QList<QWidget *> widgetList (_undoAction->associatedWidgets ());
 
          foreach (QWidget *widget, widgetList) {
@@ -351,7 +351,7 @@ dmz::MBRAPluginFileToolBar::_slot_undo () {
          }
       }
    }
-   
+
    _appState.pop_mode ();
 }
 
@@ -364,11 +364,11 @@ dmz::MBRAPluginFileToolBar::_slot_redo () {
    _undo.do_next (UndoTypeRedo);
 
    if (_redoAction && _mainWindowModule) {
-      
+
       QWidget *mouseWidget (QApplication::widgetAt (QCursor::pos ()));
-      
+
       if (mouseWidget) {
-         
+
          QList<QWidget *> widgetList (_redoAction->associatedWidgets ());
 
          foreach (QWidget *widget, widgetList) {
@@ -395,9 +395,9 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
          "Do you want to save your changes before clearing?",
          QMessageBox::Save | QMessageBox::Discard,
          QMessageBox::Save));
- 
+
       if (Value & QMessageBox::Save) { _slot_file_export (); }
-   }        
+   }
 
    _cleanUpObjMsg.send (_target, 0, 0);
    _undo.reset ();
@@ -429,17 +429,17 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
 
             _mainWindowModule->get_status_bar ()->showMessage (msg);
          }
-         
+
          Config archiveConfig;
          global.lookup_all_config_merged ("dmz", archiveConfig);
-         
+
          _cleanUpObjMsg.send (_target, 0, 0);
-         
+
          _undo.reset ();
-         
+
          qApp->processEvents ();
          _archiveModule->process_archive (_archive, archiveConfig);
-         
+
          msg = QString ("File loaded: ") + FileName;
          _log.info << qPrintable (msg) << endl;
 
@@ -449,7 +449,7 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
             _mainWindowModule->get_widget ()->setWindowTitle (name);
             _mainWindowModule->get_status_bar ()->showMessage (msg, 5000);
          }
-         
+
          _appState.set_default_directory (qPrintable (FileName));
 
          _appStateDirty = False;
@@ -478,7 +478,7 @@ dmz::MBRAPluginFileToolBar::_get_last_path () {
    }
 
    QFileInfo fi (lastPath.get_buffer ());
-   
+
    return fi.absoluteFilePath ();
 }
 
@@ -489,13 +489,13 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
    _startFile = config_to_string ("mbraStartFile.name", global, "").get_buffer ();
 
    Definitions defs (get_plugin_runtime_context ());
-   
+
    _archiveModuleName = config_to_string ("module.archive.name", local);
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-   
+
    _archive = defs.create_named_handle (
       config_to_string ("archive.name", local, ArchiveDefaultName));
- 
+
    _fileHandle = defs.create_named_handle ("file");
 
    _openFileMsg = config_create_message_type (
@@ -513,7 +513,7 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
       "CleanupObjectsMessage",
       get_plugin_runtime_context (),
       &_log);
-   
+
    _target = config_to_named_handle (
       "message.target",
       local,
@@ -527,79 +527,79 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
 
    _toolBar = new QToolBar ("File", 0);
    _toolBar->setObjectName (get_plugin_name ().get_buffer ());
-   
+
    qtoolbar_config_read ("toolBar", local, _toolBar);
-   
+
    _loadAction = new QAction (this);
    qaction_config_read ("open", local, _loadAction);
-   
+
    if (_loadAction) {
-      
+
       connect (
          _loadAction, SIGNAL (triggered ()),
          this, SLOT (_slot_file_load ()));
-         
-      _toolBar->addAction (_loadAction);   
+
+      _toolBar->addAction (_loadAction);
    }
-  
+
    _exportAction = new QAction (this);
    qaction_config_read ("export", local, _exportAction);
-   
+
    if (_exportAction) {
-      
+
       connect (
          _exportAction, SIGNAL (triggered ()),
          this, SLOT (_slot_file_export ()));
-         
+
       _toolBar->addAction (_exportAction);
    }
 
    _undoAction = new QAction (this);
    qaction_config_read ("undo", local, _undoAction);
-   
+
    if (_undoAction) {
-      
+
       _undoAction->setShortcut (QKeySequence::Undo);
-      
+
       connect (
          _undoAction, SIGNAL (triggered ()),
          this, SLOT (_slot_undo ()));
-         
+
       _toolBar->addAction (_undoAction);
    }
 
    _redoAction = new QAction (this);
    qaction_config_read ("redo", local, _redoAction);
-   
+
    if (_redoAction) {
-      
+
       _redoAction->setShortcut (QKeySequence::Redo);
-      
+
       connect (
          _redoAction, SIGNAL (triggered ()),
          this, SLOT (_slot_redo ()));
-         
+
       _toolBar->addAction (_redoAction);
    }
 
    _clearAction = new QAction (this);
    qaction_config_read ("clear", local, _clearAction);
-   
+
    if (_clearAction) {
-      
+
       connect (
          _clearAction, SIGNAL (triggered ()),
          this, SLOT (_slot_clear ()));
-         
+
       _toolBar->addAction (_clearAction);
    }
 
    _aboutAction = new QAction (this);
-   
+
    if (_aboutAction) {
 
       _aboutAction->setMenuRole (QAction::AboutRole);
-      
+
       connect (
          _aboutAction, SIGNAL (triggered ()),
          this, SLOT (_slot_about ()));

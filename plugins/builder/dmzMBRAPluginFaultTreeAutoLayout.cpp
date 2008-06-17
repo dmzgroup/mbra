@@ -49,7 +49,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::discover_plugin (
       const Plugin *PluginPtr) {
 
    if (Mode == PluginDiscoverAdd) {
-      
+
       if (!_canvasModule) {
 
          _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
@@ -73,7 +73,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::discover_plugin (
       }
    }
    else if (Mode == PluginDiscoverRemove) {
-      
+
       if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
 
          if (_pathItem) { delete _pathItem; _pathItem = 0; }
@@ -91,14 +91,14 @@ dmz::MBRAPluginFaultTreeAutoLayout::update_time_slice (const Float64 TimeDelta) 
    if (_doTreeUpdate) {
 
       _update_tree ();
-      
+
       _doTreeUpdate = False;
       _doZoomUpdate = True;
    }
    else if (_doZoomUpdate && _canvasModule) {
 
       _canvasModule->zoom_extents ();
-      
+
       _doZoomUpdate = False;
    }
 }
@@ -115,14 +115,14 @@ dmz::MBRAPluginFaultTreeAutoLayout::create_object (
    if (Type.is_of_exact_type (_rootType)) {
 
       ObjectModule *objMod (get_object_module ());
-      
+
       if (_root && objMod) {
-         
+
          objMod->destroy_object (_root);
       }
-      
+
       _root = ObjectHandle;
-      
+
       _log.debug << "Found Fault Tree Root: " << _root << endl;
    }
 }
@@ -134,7 +134,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::destroy_object (
       const Handle ObjectHandle) {
 
    if (ObjectHandle == _root) {
-      
+
       _root = 0;
    }
 }
@@ -150,7 +150,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::link_objects (
       const Handle SubHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
       _doTreeUpdate = True;
    }
 }
@@ -166,7 +166,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::unlink_objects (
       const Handle SubHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
       _doTreeUpdate = True;
    }
 }
@@ -176,44 +176,44 @@ void
 dmz::MBRAPluginFaultTreeAutoLayout::_update_tree () {
 
    ObjectModule *objMod (get_object_module ());
-   
+
    if (!_root) { _root = _create_root (); }
-   
+
    if (objMod && _root) {
-      
+
       HandleContainer children;
 
       objMod->lookup_sub_links (_root, _linkAttrHandle, children);
-      
+
       _path = QPainterPath ();
-      
+
       Int32 count (0);
-      
+
       Handle current (children.get_first ());
-      
+
       while (current) {
-         
+
          _update_tree (_root, current, 1, count);
-         
+
          current = children.get_next ();
       }
 
       Vector offset (0.0, 0.0, 0.0);
-      
+
       if (count) {
-         
+
          offset.set_z ((count - 1) * 0.5f * _vOffset);
       }
-      
+
       objMod->store_position (_root, _defaultAttrHandle, offset);
-      
+
       _update_logic (_root);
 
       if (children.get_count ()) {
-         
+
          _update_path (_root);
       }
-      
+
       if (_pathItem) { _pathItem->setPath (_path); }
    }
 }
@@ -225,26 +225,26 @@ dmz::MBRAPluginFaultTreeAutoLayout::_update_tree (
       const Handle SubHandle,
       const Int32 Column,
       Int32 &count) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && SuperHandle && SubHandle) {
 
       Vector rootPos (0.0, 0.0, 0.0);
-      
+
       Vector superPos;
       objMod->lookup_position (SuperHandle, _defaultAttrHandle, superPos);
-      
+
       Vector offset ((Column * _hOffset), 0.0, (count * _vOffset));
       Vector topPos (rootPos + offset);
-      
+
       HandleContainer children;
       objMod->lookup_sub_links (SubHandle, _linkAttrHandle, children);
-      
+
       if (children.get_count ()) {
-         
+
          Int32 startCount (count);
-         
+
          Handle current (children.get_first ());
 
          while (current) {
@@ -253,9 +253,9 @@ dmz::MBRAPluginFaultTreeAutoLayout::_update_tree (
 
             current = children.get_next ();
          }
-      
+
          Int32 endCount (count);
-         
+
          offset.set_xyz (0.0, 0.0, ((endCount - startCount - 1) * 0.5f * _vOffset));
          objMod->store_position (SubHandle, _defaultAttrHandle, topPos + offset);
 
@@ -278,9 +278,9 @@ void
 dmz::MBRAPluginFaultTreeAutoLayout::_update_logic (const Handle Parent) {
 
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod) {
-      
+
       HandleContainer logic;
       objMod->lookup_sub_links (Parent, _logicAttrHandle, logic);
 
@@ -300,31 +300,31 @@ void
 dmz::MBRAPluginFaultTreeAutoLayout::_update_path (const Handle Object) {
 
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Object) {
-      
+
       Vector rootPos;
       objMod->lookup_position (Object, _defaultAttrHandle, rootPos);
       const QPointF RootPoint (rootPos.get_x (), rootPos.get_z ());
-      
+
       Vector logicPos (
          rootPos.get_x () + (0.5f * _hOffset),
          rootPos.get_y (),
          rootPos.get_z ());
-         
+
       const QPointF LogicPoint (logicPos.get_x (), logicPos.get_z ());
-      
+
       _path.moveTo (RootPoint);
       _path.lineTo (LogicPoint);
-      
+
       HandleContainer children;
       objMod->lookup_sub_links (Object, _linkAttrHandle, children);
-      
+
       if (children.get_count ()) {
 
          Vector pos;
          Handle current (children.get_first ());
-         
+
          while (current) {
 
             Vector pos;
@@ -346,23 +346,23 @@ dmz::Handle
 dmz::MBRAPluginFaultTreeAutoLayout::_create_root () {
 
    Handle root (0);
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod) {
-      
+
       root = objMod->create_object (_rootType, ObjectLocal);
-      
+
       if (root) {
 
          objMod->store_text (root, _nameAttrHandle, _rootText);
          objMod->store_position (root, _defaultAttrHandle, Vector (0.0, 0.0, 0.0));
          objMod->activate_object (root);
-         
+
          _log.debug << "Created Fault Tree Root: " << root << endl;
       }
    }
-   
+
    return root;
 }
 
@@ -371,7 +371,7 @@ void
 dmz::MBRAPluginFaultTreeAutoLayout::_init (Config &local) {
 
    _canvasModuleName = config_to_string ("module.canvas.name", local);
-   
+
    _defaultAttrHandle = activate_default_object_attribute (
       ObjectCreateMask | ObjectDestroyMask);
 
@@ -384,9 +384,9 @@ dmz::MBRAPluginFaultTreeAutoLayout::_init (Config &local) {
 
    _nameAttrHandle = config_to_named_handle (
       "attribute.threat.name", local, "FT_Name", get_plugin_runtime_context ());
-         
+
    Definitions defs (get_plugin_runtime_context (), &_log);
-   
+
    defs.lookup_object_type (
       config_to_string ("root.type", local, "ft_component_root"), _rootType);
 

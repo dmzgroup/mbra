@@ -39,7 +39,7 @@ namespace dmz {
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
-         
+
          // Object Observer Interface
          virtual void create_object (
             const UUID &Identity,
@@ -96,7 +96,7 @@ namespace dmz {
 
       protected:
          typedef QList<QStandardItem *> QStandardItemList;
-         
+
          virtual void _store_object_module (ObjectModule &objMod);
          virtual void _remove_object_module (ObjectModule &objMod);
 
@@ -127,7 +127,7 @@ namespace dmz {
          HashTableHandleTemplate<QStandardItemList> _linkRowTable;
          Boolean _ignoreChange;
          ObjectAttributeCalculator *_degreeCalc;
-         
+
       private:
          MBRAPluginNodeTable ();
          MBRAPluginNodeTable (const MBRAPluginNodeTable &);

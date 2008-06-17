@@ -15,15 +15,15 @@ namespace dmz {
 
    class InputModule;
    class QtModuleMainWindow;
-   
-   
+
+
    class MBRAPluginModeToolBar :
          public QWidget,
          public Plugin,
          public ArchiveObserverUtil {
 
       Q_OBJECT
-      
+
       public:
          MBRAPluginModeToolBar (const PluginInfo &Info, Config &local);
          ~MBRAPluginModeToolBar ();
@@ -47,11 +47,11 @@ namespace dmz {
             const Handle ArchiveHandle,
             Config &local,
             Config &global);
-         
+
       protected slots:
          void _slot_network_analysis ();
          void _slot_fault_tree ();
-         
+
       protected:
          void _init (Config &local);
 
@@ -67,7 +67,7 @@ namespace dmz {
          Handle _networkAnalysisChannel;
          Handle _faultTreeChannel;
          Handle _currentChannel;
-         
+
       private:
          MBRAPluginModeToolBar ();
          MBRAPluginModeToolBar (const MBRAPluginModeToolBar &);

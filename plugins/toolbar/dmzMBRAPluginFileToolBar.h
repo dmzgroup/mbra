@@ -19,8 +19,8 @@ namespace dmz {
 
    class ArchiveModule;
    class QtModuleMainWindow;
-   
-   
+
+
    class MBRAPluginFileToolBar :
          public QObject,
          public Plugin,
@@ -29,7 +29,7 @@ namespace dmz {
          public ExitObserver {
 
       Q_OBJECT
-      
+
       public:
          MBRAPluginFileToolBar (const PluginInfo &Info, Config &local, Config &global);
          ~MBRAPluginFileToolBar ();
@@ -73,7 +73,7 @@ namespace dmz {
          void _slot_redo ();
          void _slot_clear ();
          void _slot_about ();
-         
+
       protected:
          void _load_file (const QString &FileName);
          QString _get_last_path ();
@@ -103,7 +103,7 @@ namespace dmz {
          QAction *_redoAction;
          QAction *_clearAction;
          QAction *_aboutAction;
-         
+
       private:
          MBRAPluginFileToolBar ();
          MBRAPluginFileToolBar (const MBRAPluginFileToolBar &);

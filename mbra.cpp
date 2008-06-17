@@ -23,29 +23,29 @@ using namespace dmz;
 namespace {
 
    static dmz::Log *appLog (0);
-   
+
    const char MBRAApplicationName[] = "mbra";
    const char MBRAOrganizationName[] = "dmz";
    const char MBRAOrganizationDomain[] = "dmz.nps.edu";
-   
+
    void local_starup_error (const QString &Msg) {
 
       QString errorMsg (Msg + "\n\nStart up errors encountered.\nShutting down.");
       QMessageBox::critical (0, "Start Up Error", errorMsg);
    }
-   
+
    void qt_message_handler (QtMsgType type, const char *msg) {
-      
+
       if (appLog) {
-         
+
          const dmz::String PreFix ("qt:");
-         
+
          switch (type) {
 
             case QtDebugMsg:
                appLog->debug << PreFix << msg << endl;
                break;
-               
+
             case QtWarningMsg:
                appLog->warn << PreFix << msg << endl;
                break;
@@ -62,20 +62,20 @@ namespace {
 
 int
 main (int argc, char *argv[]) {
-   
+
 //   Q_INIT_RESOURCE (mbra);
-   
+
    // Set up the custom qWarning/qDebug custom handler
    qInstallMsgHandler (qt_message_handler);
-   
+
    QCoreApplication::setOrganizationName (MBRAOrganizationName);
    QCoreApplication::setOrganizationDomain (MBRAOrganizationDomain);
    QCoreApplication::setApplicationName (MBRAApplicationName);
-   
+
    Application app (MBRAApplicationName, MBRAOrganizationName);
 
 #if defined(__APPLE__) || defined(MACOSX) || defined (_WIN32)
-   QtSingletonApplication qtApp (MBRAApplicationName, argc, argv, app.get_context ()); 
+   QtSingletonApplication qtApp (MBRAApplicationName, argc, argv, app.get_context ());
 
    if (!qtApp.start_application ()) {
 
@@ -83,7 +83,7 @@ main (int argc, char *argv[]) {
       return 0; // Application is already running so just bail out now -rb
    }
 #else
-   QApplication qtApp (argc, argv); 
+   QApplication qtApp (argc, argv);
 #endif
 
    app.state.set_autosave_file (get_home_directory () + "/.MBRA_AUTO_SAVE_FILE");
@@ -98,7 +98,7 @@ main (int argc, char *argv[]) {
 
    app.load_session ();
    qtLogObs.load_session ();
-   
+
    if (!appLog) { appLog = &(app.log); }
 
    QSettings settings;
@@ -120,12 +120,12 @@ main (int argc, char *argv[]) {
 #endif
 
    if (!workingDir) {
-      
+
       workingDir = qPrintable (settings.value ("/workingDir", ".").toString ());
    }
 
    if (change_directory (workingDir)) {
-      
+
       app.log.info << "Working directory: " << get_current_directory () << endl;
    }
    else {
@@ -134,26 +134,26 @@ main (int argc, char *argv[]) {
    }
 
    QString manifestFile (get_env ("MBRA_MANIFEST").get_buffer ());
-   
+
    if (manifestFile.isEmpty ()) {
-        
+
       manifestFile = settings.value ("/manifest", "config/manifest.xml").toString ();
    }
 
    QFileInfo fi (manifestFile);
    manifestFile = fi.absoluteFilePath ();
-   
+
    CommandLineArgs fileArgs ("f");
-   
+
    Config global ("global");
    app.log.info << "Manifest file: " << qPrintable (manifestFile) << endl;
-   
+
    if (fi.exists ()) {
-      
+
       if (xml_to_config (qPrintable (manifestFile), global, &(app.log))) {
 
          Config manifest;
-         
+
          if (global.lookup_all_config_merged ("manifest", manifest)) {
 
             String rcc (get_env ("MBRA_RESOURCE"));
@@ -179,19 +179,19 @@ main (int argc, char *argv[]) {
             while (manifest.get_next_config (it, cd)) {
 
                const String DataName (cd.get_name ().to_lower ());
-               
+
                if (DataName == "config") {
-                  
+
                   if (cd.lookup_attribute ("file", value)) {
 
                      fileArgs.append_arg (value);
                   }
                }
                else if (DataName == "searchpath") {
-                  
+
                   const String Prefix (config_to_string ("prefix", cd));
                   const String Path (config_to_string ("path", cd));
-                  
+
                   if (Prefix && Path) {
 
                      QDir::addSearchPath (Prefix.get_buffer (), Path.get_buffer ());
@@ -253,7 +253,7 @@ main (int argc, char *argv[]) {
 
                QFile file (qss.get_buffer ());
                if (file.open (QFile::ReadOnly)) {
-                  
+
                   QString styleSheet (QLatin1String (file.readAll ()));
                   qtApp.setStyleSheet (styleSheet);
 
@@ -263,9 +263,9 @@ main (int argc, char *argv[]) {
          }
       }
    }
-   
+
    if (fileArgs.get_count ()) {
-      
+
       CommandLine cl;
       cl.add_args (fileArgs);
 
@@ -307,10 +307,10 @@ main (int argc, char *argv[]) {
       QString errorMsg ("Unable to process manifest:\n");
       local_starup_error (errorMsg + manifestFile);
    }
-      
+
    qtApp.quit ();
-   
+
    appLog = 0;
-   
+
    return app.is_error () ? -1 : 0;
 }

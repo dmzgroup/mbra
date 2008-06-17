@@ -14,12 +14,12 @@ class QDockWidget;
 namespace dmz {
 
    class QtModuleMainWindow;
-   
-   
+
+
    class MBRAPluginCalculate : public QWidget, public Plugin {
 
       Q_OBJECT
-      
+
       public:
          MBRAPluginCalculate (const PluginInfo &Info, Config &local);
          ~MBRAPluginCalculate ();
@@ -35,7 +35,7 @@ namespace dmz {
 
       protected slots:
          void _slot_calculate (bool On);
-         
+
       protected:
          void _init (Config &local);
 
@@ -49,7 +49,7 @@ namespace dmz {
          QString _title;
          QDockWidget *_dock;
          Ui::calculateForm _ui;
-         
+
       private:
          MBRAPluginCalculate ();
          MBRAPluginCalculate (const MBRAPluginCalculate &);

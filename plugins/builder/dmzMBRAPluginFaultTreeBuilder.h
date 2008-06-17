@@ -19,8 +19,8 @@ namespace dmz {
 
    class QtModuleCanvas;
    class QtModuleMainWindow;
-   
-   
+
+
    class MBRAPluginFaultTreeBuilder :
          public Plugin,
          public MessageObserver,
@@ -46,7 +46,7 @@ namespace dmz {
             const Handle TargetObserverHandle,
             const Data *InData,
             Data *outData);
-            
+
          // Object Observer Interface
          virtual void create_object (
             const UUID &Identity,
@@ -71,16 +71,16 @@ namespace dmz {
             const Handle SuperHandle,
             const UUID &SubIdentity,
             const Handle SubHandle);
-         
+
       protected:
          struct ThreatStruct {
-            
+
             QString name;
             Float64 eliminationCost;
             Float64 consequence;
             Float64 threat;
             Float64 vulnerability;
-            
+
             ThreatStruct () :
                eliminationCost (0.0),
                consequence (0.0),
@@ -90,25 +90,25 @@ namespace dmz {
 
          virtual void _store_object_module (ObjectModule &objMod);
          virtual void _remove_object_module (ObjectModule &objMod);
-         
+
          void _component_add (const Handle Parent);
          Boolean _component_edit (const Handle Object);
          void _component_delete (const Handle Object);
-         
+
          void _threat_add (const Handle Parent);
          Boolean _threat_edit (const Handle Object);
          void _threat_get (const Handle ObjectHandle, ThreatStruct &ts);
          void _threat_update (const Handle ObjectHandle, const ThreatStruct &ts);
          void _threat_delete (const Handle Object);
-         
+
          void _logic_and (const Handle Object);
          void _logic_or (const Handle Object);
-         
+
          void _create_logic (const Handle Parent);
          void _delete_logic (const Handle Parent);
-         
+
          void _init (Config &local);
-         
+
          Log _log;
          ApplicationStateWrapper _appState;
          Definitions _defs;
@@ -143,7 +143,7 @@ namespace dmz {
          Mask _logicAndMask;
          Mask _logicOrMask;
          HashTableHandleTemplate<Int32> _linkTable;
-                  
+
       private:
          MBRAPluginFaultTreeBuilder ();
          MBRAPluginFaultTreeBuilder (const MBRAPluginFaultTreeBuilder &);

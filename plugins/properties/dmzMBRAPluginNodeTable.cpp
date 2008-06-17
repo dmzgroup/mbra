@@ -12,7 +12,7 @@
 namespace dmz {
 
    const UInt32 NAHandleRole (Qt::UserRole + 1);
-   
+
    const UInt32 NodeNameColumn (0);
    const UInt32 NodeDegreeColumn (1);
    const UInt32 NodeEliminationCostColumn (2);
@@ -135,11 +135,11 @@ dmz::MBRAPluginNodeTable::~MBRAPluginNodeTable () {
    if (_degreeCalc) { delete _degreeCalc; _degreeCalc = 0; }
 
    HashTableHandleIterator it;
-   
+
    QStandardItemList *itemList (_nodeRowTable.get_first (it));
-   
+
    while (itemList) {
-   
+
       qDeleteAll (*itemList);
       itemList = _nodeRowTable.get_next (it);
    }
@@ -155,7 +155,7 @@ dmz::MBRAPluginNodeTable::discover_plugin (
       const Plugin *PluginPtr) {
 
    if (Mode == PluginDiscoverAdd) {
-      
+
       if (!_mainWindowModule) {
 
          _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
@@ -179,7 +179,7 @@ dmz::MBRAPluginNodeTable::discover_plugin (
       }
    }
    else if (Mode == PluginDiscoverRemove) {
-      
+
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
@@ -199,44 +199,44 @@ dmz::MBRAPluginNodeTable::create_object (
       const ObjectLocalityEnum Locality) {
 
    if (Type.is_of_type (_nodeType) || Type.is_of_type (_linkType)) {
-      
+
       QStandardItemList *itemList = new QStandardItemList ();
 
       for (int ix = 0; ix < NodeColumnCount; ix++) {
 
          QStandardItem *item (new QStandardItem ());
-         
+
          item->setData ((quint64)ObjectHandle, NAHandleRole);
          item->setSelectable (True);
          item->setEditable (True);
          item->setEnabled (True);
-         
+
          if (ix == NodeDegreeColumn ||
              ix == NodeRankColumn) {
-            
+
             item->setEditable (False);
             item->setEnabled (False);
          }
 
          if ((ix == NodeDegreeColumn) && Type.is_of_type (_linkType)) {
-     
+
             item->setData (1, Qt::DisplayRole);
          }
-         
+
          itemList->append (item);
       }
-      
+
       if (_nodeRowTable.store (ObjectHandle, itemList)) {
-         
+
          _nodeModel.appendRow (*itemList);
       }
       else {
-      
+
          itemList->empty ();
          delete itemList;
          itemList = 0;
       }
-      
+
 //      _ui.tableView->resizeColumnsToContents ();
    }
 }
@@ -248,13 +248,13 @@ dmz::MBRAPluginNodeTable::destroy_object (
       const Handle ObjectHandle) {
 
    QStandardItemList *itemList (_nodeRowTable.remove (ObjectHandle));
-   
+
    if (itemList) {
-      
+
       QStandardItem *item (itemList->at (NodeNameColumn));
-      
+
       if (item) {
-         
+
          _nodeModel.takeRow (item->row ());
 
          qDeleteAll (*itemList);
@@ -274,7 +274,7 @@ dmz::MBRAPluginNodeTable::link_objects (
       const Handle SubHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
       _update_degrees (SuperHandle);
       _update_degrees (SubHandle);
    }
@@ -291,7 +291,7 @@ dmz::MBRAPluginNodeTable::unlink_objects (
       const Handle SubHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
       _update_degrees (SuperHandle);
       _update_degrees (SubHandle);
    }
@@ -312,7 +312,7 @@ dmz::MBRAPluginNodeTable::update_link_attribute_object (
       const Handle PrevAttributeObjectHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
    }
 }
 
@@ -326,36 +326,36 @@ dmz::MBRAPluginNodeTable::update_object_scalar (
       const Float64 *PreviousValue) {
 
    QStandardItemList *itemList (_nodeRowTable.lookup (ObjectHandle));
- 
+
    if (itemList) {
-      
+
       _ignoreChange = True;
-      
+
       Boolean updateVulnerabilty (False);
-      
+
       QStandardItem *item (0);
-      
+
       if (AttributeHandle == _eliminationCostAttrHandle) {
 
          item = itemList->at (NodeEliminationCostColumn);
-         
+
          if (item) {
-            
+
             item->setData (Value, Qt::DisplayRole);
-            
+
             updateVulnerabilty = True;
          }
       }
       else if (AttributeHandle == _consequenceAttrHandle) {
-         
+
          item = itemList->at (NodeConsequenceColumn);
-         
+
          if (item) {
-            
+
             item->setData (Value, Qt::DisplayRole);
          }
       }
-            
+
       _ignoreChange = False;
    }
 }
@@ -372,17 +372,17 @@ dmz::MBRAPluginNodeTable::update_object_text (
    QStandardItemList *itemList (_nodeRowTable.lookup (ObjectHandle));
 
    if (itemList) {
-      
+
       _ignoreChange = True;
-      
+
       QStandardItem *item (0);
-      
+
       if (AttributeHandle == _nameAttrHandle) {
-      
+
          item = itemList->at (NodeNameColumn);
-         
+
          if (item) {
-            
+
             item->setText (Value.get_buffer ());
 
             QHeaderView *header (_ui.nodeTableView->horizontalHeader ());
@@ -405,7 +405,7 @@ dmz::MBRAPluginNodeTable::update_object_text (
             if (ok) { item->setData ((int)rank, Qt::DisplayRole); }
          }
       }
-      
+
       _ignoreChange = False;
    }
 }
@@ -427,15 +427,15 @@ dmz::MBRAPluginNodeTable::_remove_object_module (ObjectModule &objMod) {
 
 void
 dmz::MBRAPluginNodeTable::_node_item_changed (QStandardItem *item) {
-   
+
    if (!_ignoreChange && item) {
-      
+
       bool ok (false);
 
       Handle ObjHandle (item->data (NAHandleRole).toULongLong (&ok));
 
       ObjectModule *objMod (get_object_module ());
-         
+
       if (ObjHandle && ok && objMod) {
 
          ok = false;
@@ -443,39 +443,39 @@ dmz::MBRAPluginNodeTable::_node_item_changed (QStandardItem *item) {
          Float64 val (0.0);
 
          Handle undoHandle (0);
-         
+
          switch (item->column ()) {
-            
+
             case NodeNameColumn:
 
                undoHandle = _undo.start_record ("Set Node Name");
                objMod->store_text (
                   ObjHandle, _nameAttrHandle, qPrintable (data.toString ()));
-                  
+
                break;
-               
+
             case NodeEliminationCostColumn:
-            
+
                val = data.toDouble (&ok);
-            
+
                if (ok) {
-                  
+
                   undoHandle = _undo.start_record ("Set Node Elimination Cost");
                   objMod->store_scalar (ObjHandle, _eliminationCostAttrHandle, val);
                }
-                  
+
                break;
-            
+
             case NodeConsequenceColumn:
-            
+
                val = data.toDouble (&ok);
-            
+
                if (ok) {
 
                   undoHandle = _undo.start_record ("Set Node Consequence");
                   objMod->store_scalar (ObjHandle, _consequenceAttrHandle, val);
                }
-               
+
                break;
 
             default: break;
@@ -489,20 +489,20 @@ dmz::MBRAPluginNodeTable::_node_item_changed (QStandardItem *item) {
 
 void
 dmz::MBRAPluginNodeTable::_update_degrees (const Handle ObjectHandle) {
-   
+
    QStandardItemList *itemList (_nodeRowTable.lookup (ObjectHandle));
-      
+
    if (itemList && _degreeCalc) {
-      
+
       _ignoreChange = True;
-         
+
       QStandardItem *item (itemList->at (NodeDegreeColumn));
-         
+
       if (item) {
-         
+
          item->setData ((int)_degreeCalc->calculate (ObjectHandle), Qt::DisplayRole);
       }
-         
+
       _ignoreChange = False;
    }
 }
@@ -523,7 +523,7 @@ dmz::MBRAPluginNodeTable::_init (Config &local) {
       local,
       "NetworkAnalysisChannel",
       get_plugin_runtime_context ());
-      
+
    _defaultAttrHandle = activate_default_object_attribute (
       ObjectCreateMask | ObjectDestroyMask); //  | ObjectStateMask);
 
@@ -533,7 +533,7 @@ dmz::MBRAPluginNodeTable::_init (Config &local) {
    _nameAttrHandle = activate_object_attribute (
       config_to_string ("attribute.node.name", local, "NA_Node_Name"),
       ObjectTextMask);
-      
+
    _eliminationCostAttrHandle = activate_object_attribute (
       config_to_string (
          "attribute.node.eliminationCost",
@@ -560,9 +560,9 @@ dmz::MBRAPluginNodeTable::_init (Config &local) {
    _rankAttrHandle = activate_object_attribute (
       config_to_string ("attribute.node.rank", local, "NA_Node_Rank"),
       ObjectTextMask);
-   
+
    Definitions defs (get_plugin_runtime_context (), &_log);
-   
+
    defs.lookup_object_type (
       config_to_string ("type.node", local, "na_node"),
       _nodeType);

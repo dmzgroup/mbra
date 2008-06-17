@@ -31,9 +31,9 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _dock (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
-   
+
    _ui.setupUi (this);
-   
+
    _init (local);
 }
 
@@ -51,7 +51,7 @@ dmz::MBRAPluginFTCalculate::discover_plugin (
       const Plugin *PluginPtr) {
 
    if (Mode == PluginDiscoverAdd) {
-      
+
       if (!_mainWindowModule) {
 
          _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
@@ -75,7 +75,7 @@ dmz::MBRAPluginFTCalculate::discover_plugin (
       }
    }
    else if (Mode == PluginDiscoverRemove) {
-      
+
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
@@ -152,13 +152,13 @@ void
 dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
 
    if (on) {
-      
+
       Data data;
       data.store_float64 (_budgetAttrHandle, 0, _ui.budgetSpinBox->value ());
       _calculateOnMessage.send (_target, &data, 0);
    }
    else {
-      
+
       Data data;
       _calculateOffMessage.send (_target, &data, 0);
    }
@@ -205,9 +205,9 @@ void
 dmz::MBRAPluginFTCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
-   
+
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-   
+
    _channel = config_to_named_handle (
       "channel.name",
       local,
@@ -219,7 +219,7 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       local,
       "FTBudget",
       get_plugin_runtime_context ());
-      
+
    _calculateOnMessage = config_create_message_type (
       "message.on",
       local,
@@ -246,15 +246,15 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       qPrintable (_title)).get_buffer ();
 
    qwidget_config_read ("widget", local, this);
-   
+
    qtoolbutton_config_read ("caclulateButton", local, _ui.calculateButton);
-   
+
    _ui.calculateButton->setStatusTip (_ui.infoLabel->text ());
-   
+
    QAction *action (_ui.calculateButton->defaultAction ());
-   
+
    if (action) {
-      
+
       connect (
          action, SIGNAL (toggled (bool)),
          this, SLOT (_slot_calculate (bool)));

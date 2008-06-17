@@ -69,7 +69,7 @@ dmz::MBRAPluginFaultTreeBuilder::discover_plugin (
       const Plugin *PluginPtr) {
 
    if (Mode == PluginDiscoverAdd) {
-      
+
       if (!_canvasModule) {
 
          _canvasModule = QtModuleCanvas::cast (PluginPtr, _canvasModuleName);
@@ -81,7 +81,7 @@ dmz::MBRAPluginFaultTreeBuilder::discover_plugin (
       }
    }
    else if (Mode == PluginDiscoverRemove) {
-      
+
       if (_canvasModule && (_canvasModule == QtModuleCanvas::cast (PluginPtr))) {
 
          _canvasModule = 0;
@@ -106,11 +106,11 @@ dmz::MBRAPluginFaultTreeBuilder::receive_message (
       Data *outData) {
 
    if (InData) {
-   
+
       Handle obj;
 
       if (InData->lookup_handle (_objectAttrHandle, 0, obj)) {
-         
+
          if (Msg == _componentAddMessage) { _component_add (obj); }
          else if (Msg == _componentEditMessage) { _component_edit (obj); }
          else if (Msg == _componentDeleteMessage) { _component_delete (obj); }
@@ -135,7 +135,7 @@ dmz::MBRAPluginFaultTreeBuilder::create_object (
    if (Type.is_of_exact_type (_rootType)) {
 
       _root = ObjectHandle;
-         
+
       _log.debug << "Found Fault Tree Root: " << _root << endl;
    }
 }
@@ -147,7 +147,7 @@ dmz::MBRAPluginFaultTreeBuilder::destroy_object (
       const Handle ObjectHandle) {
 
    if (ObjectHandle == _root) {
-      
+
       _root = 0;
    }
 }
@@ -165,20 +165,20 @@ dmz::MBRAPluginFaultTreeBuilder::link_objects (
    if (AttributeHandle == _linkAttrHandle) {
 
       Int32 *count (_linkTable.lookup (SuperHandle));
-         
+
       if (!count) {
-            
+
          count = new Int32 (0);
-            
+
          if (!_linkTable.store (SuperHandle, count)) { delete count; count = 0; }
       }
-         
+
       if (count) {
-         
+
          (*count)++;
 
          if (*count == 2) {
-            
+
             // Make sure we aren't loading or undoing
             if (_appState.is_mode_normal ()) {
 
@@ -200,21 +200,21 @@ dmz::MBRAPluginFaultTreeBuilder::unlink_objects (
       const Handle SubHandle) {
 
    if (AttributeHandle == _linkAttrHandle) {
-      
+
       Int32 *count (_linkTable.lookup (SuperHandle));
-         
+
       if (count) {
-         
+
          (*count)--;
 
          if (*count == 1) {
-            
+
             _delete_logic (SuperHandle);
          }
          else if ((*count) == 0) {
-            
+
             _linkTable.remove (SuperHandle);
-            
+
             delete count; count = 0;
          }
       }
@@ -234,24 +234,24 @@ dmz::MBRAPluginFaultTreeBuilder::_remove_object_module (ObjectModule &objMod) {
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_component_add (const Handle Parent) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Parent) {
-      
+
       const Handle UndoHandle (_undo.start_record ("Add Component"));
-      
+
       Handle object (objMod->create_object (_componentType, ObjectLocal));
-      
+
       if (object) {
 
          _component_edit (object);
          objMod->activate_object (object);
          objMod->link_objects (_linkAttrHandle, Parent, object);
       }
-      
+
       _undo.stop_record (UndoHandle);
    }
 }
@@ -259,18 +259,18 @@ dmz::MBRAPluginFaultTreeBuilder::_component_add (const Handle Parent) {
 
 dmz::Boolean
 dmz::MBRAPluginFaultTreeBuilder::_component_edit (const Handle Object) {
-   
+
    Boolean result (False);
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (_mainWindowModule && objMod && Object) {
 
       String text;
       objMod->lookup_text (Object, _nameAttrHandle, text);
 
       QDialog dialog (_mainWindowModule->get_widget ());
-      
+
 // #ifdef Q_WS_MAC
 //       dialog.setWindowFlags (Qt::Sheet);
 // #endif
@@ -283,39 +283,39 @@ dmz::MBRAPluginFaultTreeBuilder::_component_edit (const Handle Object) {
       if (dialog.exec () == QDialog::Accepted) {
 
          const Handle UndoHandle (_undo.start_record ("Edit Component"));
-         
+
          QString name = ui.nameLineEdit->text ();
-         
+
          text.flush ();
          if (!name.isEmpty ()) { text = qPrintable (name); }
-         
+
          objMod->store_text (Object, _nameAttrHandle, text);
-         
+
          _undo.stop_record (UndoHandle);
-         
+
          result = True;
       }
    }
-   
+
    return result;
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_component_delete (const Handle Object) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Object) {
 
       String undoName ("Delete Component");
-      
+
       if (Object == _root) { undoName = "Reset Fault Tree"; }
-      
+
       const Handle UndoHandle (_undo.start_record (undoName));
-      
+
       // delete all objects linked to this Object
-      
+
       HandleContainer children;
       objMod->lookup_sub_links (Object, _linkAttrHandle, children);
 
@@ -323,41 +323,41 @@ dmz::MBRAPluginFaultTreeBuilder::_component_delete (const Handle Object) {
 
          objMod->store_text (_root, _nameAttrHandle, "Fault Tree Root");
       }
-      
+
       Handle current (children.get_first ());
-      
+
       while (current) {
-         
+
          _component_delete (current);
-         
+
          current = children.get_next ();
       }
-      
+
       // then delete this Object
-      
+
       if (Object != _root) {
 
          objMod->destroy_object (Object);
       }
-      
+
       _undo.stop_record (UndoHandle);
-   }  
+   }
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Parent) {
-      
+
       const Handle UndoHandle (_undo.start_record ("Add Threat"));
-      
+
       Handle object (objMod->create_object (_threatType, ObjectLocal));
-      
+
       if (object) {
-         
+
          objMod->store_scalar (object, _threatAttrHandle, 1.0);
          objMod->store_scalar (object, _vulnerabilityAttrHandle, 0.0);
 
@@ -366,22 +366,22 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
          objMod->activate_object (object);
          objMod->link_objects (_linkAttrHandle, Parent, object);
       }
-      
+
       _undo.stop_record (UndoHandle);
-   }   
+   }
 }
 
 
-dmz::Boolean 
+dmz::Boolean
 dmz::MBRAPluginFaultTreeBuilder::_threat_edit (const Handle Object) {
-   
+
    Boolean result (False);
-   
+
    if (_mainWindowModule && Object) {
-      
+
       ThreatStruct ts;
       _threat_get (Object, ts);
-   
+
       QDialog dialog (_mainWindowModule->get_widget ());
 
 // #ifdef Q_WS_MAC
@@ -396,13 +396,13 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_edit (const Handle Object) {
       ui.consequenceSpinBox->setValue (ts.consequence);
       ui.threatSpinBox->setValue (ts.threat * 100);
       ui.vulnerabilitySpinBox->setValue (ts.vulnerability * 100);
-      
+
       if (ts.eliminationCost && _vulnerabilityCalc) {
-         
+
       }
-      
+
       if (dialog.exec () == QDialog::Accepted) {
-         
+
          ts.name = ui.nameLineEdit->text ();
          ts.eliminationCost = ui.eliminationCostSpinBox->value ();
          ts.consequence = ui.consequenceSpinBox->value ();
@@ -410,11 +410,11 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_edit (const Handle Object) {
          ts.vulnerability = ui.vulnerabilitySpinBox->value () / 100.0;
 
          _threat_update (Object, ts);
-         
+
          result = True;
       }
    }
-   
+
    return result;
 }
 
@@ -425,17 +425,17 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_get (const Handle Object, ThreatStruct 
    ObjectModule *objMod (get_object_module ());
 
    if (objMod && Object) {
-      
+
       String text;
-      
+
       objMod->lookup_text (Object, _nameAttrHandle, text);
       ts.name = text.get_buffer ();
-      
+
       objMod->lookup_scalar (
          Object,
          _eliminationCostAttrHandle,
          ts.eliminationCost);
-         
+
       objMod->lookup_scalar (Object, _consequenceAttrHandle, ts.consequence);
       objMod->lookup_scalar (Object, _threatAttrHandle, ts.threat);
       objMod->lookup_scalar (Object, _vulnerabilityAttrHandle, ts.vulnerability);
@@ -455,56 +455,56 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_update (
       const Handle UndoHandle (_undo.start_record ("Edit Threat"));
 
       objMod->store_text (Object, _nameAttrHandle, qPrintable (Ts.name));
-      
+
       objMod->store_scalar (
          Object,
          _eliminationCostAttrHandle,
          Ts.eliminationCost);
-      
+
       objMod->store_scalar (Object, _consequenceAttrHandle, Ts.consequence);
       objMod->store_scalar (Object, _threatAttrHandle, Ts.threat);
       objMod->store_scalar (Object, _vulnerabilityAttrHandle, Ts.vulnerability);
 
       _undo.stop_record (UndoHandle);
-   }   
+   }
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_threat_delete (const Handle Object) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Object) {
-      
+
       const Handle UndoHandle (_undo.start_record ("Delete Threat"));
-      
+
       objMod->destroy_object (Object);
-      
+
       _undo.stop_record (UndoHandle);
    }
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_logic_and (const Handle Object) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Object) {
-      
+
       Mask state;
       if (objMod->lookup_state (Object, _defaultAttrHandle, state)) {
-         
+
          if (!state.contains (_logicAndMask)) {
-            
+
             const Handle UndoHandle (_undo.start_record ("Create AND gate"));
-            
+
             state |= _logicAndMask;
             state &= ~_logicOrMask;
 
             objMod->store_state (Object, _defaultAttrHandle, state);
-            
+
             _undo.stop_record (UndoHandle);
          }
       }
@@ -512,25 +512,25 @@ dmz::MBRAPluginFaultTreeBuilder::_logic_and (const Handle Object) {
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_logic_or (const Handle Object) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Object) {
-      
+
       Mask state;
       if (objMod->lookup_state (Object, _defaultAttrHandle, state)) {
-         
+
          if (!state.contains (_logicOrMask)) {
-            
+
             const Handle UndoHandle (_undo.start_record ("Create OR gate"));
-            
+
             state &= ~_logicAndMask;
             state |= _logicOrMask;
-            
+
             objMod->store_state (Object, _defaultAttrHandle, state);
-            
+
             _undo.stop_record (UndoHandle);
          }
       }
@@ -538,65 +538,65 @@ dmz::MBRAPluginFaultTreeBuilder::_logic_or (const Handle Object) {
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_create_logic (const Handle Parent) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Parent) {
-      
+
       Handle object (objMod->create_object (_logicType, ObjectLocal));
-      
+
       if (object) {
-         
+
          objMod->store_state (object, _defaultAttrHandle, _logicOrMask);
          objMod->activate_object (object);
-         
+
          objMod->link_objects (_logicAttrHandle, Parent, object);
       }
    }
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_delete_logic (const Handle Parent) {
-   
+
    ObjectModule *objMod (get_object_module ());
-   
+
    if (objMod && Parent) {
-      
+
       HandleContainer logic;
       objMod->lookup_sub_links (Parent, _logicAttrHandle, logic);
-      
+
       if (logic.get_count ()) {
-         
+
          objMod->destroy_object (logic.get_first ());
       }
    }
 }
 
 
-void 
+void
 dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
 
    RuntimeContext *context (get_plugin_runtime_context ());
 
    _canvasModuleName = config_to_string ("module.canvas.name", local);
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-   
+
    _defaultAttrHandle = activate_default_object_attribute (
       ObjectCreateMask | ObjectDestroyMask);
-   
+
    _objectAttrHandle = config_to_named_handle (
       "attribute.object.name", local, "object", context);
-   
+
    _linkAttrHandle = activate_object_attribute (
       config_to_string ("attribute.logic.name", local, "FT_Link"),
       ObjectLinkMask | ObjectUnlinkMask);
-   
+
    _logicAttrHandle = config_to_named_handle (
       "attribute.logic.name", local, "FT_Logic_Link", context);
-      
+
    _nameAttrHandle =
       config_to_named_handle ("attribute.threat.name", local, "FT_Name", context);
 
@@ -613,7 +613,7 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
          local,
          "FT_Threat_Consequence",
          context);
-         
+
    _threatAttrHandle =
       config_to_named_handle (
          "attribute.threat.value",
@@ -633,13 +633,13 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
       local,
       "FTComponentAddMessage",
       context);
-   
+
    _componentEditMessage = config_create_message_type (
       "message.component.edit",
       local,
       "FTComponentEditMessage",
       context);
-   
+
    _componentDeleteMessage = config_create_message_type (
       "message.component.delete",
       local,
@@ -675,15 +675,15 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
       local,
       "FTLogicOrMessage",
       context);
-   
+
    subscribe_to_message (_componentAddMessage);
    subscribe_to_message (_componentEditMessage);
    subscribe_to_message (_componentDeleteMessage);
-   
+
    subscribe_to_message (_threatAddMessage);
    subscribe_to_message (_threatEditMessage);
    subscribe_to_message (_threatDeleteMessage);
-   
+
    subscribe_to_message (_logicAndMessage);
    subscribe_to_message (_logicOrMessage);
 

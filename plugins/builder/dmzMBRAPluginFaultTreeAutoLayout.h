@@ -15,8 +15,8 @@
 namespace dmz {
 
    class QtModuleCanvas;
-   
-   
+
+
    class MBRAPluginFaultTreeAutoLayout :
          public Plugin,
          public TimeSlice,
@@ -34,7 +34,7 @@ namespace dmz {
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
-         
+
          // TimeSlice Interface
          virtual void update_time_slice (const Float64 TimeDelta);
 
@@ -65,15 +65,15 @@ namespace dmz {
 
       protected:
          void _update_tree ();
-         
+
          void _update_tree (
             const Handle SuperHandle,
             const Handle SubHandle,
             const Int32 Column,
             Int32 &count);
-               
+
          void _update_logic (const Handle Parent);
-         
+
          void _update_path (const Handle Object);
 
          Handle _create_root ();
@@ -96,7 +96,7 @@ namespace dmz {
          Boolean _doZoomUpdate;
          QPainterPath _path;
          QGraphicsPathItem *_pathItem;
-         
+
       private:
          MBRAPluginFaultTreeAutoLayout ();
          MBRAPluginFaultTreeAutoLayout (const MBRAPluginFaultTreeAutoLayout &);
