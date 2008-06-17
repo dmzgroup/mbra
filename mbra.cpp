@@ -280,7 +280,7 @@ main (int argc, char *argv[]) {
          QApplication::sendPostedEvents (0, -1);
 	 QApplication::processEvents ();
 
-      } while (app.sync ());
+      } while (app.update_time_slice ());
 
       app.stop ();
       app.unload_plugins ();

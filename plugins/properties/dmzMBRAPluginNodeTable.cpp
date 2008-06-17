@@ -169,7 +169,11 @@ dmz::MBRAPluginNodeTable::discover_plugin (
             _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
    //            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 
-            _mainWindowModule->add_dock_widget (_channel, Qt::BottomDockWidgetArea, _dock);
+            _mainWindowModule->add_dock_widget (
+               _channel,
+               Qt::BottomDockWidgetArea,
+               _dock);
+
             _dock->setWidget (this);
          }
       }

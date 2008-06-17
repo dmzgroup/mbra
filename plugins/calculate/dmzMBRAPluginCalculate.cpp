@@ -65,7 +65,8 @@ dmz::MBRAPluginCalculate::discover_plugin (
    }
    else if (Mode == PluginDiscoverRemove) {
       
-      if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
          _mainWindowModule->remove_dock_widget (_channel, _dock);
          _mainWindowModule = 0;

@@ -10,7 +10,9 @@
 #include <QtGui/QtGui>
 
 
-dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (const PluginInfo &Info, Config &local) :
+dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (
+      const PluginInfo &Info,
+      Config &local) :
       QWidget (0),
       Plugin (Info),
       ArchiveObserverUtil (Info, local),
@@ -92,7 +94,8 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
          _inputModule = 0;
       }
 
-      if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
          _mainWindowModule->remove_tool_bar (_toolBar);
          _toolBar->setParent (0);
@@ -115,7 +118,9 @@ dmz::MBRAPluginModeToolBar::create_archive (
          
          Definitions defs (get_plugin_runtime_context (), &_log);
 
-         local.store_attribute ("channel", defs.lookup_named_handle_name (_currentChannel));
+         local.store_attribute (
+            "channel",
+            defs.lookup_named_handle_name (_currentChannel));
       }
    }
 }

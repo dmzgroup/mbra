@@ -13,7 +13,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::MBRAPluginFaultTreeAutoLayout (
       const PluginInfo &Info,
       Config &local) :
       Plugin (Info),
-      Sync (Info),
+      TimeSlice (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
       _canvasModule (0),
@@ -84,9 +84,9 @@ dmz::MBRAPluginFaultTreeAutoLayout::discover_plugin (
 }
 
 
-// Sync Interface
+// TimeSlice Interface
 void
-dmz::MBRAPluginFaultTreeAutoLayout::update_sync (const Float64 TimeDelta) {
+dmz::MBRAPluginFaultTreeAutoLayout::update_time_slice (const Float64 TimeDelta) {
 
    if (_doTreeUpdate) {
 

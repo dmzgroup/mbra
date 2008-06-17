@@ -108,7 +108,8 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
          _archiveModule = 0;
       }
 
-      if (_mainWindowModule && (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
+      if (_mainWindowModule &&
+            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
          _mainWindowModule->remove_tool_bar (_toolBar);
          _mainWindowModule = 0;

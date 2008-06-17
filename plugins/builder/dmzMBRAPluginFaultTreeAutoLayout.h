@@ -5,7 +5,7 @@
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
-#include <dmzRuntimeSync.h>
+#include <dmzRuntimeTimeSlice.h>
 #include <dmzTypesHandleContainer.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <dmzTypesVector.h>
@@ -19,7 +19,7 @@ namespace dmz {
    
    class MBRAPluginFaultTreeAutoLayout :
          public Plugin,
-         public Sync,
+         public TimeSlice,
          public ObjectObserverUtil {
 
       public:
@@ -35,8 +35,8 @@ namespace dmz {
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
          
-         // Sync Interface
-         virtual void update_sync (const Float64 TimeDelta);
+         // TimeSlice Interface
+         virtual void update_time_slice (const Float64 TimeDelta);
 
          // Object Observer Interface
          virtual void create_object (

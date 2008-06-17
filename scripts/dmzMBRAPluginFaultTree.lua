@@ -410,7 +410,7 @@ local function start_work (self, mtype, data)
          vulnerability,
          create_control_matrix (#self.index),
          calcCount)
-      self.sync:start (self.syncHandle)
+      self.timeSlice:start (self.timeSliceHandle)
    end
 end
 
@@ -439,12 +439,12 @@ end
 
 local function stop_work (self)
    -- self.log:error ("Stoping work")
-   self.sync:stop (self.syncHandle)
+   self.timeSlice:stop (self.timeSliceHandle)
 end
 
 local function start_plugin (self)
-   self.syncHandle = self.sync:create (work, self, self.name)
-   self.sync:stop (self.syncHandle)
+   self.timeSliceHandle = self.timeSlice:create (work, self, self.name)
+   self.timeSlice:stop (self.timeSliceHandle)
    self.objObs:register (nil, ObjectCallbacks, self)
    self.objObs:register (EliminationHandle, EliminationCallback, self)
    self.objObs:register (ConsequenceHandle, ConsequenceCallback, self)
@@ -454,7 +454,7 @@ local function start_plugin (self)
 end
 
 local function stop_plugin (self)
-   self.sync:destroy (self.syncHandle)
+   self.timeSlice:destroy (self.timeSliceHandle)
 end
 
 function new (config, name)
@@ -462,7 +462,7 @@ function new (config, name)
    local self = {
       name = name,
       log = dmz.log.new ("lua." .. name),
-      sync = dmz.sync.new (),
+      timeSlice = dmz.time_slice.new (),
       start_plugin = start_plugin,
       stop_plugin = stop_plugin,
       startWorkMessage =
