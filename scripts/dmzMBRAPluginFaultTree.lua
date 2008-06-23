@@ -339,7 +339,7 @@ local function create_risk_closure (
    end
 end
 
-local function create_test_risk_closure (self)
+local function create_test_risk_closure (self, noAdjust)
    local result = nil
    local size = #self.index
    if size > 1 and self.root then
@@ -358,10 +358,12 @@ local function create_test_risk_closure (self)
          local secondOrigAllocation = second.allocation
          local maxAddition = second.ec - second.allocation
          if maxAddition > first.allocation then maxAddition = first.allocation end
-         if maxAddition > 0.01 then
-            local addition = 0.01 + ((maxAddition - 0.01) * math.random ())
-            first.allocation = first.allocation - addition
-            second.allocation = second.allocation + addition
+         if maxAddition > 0.01 or noAdjust then
+            if not noAdjust then
+               local addition = 0.01 + ((maxAddition - 0.01) * math.random ())
+               first.allocation = first.allocation - addition
+               second.allocation = second.allocation + addition
+            end
             local risk = 0
             local vulnerability = 0
             local calcCount = 0
@@ -421,15 +423,7 @@ local function work (self)
          if self.allocate_budget then
             self:allocate_budget ()
             self.allocate_budget = nil
-            local risk = 0
-            local vulnerability = 0
-            local calcCount = 0
-            self.risk_func = create_risk_closure (
-               self,
-               risk,
-               vulnerability,
-               create_control_matrix (#self.index),
-               calcCount)
+            self.risk_func = create_test_risk_closure (self, true)
          else self.risk_func = nil
          end
       end
