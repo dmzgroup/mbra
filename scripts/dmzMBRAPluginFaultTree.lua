@@ -390,7 +390,8 @@ local function start_work (self, mtype, data)
    if data then self.budget = data:lookup_number ("FTBudget", 1) end
    if self.budget and self.root then
       dmz.object.scalar (self.root, VulnerabilitySumHandle, 0.0)
-      dmz.object.scalar (self.root, RiskSumHandle, 0.0)
+      -- Note: Not needed. Risk is reset when nodes change.
+      -- dmz.object.scalar (self.root, RiskSumHandle, 0.0)
       dmz.object.scalar (self.root, VulnerabilitySumReducedHandle, 0.0)
       dmz.object.scalar (self.root, RiskSumReducedHandle, 0.0)
       self.index = {}
