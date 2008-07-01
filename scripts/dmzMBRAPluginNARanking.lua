@@ -45,12 +45,12 @@ function receive_rank (self)
    table.sort (list, function (obj1, obj2) return obj1.rank > obj2.rank end)
    for index, object in ipairs (list) do
       dmz.object.text (object.handle, RankHandle, tostring (index))
-      if self.rankLimit and index <= self.rankLimit then
+      if self.rankLimit and index <= self.rankLimit and object.rank > 0 then
          local state = dmz.object.state (object.handle)
          if not state then state = dmz.mask.new () end
          state = state:bit_or (self.overlayState)
          dmz.object.state (object.handle, nil, state)
-     end
+      end
    end
 end
 

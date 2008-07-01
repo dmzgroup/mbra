@@ -34,6 +34,11 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
 
    _ui.setupUi (this);
 
+   _ui.riskLabel->setText (QString::number (0.0, 'f', 2));
+   _ui.riskReducedLabel->setText (QString::number (0.0, 'f', 2));
+   _ui.vulnerabilityLabel->setText (QString::number (0.0, 'f', 2) + QString ("%"));
+   _ui.vulnerabilityReducedLabel->setText (QString::number (0.0, 'f', 2) + QString ("%"));
+
    _init (local);
 }
 
@@ -131,19 +136,21 @@ dmz::MBRAPluginFTCalculate::update_object_scalar (
    }
    else if (AttributeHandle == _riskSumHandle) {
 
-      _ui.riskLabel->setText (QString::number (Value));
+      _ui.riskLabel->setText (QString::number (Value, 'f', 2));
    }
    else if (AttributeHandle == _riskSumReducedHandle) {
 
-      _ui.riskReducedLabel->setText (QString::number (Value));
+      _ui.riskReducedLabel->setText (QString::number (Value, 'f', 2));
    }
    else if (AttributeHandle == _vulnerabilitySumHandle) {
 
-      _ui.vulnerabilityLabel->setText (QString::number (Value));
+      _ui.vulnerabilityLabel->setText (
+         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
    }
    else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
 
-      _ui.vulnerabilityReducedLabel->setText (QString::number (Value));
+      _ui.vulnerabilityReducedLabel->setText (
+         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
    }
 }
 

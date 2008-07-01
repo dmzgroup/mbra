@@ -249,20 +249,20 @@ local function init (self, node)
 end
 
 local function calculate_sub_risk (objectList, control)
-   local tvSum = 0
+   local tvProduct = 1
    local consequenceSum = 0
    for index, object in ipairs (objectList) do
       if object.ec > 0 then
          local v = (1 - (object.allocation / object.ec)) * object.vulnerability
          if control[index] > 0 then
-            tvSum = tvSum + (object.threat * v)
+            tvProduct = tvProduct * (object.threat * v)
             consequenceSum = consequenceSum + object.consequence
          else
-            tvSum = tvSum + (1 - (object.threat * v))
+            tvProduct = tvProduct * (1 - (object.threat * v))
          end
       end
    end
-   return tvSum * consequenceSum, tvSum
+   return tvProduct * consequenceSum, tvProduct
 end
 
 local function new_risk_is_less (newRisk, oldRisk)

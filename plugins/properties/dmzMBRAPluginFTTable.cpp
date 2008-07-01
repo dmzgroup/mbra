@@ -322,7 +322,7 @@ dmz::MBRAPluginFTTable::update_object_scalar (
 
          if (item) {
 
-            item->setData (Value * 100, Qt::DisplayRole);
+            item->setText (QString::number (Value * 100, 'f', 2));
          }
       }
       else if (AttributeHandle == _eliminationCostAttrHandle) {
@@ -351,7 +351,7 @@ dmz::MBRAPluginFTTable::update_object_scalar (
 
          if (item) {
 
-            item->setData (Value, Qt::DisplayRole);
+            item->setText (QString::number (Value, 'f', 2));
 
             updateVulnerabilty = True;
          }
