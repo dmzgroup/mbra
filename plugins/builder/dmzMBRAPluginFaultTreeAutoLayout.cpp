@@ -23,6 +23,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::MBRAPluginFaultTreeAutoLayout (
       _logicAttrHandle (0),
       _nameAttrHandle (0),
       _root (0),
+      _subHandle (0),
       _rootType (),
       _rootText ("Fault Tree Root"),
       _hOffset (300.0),
@@ -97,7 +98,10 @@ dmz::MBRAPluginFaultTreeAutoLayout::update_time_slice (const Float64 TimeDelta) 
    }
    else if (_doZoomUpdate && _canvasModule) {
 
-      _canvasModule->zoom_extents ();
+      _canvasModule->center_on (_subHandle);
+      _subHandle = 0;
+      
+//      _canvasModule->zoom_extents ();
 
       _doZoomUpdate = False;
    }
@@ -152,6 +156,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::link_objects (
    if (AttributeHandle == _linkAttrHandle) {
 
       _doTreeUpdate = True;
+      _subHandle = SubHandle;
    }
 }
 

@@ -88,6 +88,7 @@ namespace dmz {
          Handle _logicAttrHandle;
          Handle _nameAttrHandle;
          Handle _root;
+         Handle _subHandle;
          ObjectType _rootType;
          String _rootText;
          Float64 _hOffset;

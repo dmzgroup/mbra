@@ -20,7 +20,7 @@
    </NACanvas>
    <NACanvasZoom>
       <scrollDelta value="10"/>
-      <!-- <zoom min="0.1" max="5" step="1.5" default="1.0"/> -->
+      <zoom min="0.1" max="2" step="1.5" default="1.0"/>
       <module>
          <canvas name="NACanvas"/>
       </module>
