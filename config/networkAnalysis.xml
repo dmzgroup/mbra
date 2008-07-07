@@ -145,25 +145,25 @@
       <!-- <widget>
          <stylesheet file="stylesheets:ActionButton.qss"/>
       </widget> -->
-      <defaultChannel name="NA_Default_Channel"/>
+      <!-- <defaultChannel name="NA_Default_Channel"/> -->
       <buttons>
-         <toolButton channel="NA_Create_Object_Channel" autoRaise="True">
+         <toolButton channel="NA_Default_Channel" autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
-            <action text="Add Node" checkable="true" statusTip="Add Node">
+            <action text="Edit" statusTip="Edit" checkable="True" checked="True">
                <icon>
                   <image file="images:Button_NodeAdd.png"/>
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Destroy_Object_Channel" autoRaise="True">
+         <toolButton channel="NA_Create_Object_Channel" autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
-            <action text="Delete Node" checkable="true" statusTip="Delete Node">
+            <action text="Add Node" statusTip="Add Node" checkable="True">
                <icon>
-                  <image file="images:Button_NodeDel.png"/>
+                  <image file="images:Button_NodeAdd.png"/>
                </icon>
             </action>
          </toolButton>
@@ -171,19 +171,19 @@
             <button>
                <iconSize width="32" height="32"/>
             </button>
-            <action text="Add Link" checkable="true" statusTip="Add Link">
+            <action text="Add Link" statusTip="Add Link" checkable="True">
                <icon>
                   <image file="images:Button_LinkAdd.png"/>
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Unlink_Objects_Channel" autoRaise="True">
+         <toolButton channel="NA_Destroy_Object_Channel" autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
-            <action text="Delete Link" checkable="true" statusTip="Delete Link">
+            <action text="Delete" statusTip="Delete" checkable="True">
                <icon>
-                  <image file="images:Button_LinkDel.png"/>
+                  <image file="images:Button_NodeDel.png"/>
                </icon>
             </action>
          </toolButton>
