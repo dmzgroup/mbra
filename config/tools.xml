@@ -11,7 +11,7 @@
    <instance name="dmzMBRAPluginCreateObject"/>
    <instance name="dmzMBRAPluginDestroyObject"/>
    <instance name="dmzMBRAPluginLinkObjects"/>
-   <instance name="dmzMBRAPluginUnlinkObjects"/>
+<!--   <instance name="dmzMBRAPluginUnlinkObjects"/> -->
    <instance name="dmzMBRAPluginMoveObject"/>
 </dmzLuaModuleBasic>
 <CreateObjectEvent>

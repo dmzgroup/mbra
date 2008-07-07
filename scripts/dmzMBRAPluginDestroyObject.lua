@@ -12,6 +12,10 @@ function receive (self, type, data)
             local undoHandle = dmz.undo.start_record ("Delete Node")
             dmz.object.destroy (handle)
             dmz.undo.stop_record (undoHandle)
+         else if dmz.object.is_link (handle) then
+            local undoHandle = dmz.undo.start_record ("Unlink Nodes")
+            dmz.object.unlink (handle)
+            dmz.undo.stop_record (undoHandle)
          end
       else self.log:error ("Got null handle!")
       end
