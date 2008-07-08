@@ -90,6 +90,14 @@ function destroy_object (self, handle)
    if updateRank then receive_rank (self) end
 end
 
+function link_objects (self, link, attr, super, sub)
+   if self.visible and self.list[super] then receive_rank (self) end
+end
+
+function unlink_objects (self, link, attr, super, sub)
+   if self.visible and self.list[super] then receive_rank (self) end
+end
+
 function new (config, name)
 
    local self = {
@@ -117,6 +125,9 @@ function new (config, name)
    cb = { update_object_scalar = update_object_scalar }
    self.objObs:register (ECHandle, cb, self)
    self.objObs:register (ConsequenceHandle, cb, self)
+
+   cb = { link_objects = link_objects, unlink_objects = unlink_objects, }
+   self.objObs:register (LinkHandle, cb, self)
 
    return self
 end
