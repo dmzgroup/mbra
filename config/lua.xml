@@ -5,8 +5,8 @@
    <plugin name="dmzQtPluginLuaProfiler"/>
 </plugins>
 <dmzLuaModuleBasic>
-   <path name="./scripts/?.lua"/>
-   <path name="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>
+   <path value="./scripts/?.lua"/>
+   <path value="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>
    <extensions>
       <plugin name="dmzLuaExtInput"/>
       <plugin name="dmzLuaExtObject"/>

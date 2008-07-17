@@ -5,6 +5,7 @@
 #include <dmzQtModuleMainWindow.h>
 #include <dmzRenderModulePick.h>
 #include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
 #include <QtGui/QtGui>

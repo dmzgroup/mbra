@@ -1,6 +1,7 @@
 #include "dmzMBRAPluginCalculate.h"
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
+#include <dmzRuntimeData.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
