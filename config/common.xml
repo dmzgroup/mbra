@@ -12,11 +12,7 @@
    <plugin name="dmzArchiveModuleBasic"/>
    <plugin name="dmzArchivePluginAutoLoad"/>
    <plugin name="dmzArchivePluginAutoSave"/>
-   <!--
-       Note: To ensure that MBRA will continue to work with existing Saved files
-             its unique name needs to be dmzObjectPluginArchive.
-   -->
-   <plugin name="dmzArchivePluginObject" unique="dmzObjectPluginArchive"/>
+   <plugin name="dmzArchivePluginObject"/>
    <plugin name="dmzArchivePluginUndo"/>
    <plugin name="dmzObjectModuleBasic"/>
    <plugin name="dmzObjectPluginUndo"/>
@@ -27,6 +23,10 @@
    <plugin name="dmzPluginUndoDump"/>
 </plugins>
 <dmzArchivePluginObject>
+   <scope>
+      <string value="objects"/>
+      <string value="dmzObjectPluginArchive"/>
+   </scope>
    <archive>
       <objects>
          <type name="na_tool_link_node"/>
