@@ -102,13 +102,13 @@ function new (config, name)
 
    local self = {
       visible = false,
-      rankLimit = config:lookup_number ("rank.limit", 9),
+      rankLimit = config:to_number ("rank.limit", 9),
       overlayState = dmz.definitions.lookup_state ("NA_Node_Overlay"),
       log = dmz.log.new ("lua." .. name),
       rankMessage =
-         config:lookup_message ("message.rank.name", "NARankObjectsMessage"),
+         config:to_message ("message.rank.name", "NARankObjectsMessage"),
       hideMessage =
-         config:lookup_message ("message.rank.name", "NAHideObjectsMessage"),
+         config:to_message ("message.rank.name", "NAHideObjectsMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       list = {},

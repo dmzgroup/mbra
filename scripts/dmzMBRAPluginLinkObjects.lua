@@ -69,15 +69,15 @@ function new (config, name)
       firstHandle = dmz.object.create ("na_tool_link_node"),
       secondHandle = dmz.object.create ("na_tool_link_node"),
       startMessage =
-         config:lookup_message ("message.first.name", "FirstLinkObjectMessage"),
+         config:to_message ("message.first.name", "FirstLinkObjectMessage"),
       updateMessage =
-         config:lookup_message ("message.update.name", "UpdateLinkPositionMessage"),
+         config:to_message ("message.update.name", "UpdateLinkPositionMessage"),
       endMessage =
-         config:lookup_message ("message.second.name", "SecondLinkObjectMessage"),
+         config:to_message ("message.second.name", "SecondLinkObjectMessage"),
       failedMessage =
-         config:lookup_message ("message.failed.name", "FailedLinkObjectsMessage"),
+         config:to_message ("message.failed.name", "FailedLinkObjectsMessage"),
       editMessage =
-         config:lookup_message ("message.edit.name", "EditObjectAttributesMessage"),
+         config:to_message ("message.edit.name", "EditObjectAttributesMessage"),
       obs = dmz.message_observer.new (name),
    }
 
