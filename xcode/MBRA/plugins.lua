@@ -1,0 +1,26 @@
+return {
+   { name = "dmzArchiveModuleBasic" },
+   { name = "dmzArchivePluginAutoLoad" },
+   { name = "dmzArchivePluginAutoSave" },
+   { name = "dmzArchivePluginObject" },
+   { name = "dmzObjectModuleBasic" },
+   { name = "dmzObjectPluginCleanup" },
+   { name = "dmzRenderModulePickBasic" },
+   { name = "dmzInputModuleBasic" },
+   { name = "dmzLuaModuleBasic" },
+   { name = "dmzLuaExtInput" },
+   { name = "dmzLuaExtObject" },
+   { name = "dmzLuaExtPick" },
+   { name = "dmzInputPluginMouseEventToMessage", unique = "CreateObjectEvent" },
+   { name = "dmzInputPluginMouseEventToMessage", unique = "DestroyObjectEvent" },
+   { name = "dmzInputPluginMouseEventToMessage", unique = "LinkObjectsEvent" },
+   { name = "dmzInputPluginMouseEventToMessage", unique = "UnlinkObjectsEvent" },
+   { name = "dmzInputPluginMouseEventToMessage", unique = "DefaultEvent" },
+   { name = "dmzMBRAModuleiPhone", unique="NACanvas" },
+   { name = "dmziPhonePluginCanvasObject", unique = "NACanvasObject" },
+   { name = "dmziPhonePluginRenderPick2d", unique="NARenderPick2d" },
+   { name = "dmziPhonePluginNodeProperties", unique="dmzMBRAPluginNodeProperties" },
+--[[
+   { name = "dmzPluginMsgDump" },
+--]]
+}

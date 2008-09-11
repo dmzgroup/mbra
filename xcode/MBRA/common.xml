@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<dmzArchivePluginObject>
+   <scope>
+      <string value="objects"/>
+      <string value="dmzObjectPluginArchive"/>
+   </scope>
+   <archive>
+      <objects>
+         <type name="na_tool_link_node"/>
+      </objects>
+      <attribute name="Last_Network_Value" contains="True"/>
+      <attribute name="NA_Node_Rank">
+         <mask name="text"/>
+      </attribute>
+      <state name="NA_Node_Overlay"/>
+   </archive>
+</dmzArchivePluginObject>
+<dmzObjectPluginCleanup>
+   <cleanup>
+      <type name="na_node"/>
+   </cleanup>
+</dmzObjectPluginCleanup>
+</dmz>

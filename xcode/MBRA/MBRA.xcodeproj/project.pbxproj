@@ -1,0 +1,1609 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		7A71FF260E22DFDA00017D07 /* dmz_create_plugins */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7A71FF290E22DFF800017D07 /* Build configuration list for PBXAggregateTarget "dmz_create_plugins" */;
+			buildPhases = (
+				7A71FF250E22DFDA00017D07 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = dmz_create_plugins;
+			productName = dmz_create_plugins;
+		};
+		7A8DE91B0E26BB9000623E7B /* copy_headers */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7A8DE9250E26BBE300623E7B /* Build configuration list for PBXAggregateTarget "copy_headers" */;
+			buildPhases = (
+				7A8DE91A0E26BB9000623E7B /* CopyFiles */,
+			);
+			dependencies = (
+			);
+			name = copy_headers;
+			productName = copy_headers;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		1D60589B0D05DD56006BFB54 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.mm */; };
+		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		7A09A56D0E5E0C44000CB01C /* Edge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A09A56A0E5E0C44000CB01C /* Edge.mm */; };
+		7A09A56E0E5E0C44000CB01C /* Node.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A09A56C0E5E0C44000CB01C /* Node.mm */; };
+		7A09A5EE0E5E1B47000CB01C /* libdmzPluginMsgDump.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEAA0E22DC4700017D07 /* libdmzPluginMsgDump.a */; };
+		7A09A64D0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A09A64C0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.mm */; };
+		7A09A6560E5E2FE9000CB01C /* libdmzRenderUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A202F990E5CADDE007F800D /* libdmzRenderUtil.a */; };
+		7A09E1250E1AD50A00B66206 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A09E1240E1AD50A00B66206 /* Icon.png */; };
+		7A202EAC0E5CA6C5007F800D /* libdmzLuaExtInput.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A6F1BDD0E5CA527004FB18E /* libdmzLuaExtInput.a */; };
+		7A202EAD0E5CA6E4007F800D /* libdmzLuaExtObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A6F1BB30E5CA299004FB18E /* libdmzLuaExtObject.a */; };
+		7A202EAE0E5CA6F0007F800D /* libdmzLuaExtPick.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A6F1BF70E5CA5E9004FB18E /* libdmzLuaExtPick.a */; };
+		7A202EC60E5CA879007F800D /* dmzMBRAPluginCreateObject.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EBD0E5CA878007F800D /* dmzMBRAPluginCreateObject.lua */; };
+		7A202EC70E5CA879007F800D /* dmzMBRAPluginDestroyObject.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EBE0E5CA879007F800D /* dmzMBRAPluginDestroyObject.lua */; };
+		7A202EC90E5CA879007F800D /* dmzMBRAPluginLayerActive.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC00E5CA879007F800D /* dmzMBRAPluginLayerActive.lua */; };
+		7A202ECA0E5CA879007F800D /* dmzMBRAPluginLinkObjects.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC10E5CA879007F800D /* dmzMBRAPluginLinkObjects.lua */; };
+		7A202ECB0E5CA879007F800D /* dmzMBRAPluginMoveObject.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC20E5CA879007F800D /* dmzMBRAPluginMoveObject.lua */; };
+		7A202ECC0E5CA879007F800D /* dmzMBRAPluginNALinkObject.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC30E5CA879007F800D /* dmzMBRAPluginNALinkObject.lua */; };
+		7A202ECD0E5CA879007F800D /* dmzMBRAPluginNARanking.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC40E5CA879007F800D /* dmzMBRAPluginNARanking.lua */; };
+		7A202ECE0E5CA879007F800D /* dmzMBRAPluginUnlinkObjects.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A202EC50E5CA879007F800D /* dmzMBRAPluginUnlinkObjects.lua */; };
+		7A202ED50E5CAA5D007F800D /* test_data.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7A202ED40E5CAA5D007F800D /* test_data.xml */; };
+		7A20BF520E5221A600D169ED /* dmziPhonePluginCanvasObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A20BF510E5221A600D169ED /* dmziPhonePluginCanvasObject.mm */; };
+		7A20C0740E52452C00D169ED /* libdmzInputEvents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A20C01D0E52313300D169ED /* libdmzInputEvents.a */; };
+		7A35FBC60E5CCC750002DA61 /* libdmzRenderModulePickBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A202FBB0E5CAE4D007F800D /* libdmzRenderModulePickBasic.a */; };
+		7A35FBC70E5CCC750002DA61 /* libdmzArchiveUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2030000E5CAF67007F800D /* libdmzArchiveUtil.a */; };
+		7A35FBC90E5CCC750002DA61 /* libdmzArchivePluginAutoLoad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2030370E5CC9CB007F800D /* libdmzArchivePluginAutoLoad.a */; };
+		7A35FBCA0E5CCC750002DA61 /* libdmzArchivePluginObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2030590E5CCA4D007F800D /* libdmzArchivePluginObject.a */; };
+		7A35FBCB0E5CCC750002DA61 /* libdmzArchivePluginAutoSave.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A20306C0E5CCAAC007F800D /* libdmzArchivePluginAutoSave.a */; };
+		7A35FBE70E5CCD7A0002DA61 /* libdmzObjectPluginCleanup.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A35FBDB0E5CCCFA0002DA61 /* libdmzObjectPluginCleanup.a */; };
+		7A369AB90E70971200530E9D /* dmziPhonePluginNodeProperties.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A369AB80E70971200530E9D /* dmziPhonePluginNodeProperties.mm */; };
+		7A369AC50E7099F700530E9D /* NAEditController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A369AC30E7099F700530E9D /* NAEditController.mm */; };
+		7A369AC60E7099F700530E9D /* NAEditController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7A369AC40E7099F700530E9D /* NAEditController.xib */; };
+		7A39BB540E4B8D630035E12A /* NA_ResultsOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A39BB530E4B8D630035E12A /* NA_ResultsOverlay.png */; };
+		7A39BB560E4B8D9A0035E12A /* balloon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A39BB550E4B8D9A0035E12A /* balloon.png */; };
+		7A39BB820E4BB48F0035E12A /* Canvas.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A39BB810E4BB48F0035E12A /* Canvas.mm */; };
+		7A39BC420E4BB5680035E12A /* NAController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7A39BC410E4BB5680035E12A /* NAController.xib */; };
+		7A64E6830E24228E008FFC86 /* libdmzObjectUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A64E6610E241E0A008FFC86 /* libdmzObjectUtil.a */; };
+		7A6F1B970E5CA0C6004FB18E /* libdmzInputPluginMouseEventToMessage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D249EF090E5B8B4800A57803 /* libdmzInputPluginMouseEventToMessage.a */; };
+		7A6F1B9F0E5CA0E6004FB18E /* libdmzInputUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A20C0560E52351E00D169ED /* libdmzInputUtil.a */; };
+		7A71FE330E22D48900017D07 /* NA_Node.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A71FE320E22D48900017D07 /* NA_Node.png */; };
+		7A71FE710E22DB9800017D07 /* plugins.lua in Resources */ = {isa = PBXBuildFile; fileRef = 7A71FE700E22DB9800017D07 /* plugins.lua */; };
+		7A71FE730E22DBA000017D07 /* dmz_create_plugins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A71FE720E22DBA000017D07 /* dmz_create_plugins.cpp */; };
+		7A71FE820E22DC2300017D07 /* dmzSystemFileMacOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A71FE7C0E22DC2300017D07 /* dmzSystemFileMacOS.mm */; };
+		7A71FE830E22DC2300017D07 /* dmzLogObserverNSLog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A71FE800E22DC2300017D07 /* dmzLogObserverNSLog.mm */; };
+		7A71FE840E22DC2300017D07 /* dmzApplicationiPhone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A71FE810E22DC2300017D07 /* dmzApplicationiPhone.cpp */; };
+		7A71FED70E22DCA700017D07 /* libdmzKernel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEA40E22DC4700017D07 /* libdmzKernel.a */; };
+		7A71FED80E22DCA700017D07 /* libexpat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEA60E22DC4700017D07 /* libexpat.a */; };
+		7A71FED90E22DCA700017D07 /* libdmzXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEA80E22DC4700017D07 /* libdmzXML.a */; };
+		7A71FEDA0E22DCA700017D07 /* libdmzPluginUndo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEAC0E22DC4700017D07 /* libdmzPluginUndo.a */; };
+		7A71FEDB0E22DCA700017D07 /* libdmzFileCacheLocal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEB40E22DC4700017D07 /* libdmzFileCacheLocal.a */; };
+		7A71FEDC0E22DCA700017D07 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEB60E22DC4700017D07 /* liblua.a */; };
+		7A71FEDD0E22DCA700017D07 /* libdmzLuaKernel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEB80E22DC4700017D07 /* libdmzLuaKernel.a */; };
+		7A71FEDE0E22DCA700017D07 /* libdmzLuaModuleBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEBA0E22DC4700017D07 /* libdmzLuaModuleBasic.a */; };
+		7A71FEDF0E22DCA700017D07 /* libdmzObjectModuleBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A71FEBC0E22DC4700017D07 /* libdmzObjectModuleBasic.a */; };
+		7A71FF0D0E22DF8100017D07 /* dmzApplicationStateBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A71FF0B0E22DF8100017D07 /* dmzApplicationStateBasic.cpp */; };
+		7A71FF8A0E22E67B00017D07 /* manifest.xml in Resources */ = {isa = PBXBuildFile; fileRef = 7A71FF890E22E67B00017D07 /* manifest.xml */; };
+		7A7E1BAD0E2BF37400622FCC /* dmzMBRAModuleiPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7E1BAC0E2BF37400622FCC /* dmzMBRAModuleiPhone.mm */; };
+		7A7E1BD60E2BFC5D00622FCC /* dmzAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7E1BD40E2BFC5D00622FCC /* dmzAppDelegate.mm */; };
+		7A7E1BD70E2BFC5D00622FCC /* dmzMainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7A7E1BD50E2BFC5D00622FCC /* dmzMainWindow.xib */; };
+		7A7E1C370E2C05BF00622FCC /* MBRAController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7E1C340E2C05BF00622FCC /* MBRAController.mm */; };
+		7A7E1C380E2C05BF00622FCC /* NAController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7E1C360E2C05BF00622FCC /* NAController.mm */; };
+		7A8924810E2D395000C0C6A6 /* CanvasView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A89247E0E2D395000C0C6A6 /* CanvasView.mm */; };
+		7A8C27BF0E52480A00343AC9 /* libdmzInputModuleBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8C27A90E5247BA00343AC9 /* libdmzInputModuleBasic.a */; };
+		7A8DE91F0E26BBB900623E7B /* dmziPhoneCanvasConsts.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A8E2D500E254E4A0090D5FB /* dmziPhoneCanvasConsts.h */; };
+		7A8DE9200E26BBB900623E7B /* dmziPhoneModuleCanvas.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A8E2D510E254E4A0090D5FB /* dmziPhoneModuleCanvas.h */; };
+		7A95B4120E1AF68E00787113 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A95B4110E1AF68E00787113 /* CoreGraphics.framework */; };
+		7AF2E2CF0E6F290C0062C261 /* libdmzArchiveModuleBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A2030260E5CC86D007F800D /* libdmzArchiveModuleBasic.a */; };
+		7AF2E3020E6F33F80062C261 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AF2E3010E6F33F80062C261 /* Default.png */; };
+		7AF2E3030E6F33F80062C261 /* Default.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7AF2E3010E6F33F80062C261 /* Default.png */; };
+		D2F823BE0E5B921000B9528C /* common.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823B70E5B921000B9528C /* common.xml */; };
+		D2F823C00E5B921000B9528C /* lua.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823B90E5B921000B9528C /* lua.xml */; };
+		D2F823C10E5B921000B9528C /* mbra.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823BA0E5B921000B9528C /* mbra.xml */; };
+		D2F823C20E5B921000B9528C /* networkAnalysis.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823BB0E5B921000B9528C /* networkAnalysis.xml */; };
+		D2F823C30E5B921000B9528C /* runtime.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823BC0E5B921000B9528C /* runtime.xml */; };
+		D2F823C40E5B921000B9528C /* tools.xml in Resources */ = {isa = PBXBuildFile; fileRef = D2F823BD0E5B921000B9528C /* tools.xml */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7A202EAF0E5CA6FA007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A6F1BD10E5CA509004FB18E;
+			remoteInfo = dmzLuaExtInput;
+		};
+		7A202EB10E5CA6FE007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A6F1BAD0E5CA27B004FB18E;
+			remoteInfo = dmzLuaExtObject;
+		};
+		7A202EB30E5CA700007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A6F1BEF0E5CA5CB004FB18E;
+			remoteInfo = dmzLuaExtPick;
+		};
+		7A202F560E5CAD4B007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A202F520E5CAD4A007F800D;
+			remoteInfo = dmzRenderIsect;
+		};
+		7A202F980E5CADDE007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A202F960E5CADDE007F800D;
+			remoteInfo = dmzRenderUtil;
+		};
+		7A202FBA0E5CAE4D007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A202FB80E5CAE4D007F800D;
+			remoteInfo = dmzRenderModulePickBasic;
+		};
+		7A202FFF0E5CAF67007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A202FFD0E5CAF66007F800D;
+			remoteInfo = dmzArchiveUtil;
+		};
+		7A2030250E5CC86D007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A2030210E5CC86D007F800D;
+			remoteInfo = dmzArchiveModuleBasic;
+		};
+		7A2030360E5CC9CB007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A2030340E5CC9CB007F800D;
+			remoteInfo = dmzArchivePluginAutoLoad;
+		};
+		7A2030580E5CCA4D007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A2030560E5CCA4D007F800D;
+			remoteInfo = dmzArchivePluginObject;
+		};
+		7A20306B0E5CCAAC007F800D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A2030690E5CCAAC007F800D;
+			remoteInfo = dmzArchivePluginAutoSave;
+		};
+		7A20BFCA0E5230B900D169ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A20BF610E522FD600D169ED;
+			remoteInfo = dmzInputFramework;
+		};
+		7A20C01C0E52313300D169ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A20C0110E52311500D169ED;
+			remoteInfo = dmzInputEvents;
+		};
+		7A20C0310E52318400D169ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A20C0100E52311500D169ED;
+			remoteInfo = dmzInputEvents;
+		};
+		7A20C0550E52351E00D169ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A20C04B0E52350200D169ED;
+			remoteInfo = dmzInputUtil;
+		};
+		7A35FBDA0E5CCCFA0002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A35FBD60E5CCCF90002DA61;
+			remoteInfo = dmzObjectPluginCleanup;
+		};
+		7A35FBEA0E5CCD950002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A35FBD50E5CCCF90002DA61;
+			remoteInfo = dmzObjectPluginCleanup;
+		};
+		7A35FBEC0E5CCDA40002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A20C04A0E52350200D169ED;
+			remoteInfo = dmzInputUtil;
+		};
+		7A35FBEE0E5CCDA70002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D249EF160E5B8BAD00A57803;
+			remoteInfo = dmzRenderFramework;
+		};
+		7A35FBF00E5CCDAE0002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A202F950E5CADDE007F800D;
+			remoteInfo = dmzRenderUtil;
+		};
+		7A35FBF20E5CCDB20002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A202F510E5CAD4A007F800D;
+			remoteInfo = dmzRenderIsect;
+		};
+		7A35FBF40E5CCDB40002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A202FB70E5CAE4D007F800D;
+			remoteInfo = dmzRenderModulePickBasic;
+		};
+		7A35FBF60E5CCDB80002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A202FF30E5CAF25007F800D;
+			remoteInfo = dmzArchiveFramework;
+		};
+		7A35FBF80E5CCDBA0002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A202FFC0E5CAF66007F800D;
+			remoteInfo = dmzArchiveUtil;
+		};
+		7A35FBFA0E5CCDBF0002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A2030200E5CC86D007F800D;
+			remoteInfo = dmzArchiveModuleBasic;
+		};
+		7A35FBFC0E5CCDC30002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A2030330E5CC9CB007F800D;
+			remoteInfo = dmzArchivePluginAutoLoad;
+		};
+		7A35FBFE0E5CCDC60002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A2030550E5CCA4D007F800D;
+			remoteInfo = dmzArchivePluginObject;
+		};
+		7A35FC000E5CCDC80002DA61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A2030680E5CCAAC007F800D;
+			remoteInfo = dmzArchivePluginAutoSave;
+		};
+		7A64E6600E241E0A008FFC86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A64E65C0E241E0A008FFC86;
+			remoteInfo = dmzObjectUtil;
+		};
+		7A64E6810E24227D008FFC86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A64E65B0E241E0A008FFC86;
+			remoteInfo = dmzObjectUtil;
+		};
+		7A6F1BB20E5CA299004FB18E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A6F1BAE0E5CA27B004FB18E;
+			remoteInfo = dmzLuaExtObject;
+		};
+		7A6F1BDC0E5CA527004FB18E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A6F1BD20E5CA509004FB18E;
+			remoteInfo = dmzLuaExtInput;
+		};
+		7A6F1BF60E5CA5E9004FB18E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A6F1BF00E5CA5CB004FB18E;
+			remoteInfo = dmzLuaExtPick;
+		};
+		7A71FEA30E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A0E0D5D0E117CC100E55011;
+			remoteInfo = dmzKernel;
+		};
+		7A71FEA50E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09AFF00E118D45003C5B32;
+			remoteInfo = expat;
+		};
+		7A71FEA70E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0160E118F86003C5B32;
+			remoteInfo = dmzXML;
+		};
+		7A71FEA90E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0860E119A3C003C5B32;
+			remoteInfo = dmzPluginMsgDump;
+		};
+		7A71FEAB0E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0930E119A72003C5B32;
+			remoteInfo = dmzPluginUndo;
+		};
+		7A71FEAD0E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0A00E119A9A003C5B32;
+			remoteInfo = dmzPluginUndoDump;
+		};
+		7A71FEAF0E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0CF0E119B2D003C5B32;
+			remoteInfo = dmzExPluginMessageReceive;
+		};
+		7A71FEB10E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B0DE0E119B5A003C5B32;
+			remoteInfo = dmzExPluginMessageSend;
+		};
+		7A71FEB30E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A09B1660E11A688003C5B32;
+			remoteInfo = dmzFileCacheLocal;
+		};
+		7A71FEB50E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A560B6B0E12D2F60049409D;
+			remoteInfo = lua;
+		};
+		7A71FEB70E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A560BA70E12D6B90049409D;
+			remoteInfo = dmzLuaKernel;
+		};
+		7A71FEB90E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A560BD10E12D9490049409D;
+			remoteInfo = dmzLuaModuleBasic;
+		};
+		7A71FEBB0E22DC4700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2280F5E50E19A623003A2238;
+			remoteInfo = dmzObjectModuleBasic;
+		};
+		7A71FEBD0E22DC5C00017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A0E0D5C0E117CC100E55011;
+			remoteInfo = dmzKernel;
+		};
+		7A71FEBF0E22DC6100017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09B0670E1193B4003C5B32;
+			remoteInfo = dmzFoundation;
+		};
+		7A71FEC10E22DC6300017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09AFEF0E118D45003C5B32;
+			remoteInfo = expat;
+		};
+		7A71FEC30E22DC6600017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09B0150E118F86003C5B32;
+			remoteInfo = dmzXML;
+		};
+		7A71FEC50E22DC6A00017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09B0920E119A72003C5B32;
+			remoteInfo = dmzPluginUndo;
+		};
+		7A71FEC70E22DC6F00017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09B1650E11A688003C5B32;
+			remoteInfo = dmzFileCacheLocal;
+		};
+		7A71FEC90E22DC7200017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A560BDF0E12D99C0049409D;
+			remoteInfo = dmzLuaFramework;
+		};
+		7A71FECB0E22DC7500017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A560B6A0E12D2F60049409D;
+			remoteInfo = lua;
+		};
+		7A71FECD0E22DC7700017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A560BA60E12D6B90049409D;
+			remoteInfo = dmzLuaKernel;
+		};
+		7A71FECF0E22DC7900017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A560BD00E12D9490049409D;
+			remoteInfo = dmzLuaModuleBasic;
+		};
+		7A71FED10E22DC7D00017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2280F5C80E19A55C003A2238;
+			remoteInfo = dmzObjectFramework;
+		};
+		7A71FED30E22DC8000017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2280F5E40E19A623003A2238;
+			remoteInfo = dmzObjectModuleBasic;
+		};
+		7A71FF2A0E22E01C00017D07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A71FF260E22DFDA00017D07;
+			remoteInfo = dmz_create_plugins;
+		};
+		7A8C27A80E5247BA00343AC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A8C27A00E5247B700343AC9;
+			remoteInfo = dmzInputModuleBasic;
+		};
+		7A8C27BD0E5247F700343AC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A8C279F0E5247B700343AC9;
+			remoteInfo = dmzInputModuleBasic;
+		};
+		7A8DE9210E26BBC200623E7B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A8DE91B0E26BB9000623E7B;
+			remoteInfo = copy_headers;
+		};
+		7AE147250E6DFE680063A2DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A09B0850E119A3C003C5B32;
+			remoteInfo = dmzPluginMsgDump;
+		};
+		D249EF080E5B8B4800A57803 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D249EF010E5B8B2900A57803;
+			remoteInfo = dmzInputPluginMouseEventToMessage;
+		};
+		D249EFB00E5B8CAC00A57803 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D249EF000E5B8B2900A57803;
+			remoteInfo = dmzInputPluginMouseEventToMessage;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7A8DE91A0E26BB9000623E7B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = ../../include/dmz;
+			dstSubfolderSpec = 16;
+			files = (
+				7A8DE91F0E26BBB900623E7B /* dmziPhoneCanvasConsts.h in CopyFiles */,
+				7A8DE9200E26BBB900623E7B /* dmziPhoneModuleCanvas.h in CopyFiles */,
+				7AF2E3030E6F33F80062C261 /* Default.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1D6058910D05DD3D006BFB54 /* MBRA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MBRA.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		29B97316FDCFA39411CA2CEA /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* MBRA_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBRA_Prefix.pch; sourceTree = "<group>"; };
+		7A09A5690E5E0C44000CB01C /* Edge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Edge.h; path = ../../plugins/iphone/Edge.h; sourceTree = SOURCE_ROOT; };
+		7A09A56A0E5E0C44000CB01C /* Edge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Edge.mm; path = ../../plugins/iphone/Edge.mm; sourceTree = SOURCE_ROOT; };
+		7A09A56B0E5E0C44000CB01C /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = ../../plugins/iphone/Node.h; sourceTree = SOURCE_ROOT; };
+		7A09A56C0E5E0C44000CB01C /* Node.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Node.mm; path = ../../plugins/iphone/Node.mm; sourceTree = SOURCE_ROOT; };
+		7A09A64B0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhonePluginRenderPick2d.h; path = ../../plugins/iphone/dmziPhonePluginRenderPick2d.h; sourceTree = SOURCE_ROOT; };
+		7A09A64C0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmziPhonePluginRenderPick2d.mm; path = ../../plugins/iphone/dmziPhonePluginRenderPick2d.mm; sourceTree = SOURCE_ROOT; };
+		7A09E1240E1AD50A00B66206 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		7A202EBD0E5CA878007F800D /* dmzMBRAPluginCreateObject.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginCreateObject.lua; path = ../../scripts/dmzMBRAPluginCreateObject.lua; sourceTree = SOURCE_ROOT; };
+		7A202EBE0E5CA879007F800D /* dmzMBRAPluginDestroyObject.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginDestroyObject.lua; path = ../../scripts/dmzMBRAPluginDestroyObject.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC00E5CA879007F800D /* dmzMBRAPluginLayerActive.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginLayerActive.lua; path = ../../scripts/dmzMBRAPluginLayerActive.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC10E5CA879007F800D /* dmzMBRAPluginLinkObjects.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginLinkObjects.lua; path = ../../scripts/dmzMBRAPluginLinkObjects.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC20E5CA879007F800D /* dmzMBRAPluginMoveObject.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginMoveObject.lua; path = ../../scripts/dmzMBRAPluginMoveObject.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC30E5CA879007F800D /* dmzMBRAPluginNALinkObject.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginNALinkObject.lua; path = ../../scripts/dmzMBRAPluginNALinkObject.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC40E5CA879007F800D /* dmzMBRAPluginNARanking.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginNARanking.lua; path = ../../scripts/dmzMBRAPluginNARanking.lua; sourceTree = SOURCE_ROOT; };
+		7A202EC50E5CA879007F800D /* dmzMBRAPluginUnlinkObjects.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dmzMBRAPluginUnlinkObjects.lua; path = ../../scripts/dmzMBRAPluginUnlinkObjects.lua; sourceTree = SOURCE_ROOT; };
+		7A202ED40E5CAA5D007F800D /* test_data.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = test_data.xml; sourceTree = "<group>"; };
+		7A20BF500E5221A600D169ED /* dmziPhonePluginCanvasObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhonePluginCanvasObject.h; path = ../../plugins/iphone/dmziPhonePluginCanvasObject.h; sourceTree = SOURCE_ROOT; };
+		7A20BF510E5221A600D169ED /* dmziPhonePluginCanvasObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmziPhonePluginCanvasObject.mm; path = ../../plugins/iphone/dmziPhonePluginCanvasObject.mm; sourceTree = SOURCE_ROOT; };
+		7A369AB70E70971200530E9D /* dmziPhonePluginNodeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhonePluginNodeProperties.h; path = ../../plugins/iphone/dmziPhonePluginNodeProperties.h; sourceTree = SOURCE_ROOT; };
+		7A369AB80E70971200530E9D /* dmziPhonePluginNodeProperties.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmziPhonePluginNodeProperties.mm; path = ../../plugins/iphone/dmziPhonePluginNodeProperties.mm; sourceTree = SOURCE_ROOT; };
+		7A369AC20E7099F700530E9D /* NAEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NAEditController.h; path = ../../plugins/iphone/NAEditController.h; sourceTree = SOURCE_ROOT; };
+		7A369AC30E7099F700530E9D /* NAEditController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NAEditController.mm; path = ../../plugins/iphone/NAEditController.mm; sourceTree = SOURCE_ROOT; };
+		7A369AC40E7099F700530E9D /* NAEditController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = NAEditController.xib; path = ../../plugins/iphone/NAEditController.xib; sourceTree = SOURCE_ROOT; };
+		7A39BB530E4B8D630035E12A /* NA_ResultsOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NA_ResultsOverlay.png; path = ../../assets/Images/NA_ResultsOverlay.png; sourceTree = SOURCE_ROOT; };
+		7A39BB550E4B8D9A0035E12A /* balloon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = balloon.png; sourceTree = "<group>"; };
+		7A39BB800E4BB48F0035E12A /* Canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Canvas.h; path = ../../module/iphone/Canvas.h; sourceTree = SOURCE_ROOT; };
+		7A39BB810E4BB48F0035E12A /* Canvas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Canvas.mm; path = ../../module/iphone/Canvas.mm; sourceTree = SOURCE_ROOT; };
+		7A39BC410E4BB5680035E12A /* NAController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = NAController.xib; path = ../../module/iphone/NAController.xib; sourceTree = SOURCE_ROOT; };
+		7A39BC590E4BB7010035E12A /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../../module/iphone/Constants.h; sourceTree = SOURCE_ROOT; };
+		7A71FE320E22D48900017D07 /* NA_Node.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NA_Node.png; path = ../../assets/Images/NA_Node.png; sourceTree = SOURCE_ROOT; };
+		7A71FE700E22DB9800017D07 /* plugins.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plugins.lua; sourceTree = "<group>"; };
+		7A71FE720E22DBA000017D07 /* dmz_create_plugins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dmz_create_plugins.cpp; sourceTree = "<group>"; };
+		7A71FE7C0E22DC2300017D07 /* dmzSystemFileMacOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmzSystemFileMacOS.mm; path = ../../../dmz/frameworks/iphone/util/dmzSystemFileMacOS.mm; sourceTree = SOURCE_ROOT; };
+		7A71FE7D0E22DC2300017D07 /* dmzSystemFileMacOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzSystemFileMacOS.h; path = ../../../dmz/frameworks/iphone/util/dmzSystemFileMacOS.h; sourceTree = SOURCE_ROOT; };
+		7A71FE7E0E22DC2300017D07 /* dmzLogObserverNSLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzLogObserverNSLog.h; path = ../../../dmz/frameworks/iphone/util/dmzLogObserverNSLog.h; sourceTree = SOURCE_ROOT; };
+		7A71FE7F0E22DC2300017D07 /* dmzApplicationiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzApplicationiPhone.h; path = ../../../dmz/frameworks/iphone/util/dmzApplicationiPhone.h; sourceTree = SOURCE_ROOT; };
+		7A71FE800E22DC2300017D07 /* dmzLogObserverNSLog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmzLogObserverNSLog.mm; path = ../../../dmz/frameworks/iphone/util/dmzLogObserverNSLog.mm; sourceTree = SOURCE_ROOT; };
+		7A71FE810E22DC2300017D07 /* dmzApplicationiPhone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dmzApplicationiPhone.cpp; path = ../../../dmz/frameworks/iphone/util/dmzApplicationiPhone.cpp; sourceTree = SOURCE_ROOT; };
+		7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dmzXcode.xcodeproj; path = ../../../dmz/xcode/dmzXcode/dmzXcode.xcodeproj; sourceTree = SOURCE_ROOT; };
+		7A71FEE20E22DCD000017D07 /* dmz.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = dmz.xcconfig; path = ../dmz.xcconfig; sourceTree = SOURCE_ROOT; };
+		7A71FF0B0E22DF8100017D07 /* dmzApplicationStateBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dmzApplicationStateBasic.cpp; path = ../../../dmz/foundation/libs/application/dmzApplicationStateBasic.cpp; sourceTree = SOURCE_ROOT; };
+		7A71FF0C0E22DF8100017D07 /* dmzApplicationStateBasic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzApplicationStateBasic.h; path = ../../../dmz/foundation/libs/application/dmzApplicationStateBasic.h; sourceTree = SOURCE_ROOT; };
+		7A71FF890E22E67B00017D07 /* manifest.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = manifest.xml; sourceTree = "<group>"; };
+		7A7E1BAB0E2BF37400622FCC /* dmzMBRAModuleiPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzMBRAModuleiPhone.h; path = ../../module/iphone/dmzMBRAModuleiPhone.h; sourceTree = SOURCE_ROOT; };
+		7A7E1BAC0E2BF37400622FCC /* dmzMBRAModuleiPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmzMBRAModuleiPhone.mm; path = ../../module/iphone/dmzMBRAModuleiPhone.mm; sourceTree = SOURCE_ROOT; };
+		7A7E1BD30E2BFC5D00622FCC /* dmzAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmzAppDelegate.h; path = ../../../dmz/frameworks/iphone/util/dmzAppDelegate.h; sourceTree = SOURCE_ROOT; };
+		7A7E1BD40E2BFC5D00622FCC /* dmzAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmzAppDelegate.mm; path = ../../../dmz/frameworks/iphone/util/dmzAppDelegate.mm; sourceTree = SOURCE_ROOT; };
+		7A7E1BD50E2BFC5D00622FCC /* dmzMainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = dmzMainWindow.xib; path = ../../../dmz/frameworks/iphone/util/dmzMainWindow.xib; sourceTree = SOURCE_ROOT; };
+		7A7E1C330E2C05BF00622FCC /* MBRAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBRAController.h; path = ../../module/iphone/MBRAController.h; sourceTree = SOURCE_ROOT; };
+		7A7E1C340E2C05BF00622FCC /* MBRAController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MBRAController.mm; path = ../../module/iphone/MBRAController.mm; sourceTree = SOURCE_ROOT; };
+		7A7E1C350E2C05BF00622FCC /* NAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NAController.h; path = ../../module/iphone/NAController.h; sourceTree = SOURCE_ROOT; };
+		7A7E1C360E2C05BF00622FCC /* NAController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NAController.mm; path = ../../module/iphone/NAController.mm; sourceTree = SOURCE_ROOT; };
+		7A89247D0E2D395000C0C6A6 /* CanvasView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasView.h; path = ../../module/iphone/CanvasView.h; sourceTree = SOURCE_ROOT; };
+		7A89247E0E2D395000C0C6A6 /* CanvasView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CanvasView.mm; path = ../../module/iphone/CanvasView.mm; sourceTree = SOURCE_ROOT; };
+		7A8DE9020E26AE6400623E7B /* dmziPhoneModuleCanvasBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmziPhoneModuleCanvasBasic.mm; path = ../../../dmz/frameworks/iphone/modules/canvas/dmziPhoneModuleCanvasBasic.mm; sourceTree = SOURCE_ROOT; };
+		7A8DE9030E26AE6400623E7B /* dmziPhoneModuleCanvasBasic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhoneModuleCanvasBasic.h; path = ../../../dmz/frameworks/iphone/modules/canvas/dmziPhoneModuleCanvasBasic.h; sourceTree = SOURCE_ROOT; };
+		7A8DE9050E26B0D900623E7B /* dmziPhoneCanvasView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhoneCanvasView.h; path = ../../../dmz/frameworks/iphone/modules/canvas/dmziPhoneCanvasView.h; sourceTree = SOURCE_ROOT; };
+		7A8DE9060E26B0D900623E7B /* dmziPhoneCanvasView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dmziPhoneCanvasView.mm; path = ../../../dmz/frameworks/iphone/modules/canvas/dmziPhoneCanvasView.mm; sourceTree = SOURCE_ROOT; };
+		7A8E2D500E254E4A0090D5FB /* dmziPhoneCanvasConsts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhoneCanvasConsts.h; path = ../../../dmz/frameworks/iphone/interfaces/dmziPhoneCanvasConsts.h; sourceTree = SOURCE_ROOT; };
+		7A8E2D510E254E4A0090D5FB /* dmziPhoneModuleCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dmziPhoneModuleCanvas.h; path = ../../../dmz/frameworks/iphone/interfaces/dmziPhoneModuleCanvas.h; sourceTree = SOURCE_ROOT; };
+		7A95B4110E1AF68E00787113 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		7AF2E3010E6F33F80062C261 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2F823B70E5B921000B9528C /* common.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = common.xml; sourceTree = "<group>"; };
+		D2F823B90E5B921000B9528C /* lua.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lua.xml; sourceTree = "<group>"; };
+		D2F823BA0E5B921000B9528C /* mbra.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = mbra.xml; sourceTree = "<group>"; };
+		D2F823BB0E5B921000B9528C /* networkAnalysis.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = networkAnalysis.xml; sourceTree = "<group>"; };
+		D2F823BC0E5B921000B9528C /* runtime.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = runtime.xml; sourceTree = "<group>"; };
+		D2F823BD0E5B921000B9528C /* tools.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = tools.xml; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A09A5EE0E5E1B47000CB01C /* libdmzPluginMsgDump.a in Frameworks */,
+				7A71FED70E22DCA700017D07 /* libdmzKernel.a in Frameworks */,
+				7A71FED80E22DCA700017D07 /* libexpat.a in Frameworks */,
+				7A71FED90E22DCA700017D07 /* libdmzXML.a in Frameworks */,
+				7A71FEDA0E22DCA700017D07 /* libdmzPluginUndo.a in Frameworks */,
+				7A71FEDB0E22DCA700017D07 /* libdmzFileCacheLocal.a in Frameworks */,
+				7A71FEDC0E22DCA700017D07 /* liblua.a in Frameworks */,
+				7A71FEDD0E22DCA700017D07 /* libdmzLuaKernel.a in Frameworks */,
+				7A202EAC0E5CA6C5007F800D /* libdmzLuaExtInput.a in Frameworks */,
+				7A202EAD0E5CA6E4007F800D /* libdmzLuaExtObject.a in Frameworks */,
+				7A202EAE0E5CA6F0007F800D /* libdmzLuaExtPick.a in Frameworks */,
+				7A71FEDE0E22DCA700017D07 /* libdmzLuaModuleBasic.a in Frameworks */,
+				7A71FEDF0E22DCA700017D07 /* libdmzObjectModuleBasic.a in Frameworks */,
+				7A64E6830E24228E008FFC86 /* libdmzObjectUtil.a in Frameworks */,
+				7A35FBE70E5CCD7A0002DA61 /* libdmzObjectPluginCleanup.a in Frameworks */,
+				7A20C0740E52452C00D169ED /* libdmzInputEvents.a in Frameworks */,
+				7A6F1B9F0E5CA0E6004FB18E /* libdmzInputUtil.a in Frameworks */,
+				7A8C27BF0E52480A00343AC9 /* libdmzInputModuleBasic.a in Frameworks */,
+				7A6F1B970E5CA0C6004FB18E /* libdmzInputPluginMouseEventToMessage.a in Frameworks */,
+				7A09A6560E5E2FE9000CB01C /* libdmzRenderUtil.a in Frameworks */,
+				7A35FBC60E5CCC750002DA61 /* libdmzRenderModulePickBasic.a in Frameworks */,
+				7A35FBC70E5CCC750002DA61 /* libdmzArchiveUtil.a in Frameworks */,
+				7AF2E2CF0E6F290C0062C261 /* libdmzArchiveModuleBasic.a in Frameworks */,
+				7A35FBC90E5CCC750002DA61 /* libdmzArchivePluginAutoLoad.a in Frameworks */,
+				7A35FBCA0E5CCC750002DA61 /* libdmzArchivePluginObject.a in Frameworks */,
+				7A35FBCB0E5CCC750002DA61 /* libdmzArchivePluginAutoSave.a in Frameworks */,
+				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
+				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				7A95B4120E1AF68E00787113 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* MBRA.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */,
+				7A71FEE20E22DCD000017D07 /* dmz.xcconfig */,
+				7A71FE740E22DC1100017D07 /* dmz */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				7A71FE3D0E22D66600017D07 /* Assests */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7A71FE700E22DB9800017D07 /* plugins.lua */,
+				7A71FE720E22DBA000017D07 /* dmz_create_plugins.cpp */,
+				32CA4F630368D1EE00C91783 /* MBRA_Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.mm */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107310486CEB800E47090 /* Info.plist */,
+				7A09E1240E1AD50A00B66206 /* Icon.png */,
+				7A202ED40E5CAA5D007F800D /* test_data.xml */,
+				7A71FF890E22E67B00017D07 /* manifest.xml */,
+				7A202ED00E5CA88F007F800D /* config */,
+				7A202ECF0E5CA880007F800D /* scripts */,
+				7AF2E3010E6F33F80062C261 /* Default.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7A95B4110E1AF68E00787113 /* CoreGraphics.framework */,
+				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
+				1D30AB110D05D00D00671497 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7A202ECF0E5CA880007F800D /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				7A202EBD0E5CA878007F800D /* dmzMBRAPluginCreateObject.lua */,
+				7A202EBE0E5CA879007F800D /* dmzMBRAPluginDestroyObject.lua */,
+				7A202EC00E5CA879007F800D /* dmzMBRAPluginLayerActive.lua */,
+				7A202EC10E5CA879007F800D /* dmzMBRAPluginLinkObjects.lua */,
+				7A202EC20E5CA879007F800D /* dmzMBRAPluginMoveObject.lua */,
+				7A202EC30E5CA879007F800D /* dmzMBRAPluginNALinkObject.lua */,
+				7A202EC40E5CA879007F800D /* dmzMBRAPluginNARanking.lua */,
+				7A202EC50E5CA879007F800D /* dmzMBRAPluginUnlinkObjects.lua */,
+			);
+			name = scripts;
+			sourceTree = "<group>";
+		};
+		7A202ED00E5CA88F007F800D /* config */ = {
+			isa = PBXGroup;
+			children = (
+				D2F823BC0E5B921000B9528C /* runtime.xml */,
+				D2F823B70E5B921000B9528C /* common.xml */,
+				D2F823B90E5B921000B9528C /* lua.xml */,
+				D2F823BD0E5B921000B9528C /* tools.xml */,
+				D2F823BB0E5B921000B9528C /* networkAnalysis.xml */,
+				D2F823BA0E5B921000B9528C /* mbra.xml */,
+			);
+			name = config;
+			sourceTree = "<group>";
+		};
+		7A20BF450E5202FD00D169ED /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				7A20BF500E5221A600D169ED /* dmziPhonePluginCanvasObject.h */,
+				7A20BF510E5221A600D169ED /* dmziPhonePluginCanvasObject.mm */,
+				7A09A5690E5E0C44000CB01C /* Edge.h */,
+				7A09A56A0E5E0C44000CB01C /* Edge.mm */,
+				7A09A56B0E5E0C44000CB01C /* Node.h */,
+				7A09A56C0E5E0C44000CB01C /* Node.mm */,
+				7A09A64B0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.h */,
+				7A09A64C0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.mm */,
+				7A369AB70E70971200530E9D /* dmziPhonePluginNodeProperties.h */,
+				7A369AB80E70971200530E9D /* dmziPhonePluginNodeProperties.mm */,
+				7A369AC20E7099F700530E9D /* NAEditController.h */,
+				7A369AC30E7099F700530E9D /* NAEditController.mm */,
+				7A369AC40E7099F700530E9D /* NAEditController.xib */,
+			);
+			name = plugins;
+			sourceTree = "<group>";
+		};
+		7A71FE3D0E22D66600017D07 /* Assests */ = {
+			isa = PBXGroup;
+			children = (
+				7A71FE320E22D48900017D07 /* NA_Node.png */,
+				7A39BB530E4B8D630035E12A /* NA_ResultsOverlay.png */,
+				7A39BB550E4B8D9A0035E12A /* balloon.png */,
+			);
+			name = Assests;
+			sourceTree = "<group>";
+		};
+		7A71FE740E22DC1100017D07 /* dmz */ = {
+			isa = PBXGroup;
+			children = (
+				7A8E2D4A0E254D940090D5FB /* interfaces */,
+				7A8E2D480E254D820090D5FB /* modules */,
+				7A20BF450E5202FD00D169ED /* plugins */,
+				7A8E2D470E254D720090D5FB /* util */,
+			);
+			name = dmz;
+			sourceTree = "<group>";
+		};
+		7A71FE8D0E22DC4700017D07 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7A71FEA40E22DC4700017D07 /* libdmzKernel.a */,
+				7A71FEA60E22DC4700017D07 /* libexpat.a */,
+				7A71FEA80E22DC4700017D07 /* libdmzXML.a */,
+				7A71FEAA0E22DC4700017D07 /* libdmzPluginMsgDump.a */,
+				7A71FEAC0E22DC4700017D07 /* libdmzPluginUndo.a */,
+				7A71FEAE0E22DC4700017D07 /* libdmzPluginUndoDump.a */,
+				7A71FEB00E22DC4700017D07 /* libdmzExPluginMessageReceive.a */,
+				7A71FEB20E22DC4700017D07 /* libdmzExPluginMessageSend.a */,
+				7A71FEB40E22DC4700017D07 /* libdmzFileCacheLocal.a */,
+				7A71FEB60E22DC4700017D07 /* liblua.a */,
+				7A71FEB80E22DC4700017D07 /* libdmzLuaKernel.a */,
+				7A6F1BDD0E5CA527004FB18E /* libdmzLuaExtInput.a */,
+				7A6F1BB30E5CA299004FB18E /* libdmzLuaExtObject.a */,
+				7A6F1BF70E5CA5E9004FB18E /* libdmzLuaExtPick.a */,
+				7A71FEBA0E22DC4700017D07 /* libdmzLuaModuleBasic.a */,
+				7A71FEBC0E22DC4700017D07 /* libdmzObjectModuleBasic.a */,
+				7A64E6610E241E0A008FFC86 /* libdmzObjectUtil.a */,
+				7A35FBDB0E5CCCFA0002DA61 /* libdmzObjectPluginCleanup.a */,
+				7A20C01D0E52313300D169ED /* libdmzInputEvents.a */,
+				7A20C0560E52351E00D169ED /* libdmzInputUtil.a */,
+				7A8C27A90E5247BA00343AC9 /* libdmzInputModuleBasic.a */,
+				D249EF090E5B8B4800A57803 /* libdmzInputPluginMouseEventToMessage.a */,
+				7A202F570E5CAD4B007F800D /* libdmzRenderIsect.a */,
+				7A202F990E5CADDE007F800D /* libdmzRenderUtil.a */,
+				7A202FBB0E5CAE4D007F800D /* libdmzRenderModulePickBasic.a */,
+				7A2030000E5CAF67007F800D /* libdmzArchiveUtil.a */,
+				7A2030260E5CC86D007F800D /* libdmzArchiveModuleBasic.a */,
+				7A2030370E5CC9CB007F800D /* libdmzArchivePluginAutoLoad.a */,
+				7A2030590E5CCA4D007F800D /* libdmzArchivePluginObject.a */,
+				7A20306C0E5CCAAC007F800D /* libdmzArchivePluginAutoSave.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7A7E1BA70E2BF36400622FCC /* iphone */ = {
+			isa = PBXGroup;
+			children = (
+				7A39BC590E4BB7010035E12A /* Constants.h */,
+				7A7E1BAB0E2BF37400622FCC /* dmzMBRAModuleiPhone.h */,
+				7A7E1BAC0E2BF37400622FCC /* dmzMBRAModuleiPhone.mm */,
+				7A7E1C330E2C05BF00622FCC /* MBRAController.h */,
+				7A7E1C340E2C05BF00622FCC /* MBRAController.mm */,
+				7A7E1C350E2C05BF00622FCC /* NAController.h */,
+				7A7E1C360E2C05BF00622FCC /* NAController.mm */,
+				7A39BC410E4BB5680035E12A /* NAController.xib */,
+				7A89247D0E2D395000C0C6A6 /* CanvasView.h */,
+				7A89247E0E2D395000C0C6A6 /* CanvasView.mm */,
+				7A39BB800E4BB48F0035E12A /* Canvas.h */,
+				7A39BB810E4BB48F0035E12A /* Canvas.mm */,
+			);
+			name = iphone;
+			sourceTree = "<group>";
+		};
+		7A8E2D470E254D720090D5FB /* util */ = {
+			isa = PBXGroup;
+			children = (
+				7A7E1BD30E2BFC5D00622FCC /* dmzAppDelegate.h */,
+				7A7E1BD40E2BFC5D00622FCC /* dmzAppDelegate.mm */,
+				7A7E1BD50E2BFC5D00622FCC /* dmzMainWindow.xib */,
+				7A71FF0B0E22DF8100017D07 /* dmzApplicationStateBasic.cpp */,
+				7A71FF0C0E22DF8100017D07 /* dmzApplicationStateBasic.h */,
+				7A71FE7C0E22DC2300017D07 /* dmzSystemFileMacOS.mm */,
+				7A71FE7D0E22DC2300017D07 /* dmzSystemFileMacOS.h */,
+				7A71FE7E0E22DC2300017D07 /* dmzLogObserverNSLog.h */,
+				7A71FE800E22DC2300017D07 /* dmzLogObserverNSLog.mm */,
+				7A71FE7F0E22DC2300017D07 /* dmzApplicationiPhone.h */,
+				7A71FE810E22DC2300017D07 /* dmzApplicationiPhone.cpp */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
+		7A8E2D480E254D820090D5FB /* modules */ = {
+			isa = PBXGroup;
+			children = (
+				7A7E1BA70E2BF36400622FCC /* iphone */,
+				7A8E2D490E254D8B0090D5FB /* canvas */,
+			);
+			name = modules;
+			sourceTree = "<group>";
+		};
+		7A8E2D490E254D8B0090D5FB /* canvas */ = {
+			isa = PBXGroup;
+			children = (
+				7A8DE9050E26B0D900623E7B /* dmziPhoneCanvasView.h */,
+				7A8DE9060E26B0D900623E7B /* dmziPhoneCanvasView.mm */,
+				7A8DE9030E26AE6400623E7B /* dmziPhoneModuleCanvasBasic.h */,
+				7A8DE9020E26AE6400623E7B /* dmziPhoneModuleCanvasBasic.mm */,
+			);
+			name = canvas;
+			sourceTree = "<group>";
+		};
+		7A8E2D4A0E254D940090D5FB /* interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				7A8E2D500E254E4A0090D5FB /* dmziPhoneCanvasConsts.h */,
+				7A8E2D510E254E4A0090D5FB /* dmziPhoneModuleCanvas.h */,
+			);
+			name = interfaces;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* MBRA */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "MBRA" */;
+			buildPhases = (
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A8DE9220E26BBC200623E7B /* PBXTargetDependency */,
+				7A71FF2B0E22E01C00017D07 /* PBXTargetDependency */,
+				7A71FEBE0E22DC5C00017D07 /* PBXTargetDependency */,
+				7A71FEC00E22DC6100017D07 /* PBXTargetDependency */,
+				7A71FEC20E22DC6300017D07 /* PBXTargetDependency */,
+				7A71FEC40E22DC6600017D07 /* PBXTargetDependency */,
+				7A71FEC60E22DC6A00017D07 /* PBXTargetDependency */,
+				7A71FEC80E22DC6F00017D07 /* PBXTargetDependency */,
+				7A71FECA0E22DC7200017D07 /* PBXTargetDependency */,
+				7A71FECC0E22DC7500017D07 /* PBXTargetDependency */,
+				7A71FECE0E22DC7700017D07 /* PBXTargetDependency */,
+				7A202EB00E5CA6FA007F800D /* PBXTargetDependency */,
+				7A202EB20E5CA6FE007F800D /* PBXTargetDependency */,
+				7A202EB40E5CA700007F800D /* PBXTargetDependency */,
+				7A71FED00E22DC7900017D07 /* PBXTargetDependency */,
+				7A71FED20E22DC7D00017D07 /* PBXTargetDependency */,
+				7A71FED40E22DC8000017D07 /* PBXTargetDependency */,
+				7A64E6820E24227D008FFC86 /* PBXTargetDependency */,
+				7A20BFCB0E5230B900D169ED /* PBXTargetDependency */,
+				7A20C0320E52318400D169ED /* PBXTargetDependency */,
+				7A8C27BE0E5247F700343AC9 /* PBXTargetDependency */,
+				D249EFB10E5B8CAC00A57803 /* PBXTargetDependency */,
+				7A35FBEB0E5CCD950002DA61 /* PBXTargetDependency */,
+				7A35FBED0E5CCDA40002DA61 /* PBXTargetDependency */,
+				7A35FBEF0E5CCDA70002DA61 /* PBXTargetDependency */,
+				7A35FBF10E5CCDAE0002DA61 /* PBXTargetDependency */,
+				7A35FBF30E5CCDB20002DA61 /* PBXTargetDependency */,
+				7A35FBF50E5CCDB40002DA61 /* PBXTargetDependency */,
+				7A35FBF70E5CCDB80002DA61 /* PBXTargetDependency */,
+				7A35FBF90E5CCDBA0002DA61 /* PBXTargetDependency */,
+				7A35FBFB0E5CCDBF0002DA61 /* PBXTargetDependency */,
+				7A35FBFD0E5CCDC30002DA61 /* PBXTargetDependency */,
+				7A35FBFF0E5CCDC60002DA61 /* PBXTargetDependency */,
+				7A35FC010E5CCDC80002DA61 /* PBXTargetDependency */,
+				7AE147260E6DFE680063A2DA /* PBXTargetDependency */,
+			);
+			name = MBRA;
+			productName = MBRA;
+			productReference = 1D6058910D05DD3D006BFB54 /* MBRA.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MBRA" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7A71FE8D0E22DC4700017D07 /* Products */;
+					ProjectRef = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* MBRA */,
+				7A71FF260E22DFDA00017D07 /* dmz_create_plugins */,
+				7A8DE91B0E26BB9000623E7B /* copy_headers */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		7A202F570E5CAD4B007F800D /* libdmzRenderIsect.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzRenderIsect.a;
+			remoteRef = 7A202F560E5CAD4B007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A202F990E5CADDE007F800D /* libdmzRenderUtil.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzRenderUtil.a;
+			remoteRef = 7A202F980E5CADDE007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A202FBB0E5CAE4D007F800D /* libdmzRenderModulePickBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzRenderModulePickBasic.a;
+			remoteRef = 7A202FBA0E5CAE4D007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A2030000E5CAF67007F800D /* libdmzArchiveUtil.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzArchiveUtil.a;
+			remoteRef = 7A202FFF0E5CAF67007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A2030260E5CC86D007F800D /* libdmzArchiveModuleBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzArchiveModuleBasic.a;
+			remoteRef = 7A2030250E5CC86D007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A2030370E5CC9CB007F800D /* libdmzArchivePluginAutoLoad.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzArchivePluginAutoLoad.a;
+			remoteRef = 7A2030360E5CC9CB007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A2030590E5CCA4D007F800D /* libdmzArchivePluginObject.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzArchivePluginObject.a;
+			remoteRef = 7A2030580E5CCA4D007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A20306C0E5CCAAC007F800D /* libdmzArchivePluginAutoSave.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzArchivePluginAutoSave.a;
+			remoteRef = 7A20306B0E5CCAAC007F800D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A20C01D0E52313300D169ED /* libdmzInputEvents.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzInputEvents.a;
+			remoteRef = 7A20C01C0E52313300D169ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A20C0560E52351E00D169ED /* libdmzInputUtil.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzInputUtil.a;
+			remoteRef = 7A20C0550E52351E00D169ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A35FBDB0E5CCCFA0002DA61 /* libdmzObjectPluginCleanup.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzObjectPluginCleanup.a;
+			remoteRef = 7A35FBDA0E5CCCFA0002DA61 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A64E6610E241E0A008FFC86 /* libdmzObjectUtil.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzObjectUtil.a;
+			remoteRef = 7A64E6600E241E0A008FFC86 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A6F1BB30E5CA299004FB18E /* libdmzLuaExtObject.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzLuaExtObject.a;
+			remoteRef = 7A6F1BB20E5CA299004FB18E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A6F1BDD0E5CA527004FB18E /* libdmzLuaExtInput.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzLuaExtInput.a;
+			remoteRef = 7A6F1BDC0E5CA527004FB18E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A6F1BF70E5CA5E9004FB18E /* libdmzLuaExtPick.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzLuaExtPick.a;
+			remoteRef = 7A6F1BF60E5CA5E9004FB18E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEA40E22DC4700017D07 /* libdmzKernel.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzKernel.a;
+			remoteRef = 7A71FEA30E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEA60E22DC4700017D07 /* libexpat.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libexpat.a;
+			remoteRef = 7A71FEA50E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEA80E22DC4700017D07 /* libdmzXML.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzXML.a;
+			remoteRef = 7A71FEA70E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEAA0E22DC4700017D07 /* libdmzPluginMsgDump.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzPluginMsgDump.a;
+			remoteRef = 7A71FEA90E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEAC0E22DC4700017D07 /* libdmzPluginUndo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzPluginUndo.a;
+			remoteRef = 7A71FEAB0E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEAE0E22DC4700017D07 /* libdmzPluginUndoDump.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzPluginUndoDump.a;
+			remoteRef = 7A71FEAD0E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEB00E22DC4700017D07 /* libdmzExPluginMessageReceive.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzExPluginMessageReceive.a;
+			remoteRef = 7A71FEAF0E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEB20E22DC4700017D07 /* libdmzExPluginMessageSend.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzExPluginMessageSend.a;
+			remoteRef = 7A71FEB10E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEB40E22DC4700017D07 /* libdmzFileCacheLocal.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzFileCacheLocal.a;
+			remoteRef = 7A71FEB30E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEB60E22DC4700017D07 /* liblua.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblua.a;
+			remoteRef = 7A71FEB50E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEB80E22DC4700017D07 /* libdmzLuaKernel.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzLuaKernel.a;
+			remoteRef = 7A71FEB70E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEBA0E22DC4700017D07 /* libdmzLuaModuleBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzLuaModuleBasic.a;
+			remoteRef = 7A71FEB90E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A71FEBC0E22DC4700017D07 /* libdmzObjectModuleBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzObjectModuleBasic.a;
+			remoteRef = 7A71FEBB0E22DC4700017D07 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A8C27A90E5247BA00343AC9 /* libdmzInputModuleBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzInputModuleBasic.a;
+			remoteRef = 7A8C27A80E5247BA00343AC9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D249EF090E5B8B4800A57803 /* libdmzInputPluginMouseEventToMessage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzInputPluginMouseEventToMessage.a;
+			remoteRef = D249EF080E5B8B4800A57803 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A09E1250E1AD50A00B66206 /* Icon.png in Resources */,
+				7A71FE330E22D48900017D07 /* NA_Node.png in Resources */,
+				7A71FE710E22DB9800017D07 /* plugins.lua in Resources */,
+				7A71FF8A0E22E67B00017D07 /* manifest.xml in Resources */,
+				7A7E1BD70E2BFC5D00622FCC /* dmzMainWindow.xib in Resources */,
+				7A39BB540E4B8D630035E12A /* NA_ResultsOverlay.png in Resources */,
+				7A39BB560E4B8D9A0035E12A /* balloon.png in Resources */,
+				7A39BC420E4BB5680035E12A /* NAController.xib in Resources */,
+				D2F823BE0E5B921000B9528C /* common.xml in Resources */,
+				D2F823C00E5B921000B9528C /* lua.xml in Resources */,
+				D2F823C10E5B921000B9528C /* mbra.xml in Resources */,
+				D2F823C20E5B921000B9528C /* networkAnalysis.xml in Resources */,
+				D2F823C30E5B921000B9528C /* runtime.xml in Resources */,
+				D2F823C40E5B921000B9528C /* tools.xml in Resources */,
+				7A202EC60E5CA879007F800D /* dmzMBRAPluginCreateObject.lua in Resources */,
+				7A202EC70E5CA879007F800D /* dmzMBRAPluginDestroyObject.lua in Resources */,
+				7A202EC90E5CA879007F800D /* dmzMBRAPluginLayerActive.lua in Resources */,
+				7A202ECA0E5CA879007F800D /* dmzMBRAPluginLinkObjects.lua in Resources */,
+				7A202ECB0E5CA879007F800D /* dmzMBRAPluginMoveObject.lua in Resources */,
+				7A202ECC0E5CA879007F800D /* dmzMBRAPluginNALinkObject.lua in Resources */,
+				7A202ECD0E5CA879007F800D /* dmzMBRAPluginNARanking.lua in Resources */,
+				7A202ECE0E5CA879007F800D /* dmzMBRAPluginUnlinkObjects.lua in Resources */,
+				7A202ED50E5CAA5D007F800D /* test_data.xml in Resources */,
+				7AF2E3020E6F33F80062C261 /* Default.png in Resources */,
+				7A369AC60E7099F700530E9D /* NAEditController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7A71FF250E22DFDA00017D07 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/plugins.lua",
+			);
+			outputPaths = (
+				"$(SRCROOT)/dmz_create_plugins.cpp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$LMK_HOME/ipgen $SRCROOT/plugins.lua > $SRCROOT/dmz_create_plugins.cpp";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589B0D05DD56006BFB54 /* main.mm in Sources */,
+				7A71FE730E22DBA000017D07 /* dmz_create_plugins.cpp in Sources */,
+				7A71FE820E22DC2300017D07 /* dmzSystemFileMacOS.mm in Sources */,
+				7A71FE830E22DC2300017D07 /* dmzLogObserverNSLog.mm in Sources */,
+				7A71FE840E22DC2300017D07 /* dmzApplicationiPhone.cpp in Sources */,
+				7A71FF0D0E22DF8100017D07 /* dmzApplicationStateBasic.cpp in Sources */,
+				7A7E1BAD0E2BF37400622FCC /* dmzMBRAModuleiPhone.mm in Sources */,
+				7A7E1BD60E2BFC5D00622FCC /* dmzAppDelegate.mm in Sources */,
+				7A7E1C370E2C05BF00622FCC /* MBRAController.mm in Sources */,
+				7A7E1C380E2C05BF00622FCC /* NAController.mm in Sources */,
+				7A8924810E2D395000C0C6A6 /* CanvasView.mm in Sources */,
+				7A39BB820E4BB48F0035E12A /* Canvas.mm in Sources */,
+				7A20BF520E5221A600D169ED /* dmziPhonePluginCanvasObject.mm in Sources */,
+				7A09A56D0E5E0C44000CB01C /* Edge.mm in Sources */,
+				7A09A56E0E5E0C44000CB01C /* Node.mm in Sources */,
+				7A09A64D0E5E28FC000CB01C /* dmziPhonePluginRenderPick2d.mm in Sources */,
+				7A369AB90E70971200530E9D /* dmziPhonePluginNodeProperties.mm in Sources */,
+				7A369AC50E7099F700530E9D /* NAEditController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7A202EB00E5CA6FA007F800D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaExtInput;
+			targetProxy = 7A202EAF0E5CA6FA007F800D /* PBXContainerItemProxy */;
+		};
+		7A202EB20E5CA6FE007F800D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaExtObject;
+			targetProxy = 7A202EB10E5CA6FE007F800D /* PBXContainerItemProxy */;
+		};
+		7A202EB40E5CA700007F800D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaExtPick;
+			targetProxy = 7A202EB30E5CA700007F800D /* PBXContainerItemProxy */;
+		};
+		7A20BFCB0E5230B900D169ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzInputFramework;
+			targetProxy = 7A20BFCA0E5230B900D169ED /* PBXContainerItemProxy */;
+		};
+		7A20C0320E52318400D169ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzInputEvents;
+			targetProxy = 7A20C0310E52318400D169ED /* PBXContainerItemProxy */;
+		};
+		7A35FBEB0E5CCD950002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzObjectPluginCleanup;
+			targetProxy = 7A35FBEA0E5CCD950002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBED0E5CCDA40002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzInputUtil;
+			targetProxy = 7A35FBEC0E5CCDA40002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBEF0E5CCDA70002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzRenderFramework;
+			targetProxy = 7A35FBEE0E5CCDA70002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBF10E5CCDAE0002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzRenderUtil;
+			targetProxy = 7A35FBF00E5CCDAE0002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBF30E5CCDB20002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzRenderIsect;
+			targetProxy = 7A35FBF20E5CCDB20002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBF50E5CCDB40002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzRenderModulePickBasic;
+			targetProxy = 7A35FBF40E5CCDB40002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBF70E5CCDB80002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchiveFramework;
+			targetProxy = 7A35FBF60E5CCDB80002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBF90E5CCDBA0002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchiveUtil;
+			targetProxy = 7A35FBF80E5CCDBA0002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBFB0E5CCDBF0002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchiveModuleBasic;
+			targetProxy = 7A35FBFA0E5CCDBF0002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBFD0E5CCDC30002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchivePluginAutoLoad;
+			targetProxy = 7A35FBFC0E5CCDC30002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FBFF0E5CCDC60002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchivePluginObject;
+			targetProxy = 7A35FBFE0E5CCDC60002DA61 /* PBXContainerItemProxy */;
+		};
+		7A35FC010E5CCDC80002DA61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzArchivePluginAutoSave;
+			targetProxy = 7A35FC000E5CCDC80002DA61 /* PBXContainerItemProxy */;
+		};
+		7A64E6820E24227D008FFC86 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzObjectUtil;
+			targetProxy = 7A64E6810E24227D008FFC86 /* PBXContainerItemProxy */;
+		};
+		7A71FEBE0E22DC5C00017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzKernel;
+			targetProxy = 7A71FEBD0E22DC5C00017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FEC00E22DC6100017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzFoundation;
+			targetProxy = 7A71FEBF0E22DC6100017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FEC20E22DC6300017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = expat;
+			targetProxy = 7A71FEC10E22DC6300017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FEC40E22DC6600017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzXML;
+			targetProxy = 7A71FEC30E22DC6600017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FEC60E22DC6A00017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzPluginUndo;
+			targetProxy = 7A71FEC50E22DC6A00017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FEC80E22DC6F00017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzFileCacheLocal;
+			targetProxy = 7A71FEC70E22DC6F00017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FECA0E22DC7200017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaFramework;
+			targetProxy = 7A71FEC90E22DC7200017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FECC0E22DC7500017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lua;
+			targetProxy = 7A71FECB0E22DC7500017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FECE0E22DC7700017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaKernel;
+			targetProxy = 7A71FECD0E22DC7700017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FED00E22DC7900017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzLuaModuleBasic;
+			targetProxy = 7A71FECF0E22DC7900017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FED20E22DC7D00017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzObjectFramework;
+			targetProxy = 7A71FED10E22DC7D00017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FED40E22DC8000017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzObjectModuleBasic;
+			targetProxy = 7A71FED30E22DC8000017D07 /* PBXContainerItemProxy */;
+		};
+		7A71FF2B0E22E01C00017D07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A71FF260E22DFDA00017D07 /* dmz_create_plugins */;
+			targetProxy = 7A71FF2A0E22E01C00017D07 /* PBXContainerItemProxy */;
+		};
+		7A8C27BE0E5247F700343AC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzInputModuleBasic;
+			targetProxy = 7A8C27BD0E5247F700343AC9 /* PBXContainerItemProxy */;
+		};
+		7A8DE9220E26BBC200623E7B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A8DE91B0E26BB9000623E7B /* copy_headers */;
+			targetProxy = 7A8DE9210E26BBC200623E7B /* PBXContainerItemProxy */;
+		};
+		7AE147260E6DFE680063A2DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzPluginMsgDump;
+			targetProxy = 7AE147250E6DFE680063A2DA /* PBXContainerItemProxy */;
+		};
+		D249EFB10E5B8CAC00A57803 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dmzInputPluginMouseEventToMessage;
+			targetProxy = D249EFB00E5B8CAC00A57803 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MBRA_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = MBRA;
+			};
+			name = debug;
+		};
+		1D6058950D05DD3E006BFB54 /* opt */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MBRA_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = MBRA;
+			};
+			name = opt;
+		};
+		7A71FF270E22DFDA00017D07 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = dmz_create_plugins;
+			};
+			name = debug;
+		};
+		7A71FF280E22DFDA00017D07 /* opt */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = dmz_create_plugins;
+			};
+			name = opt;
+		};
+		7A8DE91C0E26BB9000623E7B /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = copy_headers;
+			};
+			name = debug;
+		};
+		7A8DE91D0E26BB9000623E7B /* opt */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = copy_headers;
+			};
+			name = opt;
+		};
+		C01FCF4F08A954540054247B /* debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7A71FEE20E22DCD000017D07 /* dmz.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = iphonesimulator2.0;
+			};
+			name = debug;
+		};
+		C01FCF5008A954540054247B /* opt */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = iphonesimulator2.0;
+			};
+			name = opt;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "MBRA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* debug */,
+				1D6058950D05DD3E006BFB54 /* opt */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = opt;
+		};
+		7A71FF290E22DFF800017D07 /* Build configuration list for PBXAggregateTarget "dmz_create_plugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A71FF270E22DFDA00017D07 /* debug */,
+				7A71FF280E22DFDA00017D07 /* opt */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = opt;
+		};
+		7A8DE9250E26BBE300623E7B /* Build configuration list for PBXAggregateTarget "copy_headers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A8DE91C0E26BB9000623E7B /* debug */,
+				7A8DE91D0E26BB9000623E7B /* opt */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = opt;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MBRA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* debug */,
+				C01FCF5008A954540054247B /* opt */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = opt;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

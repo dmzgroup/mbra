@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dmz>
+   <NARenderPick2d>
+      <source name="NACanvas"/>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+   </NARenderPick2d>
+</dmz>

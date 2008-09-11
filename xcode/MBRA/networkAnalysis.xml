@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dmz>
+<!--
+   <plugins>
+      <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas" delete="false"/>
+      <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/>
+      <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
+      <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
+      <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer" delete="false"/>
+      <plugin name="dmzQtPluginButtonToChannel" delete="false"/>
+      <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/>
+      <plugin name="dmzQtPluginRenderPick2d" unique="NARenderPick2d"/>
+      <plugin name="dmzMBRAPluginNodeProperties"/>
+      <plugin name="dmzMBRAPluginCalculate" delete="false"/>
+      <plugin name="dmzMBRAPluginNodeTable" delete="false"/>
+      <plugin name="dmzQtPluginCanvasAutoLink"/>
+   </plugins>
+   <NACanvas>
+      <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
+      <channel name="NetworkAnalysisChannel"/>
+   </NACanvas>
+   <NACanvasZoom>
+      <scrollDelta value="10"/>
+      <zoom min="0.1" max="2" step="1.5" default="1.0"/>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+      <zoomIn>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Zoom In" statusTip="Zoom In">
+            <icon>
+               <image file="images:Button_ZoomIn.png"/>
+            </icon>
+         </action>
+      </zoomIn>
+      <zoomOut>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Zoom Out" statusTip="Zoom Out">
+            <icon>
+               <image file="images:Button_ZoomOut.png"/>
+            </icon>
+         </action>
+      </zoomOut>
+      <zoomAll>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Zoom Extents" statusTip="Zoom Extents">
+            <icon>
+               <image file="images:Button_ArrowsZoomExtents.png"/>
+            </icon>
+         </action>
+      </zoomAll>
+      <panLeft>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Pan Left" statusTip="Pan Left">
+            <icon>
+               <image file="images:Button_ArrowLft.png"/>
+            </icon>
+         </action>
+      </panLeft>
+      <panRight>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Pan Right" statusTip="Pan Right">
+            <icon>
+               <image file="images:Button_ArrowRt.png"/>
+            </icon>
+         </action>
+      </panRight>
+      <panUp>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Pan Up" statusTip="Pan Up">
+            <icon>
+               <image file="images:Button_ArrowUp.png"/>
+            </icon>
+         </action>
+      </panUp>
+      <panDown>
+         <button>
+            <iconSize width="18" height="18"/>
+         </button>
+         <action text="Pan Down" statusTip="Pan Down">
+            <icon>
+               <image file="images:Button_ArrowDn.png"/>
+            </icon>
+         </action>
+      </panDown>
+   </NACanvasZoom>
+   <NACanvasObject>
+      <plugins>
+         <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/>
+      </plugins>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+      <NACanvasObjectBasic>
+         <defaults zValue="1" itemIgnoresTransformations="false"/>
+         <module>
+            <canvas name="NACanvas"/>
+         </module>
+      </NACanvasObjectBasic>
+   </NACanvasObject>
+   <NACanvasLayer>
+      <dockWidget title="Networks"/>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+      <addLayer>
+         <action text="Add Network" statusTip="Add a new Newtork">
+            <icon>
+               <image file="images:Button_ZoomIn.png"/>
+            </icon>
+         </action>
+      </addLayer>\
+      <deleteLayer>
+         <action text="Remove Network" statusTip="Remove selected Newtork" enabled="False">
+            <icon>
+               <image file="images:Button_ZoomOut.png"/>
+            </icon>
+         </action>
+      </deleteLayer>\
+   </NACanvasLayer>
+   <dmzMBRAPluginNodeProperties>
+      <degrees>
+         <link name="Node_Link" super="true" sub="true"/>
+      </degrees>
+   </dmzMBRAPluginNodeProperties>
+   <dmzQtPluginButtonToChannel>
+      <dockWidget title="Actions"/>
+      <buttons>
+         <toolButton channel="NA_Default_Channel" autoRaise="True">
+            <button>
+               <iconSize width="32" height="32"/>
+            </button>
+            <action text="Edit" statusTip="Edit" checkable="True" checked="True">
+               <icon>
+                  <image file="images:Button_Edit.png"/>
+               </icon>
+            </action>
+         </toolButton>
+         <toolButton channel="NA_Create_Object_Channel" autoRaise="True">
+            <button>
+               <iconSize width="32" height="32"/>
+            </button>
+            <action text="Add Node" statusTip="Add Node" checkable="True">
+               <icon>
+                  <image file="images:Button_NodeAdd.png"/>
+               </icon>
+            </action>
+         </toolButton>
+         <toolButton channel="NA_Link_Objects_Channel" autoRaise="True">
+            <button>
+               <iconSize width="32" height="32"/>
+            </button>
+            <action text="Add Link" statusTip="Add Link" checkable="True">
+               <icon>
+                  <image file="images:Button_LinkAdd.png"/>
+               </icon>
+            </action>
+         </toolButton>
+         <toolButton channel="NA_Destroy_Object_Channel" autoRaise="True">
+            <button>
+               <iconSize width="32" height="32"/>
+            </button>
+            <action text="Delete" statusTip="Delete" checkable="True">
+               <icon>
+                  <image file="images:Button_Delete.png"/>
+               </icon>
+            </action>
+         </toolButton>
+      </buttons>
+   </dmzQtPluginButtonToChannel>
+   <NACanvasArchive>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+   </NACanvasArchive>
+   <NARenderPick2d>
+      <source name="NACanvas"/>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>
+   </NARenderPick2d>
+   <dmzMBRAPluginCalculate>
+      <caclulateButton autoRaise="True">
+         <button>
+            <iconSize width="32" height="32"/>
+         </button>
+         <action text="Calculate" checkable="true">
+            <icon>
+               <image file="images:Button_Calc.png"/>
+            </icon>
+         </action>
+      </caclulateButton>
+   </dmzMBRAPluginCalculate>
+   <dmzMBRAPluginNodeTable>
+      <degrees>
+         <link name="Node_Link" super="true" sub="true"/>
+      </degrees>
+      <dockWidget title="Network Table Data"/>
+   </dmzMBRAPluginNodeTable>
+   <dmzQtPluginCanvasAutoLink>
+      <link>
+         <type name="na_node"/>
+         <type name="na_link_attribute"/>
+      </link>
+   </dmzQtPluginCanvasAutoLink>
+-->
+</dmz>
+

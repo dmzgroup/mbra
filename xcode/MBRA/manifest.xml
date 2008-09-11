@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+   <frequency value="30.0"/>
+   <config file="runtime.xml"/>
+   <config file="common.xml"/>
+   <config file="lua.xml"/>
+   <config file="tools.xml"/>
+<!--   <config file="networkAnalysis.xml"/> -->
+   <config file="mbra.xml"/>
+<!--   <config file="test_data.xml"/> -->
+</manifest>

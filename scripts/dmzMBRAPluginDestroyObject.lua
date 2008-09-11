@@ -26,7 +26,7 @@ function new (config, name)
 
    local self = {
       log = dmz.log.new ("lua." .. name),
-      message = config:lookup_message ("message.name", "DestroyObjectMessage"),
+      message = config:to_message ("message.name", "DestroyObjectMessage"),
       obs = dmz.message_observer.new (name),
    }
 

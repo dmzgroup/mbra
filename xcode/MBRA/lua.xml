@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<dmzLuaModuleBasic>
+   <!-- <path value="./scripts/?.lua"/> -->
+   <instance name="dmzMBRAPluginNARanking"/>
+   <instance name="dmzMBRAPluginNALinkObject"/>
+   <instance name="dmzMBRAPluginLayerActive"/>
+</dmzLuaModuleBasic>
+</dmz>
