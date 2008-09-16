@@ -24,13 +24,14 @@
 </plugins>
 <dmzArchivePluginObject>
    <scope>
+      <string value="archive"/>
       <string value="objects"/>
       <string value="dmzObjectPluginArchive"/>
    </scope>
    <archive>
-      <objects>
-         <type name="na_tool_link_node"/>
-      </objects>
+      <object-type-set>
+         <object-type name="na_tool_link_node"/>
+      </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">
          <mask name="text"/>
