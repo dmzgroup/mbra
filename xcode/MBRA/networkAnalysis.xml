@@ -9,7 +9,7 @@
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer" delete="false"/>
       <plugin name="dmzQtPluginButtonToChannel" delete="false"/>
       <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/>
-      <plugin name="dmzQtPluginRenderPick2d" unique="NARenderPick2d"/>
+      <plugin name="dmzQtPluginRenderPick" unique="NARenderPick"/>
       <plugin name="dmzMBRAPluginNodeProperties"/>
       <plugin name="dmzMBRAPluginCalculate" delete="false"/>
       <plugin name="dmzMBRAPluginNodeTable" delete="false"/>
@@ -185,12 +185,12 @@
          <canvas name="NACanvas"/>
       </module>
    </NACanvasArchive>
-   <NARenderPick2d>
+   <NARenderPick>
       <source name="NACanvas"/>
       <module>
          <canvas name="NACanvas"/>
       </module>
-   </NARenderPick2d>
+   </NARenderPick>
    <dmzMBRAPluginCalculate>
       <caclulateButton autoRaise="True">
          <button>

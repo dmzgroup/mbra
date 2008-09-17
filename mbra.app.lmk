@@ -51,7 +51,7 @@ lmk.add_preqs {
    "dmzQtPluginCanvasObjectBasic",
    "dmzQtPluginCanvasZoomPan",
    "dmzQtPluginMenuToMessage",
-   "dmzQtPluginRenderPick2d",
+   "dmzQtPluginRenderPick",
    "dmzQtUtil",
    "dmzRenderModulePickBasic",
    "dmzRenderUtil",
