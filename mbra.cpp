@@ -2,7 +2,7 @@
 #include <dmzApplicationState.h>
 #include <dmzCommandLine.h>
 #include <dmzRuntimeConfig.h>
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeLogObserverBasic.h>

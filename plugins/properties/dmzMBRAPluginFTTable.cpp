@@ -2,7 +2,8 @@
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMainWindow.h>
 #include "dmzMBRAPluginFTTable.h"
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
