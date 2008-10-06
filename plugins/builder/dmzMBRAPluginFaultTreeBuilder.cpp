@@ -4,7 +4,8 @@
 #include <dmzQtModuleCanvas.h>
 #include <dmzQtModuleMainWindow.h>
 #include <dmzRenderModulePick.h>
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>

@@ -1,60 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dmz>
-<<<<<<< HEAD:xcode/MBRA/test_data.xml
-   <dmzObjectPluginArchive>
-      <object type="na_node">
-         <attributes>
-            <position x="100" y="0.0" z="50"/>
-         </attributes>
-         <attributes name="NA_Node_Consequence">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Elimination_Cost">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Description">
-            <text value="A Test Node"/>
-         </attributes>
-         <attributes name="NA_Node_Name">
-            <text value="Test-Node"/>
-         </attributes>
-      </object>
-      <object type="na_node">
-         <attributes>
-            <position x="100" y="0.0" z="100"/>
-         </attributes>
-         <attributes name="NA_Node_Consequence">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Elimination_Cost">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Description">
-            <text value="A Test Node"/>
-         </attributes>
-         <attributes name="NA_Node_Name">
-            <text value="Test-Node"/>
-         </attributes>
-      </object>
-      <object type="na_node">
-         <attributes>
-            <position x="100" y="0.0" z="150"/>
-         </attributes>
-         <attributes name="NA_Node_Consequence">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Elimination_Cost">
-            <scalar value="0.000000"/>
-         </attributes>
-         <attributes name="NA_Node_Description">
-            <text value="A Test Node"/>
-         </attributes>
-         <attributes name="NA_Node_Name">
-            <text value="Test-Node"/>
-         </attributes>
-      </object>
-   </dmzObjectPluginArchive>
-=======
 <archive>
    <object type="na_node">
       <attributes>
@@ -108,5 +53,4 @@
       </attributes>
    </object>
 </archive>
->>>>>>> a32ff6e6351974c7659c68fa14dd42bad5c25d1c:xcode/MBRA/test_data.xml
 </dmz>

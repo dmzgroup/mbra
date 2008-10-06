@@ -9,11 +9,7 @@
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer" delete="false"/>
       <plugin name="dmzQtPluginButtonToChannel" delete="false"/>
       <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/>
-<<<<<<< HEAD:xcode/MBRA/networkAnalysis.xml
-      <plugin name="dmzQtPluginRenderPick2d" unique="NARenderPick2d"/>
-=======
       <plugin name="dmzQtPluginRenderPick" unique="NARenderPick"/>
->>>>>>> a32ff6e6351974c7659c68fa14dd42bad5c25d1c:xcode/MBRA/networkAnalysis.xml
       <plugin name="dmzMBRAPluginNodeProperties"/>
       <plugin name="dmzMBRAPluginCalculate" delete="false"/>
       <plugin name="dmzMBRAPluginNodeTable" delete="false"/>
@@ -189,20 +185,12 @@
          <canvas name="NACanvas"/>
       </module>
    </NACanvasArchive>
-<<<<<<< HEAD:xcode/MBRA/networkAnalysis.xml
-   <NARenderPick2d>
-=======
    <NARenderPick>
->>>>>>> a32ff6e6351974c7659c68fa14dd42bad5c25d1c:xcode/MBRA/networkAnalysis.xml
       <source name="NACanvas"/>
       <module>
          <canvas name="NACanvas"/>
       </module>
-<<<<<<< HEAD:xcode/MBRA/networkAnalysis.xml
-   </NARenderPick2d>
-=======
    </NARenderPick>
->>>>>>> a32ff6e6351974c7659c68fa14dd42bad5c25d1c:xcode/MBRA/networkAnalysis.xml
    <dmzMBRAPluginCalculate>
       <caclulateButton autoRaise="True">
          <button>

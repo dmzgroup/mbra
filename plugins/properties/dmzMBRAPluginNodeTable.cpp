@@ -3,7 +3,8 @@
 #include <dmzQtCanvasConsts.h>
 #include <dmzQtModuleMainWindow.h>
 #include "dmzMBRAPluginNodeTable.h"
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>

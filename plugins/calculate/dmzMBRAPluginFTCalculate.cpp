@@ -2,6 +2,7 @@
 #include <dmzObjectAttributeMasks.h>
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
