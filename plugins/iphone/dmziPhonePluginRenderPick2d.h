@@ -1,7 +1,7 @@
 #ifndef DMZ_IPHONE_PLUGIN_RENDER_PICK_2D_DOT_H
 #define DMZ_IPHONE_PLUGIN_RENDER_PICK_2D_DOT_H
 
-#include <dmzRenderPick2dUtil.h>
+#include <dmzRenderPickUtil.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimePlugin.h>
 
@@ -13,7 +13,7 @@ namespace dmz {
 
    class iPhonePluginRenderPick2d :
       public Plugin,
-      private RenderPick2dUtil {
+      private RenderPickUtil {
 
       public:
          iPhonePluginRenderPick2d (const PluginInfo &Info, Config &local);

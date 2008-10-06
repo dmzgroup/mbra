@@ -5,7 +5,7 @@
       <plugin name="dmzQtPluginCanvasZoomPan" unique="FTCanvasZoom"/>
       <plugin name="dmzQtPluginCanvasObject" unique="FTCanvasObject"/>
       <plugin name="dmzQtPluginCanvasArchive" unique="FTCanvasArchive"/>
-      <plugin name="dmzQtPluginRenderPick2d" unique="FTRenderPick2d"/>
+      <plugin name="dmzQtPluginRenderPick" unique="FTRenderPick"/>
       <plugin name="dmzQtPluginMenuToMessage" unique="FTComponentRootMenu"/>
       <plugin name="dmzQtPluginMenuToMessage" unique="FTComponentMenu"/>
       <plugin name="dmzQtPluginMenuToMessage" unique="FTThreatMenu"/>
@@ -115,12 +115,12 @@
          <canvas name="FTCanvas"/>
       </module>
    </FTCanvasArchive>
-   <FTRenderPick2d>
+   <FTRenderPick>
       <source name="FTCanvas"/>
       <module>
          <canvas name="FTCanvas"/>
       </module>
-   </FTRenderPick2d>
+   </FTRenderPick>
    <FTComponentRootMenu>
       <module>
          <canvas name="FTCanvas"/>

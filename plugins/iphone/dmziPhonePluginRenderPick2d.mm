@@ -11,7 +11,7 @@ dmz::iPhonePluginRenderPick2d::iPhonePluginRenderPick2d (
       const PluginInfo &Info,
       Config &local) :
       Plugin (Info),
-      RenderPick2dUtil (Info, local),
+      RenderPickUtil (Info, local),
       _log (Info),
       _canvasModule (0),
       _canvasModuleName () {

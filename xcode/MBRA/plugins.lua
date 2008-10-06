@@ -18,7 +18,7 @@ return {
    { name = "dmzInputPluginMouseEventToMessage", unique = "DefaultEvent" },
    { name = "dmzMBRAModuleiPhone", unique="NACanvas" },
    { name = "dmziPhonePluginCanvasObject", unique = "NACanvasObject" },
-   { name = "dmziPhonePluginRenderPick2d", unique="NARenderPick2d" },
+   { name = "dmziPhonePluginRenderPick2d", unique="NARenderPick" },
    { name = "dmziPhonePluginNodeProperties", unique="dmzMBRAPluginNodeProperties" },
 --[[
    { name = "dmzPluginMsgDump" },

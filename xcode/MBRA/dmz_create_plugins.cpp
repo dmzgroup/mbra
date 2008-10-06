@@ -132,9 +132,9 @@ dmz_create_plugins (
    config.lookup_all_config_merged ("NACanvasObject", local);
    container.add_plugin (info, create_dmziPhonePluginCanvasObject (*info, local, global));
 
-   info = new dmz::PluginInfo ("NARenderPick2d", dmz::PluginDeleteModeDelete, context, 0);
+   info = new dmz::PluginInfo ("NARenderPick", dmz::PluginDeleteModeDelete, context, 0);
    local.set_config_context (0);
-   config.lookup_all_config_merged ("NARenderPick2d", local);
+   config.lookup_all_config_merged ("NARenderPick", local);
    container.add_plugin (info, create_dmziPhonePluginRenderPick2d (*info, local, global));
 
    info = new dmz::PluginInfo ("dmzMBRAPluginNodeProperties", dmz::PluginDeleteModeDelete, context, 0);
