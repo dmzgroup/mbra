@@ -7,8 +7,9 @@
 #include <dmzObjectModule.h>
 #import "dmzMBRAModuleiPhone.h"
 #include <dmzRuntimeConfig.h>
-#include <dmzRuntimeConfigRead.h>
-//#include <dmzRuntimeData.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
+#include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeData.h>
 #include <dmzRuntimeDefinitions.h>
 #import <dmzRuntimePluginFactoryLinkSymbol.h>
 #import <dmzRuntimePluginInfo.h>

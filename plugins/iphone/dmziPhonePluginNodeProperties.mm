@@ -2,7 +2,8 @@
 #include "dmziPhonePluginNodeProperties.h"
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectModule.h>
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>

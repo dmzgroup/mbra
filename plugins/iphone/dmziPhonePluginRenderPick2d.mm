@@ -1,7 +1,7 @@
 #include <dmziPhoneModuleCanvas.h>
 #include "dmziPhonePluginRenderPick2d.h"
 #include "dmzMBRAModuleiPhone.h"
-#include <dmzRuntimeConfigRead.h>
+#include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
 #include <dmzTypesVector.h>
