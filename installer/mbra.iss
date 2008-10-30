@@ -4,7 +4,7 @@
 #define Publisher "CHDS"
 #define AppURL "http://svndmz.nps.edu"
 #define AppExeName "mbra.exe"
-#define QtDir "..\..\..\depend\qt"
+#define DependDir "..\..\..\depend"
 #define VsDir "c:\Program Files\Microsoft Visual Studio 8"
 
 [Setup]
@@ -54,9 +54,9 @@ Root: HKCR; Subkey: mbra.file\shell\open\command; ValueType: string; ValueData: 
 
 [Files]
 Source: ..\..\..\bin\win32-{#BuildMode}\MBRA.app\*; DestDir: {app}; Flags: recursesubdirs
-Source: {#QtDir}\bin\QtCore4.dll; DestDir: {app}\bin
-Source: {#QtDir}\bin\QtGui4.dll; DestDir: {app}\bin
-Source: {#QtDir}\bin\QtOpenGL4.dll; DestDir: {app}\bin
-Source: {#QtDir}\bin\QtSvg4.dll; DestDir: {app}\bin
-Source: {#QtDir}\bin\QtXml4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtCore4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtGui4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtOpenGL4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtSvg4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtXml4.dll; DestDir: {app}\bin
 Source: {#VsDir}\VC\redist\x86\Microsoft.VC80.CRT\*; DestDir: {app}\bin\Microsoft.VC80.CRT
