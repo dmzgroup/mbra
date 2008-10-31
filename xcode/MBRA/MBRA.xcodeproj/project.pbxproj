@@ -544,6 +544,13 @@
 			remoteGlobalIDString = 7A8DE91B0E26BB9000623E7B;
 			remoteInfo = copy_headers;
 		};
+		7AA9C9440EB70D5E00A97E88 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7AA9C8FC0EB709F400A97E88;
+			remoteInfo = dmzObjectModuleGridBasic;
+		};
 		7AE147250E6DFE680063A2DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7A71FE8C0E22DC4700017D07 /* dmzXcode.xcodeproj */;
@@ -859,6 +866,7 @@
 				7A2030370E5CC9CB007F800D /* libdmzArchivePluginAutoLoad.a */,
 				7A2030590E5CCA4D007F800D /* libdmzArchivePluginObject.a */,
 				7A20306C0E5CCAAC007F800D /* libdmzArchivePluginAutoSave.a */,
+				7AA9C9450EB70D5E00A97E88 /* libdmzObjectModuleGridBasic.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1211,6 +1219,13 @@
 			fileType = archive.ar;
 			path = libdmzInputModuleBasic.a;
 			remoteRef = 7A8C27A80E5247BA00343AC9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7AA9C9450EB70D5E00A97E88 /* libdmzObjectModuleGridBasic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdmzObjectModuleGridBasic.a;
+			remoteRef = 7AA9C9440EB70D5E00A97E88 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D249EF090E5B8B4800A57803 /* libdmzInputPluginMouseEventToMessage.a */ = {
