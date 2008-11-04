@@ -606,7 +606,6 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
          _aboutAction, SIGNAL (triggered ()),
          this, SLOT (_slot_about ()));
    }
-
 }
 
 
