@@ -141,6 +141,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::destroy_object (
    if (ObjectHandle == _root) {
 
       _root = 0;
+      _doTreeUpdate = True;
    }
 }
 

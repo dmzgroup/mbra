@@ -113,7 +113,7 @@
       </NACanvasObjectBasic>
    </object-type>
    <object-type name="ft_node"/>
-   <object-type name="ft_component_root" parent="ft_node">
+   <object-type name="ft_component" parent="ft_node">
       <FTCanvasObject/>
       <FTCanvasObjectBasic>
          <items>
@@ -140,7 +140,7 @@
          </switch>
       </FTCanvasObjectBasic>
    </object-type>
-   <object-type name="ft_component" parent="ft_component_root"/>
+   <object-type name="ft_component_root" parent="ft_component"/>
    <object-type name="ft_threat" parent="ft_node">
       <FTCanvasObject/>
        <FTCanvasObjectBasic>
