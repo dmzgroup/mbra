@@ -13,6 +13,7 @@
       <plugin name="dmzMBRAPluginCalculate" delete="false"/>
       <plugin name="dmzMBRAPluginNodeTable" delete="false"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
+      <plugin name="dmzQtPluginHistogram"/>
    </plugins>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
@@ -227,5 +228,13 @@
          <type name="na_link_attribute"/>
       </link>
    </dmzQtPluginCanvasAutoLink>
+<dmzQtPluginHistogram>
+   <start value="1"/>
+   <ascending value="true"/>
+   <set>
+      <object-type name="na_node"/>
+   </set>
+   <attribute type="link" name="Node_Link"/>
+</dmzQtPluginHistogram>
 </dmz>
 

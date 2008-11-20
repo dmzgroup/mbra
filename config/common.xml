@@ -21,8 +21,8 @@
 <!--
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
--->
    <plugin name="dmzPluginUndoDump"/>
+-->
 </plugins>
 <dmzArchivePluginObject>
    <scope>
