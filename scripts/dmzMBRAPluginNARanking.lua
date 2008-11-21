@@ -43,8 +43,15 @@ function receive_rank (self)
       end
    end
    table.sort (list, function (obj1, obj2) return obj1.rank > obj2.rank end)
+   local count = 1
+   local lastRank = nil
    for index, object in ipairs (list) do
-      dmz.object.text (object.handle, RankHandle, tostring (index))
+      if not lastRank then lastRank = object.rank
+      elseif lastRank > object.rank then
+         count = count + 1
+         lastRank = object.rank
+      end
+      dmz.object.text (object.handle, RankHandle, tostring (count))
       if self.rankLimit and index <= self.rankLimit and object.rank > 0 then
          local state = dmz.object.state (object.handle)
          if not state then state = dmz.mask.new () end

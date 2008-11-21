@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dmz>
 <dmzFileCacheLocal>
-   <path value="data"/>
+   <path value="assets"/>
    <path value="scripts"/>
    <!-- devel paths -->
    <path value="assets/Images"/>
@@ -18,9 +18,11 @@
    <plugin name="dmzObjectPluginUndo"/>
    <plugin name="dmzObjectPluginCleanup"/>
    <plugin name="dmzRenderModulePickBasic"/>
-<!--   <plugin name="dmzObjectPluginDump"/>
-   <plugin name="dmzPluginMsgDump"/> -->
+<!--
+   <plugin name="dmzObjectPluginDump"/>
+   <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzPluginUndoDump"/>
+-->
 </plugins>
 <dmzArchivePluginObject>
    <scope>

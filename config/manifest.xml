@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest>
-   <resource file="data/mbra.rcc"/>
+   <resource file="assets/mbra.rcc"/>
    <searchPath prefix="stylesheets" path=":/StyleSheets"/>
    <searchPath prefix="images" path=":/Images"/>
    <!-- devel paths -->
