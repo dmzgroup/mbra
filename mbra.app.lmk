@@ -3,9 +3,9 @@ lmk.set_name ("mbraapp")
 lmk.add_vars {
    appName = "MBRA",
    majorVersion = "1",
-   minorVersion = "0",
+   minorVersion = "1",
    bugVersion = "0",
-   releaseType = "rc 4",
+   releaseType = "test 1",
    aboutImage = "images:IconFiles/AppIconMBRA_128x128.png",
 }
 lmk.add_files ({"version.xml",}, {src="version"})
