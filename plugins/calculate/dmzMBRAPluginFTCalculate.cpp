@@ -26,9 +26,7 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _vulnerabilitySumReducedHandle (0),
       _calculateOnMessage (),
       _calculateOffMessage (),
-      _target (0),
-      _title (tr ("Calculations")),
-      _dock (0) {
+      _target (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -222,11 +220,6 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       local,
       "dmzMBRAPluginFaultTree",
       get_plugin_runtime_context ());
-
-   _title = config_to_string (
-      "title",
-      local,
-      qPrintable (_title)).get_buffer ();
 
    qwidget_config_read ("widget", local, this);
 

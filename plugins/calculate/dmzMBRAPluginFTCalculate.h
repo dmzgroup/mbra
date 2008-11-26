@@ -69,8 +69,6 @@ namespace dmz {
          Message _calculateOnMessage;
          Message _calculateOffMessage;
          Handle _target;
-         QString _title;
-         QDockWidget *_dock;
          Ui::calculateForm _ui;
          HashTableHandleTemplate<Float64> _ecTable;
 
