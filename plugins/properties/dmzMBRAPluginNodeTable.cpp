@@ -69,13 +69,9 @@ dmz::MBRAPluginNodeTable::MBRAPluginNodeTable (const PluginInfo &Info, Config &l
       QWidget (0),
       Plugin (Info),
       ObjectObserverUtil (Info, local),
+      QtWidget (Info),
       _log (Info),
       _undo (Info),
-      _mainWindowModule (0),
-      _mainWindowModuleName (),
-      _channel (0),
-      _title (tr ("Node Data")),
-      _dock (0),
       _nodeModel (0, NodeColumnCount, this),
       _nodeProxyModel (this),
       _defaultAttrHandle (0),
@@ -157,36 +153,9 @@ dmz::MBRAPluginNodeTable::discover_plugin (
 
    if (Mode == PluginDiscoverAdd) {
 
-      if (!_mainWindowModule) {
-
-         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-
-         if (_mainWindowModule) {
-
-            _dock = new QDockWidget (_title, this);
-            _dock->setObjectName (get_plugin_name ().get_buffer ());
-            _dock->setAllowedAreas (Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-
-            _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
-   //            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-
-            _mainWindowModule->add_dock_widget (
-               _channel,
-               Qt::BottomDockWidgetArea,
-               _dock);
-
-            _dock->setWidget (this);
-         }
-      }
    }
    else if (Mode == PluginDiscoverRemove) {
 
-      if (_mainWindowModule &&
-            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
-
-         _mainWindowModule->remove_dock_widget (_channel, _dock);
-         _mainWindowModule = 0;
-      }
    }
 }
 
@@ -412,6 +381,11 @@ dmz::MBRAPluginNodeTable::update_object_text (
 }
 
 
+// QtWidget Interface
+QWidget *
+dmz::MBRAPluginNodeTable::get_qt_widget () { return this; }
+
+
 void
 dmz::MBRAPluginNodeTable::_store_object_module (ObjectModule &objMod) {
 
@@ -511,19 +485,6 @@ dmz::MBRAPluginNodeTable::_update_degrees (const Handle ObjectHandle) {
 
 void
 dmz::MBRAPluginNodeTable::_init (Config &local) {
-
-   _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-
-   _title = config_to_string (
-      "dockWidget.title",
-      local,
-      qPrintable (_title)).get_buffer ();
-
-   _channel = config_to_named_handle (
-      "channel.name",
-      local,
-      "NetworkAnalysisChannel",
-      get_plugin_runtime_context ());
 
    _defaultAttrHandle = activate_default_object_attribute (
       ObjectCreateMask | ObjectDestroyMask); //  | ObjectStateMask);

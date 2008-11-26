@@ -2,6 +2,7 @@
 #define DMZ_MBRA_PLUGIN_FT_CALCULATE_DOT_H
 
 #include <dmzObjectObserverUtil.h>
+#include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
@@ -15,13 +16,11 @@ class QDockWidget;
 
 namespace dmz {
 
-   class QtModuleMainWindow;
-
-
    class MBRAPluginFTCalculate :
       public QWidget,
       public Plugin,
-      public ObjectObserverUtil {
+      public ObjectObserverUtil,
+      public QtWidget {
 
       Q_OBJECT
 
@@ -48,6 +47,9 @@ namespace dmz {
             const Float64 Value,
             const Float64 *PreviousValue);
 
+         // QtWidget Interface
+         virtual QWidget *get_qt_widget ();
+
       protected slots:
          void _slot_calculate (bool On);
          void _slot_update_budget (int budget);
@@ -57,8 +59,6 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
-         QtModuleMainWindow *_mainWindowModule;
-         String _mainWindowModuleName;
          Handle _channel;
          Handle _budgetAttrHandle;
          Handle _ecHandle;
