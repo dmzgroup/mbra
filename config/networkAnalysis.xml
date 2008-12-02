@@ -235,6 +235,14 @@
       <object-type name="na_node"/>
    </set>
    <attribute type="link" name="Node_Link"/>
+   <bar>
+      <stroke>
+         <color blue="1"/>
+      </stroke>
+      <fill>
+         <color red="0.5" green="0.5" blue="1"/>
+      </fill>
+   </bar>
 </dmzQtPluginHistogram>
 </dmz>
 
