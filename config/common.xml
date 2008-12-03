@@ -8,7 +8,7 @@
    <!-- end devel paths -->
 </dmzFileCacheLocal>
 <plugins>
-   <plugin name="dmzQtModuleMainWindowBasic"/>
+   <plugin name="dmzQtModuleMainWindowBasic" scope="window"/>
    <plugin name="dmzArchiveModuleBasic"/>
    <plugin name="dmzArchivePluginAutoLoad"/>
    <plugin name="dmzArchivePluginAutoSave"/>
@@ -24,6 +24,30 @@
    <plugin name="dmzPluginUndoDump"/>
 -->
 </plugins>
+<window>
+   <channel name="NetworkAnalysisChannel">
+      <group area="main">
+         <widget name="NACanvas"/>
+      </group>
+      <group area="right">
+         <widget name="NACanvasLayer" title="Networks"/>
+         <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
+         <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
+      </group>
+      <group area="bottom">
+         <widget name="NABottomTab"/>
+      </group>
+   </channel>
+   <channel name="FaultTreeChannel">
+      <group area="main">
+         <widget name="FTCanvas"/>
+      </group>
+      <group area="bottom">
+         <widget name="dmzMBRAPluginFTTable" title="Fault Tree Threat Data Table"/>
+         <widget name="dmzMBRAPluginFTCalculate" title="Calculations"/>
+      </group>
+   </channel>
+</window>
 <dmzArchivePluginObject>
    <scope>
       <string value="archive"/>
