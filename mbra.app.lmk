@@ -53,6 +53,7 @@ lmk.add_preqs {
    "dmzQtPluginHistogram",
    "dmzQtPluginMenuToMessage",
    "dmzQtPluginRenderPick",
+   "dmzQtPluginTabWidget",
    "dmzQtUtil",
    "dmzRenderModulePickBasic",
    "dmzRenderUtil",

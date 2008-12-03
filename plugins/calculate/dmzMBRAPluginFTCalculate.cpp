@@ -1,6 +1,5 @@
 #include "dmzMBRAPluginFTCalculate.h"
 #include <dmzObjectAttributeMasks.h>
-#include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
 #include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeData.h>
@@ -16,9 +15,8 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       QWidget (0),
       Plugin (Info),
       ObjectObserverUtil (Info, local),
+      QtWidget (Info),
       _log (Info),
-      _mainWindowModule (0),
-      _mainWindowModuleName (),
       _channel (0),
       _budgetAttrHandle (0),
       _ecHandle (0),
@@ -28,9 +26,7 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _vulnerabilitySumReducedHandle (0),
       _calculateOnMessage (),
       _calculateOffMessage (),
-      _target (0),
-      _title (tr ("Calculations")),
-      _dock (0) {
+      _target (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -59,36 +55,9 @@ dmz::MBRAPluginFTCalculate::discover_plugin (
 
    if (Mode == PluginDiscoverAdd) {
 
-      if (!_mainWindowModule) {
-
-         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-
-         if (_mainWindowModule) {
-
-            _dock = new QDockWidget (_title, this);
-            _dock->setObjectName (get_plugin_name ().get_buffer ());
-            _dock->setAllowedAreas (Qt::AllDockWidgetAreas);
-
-            _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
-   //            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-
-            _mainWindowModule->add_dock_widget (
-               _channel,
-               Qt::BottomDockWidgetArea,
-               _dock);
-
-            _dock->setWidget (this);
-         }
-      }
    }
    else if (Mode == PluginDiscoverRemove) {
 
-      if (_mainWindowModule &&
-            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
-
-         _mainWindowModule->remove_dock_widget (_channel, _dock);
-         _mainWindowModule = 0;
-      }
    }
 }
 
@@ -157,6 +126,11 @@ dmz::MBRAPluginFTCalculate::update_object_scalar (
 }
 
 
+// QtWidget Interface
+QWidget *
+dmz::MBRAPluginFTCalculate::get_qt_widget () { return this; }
+
+
 void
 dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
 
@@ -215,8 +189,6 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
 
-   _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-
    _channel = config_to_named_handle (
       "channel.name",
       local,
@@ -248,11 +220,6 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       local,
       "dmzMBRAPluginFaultTree",
       get_plugin_runtime_context ());
-
-   _title = config_to_string (
-      "title",
-      local,
-      qPrintable (_title)).get_buffer ();
 
    qwidget_config_read ("widget", local, this);
 

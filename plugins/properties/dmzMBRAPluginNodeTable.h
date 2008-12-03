@@ -3,6 +3,7 @@
 
 #include <dmzObjectCalc.h>
 #include <dmzObjectObserverUtil.h>
+#include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
@@ -23,7 +24,8 @@ namespace dmz {
    class MBRAPluginNodeTable :
          public QWidget,
          public Plugin,
-         public ObjectObserverUtil {
+         public ObjectObserverUtil,
+         public QtWidget {
 
       Q_OBJECT
 
@@ -91,6 +93,9 @@ namespace dmz {
             const String &Value,
             const String *PreviousValue);
 
+         // QtWidget Interface
+         virtual QWidget *get_qt_widget ();
+
       protected slots:
          void _node_item_changed (QStandardItem *item);
 
@@ -106,11 +111,6 @@ namespace dmz {
          Log _log;
          Undo _undo;
          Ui::tableForm _ui;
-         QtModuleMainWindow *_mainWindowModule;
-         String _mainWindowModuleName;
-         QString _title;
-         Handle _channel;
-         QDockWidget *_dock;
          QStandardItemModel _nodeModel;
          QSortFilterProxyModel _nodeProxyModel;
          Handle _defaultAttrHandle;

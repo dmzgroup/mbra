@@ -12,15 +12,11 @@
 dmz::MBRAPluginCalculate::MBRAPluginCalculate (const PluginInfo &Info, Config &local) :
       QWidget (0),
       Plugin (Info),
+      QtWidget (Info),
       _log (Info),
-      _mainWindowModule (0),
-      _mainWindowModuleName (),
-      _channel (0),
       _calculateOnMessage (),
       _calculateOffMessage (),
-      _target (0),
-      _title (tr ("Calculations")),
-      _dock (0) {
+      _target (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -43,38 +39,16 @@ dmz::MBRAPluginCalculate::discover_plugin (
 
    if (Mode == PluginDiscoverAdd) {
 
-      if (!_mainWindowModule) {
-
-         _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-
-         if (_mainWindowModule) {
-
-            _dock = new QDockWidget (_title, this);
-            _dock->setObjectName (get_plugin_name ().get_buffer ());
-            _dock->setAllowedAreas (Qt::AllDockWidgetAreas);
-
-            _dock->setFeatures (QDockWidget::NoDockWidgetFeatures);
-   //            QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-
-            _mainWindowModule->add_dock_widget (
-               _channel,
-               Qt::RightDockWidgetArea,
-               _dock);
-
-            _dock->setWidget (this);
-         }
-      }
    }
    else if (Mode == PluginDiscoverRemove) {
 
-      if (_mainWindowModule &&
-            (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
-
-         _mainWindowModule->remove_dock_widget (_channel, _dock);
-         _mainWindowModule = 0;
-      }
    }
 }
+
+
+// QtWidget Interface
+QWidget *
+dmz::MBRAPluginCalculate::get_qt_widget () { return this; }
 
 
 void
@@ -98,14 +72,6 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
 
-   _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
-
-   _channel = config_to_named_handle (
-      "channel.name",
-      local,
-      "NetworkAnalysisChannel",
-      get_plugin_runtime_context ());
-
    _calculateOnMessage = config_create_message_type (
       "message.on",
       local,
@@ -125,11 +91,6 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
       local,
       "dmzMBRAPluginNARanking",
       get_plugin_runtime_context ());
-
-   _title = config_to_string (
-      "title",
-      local,
-      qPrintable (_title)).get_buffer ();
 
    qwidget_config_read ("widget", local, this);
 
