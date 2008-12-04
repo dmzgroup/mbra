@@ -35,7 +35,7 @@
          <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
       </group>
       <group area="bottom">
-         <widget name="NABottomTab"/>
+         <widget name="NABottomTab" title="Data"/>
       </group>
    </channel>
    <channel name="FaultTreeChannel">
