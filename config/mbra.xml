@@ -35,6 +35,14 @@
             <image file="images:Button_Reset.png"/>
          </icon>
       </clear>
+      <backgroundEdit text="BG" statusTip="Edit Background">
+         <!-- <icon>
+            <image file="images:Button_Reset.png"/>
+         </icon> -->
+      </backgroundEdit>
+      <message>
+         <backgroundEdit target="NACanvasBackground" />
+      </message>
    </dmzMBRAPluginFileToolBar>
    <dmzMBRAPluginModeToolBar>
       <toolBar movable="False" floatable="False">

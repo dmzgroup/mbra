@@ -33,14 +33,19 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       _undo (Info),
       _fileHandle (0),
       _target (0),
+      _backgroundEditTarget (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
       _toolBar (0),
+      _cleanUpObjMsg (0),
+      _openFileMsg (0),
+      _backgroundEditMsg (0),
       _loadAction (0),
       _exportAction (0),
       _undoAction (0),
       _redoAction (0),
       _clearAction (0),
+      _backgroundEditAction (0),
       _aboutAction (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
@@ -406,6 +411,12 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
 }
 
 
+void
+dmz::MBRAPluginFileToolBar::_slot_background_edit () {
+
+   _backgroundEditMsg.send (_backgroundEditTarget, 0, 0);
+}
+
 
 void
 dmz::MBRAPluginFileToolBar::_slot_about () {
@@ -516,6 +527,19 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
       get_plugin_runtime_context (),
       &_log);
 
+   _backgroundEditMsg = config_create_message_type (
+      "message.backgroundEdit.name",
+      local,
+      "CanvasBackgroundEditMessage",
+      get_plugin_runtime_context (),
+      &_log);
+      
+   _backgroundEditTarget = config_to_named_handle (
+      "message.backgroundEdit.target",
+      local,
+      "dmzQPluginCanvasBackground",
+      get_plugin_runtime_context ());
+
    _target = config_to_named_handle (
       "message.target",
       local,
@@ -594,6 +618,18 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
          this, SLOT (_slot_clear ()));
 
       _toolBar->addAction (_clearAction);
+   }
+
+   _backgroundEditAction = new QAction (this);
+   qaction_config_read ("backgroundEdit", local, _backgroundEditAction);
+
+   if (_backgroundEditAction) {
+
+      connect (
+         _backgroundEditAction, SIGNAL (triggered ()),
+         this, SLOT (_slot_background_edit ()));
+
+      _toolBar->addAction (_backgroundEditAction);
    }
 
    _aboutAction = new QAction (this);
