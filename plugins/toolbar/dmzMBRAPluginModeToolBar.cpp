@@ -22,7 +22,6 @@ dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (
       _mainWindowModule (0),
       _mainWindowModuleName (),
       _toolBar (0),
-      _archiveHandle (0),
       _networkAnalysisChannel (0),
       _faultTreeChannel (0),
       _currentChannel (0) {
@@ -112,7 +111,7 @@ dmz::MBRAPluginModeToolBar::create_archive (
       Config &local,
       Config &global) {
 
-   if (ArchiveHandle == _archiveHandle) {
+   if (is_active_archive_handle (ArchiveHandle)) {
 
       if (_currentChannel) {
 
@@ -132,7 +131,7 @@ dmz::MBRAPluginModeToolBar::process_archive (
       Config &local,
       Config &global) {
 
-   if (ArchiveHandle == _archiveHandle) {
+   if (is_active_archive_handle (ArchiveHandle)) {
 
       Definitions defs (get_plugin_runtime_context (), &_log);
 
@@ -178,8 +177,7 @@ dmz::MBRAPluginModeToolBar::_init (Config &local) {
 
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
 
-   _archiveHandle = activate_archive (
-      config_to_string ("archive.name", local, ArchiveDefaultName));
+   init_archive (local);
 
    _networkAnalysisChannel = defs.create_named_handle (
       config_to_string ("networkAnalysis.channel", local, "NetworkAnalysisChannel"));

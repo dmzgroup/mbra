@@ -63,7 +63,6 @@ namespace dmz {
          QMainWindow *_mainWindow;
          QToolBar *_toolBar;
          Ui::modeForm _ui;
-         Handle _archiveHandle;
          Handle _networkAnalysisChannel;
          Handle _faultTreeChannel;
          Handle _currentChannel;
