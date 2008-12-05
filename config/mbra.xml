@@ -35,7 +35,7 @@
             <image file="images:Button_Reset.png"/>
          </icon>
       </clear>
-      <backgroundEdit text="BG" statusTip="Edit Background">
+      <backgroundEdit text="BG" statusTip="Background Image">
          <!-- <icon>
             <image file="images:Button_Reset.png"/>
          </icon> -->
