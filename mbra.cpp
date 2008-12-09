@@ -132,6 +132,9 @@ main (int argc, char *argv[]) {
    if (!workingDir) {
 
       workingDir = qPrintable (settings.value ("/workingDir", ".").toString ());
+      QString plugins (workingDir.get_buffer ());
+      plugins += "/bin/plugins";
+      QApplication::addLibraryPath (plugins);
    }
 
    if (change_directory (workingDir)) {
