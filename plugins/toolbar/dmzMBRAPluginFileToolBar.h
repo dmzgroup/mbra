@@ -95,7 +95,6 @@ namespace dmz {
          Message _openFileMsg;
          Message _backgroundEditMsg;
          Handle _fileHandle;
-         Handle _target;
          Handle _backgroundEditTarget;
          String _suffix;
          String _defaultExportName;

@@ -32,7 +32,6 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       _archive (0),
       _undo (Info),
       _fileHandle (0),
-      _target (0),
       _backgroundEditTarget (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
@@ -406,7 +405,7 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
       if (Value & QMessageBox::Save) { _slot_file_export (); }
    }
 
-   _cleanUpObjMsg.send (_target, 0, 0);
+   _cleanUpObjMsg.send ();
    _undo.reset ();
 }
 
@@ -446,7 +445,7 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
          Config archiveConfig;
          global.lookup_all_config_merged ("dmz", archiveConfig);
 
-         _cleanUpObjMsg.send (_target, 0, 0);
+         _cleanUpObjMsg.send ();
 
          _undo.reset ();
 
@@ -538,12 +537,6 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
       "message.backgroundEdit.target",
       local,
       "dmzQPluginCanvasBackground",
-      get_plugin_runtime_context ());
-
-   _target = config_to_named_handle (
-      "message.target",
-      local,
-      "dmzObjectPluginCleanup",
       get_plugin_runtime_context ());
 
    _suffix = config_to_string (
