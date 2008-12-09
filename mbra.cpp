@@ -115,13 +115,26 @@ main (int argc, char *argv[]) {
       workingDir =
          CFStringGetCStringPtr (macPath, CFStringGetSystemEncoding ());
 
-      if (workingDir) { workingDir += "/Contents/Resources"; }
+      QString plugins (workingDir.get_buffer ());
+
+      if (workingDir) {
+
+         // Running as an app. Need to tell Qt where to find the plugins.
+         QString plugins (workingDir.get_buffer ());
+         plugins += "/Contents/Frameworks/Qt/plugins";
+         QApplication::addLibraryPath (plugins);
+
+         workingDir += "/Contents/Resources";
+      }
    }
 #endif
 
    if (!workingDir) {
 
       workingDir = qPrintable (settings.value ("/workingDir", ".").toString ());
+      QString plugins (workingDir.get_buffer ());
+      plugins += "/bin/plugins";
+      QApplication::addLibraryPath (plugins);
    }
 
    if (change_directory (workingDir)) {
