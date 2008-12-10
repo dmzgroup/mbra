@@ -35,10 +35,10 @@
             <image file="images:Button_Reset.png"/>
          </icon>
       </clear>
-      <backgroundEdit text="BG" statusTip="Background Image">
-         <!-- <icon>
-            <image file="images:Button_Reset.png"/>
-         </icon> -->
+      <backgroundEdit text="Background" statusTip="Background Image">
+         <icon>
+            <image file="images:Button_Map.png"/>
+         </icon>
       </backgroundEdit>
       <message>
          <backgroundEdit target="NACanvasBackground" />
