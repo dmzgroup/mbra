@@ -14,13 +14,13 @@
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
-      <plugin name="dmzQtPluginHistogram"/>
+      <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
    </plugins>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
       <widget name="dmzMBRAPluginNodeTable" title="Network Table Data"/>
-      <widget name="dmzQtPluginHistogram" title="Degree Histogram"/>
+      <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
@@ -240,7 +240,7 @@
          <type name="na_link_attribute"/>
       </link>
    </dmzQtPluginCanvasAutoLink>
-<dmzQtPluginHistogram>
+<dmzQtPluginGraph>
    <start value="1"/>
    <ascending value="true"/>
    <set>
@@ -255,6 +255,6 @@
          <color red="0.5" green="0.5" blue="1"/>
       </fill>
    </bar>
-</dmzQtPluginHistogram>
+</dmzQtPluginGraph>
 </dmz>
 
