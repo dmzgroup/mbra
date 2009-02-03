@@ -498,7 +498,7 @@ dmz::MBRAPluginFileToolBar::_get_last_path () {
 void
 dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
 
-   _startFile = config_to_string ("mbraStartFile.name", global, "").get_buffer ();
+   _startFile = config_to_string ("launch-file.name", global).get_buffer ();
 
    Definitions defs (get_plugin_runtime_context ());
 
