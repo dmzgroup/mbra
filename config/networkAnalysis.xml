@@ -2,12 +2,11 @@
 <dmz>
    <plugins>
       <plugin name="dmzQtModuleMapBasic" unique="NACanvas"/>
-      <!-- <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/> -->
-      <!-- <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/>
-      <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/>
-      <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
-      <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
-      <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/> -->
+      <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/>
+      <!-- <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/> -->
+      <!-- <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/> -->
+      <!-- <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/> -->
+      <!-- <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/> --> -->
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <plugin name="dmzQtPluginRenderPick" unique="NARenderPick"/>
@@ -27,14 +26,13 @@
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
    </NACanvas>
-   <NACanvasBackground>
-      <module>
-         <canvas name="NACanvas" />
-      </module>
-   </NACanvasBackground>
    <NACanvasZoom>
       <scrollDelta value="10"/>
-      <zoom min="0.1" max="2" step="1.5" default="1.0"/>
+      <zoom min="0" max="17" default="6"/>
+      <tileMapAdapter url="tile.cloudmade.com" path="/b999cacc40c7586fbdd6407362411e4d/2/256/%1/%2/%3.png" />
+      <!-- <tileMapAdapter url="tile.openstreetmap.org" serverPath="/%1/%2/%3.png" /> -->
+      <!-- <tileMapAdapter url="mt2.google.com" path="/mt?n=404&x=%2&y=%3&zoom=%1" /> -->
+      <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
       <module>
          <canvas name="NACanvas"/>
       </module>
