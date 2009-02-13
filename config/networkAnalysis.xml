@@ -23,16 +23,20 @@
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
-      <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
+      <map>
+         <tileMapAdapter url="" path="" tileSize="256" zoomMax=""/>
+         
+      </map>
       <channel name="NetworkAnalysisChannel"/>
+      <tileMapAdapter url="tile.cloudmade.com" path="/b999cacc40c7586fbdd6407362411e4d/2/256/%1/%2/%3.png" />
+      <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
+      <!-- <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
+      <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
+      <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
    </NACanvas>
    <NACanvasZoom>
       <scrollDelta value="10"/>
       <zoom min="0" max="17" default="6"/>
-      <tileMapAdapter url="tile.cloudmade.com" path="/b999cacc40c7586fbdd6407362411e4d/2/256/%1/%2/%3.png" />
-      <!-- <tileMapAdapter url="tile.openstreetmap.org" serverPath="/%1/%2/%3.png" /> -->
-      <!-- <tileMapAdapter url="mt2.google.com" path="/mt?n=404&x=%2&y=%3&zoom=%1" /> -->
-      <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
       <module>
          <canvas name="NACanvas"/>
       </module>
