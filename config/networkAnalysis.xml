@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
 <dmz>
    <plugins>
       <plugin name="dmzQtModuleMapBasic" unique="NACanvas"/>
@@ -23,14 +23,12 @@
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
-      <map>
-         <tileMapAdapter url="" path="" tileSize="256" zoomMax=""/>
-         
-      </map>
       <channel name="NetworkAnalysisChannel"/>
-      <tileMapAdapter url="tile.cloudmade.com" path="/b999cacc40c7586fbdd6407362411e4d/2/256/%1/%2/%3.png" />
+      <zoom min="0" max="17" />
+      <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png" />
       <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
-      <!-- <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
+      <!-- <zoom min="17" max="0" />
+      <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
       <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
       <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
    </NACanvas>
