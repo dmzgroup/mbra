@@ -1,12 +1,12 @@
 <dmz>
-<plugins>
+<plugin-list>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="CreateObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DestroyObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="LinkObjectsEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="UnlinkObjectsEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DefaultEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="FTDefaultEvent"/>
-</plugins>
+</plugin-list>
 <dmzLuaModuleBasic>
    <instance name="dmzMBRAPluginCreateObject"/>
    <instance name="dmzMBRAPluginDestroyObject"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
-   <plugins>
+   <plugin-list>
       <plugin name="dmzQtModuleCanvasBasic" unique="FTCanvas"/>
       <plugin name="dmzQtPluginCanvasZoomPan" unique="FTCanvasZoom"/>
       <plugin name="dmzQtPluginCanvasObject" unique="FTCanvasObject"/>
@@ -14,15 +14,15 @@
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
       <plugin name="dmzMBRAPluginFTTable"/>
       <plugin name="dmzMBRAPluginFTCalculate"/>
-   </plugins>
+   </plugin-list>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="FaultTreeChannel"/>
    </FTCanvas>
    <FTCanvasObject>
-      <plugins>
+      <plugin-list>
          <plugin name="dmzQtPluginCanvasObjectBasic" unique="FTCanvasObjectBasic"/>
-      </plugins>
+      </plugin-list>
       <module>
          <canvas name="FTCanvas"/>
       </module>
