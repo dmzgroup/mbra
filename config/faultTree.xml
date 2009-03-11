@@ -116,6 +116,7 @@
       </module>
    </FTCanvasArchive>
    <FTRenderPick>
+      <order x="0" y="2" z="1"/>
       <source name="FTCanvas"/>
       <module>
          <canvas name="FTCanvas"/>
