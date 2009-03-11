@@ -645,49 +645,49 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
          "FT_Vulnerability_Value",
          context);
 
-   _componentAddMessage = config_create_message_type (
+   _componentAddMessage = config_create_message (
       "message.component.add",
       local,
       "FTComponentAddMessage",
       context);
 
-   _componentEditMessage = config_create_message_type (
+   _componentEditMessage = config_create_message (
       "message.component.edit",
       local,
       "FTComponentEditMessage",
       context);
 
-   _componentDeleteMessage = config_create_message_type (
+   _componentDeleteMessage = config_create_message (
       "message.component.delete",
       local,
       "FTComponentDeleteMessage",
       context);
 
-   _threatAddMessage = config_create_message_type (
+   _threatAddMessage = config_create_message (
       "message.threat.add",
       local,
       "FTThreatAddMessage",
       context);
 
-   _threatEditMessage = config_create_message_type (
+   _threatEditMessage = config_create_message (
       "message.threat.edit",
       local,
       "FTThreatEditMessage",
       context);
 
-   _threatDeleteMessage = config_create_message_type (
+   _threatDeleteMessage = config_create_message (
       "message.threat.delete",
       local,
       "FTThreatDeleteMessage",
       context);
 
-   _logicAndMessage = config_create_message_type (
+   _logicAndMessage = config_create_message (
       "message.logic.and",
       local,
       "FTLogicAndMessage",
       context);
 
-   _logicOrMessage = config_create_message_type (
+   _logicOrMessage = config_create_message (
       "message.logic.or",
       local,
       "FTLogicOrMessage",
