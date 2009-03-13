@@ -49,9 +49,11 @@ lmk.add_preqs {
    "dmzQtPluginCanvasZoomPan",
    "dmzQtPluginGraph",
    "dmzQtPluginMenuToMessage",
-   "dmzQtPluginRenderPick",
+   "dmzQtPluginRenderPickCanvas",
    "dmzQtPluginTabWidget",
    "dmzRenderModulePickBasic",
+   "dmzQtModuleMapBasic",
+   "dmzQtPluginMapZoomPan",
 -- dev plugins
    "dmzLuaPluginReset",
    "dmzPluginMsgDump",

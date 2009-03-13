@@ -3,13 +3,12 @@
    <plugins>
       <plugin name="dmzQtModuleMapBasic" unique="NACanvas"/>
       <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/>
-      <!-- <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/> -->
       <!-- <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/> -->
       <!-- <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/> -->
       <!-- <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/> --> -->
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
-      <plugin name="dmzQtPluginRenderPick" unique="NARenderPick"/>
+      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPick"/>
       <plugin name="dmzMBRAPluginNodeProperties"/>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
