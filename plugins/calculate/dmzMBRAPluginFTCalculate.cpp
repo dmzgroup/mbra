@@ -201,14 +201,14 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       "FTBudget",
       get_plugin_runtime_context ());
 
-   _calculateOnMessage = config_create_message_type (
+   _calculateOnMessage = config_create_message (
       "message.on",
       local,
       "FTStartWorkMessage",
       get_plugin_runtime_context (),
       &_log);
 
-   _calculateOffMessage = config_create_message_type (
+   _calculateOffMessage = config_create_message (
       "message.off",
       local,
       "FTStopWorkMessage",
