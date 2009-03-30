@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dmz>
-<plugins>
+<plugin-list>
    <plugin name="dmzLuaModuleBasic"/>
    <plugin name="dmzQtPluginLuaProfiler"/>
-</plugins>
+</plugin-list>
 <dmzLuaModuleBasic>
    <path value="./scripts/?.lua"/>
    <path value="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>

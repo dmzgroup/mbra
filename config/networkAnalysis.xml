@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
-   <plugins>
+   <plugin-list>
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
       <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/>
       <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/>
@@ -16,7 +16,7 @@
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
-   </plugins>
+   </plugin-list>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
       <widget name="dmzMBRAPluginNodeTable" title="Network Table Data"/>
@@ -112,9 +112,9 @@
       </panDown>
    </NACanvasZoom>
    <NACanvasObject>
-      <plugins>
+      <plugin-list>
          <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/>
-      </plugins>
+      </plugin-list>
       <module>
          <canvas name="NACanvas"/>
       </module>
@@ -208,6 +208,7 @@
       </module>
    </NACanvasArchive>
    <NARenderPick>
+      <order x="0" y="2" z="1"/>
       <source name="NACanvas"/>
       <module>
          <canvas name="NACanvas"/>

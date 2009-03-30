@@ -420,7 +420,7 @@ dmz::MBRAPluginNodeProperties::_init (Config &local) {
          context);
 
    _editObjectMessage =
-      config_create_message_type (
+      config_create_message (
          "message.edit",
          local,
          "EditObjectAttributesMessage",
