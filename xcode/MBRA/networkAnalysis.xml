@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
 <!--
-   <plugins>
+   <plugin-list>
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas" delete="false"/>
       <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/>
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
@@ -14,7 +14,7 @@
       <plugin name="dmzMBRAPluginCalculate" delete="false"/>
       <plugin name="dmzMBRAPluginNodeTable" delete="false"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
-   </plugins>
+   </plugin-list>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
@@ -97,9 +97,9 @@
       </panDown>
    </NACanvasZoom>
    <NACanvasObject>
-      <plugins>
+      <plugin-list>
          <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/>
-      </plugins>
+      </plugin-list>
       <module>
          <canvas name="NACanvas"/>
       </module>

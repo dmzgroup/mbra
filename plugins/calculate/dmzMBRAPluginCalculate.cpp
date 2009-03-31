@@ -72,14 +72,14 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
 
-   _calculateOnMessage = config_create_message_type (
+   _calculateOnMessage = config_create_message (
       "message.on",
       local,
       "NARankObjectsMessage",
       get_plugin_runtime_context (),
       &_log);
 
-   _calculateOffMessage = config_create_message_type (
+   _calculateOffMessage = config_create_message (
       "message.off",
       local,
       "NAHideObjectsMessage",

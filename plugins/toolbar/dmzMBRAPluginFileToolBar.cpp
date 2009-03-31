@@ -510,7 +510,7 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
 
    _fileHandle = defs.create_named_handle ("file");
 
-   _openFileMsg = config_create_message_type (
+   _openFileMsg = config_create_message (
       "message.name",
       local,
       "DMZ_Open_File_Message",
@@ -519,14 +519,14 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
 
    subscribe_to_message (_openFileMsg);
 
-   _cleanUpObjMsg = config_create_message_type (
+   _cleanUpObjMsg = config_create_message (
       "message.name",
       local,
       "CleanupObjectsMessage",
       get_plugin_runtime_context (),
       &_log);
 
-   _backgroundEditMsg = config_create_message_type (
+   _backgroundEditMsg = config_create_message (
       "message.backgroundEdit.name",
       local,
       "CanvasBackgroundEditMessage",
