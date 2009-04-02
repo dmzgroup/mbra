@@ -3,7 +3,7 @@
    <plugin-list>
       <plugin name="dmzQtModuleMapBasic" unique="NACanvas"/>
       <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/>
-      <!-- <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/> -->
+      <plugin name="dmzQtPluginMapObject" unique="NACanvasObject"/>
       <!-- <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/> -->
       <!-- <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/> --> -->
       <plugin name="dmzQtPluginButtonToChannel"/>
@@ -113,7 +113,7 @@
    </NACanvasZoom>
    <NACanvasObject>
       <plugin-list>
-         <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/>
+         <!-- <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/> -->
       </plugin-list>
       <module>
          <canvas name="NACanvas"/>
