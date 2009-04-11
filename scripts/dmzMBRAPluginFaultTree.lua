@@ -250,7 +250,7 @@ end
 
 local function calculate_sub_risk (objectList, control)
    local tvProduct = 1
-   local cSum = 0;
+   local cSum = 0
    local vProduct = 1
    for index, object in ipairs (objectList) do
       if object.ec > 0 then
