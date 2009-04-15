@@ -4,7 +4,7 @@ local ThreatHandle = dmz.handle.new ("FT_Threat_Value")
 local VulnerabilityHandle = dmz.handle.new ("FT_Vulnerability_Value")
 local VulnerabilityReducedHandle = dmz.handle.new ("FT_Vulnerability_Reduced_Value")
 local VulnerabilitySumHandle = dmz.handle.new ("FT_Vulnerability_Sum_Value")
-local VulnerabilitySumReducdedHandle = dmz.handle.new (
+local VulnerabilitySumReducedHandle = dmz.handle.new (
    "FT_Vulnerability_Sum_Reduced_Value")
 local RiskSumHandle = dmz.handle.new ("FT_Risk_Sum_Value")
 local RiskSumReducedHandle = dmz.handle.new ("FT_Risk_Sum_Reduced_Value")
@@ -312,7 +312,7 @@ local function create_risk_closure (
                if self.root then
                   dmz.object.scalar (
                      self.root,
-                     VulnerabilitySumReducdedHandle,
+                     VulnerabilitySumReducedHandle,
                      self.vulnerability)
                   dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
                end
@@ -329,6 +329,10 @@ local function create_risk_closure (
                dmz.object.scalar (
                   self.root,
                   VulnerabilitySumHandle,
+                  self.vulnerability)
+               dmz.object.scalar (
+                  self.root,
+                  VulnerabilitySumReducedHandle,
                   self.vulnerability)
                dmz.object.scalar (self.root, RiskSumHandle, self.risk)
                dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
