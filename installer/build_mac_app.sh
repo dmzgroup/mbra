@@ -1,7 +1,7 @@
 #!/bin/sh
 DEPTH=../../..
 lmk -m opt -b
-cp -r $DEPTH/bin/macos-opt/MBRA.app $DEPTH
+cp -RL $DEPTH/bin/macos-opt/MBRA.app $DEPTH
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
