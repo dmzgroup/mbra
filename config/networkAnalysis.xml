@@ -4,7 +4,7 @@
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
       <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
       <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/>
-      <plugin name="dmzQtPluginCanvasZoomPan" unique="NACanvasZoom"/>
+      <plugin name="dmzQtPluginCanvasZoomPanMap" unique="NACanvasZoom"/>
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
@@ -47,7 +47,7 @@
       <scrollDelta value="10"/>
       <slidder min="0" max="17"/>
       <!-- <zoom min="0.5" max="2" step="1.5" default="1.0"/> -->
-      <zoom min="0" max="17" step="1" default="1.0"/>
+      <zoom min="0" max="17" step="1" default="0"/>
       <module>
          <canvas name="NACanvas"/>
       </module>
