@@ -27,6 +27,10 @@
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
       <scene>
+         <!-- <min x="-6553600000" y="-6553600000"/>
+         <max x ="13107200000" y="13107200000"/> -->
+         <min x="-5000000" y="-5000000"/>
+         <max x ="5000000" y="5000000"/>
          <background transparent="true" />
       </scene>
    </NACanvas>
@@ -36,7 +40,8 @@
       <!-- <zoom min="17" max="0" />
       <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
       <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
-      <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
+      
+      <!-- <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/> -->
    </NACanvasMap>
    <NACanvasBackground>
       <module>
@@ -45,9 +50,9 @@
    </NACanvasBackground>
    <NACanvasZoom>
       <scrollDelta value="10"/>
-      <slidder min="0" max="17"/>
+      <slidder min="2" max="17"/>
       <!-- <zoom min="0.5" max="2" step="1.5" default="1.0"/> -->
-      <zoom min="0" max="17" step="1" default="0"/>
+      <zoom min="2" max="17" step="1" default="2" base="15" />
       <module>
          <canvas name="NACanvas"/>
       </module>
@@ -271,5 +276,18 @@
       </fill>
    </bar>
 </dmzQtPluginGraph>
+<archive>
+   <object type="canvas">
+      <attributes>
+         <position x="0.0" y="0.0" z="0.0"/>
+      </attributes>
+      <attributes name="Canvas_Zoom">
+         <scalar value="0.000000"/>
+      </attributes>
+      <attributes name="Canvas_Base">
+         <scalar value="0.000000"/>
+      </attributes>
+   </object>
+</archive>
 </dmz>
 

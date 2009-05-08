@@ -20,6 +20,7 @@
    <state name="FT_Threat_Level_8"/>
    <state name="FT_Threat_Level_9"/>
    <state name="FT_Threat_Level_10"/>
+   <object-type name="canvas"/>
    <object-type name="canvas_layer"/>
    <object-type name="layer" parent="canvas_layer">
       <dmzQtPluginCanvasLayer/>
