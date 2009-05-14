@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
    <plugin-list>
-      <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
-      <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
-      <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/>
-      <plugin name="dmzQtPluginCanvasZoomPanMap" unique="NACanvasZoom"/>
+      <plugin name="dmzQtModuleMapBasic" unique="NAMap"/>
+      <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/>
+      <!-- <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/> -->
+      <!-- <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/> -->
+      <!-- <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/> -->
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
       <plugin name="dmzQtPluginButtonToChannel"/>
-      <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/>
-      <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/>
+      <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
+      <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
       <plugin name="dmzMBRAPluginNodeProperties"/>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
@@ -25,17 +26,30 @@
    </NABottomTab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
-      <channel name="NetworkAnalysisChannel"/>
+      <!-- <channel name="NetworkAnalysisChannel"/> -->
       <scene>
-         <!-- <min x="-6553600000" y="-6553600000"/>
-         <max x ="13107200000" y="13107200000"/> -->
          <min x="-5000000" y="-5000000"/>
          <max x ="5000000" y="5000000"/>
          <background transparent="true" />
       </scene>
    </NACanvas>
+   <NAMap>
+      <channel name="NetworkAnalysisChannel"/>      
+      <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/>
+      <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
+      <!-- <zoom min="17" max="0" />
+      <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
+      <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
+      
+      <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
+   </NAMap>
    <NACanvasMap>
-      <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png" />
+      <module>
+         <canvas name="NACanvas" />
+      </module>
+      <widget name="NAMap"/>
+      <widget name="NACanvas"/>
+      <!-- <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png" /> -->
       <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
       <!-- <zoom min="17" max="0" />
       <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
@@ -43,18 +57,18 @@
       
       <!-- <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/> -->
    </NACanvasMap>
-   <NACanvasBackground>
+   <!-- <NACanvasBackground>
       <module>
          <canvas name="NACanvas" />
       </module>
-   </NACanvasBackground>
+   </NACanvasBackground> -->
    <NACanvasZoom>
       <scrollDelta value="10"/>
-      <slidder min="2" max="17"/>
+      <slidder min="0" max="17"/>
       <!-- <zoom min="0.5" max="2" step="1.5" default="1.0"/> -->
-      <zoom min="2" max="17" step="1" default="2" base="15" />
+      <zoom min="0" max="17" step="1" default="15"/>
       <module>
-         <canvas name="NACanvas"/>
+         <canvas name="NAMap"/>
       </module>
       <!-- <widget>
          <stylesheet file="stylesheets:FileButton.qss"/>
