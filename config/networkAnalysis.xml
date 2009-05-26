@@ -2,9 +2,9 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzQtModuleMapBasic" unique="NAMap"/>
-      <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/>
-      <!-- <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/> -->
-      <!-- <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/> -->
+      <!-- <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/> -->
+      <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
+      <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
       <!-- <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/> -->
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
