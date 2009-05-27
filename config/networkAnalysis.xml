@@ -2,7 +2,8 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzQtModuleMapBasic" unique="NAMap"/>
-      <!-- <plugin name="dmzQtPluginMapZoomPan" unique="NACanvasZoom"/> -->
+      <plugin name="dmzQtPluginMapZoomPan" unique="NAMapZoom"/>
+      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPick"/>
       <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
       <!-- <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/> -->
@@ -25,7 +26,7 @@
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
-      <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
+      <canvas opengl="false" antialiasing="true" textantialiasing="true" ignoreevents="true"/>
       <!-- <channel name="NetworkAnalysisChannel"/> -->
       <scene>
          <min x="-5000000" y="-5000000"/>
@@ -45,28 +46,17 @@
    </NAMap>
    <NACanvasMap>
       <module>
-         <canvas name="NACanvas" />
+         <canvas name="NACanvas"/>
+         <map name="NAMap"/>
       </module>
-      <widget name="NAMap"/>
-      <widget name="NACanvas"/>
-      <!-- <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png" /> -->
-      <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
-      <!-- <zoom min="17" max="0" />
-      <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
-      <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
-      
-      <!-- <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/> -->
+      <canvas name="NACanvas"/>
+      <map name="NAMap"/>
+      <zoom name="NAMapZoom"/>
    </NACanvasMap>
-   <!-- <NACanvasBackground>
-      <module>
-         <canvas name="NACanvas" />
-      </module>
-   </NACanvasBackground> -->
-   <NACanvasZoom>
+   <NAMapZoom>
       <scrollDelta value="10"/>
       <slidder min="0" max="17"/>
-      <!-- <zoom min="0.5" max="2" step="1.5" default="1.0"/> -->
-      <zoom min="0" max="17" step="1" default="15"/>
+      <zoom min="0" max="17" step="1" default="6"/>
       <module>
          <canvas name="NAMap"/>
       </module>
@@ -143,7 +133,7 @@
             </icon>
          </action>
       </panDown>
-   </NACanvasZoom>
+   </NAMapZoom>
    <NACanvasObject>
       <plugin-list>
          <plugin name="dmzQtPluginCanvasObjectBasic" unique="NACanvasObjectBasic"/>
@@ -242,9 +232,9 @@
    </NACanvasArchive>
    <NARenderPick>
       <order x="0" y="2" z="1"/>
-      <source name="NACanvas"/>
+      <source name="NaMap"/>
       <module>
-         <canvas name="NACanvas"/>
+         <canvas name="NAMap"/>
       </module>
    </NARenderPick>
    <dmzMBRAPluginCalculate>
