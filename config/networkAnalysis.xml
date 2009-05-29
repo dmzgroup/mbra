@@ -232,7 +232,7 @@
    </NACanvasArchive>
    <NARenderPick>
       <order x="0" y="2" z="1"/>
-      <source name="NaMap"/>
+      <source name="NAMap"/>
       <module>
          <canvas name="NAMap"/>
       </module>
