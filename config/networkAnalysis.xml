@@ -3,13 +3,14 @@
    <plugin-list>
       <plugin name="dmzQtModuleMapBasic" unique="NAMap"/>
       <plugin name="dmzQtPluginMapZoomPan" unique="NAMapZoom"/>
-      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPick"/>
+      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPickMap"/>
       <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
       <!-- <plugin name="dmzQtPluginCanvasBackground" unique="NACanvasBackground"/> -->
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
+      <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPickCanvas"/>
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
@@ -19,6 +20,7 @@
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
+      <plugin name="dmzQtPluginMapObjectPosition"/>
    </plugin-list>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
@@ -141,6 +143,9 @@
       <module>
          <canvas name="NACanvas"/>
       </module>
+      <attribute>
+         <position name="Alt_Position_Attribute"/>
+      </attribute>
       <NACanvasObjectBasic>
          <defaults zValue="1" itemIgnoresTransformations="false"/>
          <module>
@@ -230,13 +235,20 @@
          <canvas name="NACanvas"/>
       </module>
    </NACanvasArchive>
-   <NARenderPick>
+   <NARenderPickCanvas>
+      <order x="0" y="2" z="1"/>
+      <source name="NACanvas"/>
+      <module>
+         <canvas name="NACanvas"/>
+      </module>s
+   </NARenderPickCanvas>
+   <NARenderPickMap>
       <order x="0" y="2" z="1"/>
       <source name="NAMap"/>
       <module>
          <canvas name="NAMap"/>
       </module>
-   </NARenderPick>
+   </NARenderPickMap>
    <dmzMBRAPluginCalculate>
       <!-- <widget>
          <stylesheet file="stylesheets:ActionButton.qss"/>
@@ -280,6 +292,18 @@
       </fill>
    </bar>
 </dmzQtPluginGraph>
+<dmzQtPluginMapObjectPosition>
+   <set>
+      <object-type name="na_node"/>
+   </set>
+   <attribute>
+      <position name="Alt_Position_Attribute"/>
+   </attribute>
+   <source>
+      <canvas name="NACanvas"/>
+      <map name="NAMap"/>
+   </source>
+</dmzQtPluginMapObjectPosition>
 <archive>
    <object type="canvas">
       <attributes>
