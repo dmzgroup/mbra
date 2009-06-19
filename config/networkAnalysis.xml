@@ -28,7 +28,7 @@
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
-      <canvas opengl="false" antialiasing="true" textantialiasing="true" ignoreevents="true"/>
+      <canvas opengl="false" antialiasing="true" textantialiasing="true" ignoreevents="false"/>
       <!-- <channel name="NetworkAnalysisChannel"/> -->
       <scene>
          <min x="-5000000" y="-5000000"/>
@@ -240,7 +240,9 @@
       <source name="NACanvas"/>
       <module>
          <canvas name="NACanvas"/>
+         <pickConvert name="NAMap"/>
       </module>s
+      <discover pickConvert="True"/>
    </NARenderPickCanvas>
    <NARenderPickMap>
       <order x="0" y="2" z="1"/>
@@ -293,6 +295,7 @@
    </bar>
 </dmzQtPluginGraph>
 <dmzQtPluginMapObjectPosition>
+   <order x="0" y="2" z="1"/>
    <set>
       <object-type name="na_node"/>
    </set>

@@ -17,7 +17,7 @@
 <CreateObjectEvent>
    <input>
       <channel name="NA_Create_Object_Channel"/>
-      <source name="NAMap"/>
+      <source name="NACanvas"/>
    </input>
    <target name="dmzMBRAPluginCreateObject"/>
    <converter type="2D" start="first">
@@ -32,7 +32,7 @@
 <DestroyObjectEvent>
    <input>
       <channel name="NA_Destroy_Object_Channel"/>
-      <source name="NAMap"/>
+      <source name="NACanvas"/>
    </input>
    <target name="dmzMBRAPluginDestroyObject"/>
    <converter type="2D">
@@ -50,7 +50,7 @@
 <LinkObjectsEvent>
    <input>
       <channel name="NA_Link_Objects_Channel"/>
-      <source name="NAMap"/>
+      <source name="NACanvas"/>
    </input>
    <target name="dmzMBRAPluginLinkObjects"/>
    <deactivate message="FailedLinkObjectsMessage"/>
@@ -124,7 +124,7 @@
 <UnlinkObjectsEvent>
    <input>
       <channel name="NA_Unlink_Objects_Channel"/>
-      <source name="NAMap"/>
+      <source name="NACanvas"/>
    </input>
    <target name="dmzMBRAPluginUnlinkObjects"/>
    <converter type="2D">
@@ -142,7 +142,7 @@
 <DefaultEvent>
    <input>
       <channel name="NA_Default_Channel"/>
-      <source name="NAMap"/>
+      <source name="NACanvas"/>
    </input>
    <target name="dmzMBRAPluginMoveObject"/>
    <converter type="2D">
