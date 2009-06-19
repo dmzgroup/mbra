@@ -153,6 +153,11 @@
          </module>
       </NACanvasObjectBasic>
    </NACanvasObject>
+   <NACanvasLink>
+      <attribute>
+         <position name="Alt_Position_Attribute"/>
+      </attribute>
+   </NACanvasLink>
    <NACanvasLayer>
       <dockWidget title="Networks"/>
       <module>
@@ -298,6 +303,7 @@
    <order x="0" y="2" z="1"/>
    <set>
       <object-type name="na_node"/>
+      <object-type name="na_tool_link_node"/>
    </set>
    <attribute>
       <position name="Alt_Position_Attribute"/>
