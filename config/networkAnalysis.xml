@@ -38,12 +38,12 @@
    </NACanvas>
    <NAMap>
       <!-- <channel name="NetworkAnalysisChannel"/>       -->
-      <!-- <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/> -->
+      <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/>
       <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
       <!-- <zoom min="17" max="0" />
       <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
       <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
-      <tileMapAdapter url="172.20.90.188" path="/tilecache/tilecache.py/1.0.0/osm/%1/%2/%3.png" />
+      <!-- <tileMapAdapter url="172.20.90.188" path="/tilecache/tilecache.py/1.0.0/osm/%1/%2/%3.png" /> -->
       
       <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
    </NAMap>
