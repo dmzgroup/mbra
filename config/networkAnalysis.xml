@@ -11,6 +11,7 @@
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
       <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPickCanvas"/>
+      <plugin name="dmzQtPluginMapArchive" unique="NAMapArchive"/>
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
@@ -44,7 +45,7 @@
       <tileMapAdapter url="mt2.google.com" path="/mt?n=404&amp;x=%2&amp;y=%3&amp;zoom=%1" /> -->
       <!-- <tileMapAdapter url="172.20.90.188" path="/cgi-bin/tilecache.cgi/1.0.0/osm/%1/%2/%3.png" /> -->
       <!-- <tileMapAdapter url="172.20.90.188" path="/tilecache/tilecache.py/1.0.0/osm/%1/%2/%3.png" /> -->
-      
+
       <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
    </NAMap>
    <NACanvasMap>
@@ -241,6 +242,11 @@
          <canvas name="NACanvas"/>
       </module>
    </NACanvasArchive>
+   <NAMapArchive>
+      <module>
+         <map name="NAMap"/>
+      </module>
+   </NAMapArchive>
    <NARenderPickCanvas>
       <order x="0" y="2" z="1"/>
       <source name="NACanvas"/>
