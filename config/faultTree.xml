@@ -127,80 +127,63 @@
          <canvas name="FTCanvas"/>
       </module>
       <source name="FTCanvas"/>
+      <default-target name="dmzMBRAPluginFaultTreeBuilder"/>
       <menu>
-         <item text="Add Component" message="FTComponentAddMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Add Threat" message="FTThreatAddMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Edit" message="FTComponentEditMessage" separator="true">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Reset Fault Tree" message="FTComponentDeleteMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
+         <item text="Add Component" message="FTComponentAddMessage"/>
+         <item text="Add Threat" message="FTThreatAddMessage"/>
+         <item text="Edit" message="FTComponentEditMessage" separator="true"/>
+         <item text="Reset Fault Tree" message="FTComponentDeleteMessage"/>
+         <item text="Cut" message="FTCutMessage" separator="true"/>
+         <item text="Copy" message="FTCopyMessage"/>
+         <item text="Paste" message="FTPasteMessage"/>
       </menu>  
-      <object>
-         <type name="ft_component_root"/>
-      </object>
+      <object-type name="ft_component_root"/>
    </FTComponentRootMenu>
    <FTComponentMenu>
       <module>
          <canvas name="FTCanvas"/>
       </module>
       <source name="FTCanvas"/>
+      <default-target name="dmzMBRAPluginFaultTreeBuilder"/>
+      <object-type name="ft_component"/>
       <menu>
-         <item text="Add Component" message="FTComponentAddMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Add Threat" message="FTThreatAddMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Edit" message="FTComponentEditMessage" separator="true">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Delete" message="FTComponentDeleteMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
+         <item text="Add Component" message="FTComponentAddMessage"/>
+         <item text="Add Threat" message="FTThreatAddMessage"/>
+         <item text="Edit" message="FTComponentEditMessage" separator="true"/>
+         <item text="Delete" message="FTComponentDeleteMessage"/>
+         <item text="Cut" message="FTCutMessage" separator="true"/>
+         <item text="Copy" message="FTCopyMessage"/>
+         <item text="Paste" message="FTPasteMessage"/>
       </menu>  
-      <object>
-         <type name="ft_component"/>
-      </object>
    </FTComponentMenu>
    <FTThreatMenu>
       <module>
          <canvas name="FTCanvas"/>
       </module>
       <source name="FTCanvas"/>
+      <default-target name="dmzMBRAPluginFaultTreeBuilder"/>
+      <object-type name="ft_threat"/>
       <menu>
-         <item text="Edit" message="FTThreatEditMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="Delete" message="FTThreatDeleteMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
+         <item text="Edit" message="FTThreatEditMessage"/>
+         <item text="Delete" message="FTThreatDeleteMessage"/>
+         <item text="Cut" message="FTCutMessage" separator="true"/>
+         <item text="Copy" message="FTCopyMessage"/>
       </menu>  
-      <object>
-         <type name="ft_threat"/>
-      </object>
    </FTThreatMenu>
    <FTLogicMenu>
       <module>
          <canvas name="FTCanvas"/>
       </module>
       <source name="FTCanvas"/>
+      <default-target name="dmzMBRAPluginFaultTreeBuilder"/>
+      <object-type name="ft_logic"/>
       <menu>
-         <item text="AND" message="FTLogicAndMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
-         <item text="OR" message="FTLogicOrMessage">
-            <target name="dmzMBRAPluginFaultTreeBuilder"/>
-         </item>
+         <item text="AND" message="FTLogicAndMessage"/>
+         <item text="OR" message="FTLogicOrMessage"/>
+         <item text="Cut" message="FTCutMessage" separator="true"/>
+         <item text="Copy" message="FTCopyMessage"/>
+         <item text="Paste" message="FTPasteMessage"/>
       </menu>  
-      <object>
-         <type name="ft_logic"/>
-      </object>
    </FTLogicMenu>
    <dmzMBRAPluginFaultTreeBuilder>
       <module>

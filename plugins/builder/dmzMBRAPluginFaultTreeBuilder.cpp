@@ -29,7 +29,6 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _mainWindowModule (0),
       _mainWindowModuleName (),
       _root (0),
-      _rootType (),
       _defaultAttrHandle (0),
       _objectAttrHandle (0),
       _linkAttrHandle (0),
@@ -47,6 +46,7 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _threatDeleteMessage (),
       _logicAndMessage (),
       _logicOrMessage (),
+      _rootType (),
       _componentType (),
       _threatType (),
       _logicType (),
@@ -121,6 +121,9 @@ dmz::MBRAPluginFaultTreeBuilder::receive_message (
          else if (Msg == _threatDeleteMessage) { _threat_delete (obj); }
          else if (Msg == _logicAndMessage) { _logic_and (obj); }
          else if (Msg == _logicOrMessage) { _logic_or (obj); }
+         else if (Msg == _cutMessage) { _cut (obj); }
+         else if (Msg == _copyMessage) { _copy (obj); }
+         else if (Msg == _pasteMessage) { _paste (obj); }
       }
    }
 }
@@ -594,6 +597,54 @@ dmz::MBRAPluginFaultTreeBuilder::_delete_logic (const Handle Parent) {
 
 
 void
+dmz::MBRAPluginFaultTreeBuilder::_cut (const Handle Parent) {
+
+   ObjectModule *objMod (get_object_module ());
+
+   _log.error << "Cut: " << Parent << endl;
+
+   if (objMod && Parent) {
+
+      const Handle UndoHandle (_undo.start_record ("Cut"));
+
+      _undo.stop_record (UndoHandle);
+   }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::_copy (const Handle Parent) {
+
+   ObjectModule *objMod (get_object_module ());
+
+   _log.error << "Copy: " << Parent << endl;
+
+   if (objMod && Parent) {
+
+      const Handle UndoHandle (_undo.start_record ("Copy"));
+
+      _undo.stop_record (UndoHandle);
+   }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::_paste (const Handle Parent) {
+
+   ObjectModule *objMod (get_object_module ());
+
+   _log.error << "Paste: " << Parent << endl;
+
+   if (objMod && Parent) {
+
+      const Handle UndoHandle (_undo.start_record ("Paste"));
+
+      _undo.stop_record (UndoHandle);
+   }
+}
+
+
+void
 dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
 
    RuntimeContext *context (get_plugin_runtime_context ());
@@ -693,6 +744,12 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
       "FTLogicOrMessage",
       context);
 
+   _cutMessage = config_create_message ("message.cut", local, "FTCutMessage", context);
+   _copyMessage = config_create_message ("message.copy", local, "FTCopyMessage", context);
+
+   _pasteMessage =
+      config_create_message ("message.paste", local, "FTPasteMessage", context);
+
    subscribe_to_message (_componentAddMessage);
    subscribe_to_message (_componentEditMessage);
    subscribe_to_message (_componentDeleteMessage);
@@ -704,20 +761,17 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    subscribe_to_message (_logicAndMessage);
    subscribe_to_message (_logicOrMessage);
 
-   _defs.lookup_object_type (
-      config_to_string ("root.type", local, "ft_component_root"), _rootType);
+   subscribe_to_message (_cutMessage);
+   subscribe_to_message (_copyMessage);
+   subscribe_to_message (_pasteMessage);
 
-   _defs.lookup_object_type (
-      config_to_string ("type.component", local, "ft_component"),
-      _componentType);
+   _rootType = config_to_object_type ("type.root", local, "ft_component_root", context);
 
-   _defs.lookup_object_type (
-      config_to_string ("type.threat", local, "ft_threat"),
-      _threatType);
+   _componentType =
+      config_to_object_type ("type.component", local, "ft_component", context);
 
-   _defs.lookup_object_type (
-      config_to_string ("type.logic", local, "ft_logic"),
-      _logicType);
+   _threatType = config_to_object_type ("type.threat", local, "ft_threat", context);
+   _logicType = config_to_object_type ("type.logic", local, "ft_logic", context);
 
    _defs.lookup_state (
       config_to_string ("state.logic.and", local, "FT_Logic_And"),

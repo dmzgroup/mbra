@@ -107,6 +107,10 @@ namespace dmz {
          void _create_logic (const Handle Parent);
          void _delete_logic (const Handle Parent);
 
+         void _cut (const Handle Parent);
+         void _copy (const Handle Parent);
+         void _paste (const Handle Parent);
+
          void _init (Config &local);
 
          Log _log;
@@ -118,7 +122,6 @@ namespace dmz {
          QtModuleCanvas *_canvasModule;
          String _canvasModuleName;
          Handle _root;
-         ObjectType _rootType;
          Handle _defaultAttrHandle;
          Handle _objectAttrHandle;
          Handle _linkAttrHandle;
@@ -137,6 +140,10 @@ namespace dmz {
          Message _threatDeleteMessage;
          Message _logicAndMessage;
          Message _logicOrMessage;
+         Message _cutMessage;
+         Message _copyMessage;
+         Message _pasteMessage;
+         ObjectType _rootType;
          ObjectType _componentType;
          ObjectType _threatType;
          ObjectType _logicType;
