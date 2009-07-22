@@ -113,6 +113,7 @@
          </switch>
       </NACanvasObjectBasic>
    </object-type>
+   <object-type name="ft_clip_board"/>
    <object-type name="ft_node"/>
    <object-type name="ft_component" parent="ft_node">
       <FTCanvasObject/>

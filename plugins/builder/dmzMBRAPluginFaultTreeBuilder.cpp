@@ -38,6 +38,9 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _consequenceAttrHandle (0),
       _threatAttrHandle (0),
       _vulnerabilityAttrHandle (0),
+      _hideAttrHandle (0),
+      _clipBoardHandle (0),
+      _clipBoardAttrHandle (0),
       _componentAddMessage (),
       _componentEditMessage (),
       _componentDeleteMessage (),
@@ -143,6 +146,13 @@ dmz::MBRAPluginFaultTreeBuilder::create_object (
 
       _log.debug << "Found Fault Tree Root: " << _root << endl;
    }
+   else if (Type.is_of_type (_clipBoardType)) {
+
+      if (ObjectHandle != _clipBoardHandle) {
+
+         _empty_clip_board (ObjectHandle);
+      }
+   }
 }
 
 
@@ -154,6 +164,10 @@ dmz::MBRAPluginFaultTreeBuilder::destroy_object (
    if (ObjectHandle == _root) {
 
       _root = 0;
+   }
+   else if (ObjectHandle == _clipBoardHandle) {
+
+      _clipBoardHandle = 0;
    }
 }
 
@@ -224,12 +238,17 @@ dmz::MBRAPluginFaultTreeBuilder::unlink_objects (
          }
       }
    }
+   else if (AttributeHandle == _clipBoardAttrHandle) {
+
+      if (!_undo.is_in_undo ()) { _component_delete (SubHandle); }
+   }
 }
 
 
 void
 dmz::MBRAPluginFaultTreeBuilder::_store_object_module (ObjectModule &objMod) {
 
+   if (!_clipBoardHandle) { _empty_clip_board (); }
 }
 
 
@@ -597,6 +616,59 @@ dmz::MBRAPluginFaultTreeBuilder::_delete_logic (const Handle Parent) {
 
 
 void
+dmz::MBRAPluginFaultTreeBuilder::_empty_clip_board (const Handle NewClipBoard) {
+
+   ObjectModule *objMod (get_object_module ());
+
+   if (objMod) {
+
+      if (_clipBoardHandle) { objMod->destroy_object (_clipBoardHandle); }
+
+      if (NewClipBoard) { _clipBoardHandle = NewClipBoard; }
+      else {
+
+         _clipBoardHandle = objMod->create_object (_clipBoardType, ObjectLocal);
+         objMod->activate_object (_clipBoardHandle);
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::_set_component_hide_state (
+      const Handle Obj,
+      const Boolean Value,
+      ObjectModule &objMod) {
+
+   objMod.store_flag (Obj, _hideAttrHandle, Value);
+
+   HandleContainer list;
+
+   if (objMod.lookup_sub_links (Obj, _linkAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      while (child) {
+
+         _set_component_hide_state (child, Value, objMod);
+         child = list.get_next ();
+      }
+   }
+
+   if (objMod.lookup_sub_links (Obj, _logicAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      while (child) {
+
+         objMod.store_flag (child, _hideAttrHandle, Value);
+         child = list.get_next ();
+      }
+   }
+}
+
+
+void
 dmz::MBRAPluginFaultTreeBuilder::_cut (const Handle Parent) {
 
    ObjectModule *objMod (get_object_module ());
@@ -606,6 +678,49 @@ dmz::MBRAPluginFaultTreeBuilder::_cut (const Handle Parent) {
    if (objMod && Parent) {
 
       const Handle UndoHandle (_undo.start_record ("Cut"));
+
+      _empty_clip_board ();
+
+      const ObjectType Type = objMod->lookup_object_type (Parent);
+
+      if (Type.is_of_exact_type (_componentType) || Type.is_of_exact_type (_threatType)) {
+
+         objMod->unlink_super_links (Parent, _linkAttrHandle);
+
+         if (objMod->link_objects (_clipBoardAttrHandle, _clipBoardHandle, Parent)) {
+
+            _set_component_hide_state (Parent, True, *objMod);
+         }
+         else { _component_delete (Parent); }
+      }
+      else {
+
+         Handle start = 0;
+
+         if (Type.is_of_exact_type (_rootType)) { start = Parent; }
+         else if (Type.is_of_exact_type (_logicType)) {
+
+            HandleContainer list;
+            objMod->lookup_super_links (Parent, _logicAttrHandle, list);
+            start = list.get_first ();
+         }
+
+         if (start && _clipBoardHandle) {
+
+            HandleContainer list;
+            objMod->lookup_sub_links (start, _linkAttrHandle, list);
+
+            Handle obj = list.get_last ();
+
+            while (obj) {
+
+               objMod->unlink_super_links (obj, _linkAttrHandle);
+               objMod->link_objects (_clipBoardAttrHandle, _clipBoardHandle, obj);
+               _set_component_hide_state (obj, True, *objMod);
+               obj = list.get_prev ();
+            }
+         }
+      }
 
       _undo.stop_record (UndoHandle);
    }
@@ -662,39 +777,45 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
       config_to_string ("attribute.logic.name", local, "FT_Link"),
       ObjectLinkMask | ObjectUnlinkMask);
 
+   _clipBoardAttrHandle = activate_object_attribute (
+      config_to_string ("attribute.clip-board.value", local, "FT_Clip_Board_Link"),
+      ObjectUnlinkMask);
+
    _logicAttrHandle = config_to_named_handle (
       "attribute.logic.name", local, "FT_Logic_Link", context);
 
    _nameAttrHandle =
       config_to_named_handle ("attribute.threat.name", local, "FT_Name", context);
 
-   _eliminationCostAttrHandle =
-      config_to_named_handle (
-         "attribute.threat.eliminationCost",
-         local,
-         "FT_Threat_Elimination_Cost",
-         context);
+   _eliminationCostAttrHandle = config_to_named_handle (
+      "attribute.threat.eliminationCost",
+      local,
+      "FT_Threat_Elimination_Cost",
+      context);
 
-   _consequenceAttrHandle =
-      config_to_named_handle (
-         "attribute.threat.consequence",
-         local,
-         "FT_Threat_Consequence",
-         context);
+   _consequenceAttrHandle = config_to_named_handle (
+      "attribute.threat.consequence",
+      local,
+      "FT_Threat_Consequence",
+      context);
 
-   _threatAttrHandle =
-      config_to_named_handle (
-         "attribute.threat.value",
-         local,
-         "FT_Threat_Value",
-         context);
+   _threatAttrHandle = config_to_named_handle (
+      "attribute.threat.value",
+      local,
+      "FT_Threat_Value",
+      context);
 
-   _vulnerabilityAttrHandle =
-      config_to_named_handle (
-         "attribute.vulnerability.value",
-         local,
-         "FT_Vulnerability_Value",
-         context);
+   _hideAttrHandle = config_to_named_handle (
+      "attribute.hide.value",
+      local,
+      ObjectAttributeHideName,
+      context);
+
+   _vulnerabilityAttrHandle = config_to_named_handle (
+      "attribute.vulnerability.value",
+      local,
+      "FT_Vulnerability_Value",
+      context);
 
    _componentAddMessage = config_create_message (
       "message.component.add",
@@ -772,6 +893,9 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
 
    _threatType = config_to_object_type ("type.threat", local, "ft_threat", context);
    _logicType = config_to_object_type ("type.logic", local, "ft_logic", context);
+
+   _clipBoardType =
+      config_to_object_type ("type.clip-board", local, "ft_clip_board", context);
 
    _defs.lookup_state (
       config_to_string ("state.logic.and", local, "FT_Logic_And"),

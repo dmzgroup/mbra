@@ -12,6 +12,7 @@
 #include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <dmzTypesMask.h>
+
 #include <QtCore/QString>
 
 
@@ -107,6 +108,11 @@ namespace dmz {
          void _create_logic (const Handle Parent);
          void _delete_logic (const Handle Parent);
 
+         void _empty_clip_board (const Handle NewClipBoard = 0);
+         void _set_component_hide_state (
+            const Handle Obj,
+            const Boolean Value,
+            ObjectModule &objMod);
          void _cut (const Handle Parent);
          void _copy (const Handle Parent);
          void _paste (const Handle Parent);
@@ -131,6 +137,9 @@ namespace dmz {
          Handle _consequenceAttrHandle;
          Handle _threatAttrHandle;
          Handle _vulnerabilityAttrHandle;
+         Handle _hideAttrHandle;
+         Handle _clipBoardHandle;
+         Handle _clipBoardAttrHandle;
          ObjectAttributeCalculator *_vulnerabilityCalc;
          Message _componentAddMessage;
          Message _componentEditMessage;
@@ -147,6 +156,7 @@ namespace dmz {
          ObjectType _componentType;
          ObjectType _threatType;
          ObjectType _logicType;
+         ObjectType _clipBoardType;
          Mask _logicAndMask;
          Mask _logicOrMask;
          HashTableHandleTemplate<Int32> _linkTable;
