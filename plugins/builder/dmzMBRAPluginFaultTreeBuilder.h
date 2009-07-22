@@ -108,6 +108,7 @@ namespace dmz {
          void _create_logic (const Handle Parent);
          void _delete_logic (const Handle Parent);
 
+         Handle _clone_component (const Handle Object, ObjectModule &objMod);
          void _empty_clip_board (const Handle NewClipBoard = 0);
          void _set_component_hide_state (
             const Handle Obj,
@@ -141,6 +142,7 @@ namespace dmz {
          Handle _clipBoardHandle;
          Handle _clipBoardAttrHandle;
          ObjectAttributeCalculator *_vulnerabilityCalc;
+         Int32 _cloneDepth;
          Message _componentAddMessage;
          Message _componentEditMessage;
          Message _componentDeleteMessage;

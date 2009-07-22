@@ -41,6 +41,7 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _hideAttrHandle (0),
       _clipBoardHandle (0),
       _clipBoardAttrHandle (0),
+      _cloneDepth (0),
       _componentAddMessage (),
       _componentEditMessage (),
       _componentDeleteMessage (),
@@ -199,7 +200,7 @@ dmz::MBRAPluginFaultTreeBuilder::link_objects (
          if (*count == 2) {
 
             // Make sure we aren't loading or undoing
-            if (_appState.is_mode_normal ()) {
+            if (_appState.is_mode_normal () && (_cloneDepth == 0)) {
 
                _create_logic (SuperHandle);
             }
@@ -615,6 +616,52 @@ dmz::MBRAPluginFaultTreeBuilder::_delete_logic (const Handle Parent) {
 }
 
 
+dmz::Handle
+dmz::MBRAPluginFaultTreeBuilder::_clone_component (
+      const Handle Object,
+      ObjectModule &objMod) {
+
+   Handle result (objMod.clone_object (Object, ObjectIgnoreLinks));
+   objMod.activate_object (result);
+   _cloneDepth++;
+
+   HandleContainer list;
+
+   if (objMod.lookup_sub_links (Object, _linkAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      while (child) {
+
+         Handle clone = _clone_component (child, objMod);
+
+         if (clone) { objMod.link_objects (_linkAttrHandle, result, clone); }
+
+         child = list.get_next ();
+      }
+   }
+
+   if (objMod.lookup_sub_links (Object, _logicAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      if (child) {
+
+         Handle clone = objMod.clone_object (child, ObjectIgnoreLinks);
+
+         if (clone) {
+
+            objMod.activate_object (clone);
+            objMod.link_objects (_logicAttrHandle, result, clone);
+         }
+      }
+   }
+   
+   _cloneDepth--;
+   return result;
+}
+
+
 void
 dmz::MBRAPluginFaultTreeBuilder::_empty_clip_board (const Handle NewClipBoard) {
 
@@ -673,7 +720,7 @@ dmz::MBRAPluginFaultTreeBuilder::_cut (const Handle Parent) {
 
    ObjectModule *objMod (get_object_module ());
 
-   _log.error << "Cut: " << Parent << endl;
+   //_log.error << "Cut: " << Parent << endl;
 
    if (objMod && Parent) {
 
@@ -732,11 +779,51 @@ dmz::MBRAPluginFaultTreeBuilder::_copy (const Handle Parent) {
 
    ObjectModule *objMod (get_object_module ());
 
-   _log.error << "Copy: " << Parent << endl;
+   //_log.error << "Copy: " << Parent << endl;
 
    if (objMod && Parent) {
 
       const Handle UndoHandle (_undo.start_record ("Copy"));
+
+      _empty_clip_board ();
+
+      const ObjectType Type = objMod->lookup_object_type (Parent);
+
+      if (Type.is_of_exact_type (_componentType) || Type.is_of_exact_type (_threatType)) {
+
+         Handle clone = _clone_component (Parent, *objMod);
+         _set_component_hide_state (clone, True, *objMod);
+
+         objMod->link_objects (_clipBoardAttrHandle, _clipBoardHandle, clone);
+      }
+      else {
+
+         Handle start = 0;
+
+         if (Type.is_of_exact_type (_rootType)) { start = Parent; }
+         else if (Type.is_of_exact_type (_logicType)) {
+
+            HandleContainer list;
+            objMod->lookup_super_links (Parent, _logicAttrHandle, list);
+            start = list.get_first ();
+         }
+
+         if (start && _clipBoardHandle) {
+
+            HandleContainer list;
+            objMod->lookup_sub_links (start, _linkAttrHandle, list);
+
+            Handle obj = list.get_first ();
+
+            while (obj) {
+
+               Handle clone = _clone_component (obj, *objMod);
+               _set_component_hide_state (clone, True, *objMod);
+               objMod->link_objects (_clipBoardAttrHandle, _clipBoardHandle, clone);
+               obj = list.get_next ();
+            }
+         }
+      }
 
       _undo.stop_record (UndoHandle);
    }
@@ -748,11 +835,57 @@ dmz::MBRAPluginFaultTreeBuilder::_paste (const Handle Parent) {
 
    ObjectModule *objMod (get_object_module ());
 
-   _log.error << "Paste: " << Parent << endl;
+   //_log.error << "Paste: " << Parent << endl;
 
    if (objMod && Parent) {
 
+      Handle target = Parent;
+
+      const ObjectType Type = objMod->lookup_object_type (Parent);
+
+      if (Type.is_of_exact_type (_logicType)) {
+
+         HandleContainer list;
+
+         if (objMod->lookup_super_links (Parent, _logicAttrHandle, list)) {
+
+            target = list.get_first ();
+         }
+         else { target = 0; }
+      }
+      else if (Type.is_of_exact_type (_threatType)) {
+
+         HandleContainer list;
+
+         if (objMod->lookup_super_links (Parent, _linkAttrHandle, list)) {
+
+            target = list.get_first ();
+         }
+         else { target = 0; }
+      }
+
       const Handle UndoHandle (_undo.start_record ("Paste"));
+
+      HandleContainer list;
+
+      if (target &&
+            objMod->lookup_sub_links (_clipBoardHandle, _clipBoardAttrHandle, list)) {
+
+         Handle obj = list.get_first ();
+
+         while (obj) {
+
+            Handle clone = _clone_component (obj, *objMod);
+
+            if (clone) {
+
+               _set_component_hide_state (clone, False, *objMod);
+               objMod->link_objects (_linkAttrHandle, target, clone);
+            }
+
+            obj = list.get_next ();
+         }
+      }
 
       _undo.stop_record (UndoHandle);
    }
