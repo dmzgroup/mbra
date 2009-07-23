@@ -72,7 +72,7 @@ namespace dmz {
          void _slot_undo ();
          void _slot_redo ();
          void _slot_clear ();
-         void _slot_background_edit ();
+         void _slot_map_properties_edit ();
          void _slot_about ();
 
       protected:
@@ -93,9 +93,9 @@ namespace dmz {
          Undo _undo;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
-         Message _backgroundEditMsg;
+         Message _mapPropertiesEditMsg;
          Handle _fileHandle;
-         Handle _backgroundEditTarget;
+         Handle _mapPropertiesEditTarget;
          String _suffix;
          String _defaultExportName;
          QToolBar *_toolBar;
@@ -104,7 +104,7 @@ namespace dmz {
          QAction *_undoAction;
          QAction *_redoAction;
          QAction *_clearAction;
-         QAction *_backgroundEditAction;
+         QAction *_mapPropertiesEditAction;
          QAction *_aboutAction;
 
       private:

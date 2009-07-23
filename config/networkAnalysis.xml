@@ -12,6 +12,7 @@
       <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
       <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPickCanvas"/>
       <plugin name="dmzQtPluginMapArchive" unique="NAMapArchive"/>
+      <plugin name="dmzQtPluginMapProperties"/>
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
@@ -247,6 +248,12 @@
          <map name="NAMap"/>
       </module>
    </NAMapArchive>
+   <dmzQtPluginMapProperties>
+      <module>
+         <map name="NAMap"/>
+         <canvas name="NACanvas"/>
+      </module>
+   </dmzQtPluginMapProperties>
    <NARenderPickCanvas>
       <order x="0" y="2" z="1"/>
       <source name="NACanvas"/>
