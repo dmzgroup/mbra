@@ -1,46 +1,101 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>calculateForm</class>
- <widget class="QWidget" name="calculateForm" >
-  <property name="geometry" >
+ <widget class="QWidget" name="calculateForm">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>296</width>
-    <height>318</height>
+    <width>369</width>
+    <height>377</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <layout class="QHBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Active Fault Tree:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="rootBox"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="createRootButton">
+       <property name="text">
+        <string>Create New Fault Tree</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
         <string>Risk Initial:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="riskLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <widget class="QLabel" name="riskLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -50,34 +105,34 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
+      <widget class="QLabel" name="label">
+       <property name="text">
         <string>Risk Reduced:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="riskReducedLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <widget class="QLabel" name="riskReducedLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -87,34 +142,34 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLabel" name="label_5" >
-       <property name="text" >
+      <widget class="QLabel" name="label_5">
+       <property name="text">
         <string>Likelihood Initial:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="vulnerabilityLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <widget class="QLabel" name="vulnerabilityLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -124,34 +179,34 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLabel" name="label_6" >
-       <property name="text" >
+      <widget class="QLabel" name="label_6">
+       <property name="text">
         <string>Likelihood Reduced:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="vulnerabilityReducedLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <widget class="QLabel" name="vulnerabilityReducedLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -161,34 +216,34 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
+      <widget class="QLabel" name="label_3">
+       <property name="text">
         <string>Max Budget: $</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="maxBudgetLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <widget class="QLabel" name="maxBudgetLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>0</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -198,54 +253,54 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
+      <widget class="QLabel" name="label_2">
+       <property name="text">
         <string>Budget</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="budgetSpinBox" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+      <widget class="QSpinBox" name="budgetSpinBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="suffix" >
+       <property name="suffix">
         <string/>
        </property>
-       <property name="prefix" >
+       <property name="prefix">
         <string>($) </string>
        </property>
-       <property name="maximum" >
+       <property name="maximum">
         <number>0</number>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="6" column="0" colspan="2" >
-    <widget class="QSlider" name="budgetSlider" >
-     <property name="maximum" >
+   <item>
+    <widget class="QSlider" name="budgetSlider">
+     <property name="maximum">
       <number>0</number>
      </property>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QToolButton" name="calculateButton" />
+      <widget class="QToolButton" name="calculateButton"/>
      </item>
      <item>
-      <widget class="QLabel" name="infoLabel" >
-       <property name="text" >
+      <widget class="QLabel" name="infoLabel">
+       <property name="text">
         <string>Calculate Allocation for
 Current Fault Tree</string>
        </property>
@@ -253,12 +308,12 @@ Current Fault Tree</string>
      </item>
     </layout>
    </item>
-   <item row="8" column="0" colspan="2" >
+   <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>240</width>
        <height>31</height>
@@ -280,11 +335,11 @@ Current Fault Tree</string>
    <receiver>budgetSpinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>95</x>
      <y>90</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>92</x>
      <y>31</y>
     </hint>
@@ -296,11 +351,11 @@ Current Fault Tree</string>
    <receiver>budgetSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>183</x>
      <y>27</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>186</x>
      <y>91</y>
     </hint>

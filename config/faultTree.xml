@@ -14,6 +14,7 @@
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
       <plugin name="dmzMBRAPluginFTTable"/>
       <plugin name="dmzMBRAPluginFTCalculate"/>
+      <plugin name="dmzObjectPluginFlagGroup"/>
    </plugin-list>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
@@ -239,5 +240,8 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginFTCalculate>
+	<dmzObjectPluginFlagGroup>
+      <flag attribute="FT_Active_Fault_Tree"/>
+   </dmzObjectPluginFlagGroup>
 </dmz>
 

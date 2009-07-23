@@ -1,5 +1,6 @@
 #include "dmzMBRAPluginFaultTreeAutoLayout.h"
 #include <dmzObjectAttributeMasks.h>
+#include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
 #include <dmzQtModuleCanvas.h>
 #include <dmzRuntimeConfigToTypesBase.h>
@@ -23,6 +24,8 @@ dmz::MBRAPluginFaultTreeAutoLayout::MBRAPluginFaultTreeAutoLayout (
       _linkAttrHandle (0),
       _logicAttrHandle (0),
       _nameAttrHandle (0),
+      _hideAttrHandle (0),
+      _activeAttrHandle (0),
       _root (0),
       _subHandle (0),
       _rootType (),
@@ -111,42 +114,6 @@ dmz::MBRAPluginFaultTreeAutoLayout::update_time_slice (const Float64 TimeDelta) 
 
 // Object Observer Interface
 void
-dmz::MBRAPluginFaultTreeAutoLayout::create_object (
-      const UUID &Identity,
-      const Handle ObjectHandle,
-      const ObjectType &Type,
-      const ObjectLocalityEnum Locality) {
-
-   if (Type.is_of_exact_type (_rootType)) {
-
-      ObjectModule *objMod (get_object_module ());
-
-      if (_root && objMod) {
-
-         objMod->destroy_object (_root);
-      }
-
-      _root = ObjectHandle;
-
-      _log.debug << "Found Fault Tree Root: " << _root << endl;
-   }
-}
-
-
-void
-dmz::MBRAPluginFaultTreeAutoLayout::destroy_object (
-      const UUID &Identity,
-      const Handle ObjectHandle) {
-
-   if (ObjectHandle == _root) {
-
-      _root = 0;
-      _doTreeUpdate = True;
-   }
-}
-
-
-void
 dmz::MBRAPluginFaultTreeAutoLayout::link_objects (
       const Handle LinkHandle,
       const Handle AttributeHandle,
@@ -180,11 +147,66 @@ dmz::MBRAPluginFaultTreeAutoLayout::unlink_objects (
 
 
 void
+dmz::MBRAPluginFaultTreeAutoLayout::update_object_flag (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Boolean Value,
+      const Boolean *PreviousValue) {
+
+   if (Value) { _root = ObjectHandle; }
+
+   ObjectModule *objMod = get_object_module ();
+
+   if (objMod) {
+
+      _set_component_hide_state (ObjectHandle, Value ? False : True, *objMod);
+   }
+
+   _update_tree ();
+}
+
+
+void
+dmz::MBRAPluginFaultTreeAutoLayout::_set_component_hide_state (
+      const Handle Obj,
+      const Boolean Value,
+      ObjectModule &objMod) {
+
+_log.error << (Value ? "Hiding: " : "Showing: ") << Obj << endl;
+   objMod.store_flag (Obj, _hideAttrHandle, Value);
+
+   HandleContainer list;
+
+   if (objMod.lookup_sub_links (Obj, _linkAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      while (child) {
+
+         _set_component_hide_state (child, Value, objMod);
+         child = list.get_next ();
+      }
+   }
+
+   if (objMod.lookup_sub_links (Obj, _logicAttrHandle, list)) {
+
+      Handle child = list.get_first ();
+
+      while (child) {
+
+_log.error << (Value ? "Hiding: " : "Showing: ") << child << endl;
+         objMod.store_flag (child, _hideAttrHandle, Value);
+         child = list.get_next ();
+      }
+   }
+}
+
+
+void
 dmz::MBRAPluginFaultTreeAutoLayout::_update_tree () {
 
    ObjectModule *objMod (get_object_module ());
-
-   if (!_root) { _root = _create_root (); }
 
    if (objMod && _root) {
 
@@ -349,48 +371,32 @@ dmz::MBRAPluginFaultTreeAutoLayout::_update_path (const Handle Object) {
 }
 
 
-dmz::Handle
-dmz::MBRAPluginFaultTreeAutoLayout::_create_root () {
-
-   Handle root (0);
-
-   ObjectModule *objMod (get_object_module ());
-
-   if (objMod) {
-
-      root = objMod->create_object (_rootType, ObjectLocal);
-
-      if (root) {
-
-         objMod->store_text (root, _nameAttrHandle, _rootText);
-         objMod->store_position (root, _defaultAttrHandle, Vector (0.0, 0.0, 0.0));
-         objMod->activate_object (root);
-
-         _log.debug << "Created Fault Tree Root: " << root << endl;
-      }
-   }
-
-   return root;
-}
-
-
 void
 dmz::MBRAPluginFaultTreeAutoLayout::_init (Config &local) {
 
+   const Mask EmptyMask;
+   RuntimeContext *context = get_plugin_runtime_context ();
+
    _canvasModuleName = config_to_string ("module.canvas.name", local);
 
-   _defaultAttrHandle = activate_default_object_attribute (
-      ObjectCreateMask | ObjectDestroyMask);
+   _defaultAttrHandle = activate_default_object_attribute (EmptyMask);
+
+   _activeAttrHandle = activate_object_attribute (
+      config_to_string ("attribute.activate.name", local, "FT_Active_Fault_Tree"),
+      ObjectFlagMask);
 
    _linkAttrHandle = activate_object_attribute (
       config_to_string ("attribute.link.name", local, "FT_Link"),
       ObjectLinkMask | ObjectUnlinkMask);
 
    _logicAttrHandle = config_to_named_handle (
-      "attribute.logic.name", local, "FT_Logic_Link", get_plugin_runtime_context ());
+      "attribute.logic.name", local, "FT_Logic_Link", context);
 
    _nameAttrHandle = config_to_named_handle (
-      "attribute.threat.name", local, "FT_Name", get_plugin_runtime_context ());
+      "attribute.threat.name", local, "FT_Name", context);
+
+   _hideAttrHandle = config_to_named_handle (
+      "attribute.hide.name", local, ObjectAttributeHideName, context);
 
    Definitions defs (get_plugin_runtime_context (), &_log);
 
