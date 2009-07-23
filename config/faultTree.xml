@@ -133,7 +133,7 @@
          <item text="Add Component" message="FTComponentAddMessage"/>
          <item text="Add Threat" message="FTThreatAddMessage"/>
          <item text="Edit" message="FTComponentEditMessage" separator="true"/>
-         <item text="Reset Fault Tree" message="FTComponentDeleteMessage"/>
+         <item text="Delete Fault Tree" message="FTComponentDeleteMessage"/>
          <item text="Cut" message="FTCutMessage" separator="true"/>
          <item text="Copy" message="FTCopyMessage"/>
          <item text="Paste" message="FTPasteMessage"/>
