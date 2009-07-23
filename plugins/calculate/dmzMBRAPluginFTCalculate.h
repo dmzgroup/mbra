@@ -111,9 +111,9 @@ namespace dmz {
          Message _calculateOnMessage;
          Message _calculateOffMessage;
          Message _componentEditMessage;
+         Handle _root;
          Handle _target;
          Handle _objectAttrHandle;
-         Handle _root;
          ObjectType _rootType;
          Ui::calculateForm _ui;
          HashTableHandleTemplate<EcStruct> _ecTable;
