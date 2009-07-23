@@ -1,7 +1,10 @@
 #include "dmzMBRAPluginFTCalculate.h"
 #include <dmzObjectAttributeMasks.h>
+#include <dmzObjectConsts.h>
+#include <dmzObjectModule.h>
 #include <dmzQtUtil.h>
 #include <dmzRuntimeConfigToNamedHandle.h>
+#include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
@@ -17,6 +20,8 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       ObjectObserverUtil (Info, local),
       QtWidget (Info),
       _log (Info),
+      _undo (Info),
+      _defaultAttrHandle (0),
       _channel (0),
       _budgetAttrHandle (0),
       _ecHandle (0),
@@ -24,9 +29,12 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _riskSumReducedHandle (0),
       _vulnerabilitySumHandle (0),
       _vulnerabilitySumReducedHandle (0),
-      _calculateOnMessage (),
-      _calculateOffMessage (),
-      _target (0) {
+      _nameAttrHandle (0),
+      _hideAttrHandle (0),
+      _activeAttrHandle (0),
+      _root (0),
+      _target (0),
+      _objectAttrHandle (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -61,18 +69,118 @@ dmz::MBRAPluginFTCalculate::discover_plugin (
    }
 }
 
+// ObjectObserverUtil Interface
+void
+dmz::MBRAPluginFTCalculate::create_object (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const ObjectType &Type,
+      const ObjectLocalityEnum Locality) {
+
+   int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
+
+   if ((index < 0) && Type.is_of_exact_type (_rootType)) {
+
+      _ui.rootBox->addItem ("", QVariant (qlonglong (ObjectHandle)));
+   }
+}
+
 
 void
 dmz::MBRAPluginFTCalculate::destroy_object (
       const UUID &Identity,
       const Handle ObjectHandle) {
 
-   Float64 *value (_ecTable.remove (ObjectHandle));
+   EcStruct *ecs (_ecTable.remove (ObjectHandle));
 
-   if (value) {
+   if (ecs) {
 
-      delete value; value = 0;
+      delete ecs; ecs = 0;
       _update_budget ();
+   }
+
+   int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
+
+   if (index >= 0) { _ui.rootBox->removeItem (index); }
+}
+
+
+void
+dmz::MBRAPluginFTCalculate::remove_object_attribute (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Mask &AttrMask) {
+
+   if (AttributeHandle == _hideAttrHandle) {
+
+      EcStruct *ptr = _ecTable.lookup (ObjectHandle);
+
+      if (ptr && AttrMask.contains (ObjectFlagMask)) {
+
+         ptr->hide = False;
+         _update_budget ();
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginFTCalculate::update_object_flag (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Boolean Value,
+      const Boolean *PreviousValue) {
+
+   if (AttributeHandle == _hideAttrHandle) {
+
+      EcStruct *ptr = _ecTable.lookup (ObjectHandle);
+
+      if (ptr) {
+
+         ptr->hide = Value;
+         _update_budget ();
+      }
+   }
+   else if (AttributeHandle == _activeAttrHandle) {
+
+      if (Value) {
+
+         _root = ObjectHandle;
+
+         int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
+         if (index >= 0) { _ui.rootBox->setCurrentIndex (index); }
+
+         ObjectModule *objMod (get_object_module ());
+
+         if (objMod) {
+
+            Float64 scalar (0.0);
+      
+            if (objMod->lookup_scalar (_root, _riskSumHandle, scalar)) {
+
+               _ui.riskLabel->setText (QString::number (scalar, 'f', 2));
+            }
+
+            if (objMod->lookup_scalar (_root, _riskSumReducedHandle, scalar)) {
+
+               _ui.riskReducedLabel->setText (QString::number (scalar, 'f', 2));
+            }
+
+            if (objMod->lookup_scalar (_root, _vulnerabilitySumHandle, scalar)) {
+
+               _ui.vulnerabilityLabel->setText (
+                  QString::number (scalar * 100.0, 'f', 2) + QString ("%"));
+            }
+
+            if (objMod->lookup_scalar (_root, _vulnerabilitySumReducedHandle, scalar)) {
+
+               _ui.vulnerabilityReducedLabel->setText (
+                  QString::number (scalar * 100.0, 'f', 2) + QString ("%"));
+            }
+         }
+      }
    }
 }
 
@@ -87,41 +195,70 @@ dmz::MBRAPluginFTCalculate::update_object_scalar (
 
    if (AttributeHandle == _ecHandle) {
 
-      Float64 *ptr (_ecTable.lookup (ObjectHandle));
+      EcStruct *ptr (_ecTable.lookup (ObjectHandle));
 
       if (!ptr) {
 
-         ptr = new Float64 (0.0);
+         ptr = new EcStruct;
 
          if (ptr && !_ecTable.store (ObjectHandle, ptr)) {
 
             delete ptr; ptr = 0;
          }
+         else if (ptr) {
+
+            ObjectModule *objMod (get_object_module ());
+
+            if (objMod) {
+
+               ptr->hide = objMod->lookup_flag (ObjectHandle, _hideAttrHandle);
+            }
+         }
       }
 
       if (ptr) {
 
-         *ptr = Value;
+         ptr->value = Value;
          _update_budget ();
       }
    }
-   else if (AttributeHandle == _riskSumHandle) {
+   else if (ObjectHandle == _root) {
 
-      _ui.riskLabel->setText (QString::number (Value, 'f', 2));
+      if (AttributeHandle == _riskSumHandle) {
+
+         _ui.riskLabel->setText (QString::number (Value, 'f', 2));
+      }
+      else if (AttributeHandle == _riskSumReducedHandle) {
+
+         _ui.riskReducedLabel->setText (QString::number (Value, 'f', 2));
+      }
+      else if (AttributeHandle == _vulnerabilitySumHandle) {
+
+         _ui.vulnerabilityLabel->setText (
+            QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+      }
+      else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
+
+         _ui.vulnerabilityReducedLabel->setText (
+            QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+      }
    }
-   else if (AttributeHandle == _riskSumReducedHandle) {
+}
 
-      _ui.riskReducedLabel->setText (QString::number (Value, 'f', 2));
-   }
-   else if (AttributeHandle == _vulnerabilitySumHandle) {
 
-      _ui.vulnerabilityLabel->setText (
-         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
-   }
-   else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
+void
+dmz::MBRAPluginFTCalculate::update_object_text (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const String &Value,
+      const String *PreviousValue) {
 
-      _ui.vulnerabilityReducedLabel->setText (
-         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+   int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
+
+   if (index >= 0) {
+
+      _ui.rootBox->setItemText (index, Value.get_buffer ());
    }
 }
 
@@ -161,23 +298,85 @@ dmz::MBRAPluginFTCalculate::_slot_update_budget (int budget) {
 
 
 void
-dmz::MBRAPluginFTCalculate::_update_budget () {
+dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 
-   HashTableHandleIterator it;
+   ObjectModule *objMod = get_object_module ();
+
+   if (objMod) {
+
+      const Handle UndoHandle = _undo.start_record ("Create New Fault Tree");
+
+      Handle root = objMod->create_object (_rootType, ObjectLocal);
+
+      if (root) {
+
+//         objMod->store_text (root, _nameAttrHandle, "Fault Tree Root");
+         objMod->store_position (root, _defaultAttrHandle, Vector (0.0, 0.0, 0.0));
+
+         _ui.rootBox->addItem ("", QVariant (qulonglong (root)));
+         int index = _ui.rootBox->findData (QVariant (qulonglong (root)));
+
+         if (index >= 0) { _ui.rootBox->setCurrentIndex (index); }
+
+         objMod->activate_object (root);
+
+         Data out;
+         out.store_handle (_objectAttrHandle, 0, root);
+         _componentEditMessage.send (&out);
+
+         _log.debug << "Created Fault Tree Root: " << root << endl;
+
+         _undo.stop_record (UndoHandle);
+      }
+      else { _undo.abort_record (UndoHandle); }
+   }
+}
+
+
+void
+dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
+
+   if (index >= 0) {
+
+      QVariant data = _ui.rootBox->itemData (index);
+
+      ObjectModule *objMod = get_object_module ();
+      Handle obj = data.toULongLong ();
+
+      if (obj && objMod) {
+
+         const Handle UndoHandle = _undo.start_record ("Change Active Fault Tree");
+         objMod->store_flag (obj, _activeAttrHandle, True);
+         _undo.stop_record (UndoHandle);
+      }
+
+     // Should not be needed. The script resets it self when the root changes.
+#if 0
+      if (_ui.calculateButton->isChecked ()) {
+
+         // If calculation is on, toggle it off and on to reset it
+         _slot_calculate (false);
+         _slot_calculate (true);
+      }
+#endif // 0
+   }
+}
+
+
+void
+dmz::MBRAPluginFTCalculate::_update_budget () {
 
    Float64 total (0.0);
 
-   Float64 *value (_ecTable.get_first (it));
+   HashTableHandleIterator it;
+   EcStruct *ecs (0);
 
-   while (value) {
+   while (_ecTable.get_next (it, ecs)) {
 
-      total += *value;
-
-      value = _ecTable.get_next (it);
+      if (!ecs->hide) { total += ecs->value; }
    }
 
    // _log.error << "Total: " << total << endl;
-
    _ui.budgetSlider->setMaximum (int (total));
    _ui.budgetSpinBox->setMaximum (int (total));
    _ui.maxBudgetLabel->setNum (int (total));
@@ -187,7 +386,8 @@ dmz::MBRAPluginFTCalculate::_update_budget () {
 void
 dmz::MBRAPluginFTCalculate::_init (Config &local) {
 
-   Definitions defs (get_plugin_runtime_context ());
+   RuntimeContext *context = get_plugin_runtime_context ();
+   Definitions defs (context);
 
    _channel = config_to_named_handle (
       "channel.name",
@@ -215,11 +415,20 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       get_plugin_runtime_context (),
       &_log);
 
+   _componentEditMessage = config_create_message (
+      "message.component.edit",
+      local,
+      "FTComponentEditMessage",
+      context);
+
    _target = config_to_named_handle (
       "message.target",
       local,
       "dmzMBRAPluginFaultTree",
       get_plugin_runtime_context ());
+
+   _objectAttrHandle = config_to_named_handle (
+      "attribute.object.name", local, "object", context);
 
    qwidget_config_read ("widget", local, this);
 
@@ -240,7 +449,20 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       _ui.budgetSpinBox, SIGNAL (valueChanged (int)),
       this, SLOT (_slot_update_budget (int)));
 
-   activate_default_object_attribute (ObjectDestroyMask);
+   _defaultAttrHandle =
+      activate_default_object_attribute (ObjectCreateMask | ObjectDestroyMask);
+
+   _nameAttrHandle = activate_object_attribute (
+      config_to_string ("attribute.name", local, "FT_Name"),
+      ObjectTextMask);
+
+   _hideAttrHandle = activate_object_attribute (
+      ObjectAttributeHideName,
+      ObjectRemoveAttributeMask | ObjectFlagMask);
+
+   _activeAttrHandle = activate_object_attribute (
+      config_to_string ("attribute.flag", local, "FT_Active_Fault_Tree"),
+      ObjectFlagMask);
 
    _ecHandle = activate_object_attribute (
       config_to_string ("elimination_cost.name", local, "FT_Threat_Elimination_Cost"),
@@ -265,6 +487,7 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
          "FT_Vulnerability_Sum_Reduced_Value"),
       ObjectScalarMask);
 
+   _rootType = config_to_object_type ("type.root", local, "ft_component_root", context);
 }
 
 

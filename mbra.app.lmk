@@ -20,6 +20,7 @@ lmk.add_preqs {
    "dmzArchivePluginObject",
    "dmzArchivePluginUndo",
    "dmzObjectModuleBasic",
+   "dmzObjectPluginFlagGroup",
    "dmzObjectPluginUndo",
    "dmzObjectPluginCleanup",
    "dmzRenderModulePickBasic",

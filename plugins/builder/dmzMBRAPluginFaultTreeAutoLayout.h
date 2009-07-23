@@ -39,14 +39,6 @@ namespace dmz {
          virtual void update_time_slice (const Float64 TimeDelta);
 
          // Object Observer Interface
-         virtual void create_object (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const ObjectType &Type,
-            const ObjectLocalityEnum Locality);
-
-         virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
-
          virtual void link_objects (
             const Handle LinkHandle,
             const Handle AttributeHandle,
@@ -63,7 +55,19 @@ namespace dmz {
             const UUID &SubIdentity,
             const Handle SubHandle);
 
+         virtual void update_object_flag (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Boolean Value,
+            const Boolean *PreviousValue);
+
       protected:
+         void _set_component_hide_state (
+            const Handle Obj,
+            const Boolean Value,
+            ObjectModule &objMod);
+
          void _update_tree ();
 
          void _update_tree (
@@ -76,8 +80,6 @@ namespace dmz {
 
          void _update_path (const Handle Object);
 
-         Handle _create_root ();
-
          void _init (Config &local);
 
          Log _log;
@@ -87,6 +89,8 @@ namespace dmz {
          Handle _linkAttrHandle;
          Handle _logicAttrHandle;
          Handle _nameAttrHandle;
+         Handle _hideAttrHandle;
+         Handle _activeAttrHandle;
          Handle _root;
          Handle _subHandle;
          ObjectType _rootType;

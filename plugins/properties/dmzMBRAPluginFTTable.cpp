@@ -102,6 +102,7 @@ dmz::MBRAPluginFTTable::MBRAPluginFTTable (const PluginInfo &Info, Config &local
       _threatAttrHandle (0),
       _vulnerabilityAttrHandle (0),
       _vreducedAttrHandle (0),
+      _hideAttrHandle (0),
       _threatType (),
       _rowTable (),
       _ignoreChange (False),
@@ -245,6 +246,50 @@ dmz::MBRAPluginFTTable::destroy_object (
 
          qDeleteAll (*itemList);
          delete itemList; itemList = 0;
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginFTTable::remove_object_attribute (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Mask &AttrMask) {
+
+   if (AttributeHandle == _hideAttrHandle) {
+
+      if (AttrMask.contains (ObjectFlagMask)) {
+
+         update_object_flag (Identity, ObjectHandle, AttributeHandle, False, 0);
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginFTTable::update_object_flag (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Boolean Value,
+      const Boolean *PreviousValue) {
+
+   if (AttributeHandle == _hideAttrHandle) {
+
+      QStandardItemList *itemList (_rowTable.lookup (ObjectHandle));
+
+      if (itemList) {
+
+         QStandardItem *item (itemList->at (FTNameColumn));
+
+         if (item) {
+
+            const int Index = item->row ();
+            if (Value && (Index >= 0)) { _model.takeRow (Index); }
+            else if (Index < 0) { _model.appendRow (*itemList); }
+         }
       }
    }
 }
@@ -543,6 +588,10 @@ dmz::MBRAPluginFTTable::_init (Config &local) {
          local,
          "FT_Vulnerability_Reduced_Value"),
       ObjectScalarMask);
+
+   _hideAttrHandle = activate_object_attribute (
+      ObjectAttributeHideName,
+      ObjectRemoveAttributeMask | ObjectFlagMask);
 
    Definitions defs (get_plugin_runtime_context (), &_log);
 

@@ -128,7 +128,6 @@ namespace dmz {
          String _mainWindowModuleName;
          QtModuleCanvas *_canvasModule;
          String _canvasModuleName;
-         Handle _root;
          Handle _defaultAttrHandle;
          Handle _objectAttrHandle;
          Handle _linkAttrHandle;

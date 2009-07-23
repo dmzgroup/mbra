@@ -5,7 +5,9 @@
 #include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
+#include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
+#include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <QtGui/QWidget>
 #include "ui_dmzMBRAFTCalculateForm.h"
@@ -38,7 +40,26 @@ namespace dmz {
             const Plugin *PluginPtr);
 
          // ObjectObserverUtil Interface
+         virtual void create_object (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const ObjectType &Type,
+            const ObjectLocalityEnum Locality);
+
          virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
+
+         virtual void remove_object_attribute (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Mask &AttrMask);
+
+         virtual void update_object_flag (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Boolean Value,
+            const Boolean *PreviousValue);
 
          virtual void update_object_scalar (
             const UUID &Identity,
@@ -47,18 +68,36 @@ namespace dmz {
             const Float64 Value,
             const Float64 *PreviousValue);
 
+         virtual void update_object_text (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const String &Value,
+            const String *PreviousValue);
+
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
       protected slots:
          void _slot_calculate (bool On);
          void _slot_update_budget (int budget);
+         void on_createRootButton_released ();
+         void on_rootBox_currentIndexChanged (int index);
 
       protected:
+         struct EcStruct {
+            Boolean hide;
+            Float64 value;
+
+            EcStruct () : hide (False), value (0.0) {;}
+         };
+
          void _update_budget ();
          void _init (Config &local);
 
          Log _log;
+         Undo _undo;
+         Handle _defaultAttrHandle;
          Handle _channel;
          Handle _budgetAttrHandle;
          Handle _ecHandle;
@@ -66,11 +105,18 @@ namespace dmz {
          Handle _riskSumReducedHandle;
          Handle _vulnerabilitySumHandle;
          Handle _vulnerabilitySumReducedHandle;
+         Handle _nameAttrHandle;
+         Handle _hideAttrHandle;
+         Handle _activeAttrHandle;
          Message _calculateOnMessage;
          Message _calculateOffMessage;
+         Message _componentEditMessage;
+         Handle _root;
          Handle _target;
+         Handle _objectAttrHandle;
+         ObjectType _rootType;
          Ui::calculateForm _ui;
-         HashTableHandleTemplate<Float64> _ecTable;
+         HashTableHandleTemplate<EcStruct> _ecTable;
 
       private:
          MBRAPluginFTCalculate ();

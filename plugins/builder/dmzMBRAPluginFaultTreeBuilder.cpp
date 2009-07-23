@@ -28,7 +28,6 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _canvasModuleName (),
       _mainWindowModule (0),
       _mainWindowModuleName (),
-      _root (0),
       _defaultAttrHandle (0),
       _objectAttrHandle (0),
       _linkAttrHandle (0),
@@ -141,13 +140,7 @@ dmz::MBRAPluginFaultTreeBuilder::create_object (
       const ObjectType &Type,
       const ObjectLocalityEnum Locality) {
 
-   if (Type.is_of_exact_type (_rootType)) {
-
-      _root = ObjectHandle;
-
-      _log.debug << "Found Fault Tree Root: " << _root << endl;
-   }
-   else if (Type.is_of_type (_clipBoardType)) {
+   if (Type.is_of_type (_clipBoardType)) {
 
       if (ObjectHandle != _clipBoardHandle) {
 
@@ -162,11 +155,7 @@ dmz::MBRAPluginFaultTreeBuilder::destroy_object (
       const UUID &Identity,
       const Handle ObjectHandle) {
 
-   if (ObjectHandle == _root) {
-
-      _root = 0;
-   }
-   else if (ObjectHandle == _clipBoardHandle) {
+   if (ObjectHandle == _clipBoardHandle) {
 
       _clipBoardHandle = 0;
    }
@@ -341,21 +330,19 @@ dmz::MBRAPluginFaultTreeBuilder::_component_delete (const Handle Object) {
 
    if (objMod && Object) {
 
+      const Boolean IsRoot (
+         objMod->lookup_object_type (Object).is_of_exact_type (_rootType));
+
       String undoName ("Delete Component");
 
-      if (Object == _root) { undoName = "Reset Fault Tree"; }
+      if (IsRoot) { undoName = "Delete Fault Tree"; }
 
       const Handle UndoHandle (_undo.start_record (undoName));
 
       // delete all objects linked to this Object
-
       HandleContainer children;
+
       objMod->lookup_sub_links (Object, _linkAttrHandle, children);
-
-      if (Object == _root) {
-
-         objMod->store_text (_root, _nameAttrHandle, "Fault Tree Root");
-      }
 
       Handle current (children.get_first ());
 
@@ -367,11 +354,7 @@ dmz::MBRAPluginFaultTreeBuilder::_component_delete (const Handle Object) {
       }
 
       // then delete this Object
-
-      if (Object != _root) {
-
-         objMod->destroy_object (Object);
-      }
+      objMod->destroy_object (Object);
 
       _undo.stop_record (UndoHandle);
    }
