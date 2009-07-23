@@ -57,6 +57,7 @@ Source: ..\..\..\bin\win32-{#BuildMode}\MBRA.app\*; DestDir: {app}; Flags: recur
 Source: {#DependDir}\bin\QtCore4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtGui4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtOpenGL4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\QtNetwork4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtSvg4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtXml4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\qjpeg4.dll; DestDir: {app}\bin\plugins\imageformats

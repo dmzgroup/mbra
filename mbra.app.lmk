@@ -125,6 +125,7 @@ lmk.add_vars ({
       {"QtXml.framework/Versions/4/QtXml", "@executable_path/../Frameworks/Qt/QtXml"},
       {"QtSvg.framework/Versions/4/QtSvg", "@executable_path/../Frameworks/Qt/QtSvg"},
       {"QtOpenGL.framework/Versions/4/QtOpenGL", "@executable_path/../Frameworks/Qt/QtOpenGL"},
+      {"QtNetwork.framework/Versions/4/QtNetwork", "@executable_path/../Frameworks/Qt/QtNetwork"},
    },
 }
 ,{opt = true})

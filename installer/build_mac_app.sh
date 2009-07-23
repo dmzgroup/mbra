@@ -10,6 +10,7 @@ cp $DEPTH/depend/Qt/QtGui $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/QtXml $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/QtSvg $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/QtOpenGL $DEPTH/MBRA.app/Contents/Frameworks/Qt
+cp $DEPTH/depend/Qt/QtNetwork $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/libqgif.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqjpeg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqtiff.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
