@@ -35,13 +35,13 @@
             <image file="images:Button_Reset.png"/>
          </icon>
       </clear>
-      <backgroundEdit text="Background" statusTip="Background Image">
+      <mapPropertiesEdit text="Map Properties..." statusTip="Edit Map Properties...">
          <icon>
             <image file="images:Button_Map.png"/>
          </icon>
-      </backgroundEdit>
+      </mapPropertiesEdit>
       <message>
-         <backgroundEdit target="NACanvasBackground" />
+         <mapPropertiesEdit target="dmzQtPluginMapProperties" />
       </message>
    </dmzMBRAPluginFileToolBar>
    <dmzMBRAPluginModeToolBar>

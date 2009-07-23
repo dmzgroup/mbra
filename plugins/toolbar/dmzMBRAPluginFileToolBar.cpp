@@ -32,19 +32,19 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       _archive (0),
       _undo (Info),
       _fileHandle (0),
-      _backgroundEditTarget (0),
+      _mapPropertiesEditTarget (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
       _toolBar (0),
       _cleanUpObjMsg (0),
       _openFileMsg (0),
-      _backgroundEditMsg (0),
+      _mapPropertiesEditMsg (0),
       _loadAction (0),
       _exportAction (0),
       _undoAction (0),
       _redoAction (0),
       _clearAction (0),
-      _backgroundEditAction (0),
+      _mapPropertiesEditAction (0),
       _aboutAction (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
@@ -411,9 +411,9 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
 
 
 void
-dmz::MBRAPluginFileToolBar::_slot_background_edit () {
+dmz::MBRAPluginFileToolBar::_slot_map_properties_edit () {
 
-   _backgroundEditMsg.send (_backgroundEditTarget, 0, 0);
+   _mapPropertiesEditMsg.send (_mapPropertiesEditTarget, 0, 0);
 }
 
 
@@ -526,17 +526,17 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
       get_plugin_runtime_context (),
       &_log);
 
-   _backgroundEditMsg = config_create_message (
-      "message.backgroundEdit.name",
+   _mapPropertiesEditMsg = config_create_message (
+      "message.mapPropertiesEdit.name",
       local,
-      "CanvasBackgroundEditMessage",
+      "MapPropertiesEditMessage",
       get_plugin_runtime_context (),
       &_log);
       
-   _backgroundEditTarget = config_to_named_handle (
-      "message.backgroundEdit.target",
+   _mapPropertiesEditTarget = config_to_named_handle (
+      "message.mapPropertiesEdit.target",
       local,
-      "dmzQPluginCanvasBackground",
+      "dmzQtPluginMapProperties",
       get_plugin_runtime_context ());
 
    _suffix = config_to_string (
@@ -613,16 +613,16 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
       _toolBar->addAction (_clearAction);
    }
 
-   _backgroundEditAction = new QAction (this);
-   qaction_config_read ("backgroundEdit", local, _backgroundEditAction);
+   _mapPropertiesEditAction = new QAction (this);
+   qaction_config_read ("mapPropertiesEdit", local, _mapPropertiesEditAction);
 
-   if (_backgroundEditAction) {
+   if (_mapPropertiesEditAction) {
 
       connect (
-         _backgroundEditAction, SIGNAL (triggered ()),
-         this, SLOT (_slot_background_edit ()));
+         _mapPropertiesEditAction, SIGNAL (triggered ()),
+         this, SLOT (_slot_map_properties_edit ()));
 
-      _toolBar->addAction (_backgroundEditAction);
+      _toolBar->addAction (_mapPropertiesEditAction);
    }
 
    _aboutAction = new QAction (this);
