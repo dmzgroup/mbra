@@ -54,6 +54,7 @@ lmk.add_preqs {
    "dmzQtPluginMapObjectPosition",
    "dmzQtPluginCanvasZoomPan",
    "dmzQtPluginCanvasArchive",
+   "dmzQtPluginMapProperties",
    "dmzQtPluginMenuToMessage",
    "dmzMBRAPluginFaultTreeBuilder",
    "dmzMBRAPluginFaultTreeAutoLayout",
