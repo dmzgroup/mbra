@@ -19,8 +19,8 @@
    <plugin name="dmzObjectPluginCleanup"/>
    <plugin name="dmzRenderModulePickBasic"/>
 
-   <plugin name="dmzObjectPluginDump"/>
 <!--
+   <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzPluginUndoDump"/>
 -->

@@ -50,6 +50,19 @@ namespace dmz {
 
          virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
 
+         virtual void remove_object_attribute (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Mask &AttrMask);
+
+         virtual void update_object_flag (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Boolean Value,
+            const Boolean *PreviousValue);
+
          virtual void update_object_scalar (
             const UUID &Identity,
             const Handle ObjectHandle,
@@ -92,6 +105,7 @@ namespace dmz {
          Handle _threatAttrHandle;
          Handle _vulnerabilityAttrHandle;
          Handle _vreducedAttrHandle;
+         Handle _hideAttrHandle;
          ObjectType _threatType;
          HashTableHandleTemplate<QStandardItemList> _rowTable;
          Boolean _ignoreChange;

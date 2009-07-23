@@ -173,7 +173,6 @@ dmz::MBRAPluginFaultTreeAutoLayout::_set_component_hide_state (
       const Boolean Value,
       ObjectModule &objMod) {
 
-_log.error << (Value ? "Hiding: " : "Showing: ") << Obj << endl;
    objMod.store_flag (Obj, _hideAttrHandle, Value);
 
    HandleContainer list;
@@ -195,7 +194,6 @@ _log.error << (Value ? "Hiding: " : "Showing: ") << Obj << endl;
 
       while (child) {
 
-_log.error << (Value ? "Hiding: " : "Showing: ") << child << endl;
          objMod.store_flag (child, _hideAttrHandle, Value);
          child = list.get_next ();
       }

@@ -32,6 +32,7 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _nameAttrHandle (0),
       _hideAttrHandle (0),
       _activeAttrHandle (0),
+      _root (0),
       _target (0),
       _objectAttrHandle (0) {
 
@@ -103,6 +104,7 @@ dmz::MBRAPluginFTCalculate::destroy_object (
    if (index >= 0) { _ui.rootBox->removeItem (index); }
 }
 
+
 void
 dmz::MBRAPluginFTCalculate::remove_object_attribute (
       const UUID &Identity,
@@ -139,6 +141,45 @@ dmz::MBRAPluginFTCalculate::update_object_flag (
 
          ptr->hide = Value;
          _update_budget ();
+      }
+   }
+   else if (AttributeHandle == _activeAttrHandle) {
+
+      if (Value) {
+
+         _root = ObjectHandle;
+
+         int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
+         if (index >= 0) { _ui.rootBox->setCurrentIndex (index); }
+
+         ObjectModule *objMod (get_object_module ());
+
+         if (objMod) {
+
+            Float64 scalar (0.0);
+      
+            if (objMod->lookup_scalar (_root, _riskSumHandle, scalar)) {
+
+               _ui.riskLabel->setText (QString::number (scalar, 'f', 2));
+            }
+
+            if (objMod->lookup_scalar (_root, _riskSumReducedHandle, scalar)) {
+
+               _ui.riskReducedLabel->setText (QString::number (scalar, 'f', 2));
+            }
+
+            if (objMod->lookup_scalar (_root, _vulnerabilitySumHandle, scalar)) {
+
+               _ui.vulnerabilityLabel->setText (
+                  QString::number (scalar * 100.0, 'f', 2) + QString ("%"));
+            }
+
+            if (objMod->lookup_scalar (_root, _vulnerabilitySumReducedHandle, scalar)) {
+
+               _ui.vulnerabilityReducedLabel->setText (
+                  QString::number (scalar * 100.0, 'f', 2) + QString ("%"));
+            }
+         }
       }
    }
 }
@@ -181,23 +222,26 @@ dmz::MBRAPluginFTCalculate::update_object_scalar (
          _update_budget ();
       }
    }
-   else if (AttributeHandle == _riskSumHandle) {
+   else if (ObjectHandle == _root) {
 
-      _ui.riskLabel->setText (QString::number (Value, 'f', 2));
-   }
-   else if (AttributeHandle == _riskSumReducedHandle) {
+      if (AttributeHandle == _riskSumHandle) {
 
-      _ui.riskReducedLabel->setText (QString::number (Value, 'f', 2));
-   }
-   else if (AttributeHandle == _vulnerabilitySumHandle) {
+         _ui.riskLabel->setText (QString::number (Value, 'f', 2));
+      }
+      else if (AttributeHandle == _riskSumReducedHandle) {
 
-      _ui.vulnerabilityLabel->setText (
-         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
-   }
-   else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
+         _ui.riskReducedLabel->setText (QString::number (Value, 'f', 2));
+      }
+      else if (AttributeHandle == _vulnerabilitySumHandle) {
 
-      _ui.vulnerabilityReducedLabel->setText (
-         QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+         _ui.vulnerabilityLabel->setText (
+            QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+      }
+      else if (AttributeHandle == _vulnerabilitySumReducedHandle) {
+
+         _ui.vulnerabilityReducedLabel->setText (
+            QString::number (Value * 100.0, 'f', 2) + QString ("%"));
+      }
    }
 }
 
@@ -305,6 +349,16 @@ dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
          objMod->store_flag (obj, _activeAttrHandle, True);
          _undo.stop_record (UndoHandle);
       }
+
+     // Should not be needed. The script resets it self when the root changes.
+#if 0
+      if (_ui.calculateButton->isChecked ()) {
+
+         // If calculation is on, toggle it off and on to reset it
+         _slot_calculate (false);
+         _slot_calculate (true);
+      }
+#endif // 0
    }
 }
 
@@ -406,8 +460,9 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       ObjectAttributeHideName,
       ObjectRemoveAttributeMask | ObjectFlagMask);
 
-   _activeAttrHandle =
-      config_to_named_handle ("attribute.flag", local, "FT_Active_Fault_Tree", context);
+   _activeAttrHandle = activate_object_attribute (
+      config_to_string ("attribute.flag", local, "FT_Active_Fault_Tree"),
+      ObjectFlagMask);
 
    _ecHandle = activate_object_attribute (
       config_to_string ("elimination_cost.name", local, "FT_Threat_Elimination_Cost"),

@@ -11,6 +11,7 @@ local RiskSumReducedHandle = dmz.handle.new ("FT_Risk_Sum_Reduced_Value")
 local AllocationHandle = dmz.handle.new ("FT_Threat_Allocation")
 local FTLinkHandle = dmz.handle.new ("FT_Link")
 local FTLogicLinkHandle = dmz.handle.new ("FT_Logic_Link")
+local FTActiveFaultTree = dmz.handle.new ("FT_Active_Fault_Tree")
 local AndState = 1
 local OrState = 2
 local AndMask = dmz.definitions.lookup_state ("FT_Logic_And")
@@ -79,9 +80,12 @@ create_object = function (self, objHandle, objType)
    if objType:is_of_type (ThreatType) then
       self.objects[objHandle] = { handle = objHandle, }
       self.reset = true
+   end
+--[[
    elseif objType == ComponentRootType then
       self.root = objHandle
    end
+--]]
 end,
 
 destroy_object = function (self, objHandle)
@@ -98,6 +102,16 @@ update_object_state = function (self, objHandle, attrHandle, value, prevValue)
          self.reset = true
       end
    elseif value then
+   end
+end
+}
+
+local RootCallback = {
+
+update_object_flag = function (self, object, attrHandle, value)
+   if value then
+      self.root = object
+      self.reset = true
    end
 end
 }
@@ -445,6 +459,7 @@ local function start_plugin (self)
    self.timeSliceHandle = self.timeSlice:create (work, self, self.name)
    self.timeSlice:stop (self.timeSliceHandle)
    self.objObs:register (nil, ObjectCallbacks, self)
+   self.objObs:register (FTActiveFaultTree, RootCallback, self)
    self.objObs:register (EliminationHandle, EliminationCallback, self)
    self.objObs:register (ConsequenceHandle, ConsequenceCallback, self)
    self.objObs:register (ThreatHandle, ThreatCallback, self)
