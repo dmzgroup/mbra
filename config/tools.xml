@@ -164,7 +164,7 @@
                action="released"
                message="EditObjectAttributesMessage"
                next="start">
-            <target name="dmzMBRAPluginNAProperties"/>
+            <target name="dmzMBRAPluginProperties"/>
             <attribute type="object" name="object"/>
          </condition>
          <condition action="moved" message="MoveSelectedObjectMessage" next="move_object">

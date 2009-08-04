@@ -16,7 +16,7 @@
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
-      <plugin name="dmzMBRAPluginNAProperties" scope="na-properties"/>
+      <plugin name="dmzMBRAPluginProperties" scope="na-properties"/>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
