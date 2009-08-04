@@ -4,11 +4,14 @@
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMainWindow.h>
 #include <dmzRuntimeConfig.h>
+#include <dmzRuntimeConfigToState.h>
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
+#include <dmzTypesHashTableStringTemplate.h>
+#include <dmzTypesMask.h>
 
 #include <QtGui/QtGui>
 #include "ui_NodeProperties.h"
@@ -144,10 +147,10 @@ class ScalarEditor : public pedit {
       ScalarEditor &operator= (const ScalarEditor &);
 };
 
-class CalcEditor : public pedit {
+class CalcLabel : public pedit {
 
    public:
-      CalcEditor (
+      CalcLabel (
          const Handle AttrHandle,
          const String &Name,
          ObjectAttributeCalculator *calc);
@@ -159,17 +162,100 @@ class CalcEditor : public pedit {
          QFormLayout *layout);
 
    protected:
-      virtual ~CalcEditor () {;}
+      virtual ~CalcLabel () {;}
 
       ObjectAttributeCalculator *_calc;
 
    private:
-      CalcEditor ();
-      CalcEditor (const CalcEditor &);
-      CalcEditor &operator= (const CalcEditor &);
+      CalcLabel ();
+      CalcLabel (const CalcLabel &);
+      CalcLabel &operator= (const CalcLabel &);
 };
 
+class LinkLabel : public pedit {
+
+   public:
+      LinkLabel (
+         const Handle AttrHandle,
+         const String &Name,
+         const Boolean Super);
+
+      virtual pupdate *create_widgets (
+         const Handle Object,
+         ObjectModule &module,
+         QWidget *parent,
+         QFormLayout *layout);
+
+   protected:
+      virtual ~LinkLabel () {;}
+      const Boolean _Super;
+
+   private:
+      LinkLabel ();
+      LinkLabel (const LinkLabel &);
+      LinkLabel &operator= (const LinkLabel &);
 };
+
+class StateEditor;
+
+class StateUpdater : public pupdate {
+
+   public:
+      StateUpdater (const Handle AttrHandle, QComboBox *edit, StateEditor &table);
+      virtual void update_object (const Handle Object, ObjectModule &module);
+
+   protected:
+      virtual ~StateUpdater () {;}
+      QComboBox *_edit;
+      StateEditor &_table;
+
+   private:
+      StateUpdater ();
+      StateUpdater (const StateUpdater &);
+      StateUpdater &operator= (const StateUpdater &);
+};
+
+class StateEditor : public pedit {
+
+   public:
+      StateEditor (const Handle AttrHandle, const String &Name) :
+            pedit (AttrHandle, Name) {;}
+
+      Boolean add_state (const String &Name, const Mask &State);
+      void set_default_state_name (const String &Name);
+      Mask get_state_mask () const;
+      Mask lookup_state (const String &Name) const;
+
+      virtual pupdate *create_widgets (
+         const Handle Object,
+         ObjectModule &module,
+         QWidget *parent,
+         QFormLayout *layout);
+
+   protected:
+      String _defaultStateName;
+      Mask _mask;
+      HashTableStringTemplate<Mask> _table;
+
+      virtual ~StateEditor () { _table.empty (); }
+
+   private:
+      StateEditor ();
+      StateEditor (const StateEditor &);
+      StateEditor &operator= (const StateEditor &);
+};
+
+
+inline static Handle
+get_real_object (const Handle Object, ObjectModule &module) {
+
+   return module.is_link (Object) ?
+      module.lookup_link_attribute_object (Object) :
+      Object;
+}
+
+};
+
 
 LineUpdater::LineUpdater (const Handle AttrHandle, QLineEdit *edit) :
       pupdate (AttrHandle),
@@ -179,9 +265,11 @@ LineUpdater::LineUpdater (const Handle AttrHandle, QLineEdit *edit) :
 void
 LineUpdater::update_object (const Handle Object, ObjectModule &module) {
 
+   const Handle RealObject = get_real_object (Object, module);
+
    if (_edit) {
 
-      module.store_text (Object, AttrHandle, _edit->text ().toAscii ().data ());
+      module.store_text (RealObject, AttrHandle, _edit->text ().toAscii ().data ());
    }
 }
 
@@ -193,11 +281,13 @@ LineEditor::create_widgets (
       QWidget *parent,
       QFormLayout *layout) {
 
+   const Handle RealObject = get_real_object (Object, module);
+
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
    String text;
 
-   if (!module.lookup_text (Object, AttrHandle, text)) { text = ""; }
+   if (!module.lookup_text (RealObject, AttrHandle, text)) { text = ""; }
 
    QLineEdit *edit= new QLineEdit (text.get_buffer (), parent);
 
@@ -217,7 +307,12 @@ TextUpdater::update_object (const Handle Object, ObjectModule &module) {
 
    if (_edit) {
 
-      module.store_text (Object, AttrHandle, _edit->toPlainText ().toAscii ().data ());
+      const Handle RealObject = get_real_object (Object, module);
+
+      module.store_text (
+         RealObject,
+         AttrHandle,
+         _edit->toPlainText ().toAscii ().data ());
    }
 }
 
@@ -229,11 +324,13 @@ TextEditor::create_widgets (
       QWidget *parent,
       QFormLayout *layout) {
 
+   const Handle RealObject = get_real_object (Object, module);
+
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
    String text;
 
-   if (!module.lookup_text (Object, AttrHandle, text)) { text = ""; }
+   if (!module.lookup_text (RealObject, AttrHandle, text)) { text = ""; }
 
    QTextEdit *edit= new QTextEdit (text.get_buffer (), parent);
 
@@ -251,7 +348,9 @@ ScalarUpdater::ScalarUpdater (const Handle AttrHandle, QDoubleSpinBox *edit) :
 void
 ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
 
-   if (_edit) { module.store_scalar (Object, AttrHandle, _edit->value ()); } }
+   const Handle RealObject = get_real_object (Object, module);
+   if (_edit) { module.store_scalar (RealObject, AttrHandle, _edit->value ()); }
+}
 
 
 ScalarEditor::ScalarEditor (
@@ -279,11 +378,13 @@ ScalarEditor::create_widgets (
       QWidget *parent,
       QFormLayout *layout) {
 
+   const Handle RealObject = get_real_object (Object, module);
+
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
    Float64 value (0.0);
 
-   module.lookup_scalar (Object, AttrHandle, value);
+   module.lookup_scalar (RealObject, AttrHandle, value);
 
    QDoubleSpinBox *edit = new QDoubleSpinBox (parent);
    edit->setDecimals (_Decimals);
@@ -299,7 +400,7 @@ ScalarEditor::create_widgets (
 }
 
 
-CalcEditor::CalcEditor (
+CalcLabel::CalcLabel (
       const Handle AttrHandle,
       const String &Name,
       ObjectAttributeCalculator *calc) :
@@ -307,14 +408,14 @@ CalcEditor::CalcEditor (
       _calc (calc) {;}
 
 
-#include <qdb.h>
-static qdb out;
 pupdate *
-CalcEditor::create_widgets (
+CalcLabel::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
       QFormLayout *layout) {
+
+   const Handle RealObject = get_real_object (Object, module);
 
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
@@ -323,8 +424,7 @@ CalcEditor::create_widgets (
    if (_calc) {
 
       _calc->store_object_module (&module);
-      value = _calc->calculate (Object);
-out << "Value: " << value << endl;
+      value = _calc->calculate (RealObject);
       _calc->store_object_module (0);
    }
 
@@ -335,6 +435,155 @@ out << "Value: " << value << endl;
 
    return 0;
 }
+
+
+LinkLabel::LinkLabel (
+      const Handle AttrHandle,
+      const String &Name,
+      const Boolean Super) :
+      pedit (AttrHandle, Name),
+      _Super (Super) {;}
+
+
+pupdate *
+LinkLabel::create_widgets (
+      const Handle Object,
+      ObjectModule &module,
+      QWidget *parent,
+      QFormLayout *layout) {
+
+   QLabel *label = new QLabel (Name.get_buffer (), parent);
+
+   Handle linkAttr (0);
+   Handle sub (0);
+   Handle super (0);
+
+   module.lookup_linked_objects (Object, linkAttr, super, sub);
+
+   String value;
+
+   if (_Super) { module.lookup_text (super, AttrHandle, value); }
+   else { module.lookup_text (sub, AttrHandle, value); }
+
+   QLabel *data = new QLabel (value.get_buffer (), parent);
+
+   layout->addRow (label, data);
+
+   return 0;
+}
+
+
+StateUpdater::StateUpdater (
+      const Handle AttrHandle,
+      QComboBox *edit,
+      StateEditor &table) :
+      pupdate (AttrHandle),
+      _edit (edit),
+      _table (table) {;}
+
+
+void
+StateUpdater::update_object (const Handle Object, ObjectModule &module) {
+
+   const Handle RealObject = get_real_object (Object, module);
+
+   if (_edit) {
+
+      Mask state;
+      module.lookup_state (RealObject, AttrHandle, state);
+
+      const Mask StateMask = _table.get_state_mask ();
+      const Mask Value = _table.lookup_state (_edit->currentText ().toAscii ().data ());
+
+      state.unset (StateMask);
+      state |= Value;
+
+      module.store_state (RealObject, AttrHandle, state);
+   }
+}
+
+
+Boolean
+StateEditor::add_state (const String &Name, const Mask &State) {
+
+   Mask *ptr = new Mask (State);
+
+   if (ptr && !_table.store (Name, ptr)) { delete ptr; ptr = 0; }
+   else if (ptr) { _mask |= State; }
+
+   return ptr != 0;
+}
+
+
+void
+StateEditor::set_default_state_name (const String &Name) { _defaultStateName = Name; }
+
+
+Mask
+StateEditor::get_state_mask () const { return _mask; }
+
+
+Mask
+StateEditor::lookup_state (const String &Name) const {
+
+   Mask *ptr = _table.lookup (Name);
+
+   return ptr ? *ptr : Mask ();
+}
+
+
+pupdate *
+StateEditor::create_widgets (
+      const Handle Object,
+      ObjectModule &module,
+      QWidget *parent,
+      QFormLayout *layout) {
+
+   const Handle RealObject = get_real_object (Object, module);
+
+   QLabel *label = new QLabel (Name.get_buffer (), parent);
+
+   Mask state;
+
+   String stateName (_defaultStateName);
+
+   if (module.lookup_state (RealObject, AttrHandle, state)) {
+
+      HashTableStringIterator it;
+      Mask *current (0);
+
+      Boolean done = False;
+
+      while (!done && _table.get_next (it, current)) {
+
+         if (state.contains (*current)) { stateName = it.get_hash_key (); done = true; }
+      }
+   }
+   else {
+
+   }
+
+   QComboBox *edit = new QComboBox (parent);
+
+   HashTableStringIterator it;
+   Mask *current (0);
+
+   while (_table.get_next (it, current)) {
+
+      edit->addItem (it.get_hash_key ().get_buffer ());
+   }
+
+   if (stateName) {
+
+      const int Index = edit->findText (stateName.get_buffer ());
+      if (Index >= 0) { edit->setCurrentIndex (Index); }
+   }
+
+   layout->addRow (label, edit);
+
+   return new StateUpdater (AttrHandle, edit, *this);
+}
+
 
 // Start MBRAPluginNAProperties class
 dmz::MBRAPluginNAProperties::MBRAPluginNAProperties (
@@ -349,7 +598,8 @@ dmz::MBRAPluginNAProperties::MBRAPluginNAProperties (
       _window (0),
       _objectDataHandle (0),
       _createdDataHandle (0),
-      _objectEditors (0) {
+      _objectEditors (0),
+      _linkEditors (0) {
 
    _init (local);
 }
@@ -358,6 +608,7 @@ dmz::MBRAPluginNAProperties::MBRAPluginNAProperties (
 dmz::MBRAPluginNAProperties::~MBRAPluginNAProperties () {
 
    if (_objectEditors) { delete _objectEditors; _objectEditors = 0; }
+   if (_linkEditors) { delete _linkEditors; _linkEditors = 0; }
 }
 
 
@@ -468,6 +719,8 @@ dmz::MBRAPluginNAProperties::_edit_node (const Handle Object, const Boolean Crea
 
       if (dialog.exec () == QDialog::Accepted) {
 
+         const Handle UndoHandle = _undo.start_record ("Edit Node");
+
          current = head;
 
          while (current) {
@@ -475,6 +728,8 @@ dmz::MBRAPluginNAProperties::_edit_node (const Handle Object, const Boolean Crea
             current->update_object (Object, *_objMod);
             current = current->next;
          }
+
+         _undo.stop_record (UndoHandle);
       }
       else if (Created) { _objMod->destroy_object (Object); }
 
@@ -485,6 +740,52 @@ dmz::MBRAPluginNAProperties::_edit_node (const Handle Object, const Boolean Crea
 
 void
 dmz::MBRAPluginNAProperties::_edit_link (const Handle Link, const Boolean Created) {
+
+   if (_objMod && _window) {
+
+      QDialog dialog (_window->get_widget ());
+
+      Ui::NodeProperties ui;
+      ui.setupUi (&dialog);
+      dialog.setWindowTitle ("Link Properties");
+
+      QFormLayout *layout = new QFormLayout (ui.attributes);
+
+      PropertyEditor *pe (_linkEditors);
+      PropertyUpdater *head (0), *current (0);
+
+      while (pe) {
+
+         PropertyUpdater *next = pe->create_widgets (
+            Link,
+            *_objMod,
+            &dialog,
+            layout);
+
+         if (!current) { head = current = next; }
+         else if (next) { current->next = next; current = next; }
+
+         pe = pe->next;
+      }
+
+      if (dialog.exec () == QDialog::Accepted) {
+
+         const Handle UndoHandle = _undo.start_record ("Edit Link");
+
+         current = head;
+
+         while (current) {
+
+            current->update_object (Link, *_objMod);
+            current = current->next;
+         }
+
+         _undo.stop_record (UndoHandle);
+      }
+      else if (Created) { _objMod->unlink_objects (Link); }
+
+      if (head) { delete head; head = 0; }
+   }
 
 }
 
@@ -527,7 +828,7 @@ dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
             Step,
             Suffix);
       }
-      else if (Type == "calc") {
+      else if (Type == "calc-label") {
 
          ConfigIterator it;
          Config root;
@@ -539,9 +840,41 @@ dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
             get_plugin_runtime_context (),
             &_log);
 
-if (!calc) { out << "Not calc was create!" << endl; }
+         pe = new CalcLabel (AttrHandle, Name, calc);
+      }
+      else if (Type == "state") {
 
-         pe = new CalcEditor (AttrHandle, Name, calc);
+         StateEditor *se = new StateEditor (AttrHandle, Name);
+
+         if (se) {
+
+            Config stateList;
+
+            editor.lookup_all_config ("state", stateList);
+
+            ConfigIterator it;
+            Config state;
+
+            while (stateList.get_next_config (it, state)) {
+
+               const String Name = config_to_string ("label", state);
+
+               se->add_state (
+                  Name,
+                  config_to_state ("name", state, get_plugin_runtime_context ()));
+
+               if (config_to_boolean ("default", state, False)) {
+
+                  se->set_default_state_name (Name);
+               }
+            }
+
+            pe = se;
+         }
+      }
+      else if (Type == "link-label") {
+
+         pe = new LinkLabel (AttrHandle, Name, config_to_boolean ("super", editor));
       }
 
       if (pe) { pe->next = result; result = pe; }
@@ -575,6 +908,11 @@ dmz::MBRAPluginNAProperties::_init (Config &local) {
    if (local.lookup_all_config ("object-editor-list.editor", list)) {
 
       _objectEditors = _create_editors (list);
+   }
+
+   if (local.lookup_all_config ("link-editor-list.editor", list)) {
+
+      _linkEditors = _create_editors (list);
    }
 }
 

@@ -187,7 +187,6 @@
    <na-properties>
       <object-editor-list>
          <editor type="line" name="Name:" attribute="NA_Node_Name"/>
-         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
          <editor
             type="scalar"
             name="Elimination Cost:"
@@ -200,10 +199,34 @@
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <editor type="calc" name="Degrees:">
+         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
+         <editor type="calc-label" name="Degrees:">
             <link name="Node_Link" super="true" sub="true"/>
          </editor>
       </object-editor-list>
+      <link-editor-list>
+         <editor type="line" name="Name:" attribute="NA_Node_Name"/>
+         <editor
+            type="scalar"
+            name="Elimination Cost:"
+            attribute="NA_Node_Elimination_Cost"
+            prefix="$"
+         />
+         <editor
+            type="scalar"
+            name="Consequence:"
+            attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <editor type="state" name="Flow:" attribute="NA_Link_Flow">
+            <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
+            <state label="forward" name="NA_Flow_Forward"/>
+            <state label="reverse" name="NA_Flow_Reverse"/>
+         </editor>
+         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
+         <editor type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
+         <editor type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+      </link-editor-list>
    </na-properties>
    <dmzQtPluginButtonToChannel>
       <dockWidget title="Actions"/>
@@ -334,6 +357,7 @@
    <set>
       <object-type name="na_node"/>
       <object-type name="na_tool_link_node"/>
+      <object-type name="na_link_attribute"/>
    </set>
    <attribute>
       <position name="Alt_Position_Attribute"/>

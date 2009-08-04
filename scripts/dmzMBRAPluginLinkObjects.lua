@@ -1,3 +1,5 @@
+local NodeType = dmz.object_type.new ("na_node")
+
 function receive_start (self, type, data)
    if self.linkHandle then
       dmz.object.unlink (self.linkHandle)
@@ -38,16 +40,19 @@ function receive_end (self, type, data)
       if handle then
          if handle == self.handle then self.handle = nil; handle = nil
          elseif dmz.object.is_object (handle) and self.handle then 
-            local undoHandle = dmz.undo.start_record ("Link Nodes")
-            local linkHandle = dmz.object.link ("Node_Link", self.handle, handle)
-            if linkHandle then
-               local outData = dmz.data.new ()
-               outData:store_handle ("object", 1, linkHandle)
-               outData:store_handle ("created", 1, linkHandle)
-               self.editMessage:send ("dmzMBRAPluginNAProperties", outData)
-            end
-            if dmz.object.is_link (linkHandle) then dmz.undo.stop_record (undoHandle)
-            else dmz.undo.abort_record (undoHandle)
+            local otype = dmz.object.type (handle)
+            if otype and otype:is_of_type (NodeType) then
+               local undoHandle = dmz.undo.start_record ("Link Nodes")
+               local linkHandle = dmz.object.link ("Node_Link", self.handle, handle)
+               if linkHandle then
+                  local outData = dmz.data.new ()
+                  outData:store_handle ("object", 1, linkHandle)
+                  outData:store_handle ("created", 1, linkHandle)
+                  self.editMessage:send ("dmzMBRAPluginNAProperties", outData)
+               end
+               if dmz.object.is_link (linkHandle) then dmz.undo.stop_record (undoHandle)
+               else dmz.undo.abort_record (undoHandle)
+               end
             end
          end
       end

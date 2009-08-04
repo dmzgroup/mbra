@@ -129,6 +129,7 @@ namespace dmz {
          Handle _createdDataHandle;
 
          PropertyEditor *_objectEditors;
+         PropertyEditor *_linkEditors;
 
       private:
          MBRAPluginNAProperties ();
