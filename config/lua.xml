@@ -13,6 +13,7 @@
       <plugin name="dmzLuaExtPick"/>
       <plugin name="dmzQtExtLuaConsole"/>
    </extensions>
+   <instance name="dmzMBRAPluginNAEdit"/>
    <instance name="dmzMBRAPluginNARanking"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
    <instance name="dmzMBRAPluginFaultTree"/>

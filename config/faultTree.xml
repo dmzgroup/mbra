@@ -27,14 +27,16 @@
       <plugin name="dmzObjectPluginFlagGroup"/>
    </plugin-list>
    <ft-component-properties>
+      <title value="Component Properties"/>
       <edit-message name="FTComponentEditMessage"/>
-      <object-widget-list>
+      <widget-list>
          <widget type="line" name="Name:" attribute="FT_Name"/>
-      </object-widget-list>
+      </widget-list>
    </ft-component-properties>
    <ft-threat-properties>
+      <title value="Threat Properties"/>
       <edit-message name="FTThreatEditMessage"/>
-      <object-widget-list>
+      <widget-list>
          <widget type="line" name="Name:" attribute="FT_Name"/>
          <widget
             type="scalar"
@@ -71,7 +73,7 @@
             attribute="FT_Threat_Consequence"
             prefix="$"
          />
-      </object-widget-list>
+      </widget-list>
    </ft-threat-properties>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>

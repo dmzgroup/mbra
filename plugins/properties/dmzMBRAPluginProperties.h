@@ -110,8 +110,8 @@ namespace dmz {
             Data *outData);
 
       protected:
-         void _edit_node (const Handle Object, const Boolean Created);
-         void _edit_link (const Handle Link, const Boolean Created);
+         void _edit (const Handle Object, const Boolean Created);
+
          PropertyWidget *_create_widgets (Config &list);
 
          void _init (Config &local);
@@ -128,8 +128,9 @@ namespace dmz {
          Handle _objectDataHandle;
          Handle _createdDataHandle;
 
-         PropertyWidget *_objectWidgets;
-         PropertyWidget *_linkWidgets;
+         String _dialogTitle;
+
+         PropertyWidget *_widgets;
 
       private:
          MBRAPluginProperties ();

@@ -611,8 +611,7 @@ dmz::MBRAPluginProperties::MBRAPluginProperties (
       _window (0),
       _objectDataHandle (0),
       _createdDataHandle (0),
-      _objectWidgets (0),
-      _linkWidgets (0) {
+      _widgets (0) {
 
    _init (local);
 }
@@ -620,8 +619,7 @@ dmz::MBRAPluginProperties::MBRAPluginProperties (
 
 dmz::MBRAPluginProperties::~MBRAPluginProperties () {
 
-   if (_objectWidgets) { delete _objectWidgets; _objectWidgets = 0; }
-   if (_linkWidgets) { delete _linkWidgets; _linkWidgets = 0; }
+   if (_widgets) { delete _widgets; _widgets = 0; }
 }
 
 
@@ -686,14 +684,7 @@ dmz::MBRAPluginProperties::receive_message (
 
             qApp->processEvents ();
 
-            if (_objMod->is_object (object)) {
-
-               _edit_node (object, createdHandle != 0);
-            }
-            else if (_objMod->is_link (object)) {
-
-               _edit_link (object, createdHandle != 0);
-            }
+            _edit (object, createdHandle != 0);
          }
       }
    }
@@ -702,7 +693,7 @@ dmz::MBRAPluginProperties::receive_message (
 
 // dmzMBRAPluginProperties Interface
 void
-dmz::MBRAPluginProperties::_edit_node (const Handle Object, const Boolean Created) {
+dmz::MBRAPluginProperties::_edit (const Handle Object, const Boolean Created) {
 
    if (_objMod && _window) {
 
@@ -710,10 +701,11 @@ dmz::MBRAPluginProperties::_edit_node (const Handle Object, const Boolean Create
 
       Ui::NodeProperties ui;
       ui.setupUi (&dialog);
+      dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
       QFormLayout *layout = new QFormLayout (ui.attributes);
 
-      PropertyWidget *pe (_objectWidgets);
+      PropertyWidget *pe (_widgets);
       PropertyUpdater *head (0), *current (0);
 
       while (pe) {
@@ -744,62 +736,14 @@ dmz::MBRAPluginProperties::_edit_node (const Handle Object, const Boolean Create
 
          _undo.stop_record (UndoHandle);
       }
-      else if (Created) { _objMod->destroy_object (Object); }
+      else if (Created) {
+
+         if (_objMod->is_object (Object)) { _objMod->destroy_object (Object); }
+         else if (_objMod->is_link (Object)) { _objMod->unlink_objects (Object); }
+      }
 
       if (head) { delete head; head = 0; }
    }
-}
-
-
-void
-dmz::MBRAPluginProperties::_edit_link (const Handle Link, const Boolean Created) {
-
-   if (_objMod && _window) {
-
-      QDialog dialog (_window->get_widget ());
-
-      Ui::NodeProperties ui;
-      ui.setupUi (&dialog);
-      dialog.setWindowTitle ("Link Properties");
-
-      QFormLayout *layout = new QFormLayout (ui.attributes);
-
-      PropertyWidget *pe (_linkWidgets);
-      PropertyUpdater *head (0), *current (0);
-
-      while (pe) {
-
-         PropertyUpdater *next = pe->create_widgets (
-            Link,
-            *_objMod,
-            &dialog,
-            layout);
-
-         if (!current) { head = current = next; }
-         else if (next) { current->next = next; current = next; }
-
-         pe = pe->next;
-      }
-
-      if (dialog.exec () == QDialog::Accepted) {
-
-         const Handle UndoHandle = _undo.start_record ("Edit Link");
-
-         current = head;
-
-         while (current) {
-
-            current->update_object (Link, *_objMod);
-            current = current->next;
-         }
-
-         _undo.stop_record (UndoHandle);
-      }
-      else if (Created) { _objMod->unlink_objects (Link); }
-
-      if (head) { delete head; head = 0; }
-   }
-
 }
 
 
@@ -920,16 +864,13 @@ dmz::MBRAPluginProperties::_init (Config &local) {
    _createdDataHandle =
       config_to_named_handle ("attribute.created.name", local, "created", context);
 
+   _dialogTitle = config_to_string ("title.value", local, "Node Properties");
+
    Config list;
 
-   if (local.lookup_all_config ("object-widget-list.widget", list)) {
+   if (local.lookup_all_config ("widget-list.widget", list)) {
 
-      _objectWidgets = _create_widgets (list);
-   }
-
-   if (local.lookup_all_config ("link-widget-list.widget", list)) {
-
-      _linkWidgets = _create_widgets (list);
+      _widgets = _create_widgets (list);
    }
 }
 
