@@ -34,7 +34,9 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _activeAttrHandle (0),
       _root (0),
       _target (0),
-      _objectAttrHandle (0) {
+      _editTarget (0),
+      _objectDataHandle (0),
+      _createdDataHandle (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -310,7 +312,6 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 
       if (root) {
 
-//         objMod->store_text (root, _nameAttrHandle, "Fault Tree Root");
          objMod->store_position (root, _defaultAttrHandle, Vector (0.0, 0.0, 0.0));
 
          _ui.rootBox->addItem ("", QVariant (qulonglong (root)));
@@ -321,12 +322,14 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
          objMod->activate_object (root);
 
          Data out;
-         out.store_handle (_objectAttrHandle, 0, root);
-         _componentEditMessage.send (&out);
+         out.store_handle (_objectDataHandle, 0, root);
+         out.store_handle (_createdDataHandle, 0, root);
+         _componentEditMessage.send (_editTarget, &out, 0);
 
          _log.debug << "Created Fault Tree Root: " << root << endl;
 
-         _undo.stop_record (UndoHandle);
+         if (objMod->is_object (root)) { _undo.stop_record (UndoHandle); }
+         else { _undo.abort_record (UndoHandle); }
       }
       else { _undo.abort_record (UndoHandle); }
    }
@@ -427,8 +430,17 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       "dmzMBRAPluginFaultTree",
       get_plugin_runtime_context ());
 
-   _objectAttrHandle = config_to_named_handle (
+   _editTarget = config_to_named_handle (
+      "thread-edit-target.name",
+      local,
+      "FaultTreeComponentProperties",
+      get_plugin_runtime_context ());
+
+   _objectDataHandle = config_to_named_handle (
       "attribute.object.name", local, "object", context);
+
+   _createdDataHandle = config_to_named_handle (
+      "attribute.created.name", local, "created", context);
 
    qwidget_config_read ("widget", local, this);
 

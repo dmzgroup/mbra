@@ -27,7 +27,7 @@
       <plugin name="dmzObjectPluginFlagGroup"/>
    </plugin-list>
    <ft-component-properties>
-      <edit-message name="FTThreatEditMessage"/>
+      <edit-message name="FTComponentEditMessage"/>
       <object-widget-list>
          <widget type="line" name="Name:" attribute="FT_Name"/>
       </object-widget-list>

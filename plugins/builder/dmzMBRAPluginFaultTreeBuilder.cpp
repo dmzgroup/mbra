@@ -287,7 +287,7 @@ dmz::MBRAPluginFaultTreeBuilder::_component_edit (
       Data out;
       out.store_handle (_objectDataHandle, 0, Object);
       if (Created) { out.store_handle (_createdDataHandle, 0, Object); }
-      _threatEditMessage.send (_componentEditTarget, &out, 0);
+      _componentEditMessage.send (_componentEditTarget, &out, 0);
    }
 }
 
