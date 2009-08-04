@@ -50,19 +50,19 @@ namespace dmz {
                PropertyUpdater &operator= (const PropertyUpdater &);
          };
 
-         class PropertyEditor {
+         class PropertyWidget {
 
             public:
                const Handle AttrHandle;
                const String Name;
 
-               PropertyEditor *next;
+               PropertyWidget *next;
 
-               virtual ~PropertyEditor () {
+               virtual ~PropertyWidget () {
 
                   while (next) {
 
-                     PropertyEditor *temp = next;
+                     PropertyWidget *temp = next;
                      next = next->next;
                      temp->next = 0;
                      delete temp; temp = 0;
@@ -76,7 +76,7 @@ namespace dmz {
                   QFormLayout *layout) = 0;
 
             protected:
-               PropertyEditor (
+               PropertyWidget (
                      const Handle TheAttrHandle,
                      const String &TheName) :
                      AttrHandle (TheAttrHandle),
@@ -84,9 +84,9 @@ namespace dmz {
                      next (0) {;}
 
             private:
-               PropertyEditor ();
-               PropertyEditor (const PropertyEditor &);
-               PropertyEditor &operator= (const PropertyEditor &);
+               PropertyWidget ();
+               PropertyWidget (const PropertyWidget &);
+               PropertyWidget &operator= (const PropertyWidget &);
          };
 
          MBRAPluginNAProperties (const PluginInfo &Info, Config &local);
@@ -112,7 +112,7 @@ namespace dmz {
       protected:
          void _edit_node (const Handle Object, const Boolean Created);
          void _edit_link (const Handle Link, const Boolean Created);
-         PropertyEditor *_create_editors (Config &list);
+         PropertyWidget *_create_widgets (Config &list);
 
          void _init (Config &local);
 
@@ -128,8 +128,8 @@ namespace dmz {
          Handle _objectDataHandle;
          Handle _createdDataHandle;
 
-         PropertyEditor *_objectEditors;
-         PropertyEditor *_linkEditors;
+         PropertyWidget *_objectWidgets;
+         PropertyWidget *_linkWidgets;
 
       private:
          MBRAPluginNAProperties ();

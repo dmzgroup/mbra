@@ -185,48 +185,48 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-properties>
-      <object-editor-list>
-         <editor type="line" name="Name:" attribute="NA_Node_Name"/>
-         <editor
+      <object-widget-list>
+         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
+         <widget
             type="scalar"
             name="Elimination Cost:"
             attribute="NA_Node_Elimination_Cost"
             prefix="$"
          />
-         <editor
+         <widget
             type="scalar"
             name="Consequence:"
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
-         <editor type="calc-label" name="Degrees:">
+         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
+         <widget type="calc-label" name="Degrees:">
             <link name="Node_Link" super="true" sub="true"/>
-         </editor>
-      </object-editor-list>
-      <link-editor-list>
-         <editor type="line" name="Name:" attribute="NA_Node_Name"/>
-         <editor
+         </widget>
+      </object-widget-list>
+      <link-widget-list>
+         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
+         <widget
             type="scalar"
             name="Elimination Cost:"
             attribute="NA_Node_Elimination_Cost"
             prefix="$"
          />
-         <editor
+         <widget
             type="scalar"
             name="Consequence:"
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <editor type="state" name="Flow:" attribute="NA_Link_Flow">
+         <widget type="state" name="Flow:" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
             <state label="reverse" name="NA_Flow_Reverse"/>
-         </editor>
-         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
-         <editor type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
-         <editor type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
-      </link-editor-list>
+         </widget>
+         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
+         <widget type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
+         <widget type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+      </link-widget-list>
    </na-properties>
    <dmzQtPluginButtonToChannel>
       <dockWidget title="Actions"/>

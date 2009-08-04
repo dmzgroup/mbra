@@ -20,7 +20,7 @@ using namespace dmz;
 
 namespace {
 
-typedef dmz::MBRAPluginNAProperties::PropertyEditor pedit;
+typedef dmz::MBRAPluginNAProperties::PropertyWidget pedit;
 typedef dmz::MBRAPluginNAProperties::PropertyUpdater pupdate;
 
 class LineUpdater : public pupdate {
@@ -39,10 +39,10 @@ class LineUpdater : public pupdate {
       LineUpdater &operator= (const LineUpdater &);
 };
 
-class LineEditor : public pedit {
+class LineWidget : public pedit {
 
    public:
-      LineEditor (const Handle AttrHandle, const String &Name) :
+      LineWidget (const Handle AttrHandle, const String &Name) :
             pedit (AttrHandle, Name) {;}
 
       virtual pupdate *create_widgets (
@@ -52,12 +52,12 @@ class LineEditor : public pedit {
          QFormLayout *layout);
 
    protected:
-      virtual ~LineEditor () {;}
+      virtual ~LineWidget () {;}
 
    private:
-      LineEditor ();
-      LineEditor (const LineEditor &);
-      LineEditor &operator= (const LineEditor &);
+      LineWidget ();
+      LineWidget (const LineWidget &);
+      LineWidget &operator= (const LineWidget &);
 };
 
 class TextUpdater : public pupdate {
@@ -76,10 +76,10 @@ class TextUpdater : public pupdate {
       TextUpdater &operator= (const TextUpdater &);
 };
 
-class TextEditor : public pedit {
+class TextWidget : public pedit {
 
    public:
-      TextEditor (const Handle AttrHandle, const String &Name) :
+      TextWidget (const Handle AttrHandle, const String &Name) :
             pedit (AttrHandle, Name) {;}
 
       virtual pupdate *create_widgets (
@@ -89,12 +89,12 @@ class TextEditor : public pedit {
          QFormLayout *layout);
 
    protected:
-      virtual ~TextEditor () {;}
+      virtual ~TextWidget () {;}
 
    private:
-      TextEditor ();
-      TextEditor (const TextEditor &);
-      TextEditor &operator= (const TextEditor &);
+      TextWidget ();
+      TextWidget (const TextWidget &);
+      TextWidget &operator= (const TextWidget &);
 };
 
 class ScalarUpdater : public pupdate {
@@ -113,10 +113,10 @@ class ScalarUpdater : public pupdate {
       ScalarUpdater &operator= (const ScalarUpdater &);
 };
 
-class ScalarEditor : public pedit {
+class ScalarWidget : public pedit {
 
    public:
-      ScalarEditor (
+      ScalarWidget (
          const Handle AttrHandle,
          const String &Name,
          const int Decimals,
@@ -133,7 +133,7 @@ class ScalarEditor : public pedit {
          QFormLayout *layout);
 
    protected:
-      virtual ~ScalarEditor () {;}
+      virtual ~ScalarWidget () {;}
       const int _Decimals;
       const double _Max;
       const double _Min;
@@ -142,9 +142,9 @@ class ScalarEditor : public pedit {
       const String _Suffix;
 
    private:
-      ScalarEditor ();
-      ScalarEditor (const ScalarEditor &);
-      ScalarEditor &operator= (const ScalarEditor &);
+      ScalarWidget ();
+      ScalarWidget (const ScalarWidget &);
+      ScalarWidget &operator= (const ScalarWidget &);
 };
 
 class CalcLabel : public pedit {
@@ -196,18 +196,18 @@ class LinkLabel : public pedit {
       LinkLabel &operator= (const LinkLabel &);
 };
 
-class StateEditor;
+class StateWidget;
 
 class StateUpdater : public pupdate {
 
    public:
-      StateUpdater (const Handle AttrHandle, QComboBox *edit, StateEditor &table);
+      StateUpdater (const Handle AttrHandle, QComboBox *edit, StateWidget &table);
       virtual void update_object (const Handle Object, ObjectModule &module);
 
    protected:
       virtual ~StateUpdater () {;}
       QComboBox *_edit;
-      StateEditor &_table;
+      StateWidget &_table;
 
    private:
       StateUpdater ();
@@ -215,10 +215,10 @@ class StateUpdater : public pupdate {
       StateUpdater &operator= (const StateUpdater &);
 };
 
-class StateEditor : public pedit {
+class StateWidget : public pedit {
 
    public:
-      StateEditor (const Handle AttrHandle, const String &Name) :
+      StateWidget (const Handle AttrHandle, const String &Name) :
             pedit (AttrHandle, Name) {;}
 
       Boolean add_state (const String &Name, const Mask &State);
@@ -237,12 +237,12 @@ class StateEditor : public pedit {
       Mask _mask;
       HashTableStringTemplate<Mask> _table;
 
-      virtual ~StateEditor () { _table.empty (); }
+      virtual ~StateWidget () { _table.empty (); }
 
    private:
-      StateEditor ();
-      StateEditor (const StateEditor &);
-      StateEditor &operator= (const StateEditor &);
+      StateWidget ();
+      StateWidget (const StateWidget &);
+      StateWidget &operator= (const StateWidget &);
 };
 
 
@@ -275,7 +275,7 @@ LineUpdater::update_object (const Handle Object, ObjectModule &module) {
 
 
 pupdate *
-LineEditor::create_widgets (
+LineWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
@@ -318,7 +318,7 @@ TextUpdater::update_object (const Handle Object, ObjectModule &module) {
 
 
 pupdate *
-TextEditor::create_widgets (
+TextWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
@@ -353,7 +353,7 @@ ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
-ScalarEditor::ScalarEditor (
+ScalarWidget::ScalarWidget (
       const Handle AttrHandle,
       const String &Name,
       const int Decimals,
@@ -372,7 +372,7 @@ ScalarEditor::ScalarEditor (
 
 
 pupdate *
-ScalarEditor::create_widgets (
+ScalarWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
@@ -476,7 +476,7 @@ LinkLabel::create_widgets (
 StateUpdater::StateUpdater (
       const Handle AttrHandle,
       QComboBox *edit,
-      StateEditor &table) :
+      StateWidget &table) :
       pupdate (AttrHandle),
       _edit (edit),
       _table (table) {;}
@@ -504,7 +504,7 @@ StateUpdater::update_object (const Handle Object, ObjectModule &module) {
 
 
 Boolean
-StateEditor::add_state (const String &Name, const Mask &State) {
+StateWidget::add_state (const String &Name, const Mask &State) {
 
    Mask *ptr = new Mask (State);
 
@@ -516,15 +516,15 @@ StateEditor::add_state (const String &Name, const Mask &State) {
 
 
 void
-StateEditor::set_default_state_name (const String &Name) { _defaultStateName = Name; }
+StateWidget::set_default_state_name (const String &Name) { _defaultStateName = Name; }
 
 
 Mask
-StateEditor::get_state_mask () const { return _mask; }
+StateWidget::get_state_mask () const { return _mask; }
 
 
 Mask
-StateEditor::lookup_state (const String &Name) const {
+StateWidget::lookup_state (const String &Name) const {
 
    Mask *ptr = _table.lookup (Name);
 
@@ -533,7 +533,7 @@ StateEditor::lookup_state (const String &Name) const {
 
 
 pupdate *
-StateEditor::create_widgets (
+StateWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
@@ -598,8 +598,8 @@ dmz::MBRAPluginNAProperties::MBRAPluginNAProperties (
       _window (0),
       _objectDataHandle (0),
       _createdDataHandle (0),
-      _objectEditors (0),
-      _linkEditors (0) {
+      _objectWidgets (0),
+      _linkWidgets (0) {
 
    _init (local);
 }
@@ -607,8 +607,8 @@ dmz::MBRAPluginNAProperties::MBRAPluginNAProperties (
 
 dmz::MBRAPluginNAProperties::~MBRAPluginNAProperties () {
 
-   if (_objectEditors) { delete _objectEditors; _objectEditors = 0; }
-   if (_linkEditors) { delete _linkEditors; _linkEditors = 0; }
+   if (_objectWidgets) { delete _objectWidgets; _objectWidgets = 0; }
+   if (_linkWidgets) { delete _linkWidgets; _linkWidgets = 0; }
 }
 
 
@@ -700,7 +700,7 @@ dmz::MBRAPluginNAProperties::_edit_node (const Handle Object, const Boolean Crea
 
       QFormLayout *layout = new QFormLayout (ui.attributes);
 
-      PropertyEditor *pe (_objectEditors);
+      PropertyWidget *pe (_objectWidgets);
       PropertyUpdater *head (0), *current (0);
 
       while (pe) {
@@ -751,7 +751,7 @@ dmz::MBRAPluginNAProperties::_edit_link (const Handle Link, const Boolean Create
 
       QFormLayout *layout = new QFormLayout (ui.attributes);
 
-      PropertyEditor *pe (_linkEditors);
+      PropertyWidget *pe (_linkWidgets);
       PropertyUpdater *head (0), *current (0);
 
       while (pe) {
@@ -790,35 +790,35 @@ dmz::MBRAPluginNAProperties::_edit_link (const Handle Link, const Boolean Create
 }
 
 
-dmz::MBRAPluginNAProperties::PropertyEditor *
-dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
+dmz::MBRAPluginNAProperties::PropertyWidget *
+dmz::MBRAPluginNAProperties::_create_widgets (Config &list) {
 
    ConfigIterator it;
-   Config editor;
+   Config widget;
 
-   PropertyEditor *result (0);
+   PropertyWidget *result (0);
 
-   while (list.get_prev_config (it, editor)) {
+   while (list.get_prev_config (it, widget)) {
 
-      PropertyEditor *pe (0);
+      PropertyWidget *pe (0);
 
-      const String Type = config_to_string ("type", editor);
-      const String Name = config_to_string ("name", editor);
+      const String Type = config_to_string ("type", widget);
+      const String Name = config_to_string ("name", widget);
       const Handle AttrHandle = _defs.create_named_handle (
-         config_to_string ("attribute", editor, ObjectAttributeDefaultName));
+         config_to_string ("attribute", widget, ObjectAttributeDefaultName));
 
-      if (Type == "line") { pe = new LineEditor (AttrHandle, Name); }
-      else if (Type == "text") { pe = new TextEditor (AttrHandle, Name); }
+      if (Type == "line") { pe = new LineWidget (AttrHandle, Name); }
+      else if (Type == "text") { pe = new TextWidget (AttrHandle, Name); }
       else if (Type == "scalar") {
 
-         const int Decimals = (int)config_to_int32 ("decimals", editor, 2);
-         const double Max = config_to_float64 ("max", editor, 1e+10);
-         const double Min = config_to_float64 ("min", editor, 0);
-         const String Prefix = config_to_string ("prefix", editor);
-         const double Step = config_to_float64 ("step", editor, 1000);
-         const String Suffix = config_to_string ("suffix", editor);
+         const int Decimals = (int)config_to_int32 ("decimals", widget, 2);
+         const double Max = config_to_float64 ("max", widget, 1e+10);
+         const double Min = config_to_float64 ("min", widget, 0);
+         const String Prefix = config_to_string ("prefix", widget);
+         const double Step = config_to_float64 ("step", widget, 1000);
+         const String Suffix = config_to_string ("suffix", widget);
 
-         pe = new ScalarEditor (
+         pe = new ScalarWidget (
             AttrHandle,
             Name,
             Decimals,
@@ -832,7 +832,7 @@ dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
 
          ConfigIterator it;
          Config root;
-         editor.get_first_config (it, root);
+         widget.get_first_config (it, root);
 
          ObjectAttributeCalculator *calc = config_to_object_attribute_calculator (
             "",
@@ -844,13 +844,13 @@ dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
       }
       else if (Type == "state") {
 
-         StateEditor *se = new StateEditor (AttrHandle, Name);
+         StateWidget *se = new StateWidget (AttrHandle, Name);
 
          if (se) {
 
             Config stateList;
 
-            editor.lookup_all_config ("state", stateList);
+            widget.lookup_all_config ("state", stateList);
 
             ConfigIterator it;
             Config state;
@@ -874,7 +874,7 @@ dmz::MBRAPluginNAProperties::_create_editors (Config &list) {
       }
       else if (Type == "link-label") {
 
-         pe = new LinkLabel (AttrHandle, Name, config_to_boolean ("super", editor));
+         pe = new LinkLabel (AttrHandle, Name, config_to_boolean ("super", widget));
       }
 
       if (pe) { pe->next = result; result = pe; }
@@ -905,14 +905,14 @@ dmz::MBRAPluginNAProperties::_init (Config &local) {
 
    Config list;
 
-   if (local.lookup_all_config ("object-editor-list.editor", list)) {
+   if (local.lookup_all_config ("object-widget-list.widget", list)) {
 
-      _objectEditors = _create_editors (list);
+      _objectWidgets = _create_widgets (list);
    }
 
-   if (local.lookup_all_config ("link-editor-list.editor", list)) {
+   if (local.lookup_all_config ("link-widget-list.widget", list)) {
 
-      _linkEditors = _create_editors (list);
+      _linkWidgets = _create_widgets (list);
    }
 }
 
