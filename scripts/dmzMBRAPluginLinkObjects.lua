@@ -44,7 +44,7 @@ function receive_end (self, type, data)
                local outData = dmz.data.new ()
                outData:store_handle ("object", 1, linkHandle)
                outData:store_handle ("created", 1, linkHandle)
-               self.editMessage:send ("dmzMBRAPluginNodeProperties", outData)
+               self.editMessage:send ("dmzMBRAPluginNAProperties", outData)
             end
             if dmz.object.is_link (linkHandle) then dmz.undo.stop_record (undoHandle)
             else dmz.undo.abort_record (undoHandle)

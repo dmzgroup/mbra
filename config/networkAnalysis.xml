@@ -16,7 +16,7 @@
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
-      <plugin name="dmzMBRAPluginNodeProperties"/>
+      <plugin name="dmzMBRAPluginNAProperties" scope="na-properties"/>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
@@ -184,11 +184,27 @@
          </action>
       </deleteLayer>\
    </NACanvasLayer>
-   <dmzMBRAPluginNodeProperties>
-      <degrees>
-         <link name="Node_Link" super="true" sub="true"/>
-      </degrees>
-   </dmzMBRAPluginNodeProperties>
+   <na-properties>
+      <object-editor-list>
+         <editor type="line" name="Name:" attribute="NA_Node_Name"/>
+         <editor type="text" name="Description:" attribute="NA_Node_Description"/>
+         <editor
+            type="scalar"
+            name="Elimination Cost:"
+            attribute="NA_Node_Elimination_Cost"
+            prefix="$"
+         />
+         <editor
+            type="scalar"
+            name="Consequence:"
+            attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <editor type="calc" name="Degrees:">
+            <link name="Node_Link" super="true" sub="true"/>
+         </editor>
+      </object-editor-list>
+   </na-properties>
    <dmzQtPluginButtonToChannel>
       <dockWidget title="Actions"/>
       <!-- <widget>
