@@ -100,11 +100,12 @@ class TextWidget : public pedit {
 class ScalarUpdater : public pupdate {
 
    public:
-      ScalarUpdater (const Handle AttrHandle, QDoubleSpinBox *edit);
+      ScalarUpdater (const Handle AttrHandle, QDoubleSpinBox *edit, const double Scale);
       virtual void update_object (const Handle Object, ObjectModule &module);
 
    protected:
       virtual ~ScalarUpdater () {;}
+      const double _Scale;
       QDoubleSpinBox *_edit;
 
    private:
@@ -119,6 +120,8 @@ class ScalarWidget : public pedit {
       ScalarWidget (
          const Handle AttrHandle,
          const String &Name,
+         const double DefaultValue,
+         const double Scale,
          const int Decimals,
          const double Max,
          const double Min,
@@ -134,6 +137,8 @@ class ScalarWidget : public pedit {
 
    protected:
       virtual ~ScalarWidget () {;}
+      const double _DefaultValue;
+      const double _Scale;
       const int _Decimals;
       const double _Max;
       const double _Min;
@@ -340,8 +345,12 @@ TextWidget::create_widgets (
 }
 
 
-ScalarUpdater::ScalarUpdater (const Handle AttrHandle, QDoubleSpinBox *edit) :
+ScalarUpdater::ScalarUpdater (
+      const Handle AttrHandle,
+      QDoubleSpinBox *edit,
+      const double Scale) :
       pupdate (AttrHandle),
+      _Scale (Scale > 0.0 ? Scale : 1.0),
       _edit (edit) {;}
 
 
@@ -349,13 +358,15 @@ void
 ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
 
    const Handle RealObject = get_real_object (Object, module);
-   if (_edit) { module.store_scalar (RealObject, AttrHandle, _edit->value ()); }
+   if (_edit) { module.store_scalar (RealObject, AttrHandle, _edit->value () / _Scale); }
 }
 
 
 ScalarWidget::ScalarWidget (
       const Handle AttrHandle,
       const String &Name,
+      const double DefaultValue,
+      const double Scale,
       const int Decimals,
       const double Max,
       const double Min,
@@ -363,6 +374,8 @@ ScalarWidget::ScalarWidget (
       const double Step,
       const String Suffix) :
       pedit (AttrHandle, Name),
+      _DefaultValue (DefaultValue),
+      _Scale (Scale > 0.0 ? Scale : 1.0),
       _Decimals (Decimals),
       _Max (Max),
       _Min (Min),
@@ -382,7 +395,7 @@ ScalarWidget::create_widgets (
 
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
-   Float64 value (0.0);
+   Float64 value (_DefaultValue);
 
    module.lookup_scalar (RealObject, AttrHandle, value);
 
@@ -392,11 +405,11 @@ ScalarWidget::create_widgets (
    edit->setPrefix (_Prefix.get_buffer ());
    edit->setSingleStep (_Step);
    edit->setSuffix (_Suffix.get_buffer ());
-   edit->setValue (value);
+   edit->setValue (value * _Scale);
 
    layout->addRow (label, edit);
 
-   return new ScalarUpdater (AttrHandle, edit);
+   return new ScalarUpdater (AttrHandle, edit, _Scale);
 }
 
 
@@ -811,6 +824,8 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
       else if (Type == "text") { pe = new TextWidget (AttrHandle, Name); }
       else if (Type == "scalar") {
 
+         const double DefaultValue = config_to_float64 ("default", widget, 0.0);
+         const double Scale = config_to_float64 ("scale", widget, 1.0);
          const int Decimals = (int)config_to_int32 ("decimals", widget, 2);
          const double Max = config_to_float64 ("max", widget, 1e+10);
          const double Min = config_to_float64 ("min", widget, 0);
@@ -821,6 +836,8 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
          pe = new ScalarWidget (
             AttrHandle,
             Name,
+            DefaultValue,
+            Scale,
             Decimals,
             Max,
             Min,
@@ -890,7 +907,7 @@ dmz::MBRAPluginProperties::_init (Config &local) {
    RuntimeContext *context = get_plugin_runtime_context ();
 
    _editMessage = config_create_message (
-      "message.edit",
+      "edit-message.name",
       local,
       "EditObjectAttributesMessage",
       context);

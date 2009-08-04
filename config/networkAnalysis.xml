@@ -185,6 +185,7 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-properties>
+      <edit-message name="EditObjectAttributesMessage"/>
       <object-widget-list>
          <widget type="line" name="Name:" attribute="NA_Node_Name"/>
          <widget
