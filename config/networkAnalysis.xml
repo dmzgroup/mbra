@@ -16,7 +16,16 @@
       <plugin name="dmzQtPluginButtonToChannel"/>
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
-      <plugin name="dmzMBRAPluginNodeProperties"/>
+      <plugin
+         name="dmzMBRAPluginProperties"
+         unique="NetworkAnalysisNodeProperties"
+         scope="na-node-properties"
+      />
+      <plugin
+         name="dmzMBRAPluginProperties"
+         unique="NetworkAnalysisLinkProperties"
+         scope="na-link-properties"
+      />
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
@@ -184,11 +193,56 @@
          </action>
       </deleteLayer>\
    </NACanvasLayer>
-   <dmzMBRAPluginNodeProperties>
-      <degrees>
-         <link name="Node_Link" super="true" sub="true"/>
-      </degrees>
-   </dmzMBRAPluginNodeProperties>
+   <na-node-properties>
+      <title value="Node Properties"/>
+      <edit-message name="EditObjectAttributesMessage"/>
+      <widget-list>
+         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
+         <widget
+            type="scalar"
+            name="Elimination Cost:"
+            attribute="NA_Node_Elimination_Cost"
+            prefix="$"
+         />
+         <widget
+            type="scalar"
+            name="Consequence:"
+            attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
+         <widget type="calc-label" name="Degrees:">
+            <link name="Node_Link" super="true" sub="true"/>
+         </widget>
+      </widget-list>
+   </na-node-properties>
+   <na-link-properties>
+      <title value="Link Properties"/>
+      <edit-message name="EditObjectAttributesMessage"/>
+      <widget-list>
+         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
+         <widget
+            type="scalar"
+            name="Elimination Cost:"
+            attribute="NA_Node_Elimination_Cost"
+            prefix="$"
+         />
+         <widget
+            type="scalar"
+            name="Consequence:"
+            attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <widget type="state" name="Flow:" attribute="NA_Link_Flow">
+            <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
+            <state label="forward" name="NA_Flow_Forward"/>
+            <state label="reverse" name="NA_Flow_Reverse"/>
+         </widget>
+         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
+         <widget type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
+         <widget type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+      </widget-list>
+   </na-link-properties>
    <dmzQtPluginButtonToChannel>
       <dockWidget title="Actions"/>
       <!-- <widget>

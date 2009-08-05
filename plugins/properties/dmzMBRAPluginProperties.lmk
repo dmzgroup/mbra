@@ -1,0 +1,12 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginProperties"
+lmk.set_type "plugin"
+lmk.add_files {"NodeProperties.ui",}
+lmk.add_files {"dmzMBRAPluginProperties.cpp",}
+lmk.add_libs {
+   "dmzObjectUtil",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzObjectFramework","dmzQtFramework",}
+lmkQt.add_libs {"QtCore", "QtGui",}
+

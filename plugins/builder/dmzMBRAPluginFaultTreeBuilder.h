@@ -93,13 +93,11 @@ namespace dmz {
          virtual void _remove_object_module (ObjectModule &objMod);
 
          void _component_add (const Handle Parent);
-         Boolean _component_edit (const Handle Object);
+         void _component_edit (const Handle Object, const Boolean Created);
          void _component_delete (const Handle Object);
 
          void _threat_add (const Handle Parent);
-         Boolean _threat_edit (const Handle Object);
-         void _threat_get (const Handle ObjectHandle, ThreatStruct &ts);
-         void _threat_update (const Handle ObjectHandle, const ThreatStruct &ts);
+         void _threat_edit (const Handle Object, const Boolean Created);
          void _threat_delete (const Handle Object);
 
          void _logic_and (const Handle Object);
@@ -110,10 +108,12 @@ namespace dmz {
 
          Handle _clone_component (const Handle Object, ObjectModule &objMod);
          void _empty_clip_board (const Handle NewClipBoard = 0);
+
          void _set_component_hide_state (
             const Handle Obj,
             const Boolean Value,
             ObjectModule &objMod);
+
          void _cut (const Handle Parent);
          void _copy (const Handle Parent);
          void _paste (const Handle Parent);
@@ -129,18 +129,15 @@ namespace dmz {
          QtModuleCanvas *_canvasModule;
          String _canvasModuleName;
          Handle _defaultAttrHandle;
-         Handle _objectAttrHandle;
+         Handle _objectDataHandle;
+         Handle _createdDataHandle;
          Handle _linkAttrHandle;
          Handle _logicAttrHandle;
-         Handle _nameAttrHandle;
-         Handle _eliminationCostAttrHandle;
-         Handle _consequenceAttrHandle;
-         Handle _threatAttrHandle;
-         Handle _vulnerabilityAttrHandle;
          Handle _hideAttrHandle;
          Handle _clipBoardHandle;
          Handle _clipBoardAttrHandle;
-         ObjectAttributeCalculator *_vulnerabilityCalc;
+         Handle _componentEditTarget;
+         Handle _threatEditTarget;
          Int32 _cloneDepth;
          Message _componentAddMessage;
          Message _componentEditMessage;

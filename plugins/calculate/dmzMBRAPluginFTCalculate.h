@@ -113,7 +113,9 @@ namespace dmz {
          Message _componentEditMessage;
          Handle _root;
          Handle _target;
-         Handle _objectAttrHandle;
+         Handle _editTarget;
+         Handle _objectDataHandle;
+         Handle _createdDataHandle;
          ObjectType _rootType;
          Ui::calculateForm _ui;
          HashTableHandleTemplate<EcStruct> _ecTable;

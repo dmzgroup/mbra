@@ -45,7 +45,7 @@ lmk.add_preqs {
    "dmzQtPluginRenderPickCanvas",
    "dmzQtPluginMapArchive",
    "dmzQtPluginButtonToChannel",
-   "dmzMBRAPluginNodeProperties",
+   "dmzMBRAPluginProperties",
    "dmzMBRAPluginCalculate",
    "dmzMBRAPluginNodeTable",
    "dmzQtPluginCanvasAutoLink",

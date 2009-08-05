@@ -29,17 +29,15 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _mainWindowModule (0),
       _mainWindowModuleName (),
       _defaultAttrHandle (0),
-      _objectAttrHandle (0),
+      _objectDataHandle (0),
+      _createdDataHandle (0),
       _linkAttrHandle (0),
       _logicAttrHandle (0),
-      _nameAttrHandle (0),
-      _eliminationCostAttrHandle (0),
-      _consequenceAttrHandle (0),
-      _threatAttrHandle (0),
-      _vulnerabilityAttrHandle (0),
       _hideAttrHandle (0),
       _clipBoardHandle (0),
       _clipBoardAttrHandle (0),
+      _componentEditTarget (0),
+      _threatEditTarget (0),
       _cloneDepth (0),
       _componentAddMessage (),
       _componentEditMessage (),
@@ -114,13 +112,13 @@ dmz::MBRAPluginFaultTreeBuilder::receive_message (
 
       Handle obj;
 
-      if (InData->lookup_handle (_objectAttrHandle, 0, obj)) {
+      if (InData->lookup_handle (_objectDataHandle, 0, obj)) {
 
          if (Msg == _componentAddMessage) { _component_add (obj); }
-         else if (Msg == _componentEditMessage) { _component_edit (obj); }
+         else if (Msg == _componentEditMessage) { _component_edit (obj, False); }
          else if (Msg == _componentDeleteMessage) { _component_delete (obj); }
          else if (Msg == _threatAddMessage) { _threat_add (obj); }
-         else if (Msg == _threatEditMessage) { _threat_edit (obj); }
+         else if (Msg == _threatEditMessage) { _threat_edit (obj, False); }
          else if (Msg == _threatDeleteMessage) { _threat_delete (obj); }
          else if (Msg == _logicAndMessage) { _logic_and (obj); }
          else if (Msg == _logicOrMessage) { _logic_or (obj); }
@@ -263,14 +261,14 @@ dmz::MBRAPluginFaultTreeBuilder::_component_add (const Handle Parent) {
 
       if (object) {
 
-         edited = _component_edit (object);
+         _component_edit (object, True);
 
-         if (edited) {
+         if (objMod->is_object (object)) {
 
+            edited = true;
             objMod->activate_object (object);
             objMod->link_objects (_linkAttrHandle, Parent, object);
          }
-         else { objMod->destroy_object (object); }
       }
 
       if (edited) { _undo.stop_record (UndoHandle); }
@@ -279,47 +277,18 @@ dmz::MBRAPluginFaultTreeBuilder::_component_add (const Handle Parent) {
 }
 
 
-dmz::Boolean
-dmz::MBRAPluginFaultTreeBuilder::_component_edit (const Handle Object) {
+void
+dmz::MBRAPluginFaultTreeBuilder::_component_edit (
+      const Handle Object,
+      const Boolean Created) {
 
-   Boolean result (False);
+   if (_componentEditTarget) {
 
-   ObjectModule *objMod (get_object_module ());
-
-   if (_mainWindowModule && objMod && Object) {
-
-      String text;
-      objMod->lookup_text (Object, _nameAttrHandle, text);
-
-      QDialog dialog (_mainWindowModule->get_widget ());
-
-// #ifdef Q_WS_MAC
-//       dialog.setWindowFlags (Qt::Sheet);
-// #endif
-
-      Ui::componentForm ui;
-      ui.setupUi (&dialog);
-
-      ui.nameLineEdit->setText (text.get_buffer ());
-
-      if (dialog.exec () == QDialog::Accepted) {
-
-         const Handle UndoHandle (_undo.start_record ("Edit Component"));
-
-         QString name = ui.nameLineEdit->text ();
-
-         text.flush ();
-         if (!name.isEmpty ()) { text = qPrintable (name); }
-
-         objMod->store_text (Object, _nameAttrHandle, text);
-
-         _undo.stop_record (UndoHandle);
-
-         result = True;
-      }
+      Data out;
+      out.store_handle (_objectDataHandle, 0, Object);
+      if (Created) { out.store_handle (_createdDataHandle, 0, Object); }
+      _componentEditMessage.send (_componentEditTarget, &out, 0);
    }
-
-   return result;
 }
 
 
@@ -376,17 +345,14 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
 
       if (object) {
 
-         objMod->store_scalar (object, _threatAttrHandle, 1.0);
-         objMod->store_scalar (object, _vulnerabilityAttrHandle, 0.0);
+         _threat_edit (object, True);
 
-         edited = _threat_edit (object);
+         if (objMod->is_object (object)) {
 
-         if (edited) {
-
+            edited = true;
             objMod->activate_object (object);
             objMod->link_objects (_linkAttrHandle, Parent, object);
          }
-         else { objMod->destroy_object (object); }
       }
 
       if (edited) { _undo.stop_record (UndoHandle); }
@@ -395,100 +361,17 @@ dmz::MBRAPluginFaultTreeBuilder::_threat_add (const Handle Parent) {
 }
 
 
-dmz::Boolean
-dmz::MBRAPluginFaultTreeBuilder::_threat_edit (const Handle Object) {
-
-   Boolean result (False);
-
-   if (_mainWindowModule && Object) {
-
-      ThreatStruct ts;
-      _threat_get (Object, ts);
-
-      QDialog dialog (_mainWindowModule->get_widget ());
-
-// #ifdef Q_WS_MAC
-//       dialog.setWindowFlags (Qt::Sheet);
-// #endif
-
-      Ui::threatForm ui;
-      ui.setupUi (&dialog);
-
-      ui.nameLineEdit->setText (ts.name);
-      ui.eliminationCostSpinBox->setValue (ts.eliminationCost);
-      ui.consequenceSpinBox->setValue (ts.consequence);
-      ui.threatSpinBox->setValue (ts.threat * 100);
-      ui.vulnerabilitySpinBox->setValue (ts.vulnerability * 100);
-
-      if (ts.eliminationCost && _vulnerabilityCalc) {
-
-      }
-
-      if (dialog.exec () == QDialog::Accepted) {
-
-         ts.name = ui.nameLineEdit->text ();
-         ts.eliminationCost = ui.eliminationCostSpinBox->value ();
-         ts.consequence = ui.consequenceSpinBox->value ();
-         ts.threat = ui.threatSpinBox->value () / 100.0;
-         ts.vulnerability = ui.vulnerabilitySpinBox->value () / 100.0;
-
-         _threat_update (Object, ts);
-
-         result = True;
-      }
-   }
-
-   return result;
-}
-
-
 void
-dmz::MBRAPluginFaultTreeBuilder::_threat_get (const Handle Object, ThreatStruct &ts) {
-
-   ObjectModule *objMod (get_object_module ());
-
-   if (objMod && Object) {
-
-      String text;
-
-      objMod->lookup_text (Object, _nameAttrHandle, text);
-      ts.name = text.get_buffer ();
-
-      objMod->lookup_scalar (
-         Object,
-         _eliminationCostAttrHandle,
-         ts.eliminationCost);
-
-      objMod->lookup_scalar (Object, _consequenceAttrHandle, ts.consequence);
-      objMod->lookup_scalar (Object, _threatAttrHandle, ts.threat);
-      objMod->lookup_scalar (Object, _vulnerabilityAttrHandle, ts.vulnerability);
-   }
-}
-
-
-void
-dmz::MBRAPluginFaultTreeBuilder::_threat_update (
+dmz::MBRAPluginFaultTreeBuilder::_threat_edit (
       const Handle Object,
-      const ThreatStruct &Ts) {
+      const Boolean Created) {
 
-   ObjectModule *objMod (get_object_module ());
+   if (_threatEditTarget) {
 
-   if (objMod && Object) {
-
-      const Handle UndoHandle (_undo.start_record ("Edit Threat"));
-
-      objMod->store_text (Object, _nameAttrHandle, qPrintable (Ts.name));
-
-      objMod->store_scalar (
-         Object,
-         _eliminationCostAttrHandle,
-         Ts.eliminationCost);
-
-      objMod->store_scalar (Object, _consequenceAttrHandle, Ts.consequence);
-      objMod->store_scalar (Object, _threatAttrHandle, Ts.threat);
-      objMod->store_scalar (Object, _vulnerabilityAttrHandle, Ts.vulnerability);
-
-      _undo.stop_record (UndoHandle);
+      Data out;
+      out.store_handle (_objectDataHandle, 0, Object);
+      if (Created) { out.store_handle (_createdDataHandle, 0, Object); }
+      _threatEditMessage.send (_threatEditTarget, &out, 0);
    }
 }
 
@@ -886,8 +769,11 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _defaultAttrHandle = activate_default_object_attribute (
       ObjectCreateMask | ObjectDestroyMask);
 
-   _objectAttrHandle = config_to_named_handle (
+   _objectDataHandle = config_to_named_handle (
       "attribute.object.name", local, "object", context);
+
+   _createdDataHandle = config_to_named_handle (
+      "attribute.created.name", local, "created", context);
 
    _linkAttrHandle = activate_object_attribute (
       config_to_string ("attribute.logic.name", local, "FT_Link"),
@@ -900,37 +786,22 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _logicAttrHandle = config_to_named_handle (
       "attribute.logic.name", local, "FT_Logic_Link", context);
 
-   _nameAttrHandle =
-      config_to_named_handle ("attribute.threat.name", local, "FT_Name", context);
-
-   _eliminationCostAttrHandle = config_to_named_handle (
-      "attribute.threat.eliminationCost",
-      local,
-      "FT_Threat_Elimination_Cost",
-      context);
-
-   _consequenceAttrHandle = config_to_named_handle (
-      "attribute.threat.consequence",
-      local,
-      "FT_Threat_Consequence",
-      context);
-
-   _threatAttrHandle = config_to_named_handle (
-      "attribute.threat.value",
-      local,
-      "FT_Threat_Value",
-      context);
-
    _hideAttrHandle = config_to_named_handle (
       "attribute.hide.value",
       local,
       ObjectAttributeHideName,
       context);
 
-   _vulnerabilityAttrHandle = config_to_named_handle (
-      "attribute.vulnerability.value",
+   _componentEditTarget = config_to_named_handle (
+      "thread-edit-component.name",
       local,
-      "FT_Vulnerability_Value",
+      "FaultTreeComponentProperties",
+      context);
+
+   _threatEditTarget = config_to_named_handle (
+      "thread-edit-target.name",
+      local,
+      "FaultTreeThreatProperties",
       context);
 
    _componentAddMessage = config_create_message (

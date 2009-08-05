@@ -12,10 +12,69 @@
       <plugin name="dmzQtPluginMenuToMessage" unique="FTLogicMenu"/>
       <plugin name="dmzMBRAPluginFaultTreeBuilder"/>
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
+      <plugin
+         name="dmzMBRAPluginProperties"
+         unique="FaultTreeComponentProperties"
+         scope="ft-component-properties"
+      />
+      <plugin
+         name="dmzMBRAPluginProperties"
+         unique="FaultTreeThreatProperties"
+         scope="ft-threat-properties"
+      />
       <plugin name="dmzMBRAPluginFTTable"/>
       <plugin name="dmzMBRAPluginFTCalculate"/>
       <plugin name="dmzObjectPluginFlagGroup"/>
    </plugin-list>
+   <ft-component-properties>
+      <title value="Component Properties"/>
+      <edit-message name="FTComponentEditMessage"/>
+      <widget-list>
+         <widget type="line" name="Name:" attribute="FT_Name"/>
+      </widget-list>
+   </ft-component-properties>
+   <ft-threat-properties>
+      <title value="Threat Properties"/>
+      <edit-message name="FTThreatEditMessage"/>
+      <widget-list>
+         <widget type="line" name="Name:" attribute="FT_Name"/>
+         <widget
+            type="scalar"
+            name="Threat:"
+            attribute="FT_Threat_Value"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <widget
+            type="scalar"
+            name="Vulnerability:"
+            attribute="FT_Vulnerability_Value"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <widget
+            type="scalar"
+            name="Elimination Cost:"
+            attribute="FT_Threat_Elimination_Cost"
+            prefix="$"
+         />
+         <widget
+            type="scalar"
+            name="Consequence:"
+            attribute="FT_Threat_Consequence"
+            prefix="$"
+         />
+      </widget-list>
+   </ft-threat-properties>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="FaultTreeChannel"/>
