@@ -760,7 +760,7 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
       PropertyWidget *pe (0);
 
       const String Type = config_to_string ("type", widget);
-      const String Name = config_to_string ("name", widget);
+      const String Name = config_to_string ("name", widget) + ":";
       const Handle AttrHandle = _defs.create_named_handle (
          config_to_string ("attribute", widget, ObjectAttributeDefaultName));
 
@@ -868,7 +868,7 @@ dmz::MBRAPluginProperties::_init (Config &local) {
 
    Config list;
 
-   if (local.lookup_all_config ("widget-list.widget", list)) {
+   if (local.lookup_all_config ("property-list.property", list)) {
 
       _widgets = _create_widgets (list);
    }

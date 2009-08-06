@@ -196,52 +196,52 @@
    <na-node-properties>
       <title value="Node Properties"/>
       <edit-message name="EditObjectAttributesMessage"/>
-      <widget-list>
-         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
-         <widget
+      <property-list>
+         <property type="line" name="Name" attribute="NA_Node_Name"/>
+         <property
             type="scalar"
-            name="Elimination Cost:"
+            name="Elimination Cost"
             attribute="NA_Node_Elimination_Cost"
             prefix="$"
          />
-         <widget
+         <property
             type="scalar"
-            name="Consequence:"
+            name="Consequence"
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
-         <widget type="calc-label" name="Degrees:">
+         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property type="calc-label" name="Degrees">
             <link name="Node_Link" super="true" sub="true"/>
-         </widget>
-      </widget-list>
+         </property>
+      </property-list>
    </na-node-properties>
    <na-link-properties>
       <title value="Link Properties"/>
       <edit-message name="EditObjectAttributesMessage"/>
-      <widget-list>
-         <widget type="line" name="Name:" attribute="NA_Node_Name"/>
-         <widget
+      <property-list>
+         <property type="line" name="Name" attribute="NA_Node_Name"/>
+         <property
             type="scalar"
-            name="Elimination Cost:"
+            name="Elimination Cost"
             attribute="NA_Node_Elimination_Cost"
             prefix="$"
          />
-         <widget
+         <property
             type="scalar"
-            name="Consequence:"
+            name="Consequence"
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <widget type="state" name="Flow:" attribute="NA_Link_Flow">
+         <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
             <state label="reverse" name="NA_Flow_Reverse"/>
-         </widget>
-         <widget type="text" name="Description:" attribute="NA_Node_Description"/>
-         <widget type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
-         <widget type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
-      </widget-list>
+         </property>
+         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
+         <property type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+      </property-list>
    </na-link-properties>
    <dmzQtPluginButtonToChannel>
       <dockWidget title="Actions"/>

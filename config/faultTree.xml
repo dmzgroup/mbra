@@ -29,18 +29,18 @@
    <ft-component-properties>
       <title value="Component Properties"/>
       <edit-message name="FTComponentEditMessage"/>
-      <widget-list>
-         <widget type="line" name="Name:" attribute="FT_Name"/>
-      </widget-list>
+      <property-list>
+         <property type="line" name="Name" attribute="FT_Name"/>
+      </property-list>
    </ft-component-properties>
    <ft-threat-properties>
       <title value="Threat Properties"/>
       <edit-message name="FTThreatEditMessage"/>
-      <widget-list>
-         <widget type="line" name="Name:" attribute="FT_Name"/>
-         <widget
+      <property-list>
+         <property type="line" name="Name" attribute="FT_Name"/>
+         <property
             type="scalar"
-            name="Threat:"
+            name="Threat"
             attribute="FT_Threat_Value"
             default="1.0"
             scale="100"
@@ -50,9 +50,9 @@
             step="5"
             suffix="%"
          />
-         <widget
+         <property
             type="scalar"
-            name="Vulnerability:"
+            name="Vulnerability"
             attribute="FT_Vulnerability_Value"
             scale="100"
             decimals="0"
@@ -61,19 +61,19 @@
             step="5"
             suffix="%"
          />
-         <widget
+         <property
             type="scalar"
-            name="Elimination Cost:"
+            name="Elimination Cost"
             attribute="FT_Threat_Elimination_Cost"
             prefix="$"
          />
-         <widget
+         <property
             type="scalar"
-            name="Consequence:"
+            name="Consequence"
             attribute="FT_Threat_Consequence"
             prefix="$"
          />
-      </widget-list>
+      </property-list>
    </ft-threat-properties>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
