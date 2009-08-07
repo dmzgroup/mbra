@@ -13,12 +13,12 @@
       <plugin name="dmzMBRAPluginFaultTreeBuilder"/>
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="FaultTreeComponentProperties"
          scope="ft-component-properties"
       />
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="FaultTreeThreatProperties"
          scope="ft-threat-properties"
       />

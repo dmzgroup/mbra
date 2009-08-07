@@ -1,5 +1,5 @@
-#ifndef DMZ_MBRA_PLUGIN_PROPERTIES_DOT_H
-#define DMZ_MBRA_PLUGIN_PROPERTIES_DOT_H
+#ifndef DMZ_MBRA_PLUGIN_PROPERTY_EDITOR_DOT_H
+#define DMZ_MBRA_PLUGIN_PROPERTY_EDITOR_DOT_H
 
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimeLog.h>
@@ -15,7 +15,7 @@ namespace dmz {
    class ObjectModule;
    class QtModuleMainWindow;
 
-   class MBRAPluginProperties :
+   class MBRAPluginPropertyEditor :
          public Plugin,
          public MessageObserver {
 
@@ -89,8 +89,8 @@ namespace dmz {
                PropertyWidget &operator= (const PropertyWidget &);
          };
 
-         MBRAPluginProperties (const PluginInfo &Info, Config &local);
-         ~MBRAPluginProperties ();
+         MBRAPluginPropertyEditor (const PluginInfo &Info, Config &local);
+         ~MBRAPluginPropertyEditor ();
 
          // Plugin Interface
          virtual void update_plugin_state (
@@ -133,11 +133,11 @@ namespace dmz {
          PropertyWidget *_widgets;
 
       private:
-         MBRAPluginProperties ();
-         MBRAPluginProperties (const MBRAPluginProperties &);
-         MBRAPluginProperties &operator= (const MBRAPluginProperties &);
+         MBRAPluginPropertyEditor ();
+         MBRAPluginPropertyEditor (const MBRAPluginPropertyEditor &);
+         MBRAPluginPropertyEditor &operator= (const MBRAPluginPropertyEditor &);
 
    };
 };
 
-#endif // DMZ_MBRA_PLUGIN_PROPERTIES_DOT_H
+#endif // DMZ_MBRA_PLUGIN_PROPERTY_EDITOR_DOT_H

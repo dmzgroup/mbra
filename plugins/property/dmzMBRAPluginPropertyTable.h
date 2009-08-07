@@ -1,7 +1,6 @@
-#ifndef DMZ_MBRA_PLUGIN_NODE_TABLE_DOT_H
-#define DMZ_MBRA_PLUGIN_NODE_TABLE_DOT_H
+#ifndef DMZ_MBRA_PLUGIN_PROPERTY_TABLE_DOT_H
+#define DMZ_MBRA_PLUGIN_PROPERTY_TABLE_DOT_H
 
-#include <dmzObjectCalc.h>
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
@@ -9,19 +8,18 @@
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
+#include <QtGui/QItemDelegate>
 #include <QtGui/QWidget>
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QStandardItemModel>
-#include "ui_dmzMBRANodeTable.h"
+#include <ui_PropertyTable.h>
 
 class QDockWidget;
 class QStandarItem;
 
 namespace dmz {
 
-   class QtModuleMainWindow;
-
-   class MBRAPluginNodeTable :
+   class MBRAPluginPropertyTable :
          public QWidget,
          public Plugin,
          public ObjectObserverUtil,
@@ -30,13 +28,13 @@ namespace dmz {
       Q_OBJECT
 
       public:
-         MBRAPluginNodeTable (const PluginInfo &Info, Config &local);
-         ~MBRAPluginNodeTable ();
+         MBRAPluginPropertyTable (const PluginInfo &Info, Config &local);
+         ~MBRAPluginPropertyTable ();
 
          // Plugin Interface
          virtual void update_plugin_state (
             const PluginStateEnum State,
-            const UInt32 Level) {;}
+            const UInt32 Level);
 
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
@@ -50,6 +48,12 @@ namespace dmz {
             const ObjectLocalityEnum Locality);
 
          virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
+
+         virtual void remove_object_attribute (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Mask &AttrMask);
 
          virtual void link_objects (
             const Handle LinkHandle,
@@ -79,6 +83,34 @@ namespace dmz {
             const UUID &PrevAttributeIdentity,
             const Handle PrevAttributeObjectHandle);
 
+         virtual void update_object_counter (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Int64 Value,
+            const Int64 *PreviousValue);
+
+         virtual void update_object_counter_minimum (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Int64 Value,
+            const Int64 *PreviousValue);
+
+         virtual void update_object_counter_maximum (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Int64 Value,
+            const Int64 *PreviousValue);
+
+         virtual void update_object_flag (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Boolean Value,
+            const Boolean *PreviousValue);
+
          virtual void update_object_scalar (
             const UUID &Identity,
             const Handle ObjectHandle,
@@ -96,43 +128,22 @@ namespace dmz {
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
-      protected slots:
-         void _node_item_changed (QStandardItem *item);
-
       protected:
-         typedef QList<QStandardItem *> QStandardItemList;
-
-         virtual void _store_object_module (ObjectModule &objMod);
-         virtual void _remove_object_module (ObjectModule &objMod);
-
-         void _update_degrees (const Handle ObjectHandle);
          void _init (Config &local);
 
          Log _log;
-         Undo _undo;
-         Ui::tableForm _ui;
-         QStandardItemModel _nodeModel;
-         QSortFilterProxyModel _nodeProxyModel;
-         Handle _defaultAttrHandle;
-         Handle _objectAttrHandle;
-         Handle _nameAttrHandle;
-         Handle _eliminationCostAttrHandle;
-         Handle _consequenceAttrHandle;
-         Handle _flowAttrHandle;
-         Handle _linkAttrHandle;
-         Handle _rankAttrHandle;
-         ObjectType _nodeType;
-         ObjectType _linkType;
-         HashTableHandleTemplate<QStandardItemList> _nodeRowTable;
-         HashTableHandleTemplate<QStandardItemList> _linkRowTable;
-         Boolean _ignoreChange;
-         ObjectAttributeCalculator *_degreeCalc;
+         Ui::PropertyTable _ui;
+
+         QStandardItemModel _model;
+         QSortFilterProxyModel _proxyModel;
+         QItemDelegate *_delegate;
 
       private:
-         MBRAPluginNodeTable ();
-         MBRAPluginNodeTable (const MBRAPluginNodeTable &);
-         MBRAPluginNodeTable &operator= (const MBRAPluginNodeTable &);
+         MBRAPluginPropertyTable ();
+         MBRAPluginPropertyTable (const MBRAPluginPropertyTable &);
+         MBRAPluginPropertyTable &operator= (const MBRAPluginPropertyTable &);
+
    };
 };
 
-#endif // DMZ_MBRA_PLUGIN_NODE_TABLE_DOT_H
+#endif // DMZ_MBRA_PLUGIN_PROPERTY_TABLE_DOT_H

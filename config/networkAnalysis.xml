@@ -17,12 +17,12 @@
       <!-- <plugin name="dmzQtPluginCanvasArchive" unique="NACanvasArchive"/> -->
       <!-- <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPick"/> -->
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="NetworkAnalysisNodeProperties"
          scope="na-node-properties"
       />
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="NetworkAnalysisLinkProperties"
          scope="na-link-properties"
       />

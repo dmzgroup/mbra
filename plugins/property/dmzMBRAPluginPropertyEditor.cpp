@@ -1,4 +1,4 @@
-#include "dmzMBRAPluginProperties.h"
+#include "dmzMBRAPluginPropertyEditor.h"
 #include <dmzObjectCalc.h>
 #include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
@@ -14,14 +14,14 @@
 #include <dmzTypesMask.h>
 
 #include <QtGui/QtGui>
-#include "ui_NodeProperties.h"
+#include "ui_PropertyEditor.h"
 
 using namespace dmz;
 
 namespace {
 
-typedef dmz::MBRAPluginProperties::PropertyWidget pedit;
-typedef dmz::MBRAPluginProperties::PropertyUpdater pupdate;
+typedef dmz::MBRAPluginPropertyEditor::PropertyWidget pedit;
+typedef dmz::MBRAPluginPropertyEditor::PropertyUpdater pupdate;
 
 class LineUpdater : public pupdate {
 
@@ -598,8 +598,8 @@ StateWidget::create_widgets (
 }
 
 
-// Start MBRAPluginProperties class
-dmz::MBRAPluginProperties::MBRAPluginProperties (
+// Start MBRAPluginPropertyEditor class
+dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       const PluginInfo &Info,
       Config &local) :
       Plugin (Info),
@@ -617,7 +617,7 @@ dmz::MBRAPluginProperties::MBRAPluginProperties (
 }
 
 
-dmz::MBRAPluginProperties::~MBRAPluginProperties () {
+dmz::MBRAPluginPropertyEditor::~MBRAPluginPropertyEditor () {
 
    if (_widgets) { delete _widgets; _widgets = 0; }
 }
@@ -625,7 +625,7 @@ dmz::MBRAPluginProperties::~MBRAPluginProperties () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginProperties::update_plugin_state (
+dmz::MBRAPluginPropertyEditor::update_plugin_state (
       const PluginStateEnum State,
       const UInt32 Level) {
 
@@ -645,7 +645,7 @@ dmz::MBRAPluginProperties::update_plugin_state (
 
 
 void
-dmz::MBRAPluginProperties::discover_plugin (
+dmz::MBRAPluginPropertyEditor::discover_plugin (
       const PluginDiscoverEnum Mode,
       const Plugin *PluginPtr) {
 
@@ -664,7 +664,7 @@ dmz::MBRAPluginProperties::discover_plugin (
 
 // Message Observer Interface
 void
-dmz::MBRAPluginProperties::receive_message (
+dmz::MBRAPluginPropertyEditor::receive_message (
       const Message &Type,
       const UInt32 MessageSendHandle,
       const Handle TargetObserverHandle,
@@ -691,15 +691,15 @@ dmz::MBRAPluginProperties::receive_message (
 }
 
 
-// dmzMBRAPluginProperties Interface
+// dmzMBRAPluginPropertyEditor Interface
 void
-dmz::MBRAPluginProperties::_edit (const Handle Object, const Boolean Created) {
+dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created) {
 
    if (_objMod && _window) {
 
       QDialog dialog (_window->get_widget ());
 
-      Ui::NodeProperties ui;
+      Ui::PropertyEditor ui;
       ui.setupUi (&dialog);
       dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
@@ -747,8 +747,8 @@ dmz::MBRAPluginProperties::_edit (const Handle Object, const Boolean Created) {
 }
 
 
-dmz::MBRAPluginProperties::PropertyWidget *
-dmz::MBRAPluginProperties::_create_widgets (Config &list) {
+dmz::MBRAPluginPropertyEditor::PropertyWidget *
+dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
 
    ConfigIterator it;
    Config widget;
@@ -846,7 +846,7 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
 
 
 void
-dmz::MBRAPluginProperties::_init (Config &local) {
+dmz::MBRAPluginPropertyEditor::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
 
@@ -878,12 +878,12 @@ dmz::MBRAPluginProperties::_init (Config &local) {
 extern "C" {
 
 DMZ_PLUGIN_FACTORY_LINK_SYMBOL dmz::Plugin *
-create_dmzMBRAPluginProperties (
+create_dmzMBRAPluginPropertyEditor (
       const dmz::PluginInfo &Info,
       dmz::Config &local,
       dmz::Config &global) {
 
-   return new dmz::MBRAPluginProperties (Info, local);
+   return new dmz::MBRAPluginPropertyEditor (Info, local);
 }
 
 };
