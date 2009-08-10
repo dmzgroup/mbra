@@ -3,11 +3,13 @@
 
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
+#include <dmzTypesHashTableUInt32Template.h>
 #include <QtGui/QItemDelegate>
 #include <QtGui/QWidget>
 #include <QtGui/QSortFilterProxyModel>
@@ -28,6 +30,33 @@ namespace dmz {
       Q_OBJECT
 
       public:
+         class PropertyWidget {
+
+            public:
+               const Handle Attribute;
+               const Int32 Column;
+               const Boolean Editable;
+
+               PropertyWidget (
+                     const Handle TheAttribute,
+                     const Int32 TheColumn,
+                     const Boolean IsEditable) :
+                     Attribute (TheAttribute),
+                     Column (TheColumn),
+                     Editable (IsEditable) {;}
+
+               virtual ~PropertyWidget () {;}
+
+               virtual QWidget *create_widget (QWidget *parent) = 0;
+
+               virtual void update_property (
+                  const Handle Object,
+                  const QVariant &Data,
+                  ObjectModule &module) = 0;
+
+               virtual QVariant update_variant (const QVariant &data) = 0;
+         };
+
          MBRAPluginPropertyTable (const PluginInfo &Info, Config &local);
          ~MBRAPluginPropertyTable ();
 
@@ -128,15 +157,33 @@ namespace dmz {
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
+      protected slots:
+         void _item_changed (QStandardItem *item);
+
       protected:
+         typedef QList<QStandardItem *> QStandardItemList;
+
+         void _create_properties (Config &list);
          void _init (Config &local);
 
          Log _log;
+         Definitions _defs;
+
          Ui::PropertyTable _ui;
 
          QStandardItemModel _model;
          QSortFilterProxyModel _proxyModel;
-         QItemDelegate *_delegate;
+
+         ObjectTypeSet _typeSet;
+
+         Boolean _ignoreChange;
+
+         Handle _hideAttrHandle;
+
+         HashTableHandleTemplate<QStandardItemList> _rowTable;
+
+         HashTableHandleTemplate<PropertyWidget> _attrTable;
+         HashTableUInt32Template<PropertyWidget> _colTable;
 
       private:
          MBRAPluginPropertyTable ();

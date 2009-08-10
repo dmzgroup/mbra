@@ -26,8 +26,12 @@
          unique="NetworkAnalysisLinkProperties"
          scope="na-link-properties"
       />
+      <plugin
+         name="dmzMBRAPluginPropertyTable"
+         unique="NetworkAnalysisPropertyTable"
+         scope="na-node-properties"
+      />
       <plugin name="dmzMBRAPluginCalculate"/>
-      <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
@@ -35,7 +39,7 @@
    </plugin-list>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
-      <widget name="dmzMBRAPluginNodeTable" title="Network Table Data"/>
+      <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
@@ -194,6 +198,10 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-node-properties>
+      <object-type-list>
+         <object-type name="na_node"/>
+         <object-type name="na_link_attribute"/>
+      </object-type-list>
       <title value="Node Properties"/>
       <edit-message name="EditObjectAttributesMessage"/>
       <property-list>
@@ -427,12 +435,6 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
-   <dmzMBRAPluginNodeTable>
-      <degrees>
-         <link name="Node_Link" super="true" sub="true"/>
-      </degrees>
-      <dockWidget title="Network Table Data"/>
-   </dmzMBRAPluginNodeTable>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>
