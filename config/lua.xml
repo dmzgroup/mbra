@@ -15,6 +15,7 @@
    </extensions>
    <instance name="dmzMBRAPluginNAEdit"/>
    <instance name="dmzMBRAPluginNARanking"/>
+   <instance name="dmzMBRAPluginNADegrees"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
    <instance name="dmzMBRAPluginFaultTree"/>
    <instance name="dmzMBRAPluginLayerActive"/>

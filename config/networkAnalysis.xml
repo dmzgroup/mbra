@@ -219,9 +219,12 @@
             prefix="$"
          />
          <property type="text" name="Description" attribute="NA_Node_Description"/>
-         <property type="calc-label" name="Degrees">
-            <link name="Node_Link" super="true" sub="true"/>
-         </property>
+         <property
+            type="scalar-label"
+            name="Degrees"
+            attribute="NA_Node_Degrees"
+            decimals="0"
+         />
          <property type="line-label" name="Rank" attribute="NA_Node_Rank"/>
       </property-list>
    </na-node-properties>

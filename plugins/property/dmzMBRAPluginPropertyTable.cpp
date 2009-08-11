@@ -669,7 +669,6 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
       while (_attrTable.get_next (it, pw)) {
 
-_log.error << "Resizing: " << pw->Name << " " << (Int32)pw->Column << endl;
          header->setResizeMode (pw->Column, QHeaderView::ResizeToContents);
       }
    }

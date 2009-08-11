@@ -121,6 +121,7 @@ class ScalarWidget : public pedit {
       ScalarWidget (
          const Handle AttrHandle,
          const String &Name,
+         const Boolean Editable,
          const double DefaultValue,
          const double Scale,
          const int Decimals,
@@ -138,6 +139,7 @@ class ScalarWidget : public pedit {
 
    protected:
       virtual ~ScalarWidget () {;}
+      const Boolean _Editable;
       const double _DefaultValue;
       const double _Scale;
       const int _Decimals;
@@ -376,6 +378,7 @@ ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
 ScalarWidget::ScalarWidget (
       const Handle AttrHandle,
       const String &Name,
+      const Boolean Editable,
       const double DefaultValue,
       const double Scale,
       const int Decimals,
@@ -385,6 +388,7 @@ ScalarWidget::ScalarWidget (
       const double Step,
       const String Suffix) :
       pedit (AttrHandle, Name),
+      _Editable (Editable),
       _DefaultValue (DefaultValue),
       _Scale (Scale > 0.0 ? Scale : 1.0),
       _Decimals (Decimals),
@@ -410,17 +414,27 @@ ScalarWidget::create_widgets (
 
    module.lookup_scalar (RealObject, AttrHandle, value);
 
-   QDoubleSpinBox *edit = new QDoubleSpinBox (parent);
-   edit->setDecimals (_Decimals);
-   edit->setRange (_Min, _Max),
-   edit->setPrefix (_Prefix.get_buffer ());
-   edit->setSingleStep (_Step);
-   edit->setSuffix (_Suffix.get_buffer ());
-   edit->setValue (value * _Scale);
+   QDoubleSpinBox *edit (0);
 
-   layout->addRow (label, edit);
+   if (_Editable) {
 
-   return new ScalarUpdater (AttrHandle, edit, _Scale);
+      edit = new QDoubleSpinBox (parent);
+      edit->setDecimals (_Decimals);
+      edit->setRange (_Min, _Max),
+      edit->setPrefix (_Prefix.get_buffer ());
+      edit->setSingleStep (_Step);
+      edit->setSuffix (_Suffix.get_buffer ());
+      edit->setValue (value * _Scale);
+
+      layout->addRow (label, edit);
+   }
+   else {
+
+      QLabel *vlabel = new QLabel (QString::number (value, 'f', _Decimals), parent);
+      layout->addRow (label, vlabel);
+   }
+
+   return _Editable ? new ScalarUpdater (AttrHandle, edit, _Scale) : 0;
 }
 
 
@@ -781,7 +795,7 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
          pe = new LineWidget (AttrHandle, Name, MaxLength);
       }
       else if (Type == "text") { pe = new TextWidget (AttrHandle, Name); }
-      else if (Type == "scalar") {
+      else if ((Type == "scalar") || (Type == "scalar-label")) {
 
          const double DefaultValue = config_to_float64 ("default", widget, 0.0);
          const double Scale = config_to_float64 ("scale", widget, 1.0);
@@ -795,6 +809,7 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
          pe = new ScalarWidget (
             AttrHandle,
             Name,
+            Type == "scalar" ? True : False,
             DefaultValue,
             Scale,
             Decimals,
@@ -808,11 +823,10 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
 
          ConfigIterator it;
          Config root;
-         widget.get_first_config (it, root);
 
          ObjectAttributeCalculator *calc = config_to_object_attribute_calculator (
             "",
-            root,
+            widget,
             get_plugin_runtime_context (),
             &_log);
 
