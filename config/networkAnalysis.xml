@@ -222,6 +222,7 @@
          <property type="calc-label" name="Degrees">
             <link name="Node_Link" super="true" sub="true"/>
          </property>
+         <property type="line-label" name="Rank" attribute="NA_Node_Rank"/>
       </property-list>
    </na-node-properties>
    <na-link-properties>

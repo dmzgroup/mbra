@@ -42,8 +42,7 @@ class LineUpdater : public pupdate {
 class LineWidget : public pedit {
 
    public:
-      LineWidget (const Handle AttrHandle, const String &Name) :
-            pedit (AttrHandle, Name) {;}
+      LineWidget (const Handle AttrHandle, const String &Name, const int MaxLength);
 
       virtual pupdate *create_widgets (
          const Handle Object,
@@ -53,6 +52,8 @@ class LineWidget : public pedit {
 
    protected:
       virtual ~LineWidget () {;}
+
+      const int _MaxLength;
 
    private:
       LineWidget ();
@@ -279,6 +280,14 @@ LineUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
+LineWidget::LineWidget (
+      const Handle AttrHandle,
+      const String &Name,
+      const int MaxLength) :
+      pedit (AttrHandle, Name),
+      _MaxLength (MaxLength) {;}
+
+
 pupdate *
 LineWidget::create_widgets (
       const Handle Object,
@@ -295,6 +304,8 @@ LineWidget::create_widgets (
    if (!module.lookup_text (RealObject, AttrHandle, text)) { text = ""; }
 
    QLineEdit *edit= new QLineEdit (text.get_buffer (), parent);
+
+   if (_MaxLength > 0) { edit->setMaxLength (_MaxLength); }
 
    layout->addRow (label, edit);
 
@@ -764,7 +775,11 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
       const Handle AttrHandle = _defs.create_named_handle (
          config_to_string ("attribute", widget, ObjectAttributeDefaultName));
 
-      if (Type == "line") { pe = new LineWidget (AttrHandle, Name); }
+      if (Type == "line") {
+
+         const int MaxLength = config_to_int32 ("max-length", widget);
+         pe = new LineWidget (AttrHandle, Name, MaxLength);
+      }
       else if (Type == "text") { pe = new TextWidget (AttrHandle, Name); }
       else if (Type == "scalar") {
 

@@ -22,8 +22,10 @@ class LineWidget : public pwidget {
    public:
       LineWidget (
          const Handle Attribute,
+         const String &Name,
          const Int32 Column,
-         const Boolean Editable) : pwidget (Attribute, Column, Editable) {;}
+         const Boolean Editable,
+         const int MaxLength);
 
       virtual ~LineWidget () {;}
 
@@ -36,6 +38,8 @@ class LineWidget : public pwidget {
 
       virtual QVariant update_variant (const QVariant &data) { return data; }
 
+   protected:
+      const int _MaxLength;
 };
 
 class ScalarWidget : public pwidget {
@@ -43,6 +47,7 @@ class ScalarWidget : public pwidget {
    public:
       ScalarWidget (
          const Handle Attribute,
+         const String &Name,
          const Int32 Column,
          const Boolean Editable,
          const double Scale,
@@ -96,10 +101,22 @@ get_real_object (const Handle Object, ObjectModule &module) {
 };
 
 
+LineWidget::LineWidget (
+      const Handle Attribute,
+      const String &Name,
+      const Int32 Column,
+      const Boolean Editable,
+      const int MaxLength) :
+      pwidget (Attribute, Name, Column, Editable),
+      _MaxLength (MaxLength) {;}
+
+
 QWidget *
 LineWidget::create_widget (QWidget *parent) {
 
    QLineEdit *result (new QLineEdit (parent));
+
+   if (_MaxLength > 0) { result->setMaxLength (_MaxLength); }
 
    return result;
 }
@@ -117,6 +134,7 @@ LineWidget::update_property (
 
 ScalarWidget::ScalarWidget (
       const Handle Attribute,
+      const String &Name,
       const Int32 Column,
       const Boolean Editable,
       const double Scale,
@@ -124,7 +142,7 @@ ScalarWidget::ScalarWidget (
       const double Max,
       const double Min,
       const double Step) :
-      PropertyWidget (Attribute, Column, Editable),
+      PropertyWidget (Attribute, Name, Column, Editable),
       _Scale (Scale > 0.0 ? Scale : 1.0),
       _Decimals (Decimals),
       _Max (Max),
@@ -195,6 +213,9 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       QtWidget (Info),
       _log (Info),
       _defs (Info, &_log),
+      _undo (Info),
+      _model (this),
+      _proxyModel (this),
       _ignoreChange (False),
       _hideAttrHandle (0) {
 
@@ -461,6 +482,9 @@ dmz::MBRAPluginPropertyTable::update_object_scalar (
       }
 
       _ignoreChange = False;
+
+      QHeaderView *header (_ui.tableView->horizontalHeader ());
+      if (header) { header->setResizeMode (pw->Column, QHeaderView::ResizeToContents); }
    }
 }
 
@@ -490,6 +514,9 @@ dmz::MBRAPluginPropertyTable::update_object_text (
       }
 
       _ignoreChange = False;
+
+      QHeaderView *header (_ui.tableView->horizontalHeader ());
+      if (header) { header->setResizeMode (pw->Column, QHeaderView::ResizeToContents); }
    }
 }
 
@@ -511,9 +538,10 @@ dmz::MBRAPluginPropertyTable::_item_changed (QStandardItem *item) {
 
       if (Object && objMod && pw) {
 
-         //const Handle UndoHandle = _undo.start_record ("Edit Property");
+         const String Msg ("Edit Property ");
+         const Handle UndoHandle = _undo.start_record (Msg + pw->Name);
          pw->update_property (Object, item->data (Qt::DisplayRole), *objMod);
-         //_undo.stop_record (UndoHandle);
+         _undo.stop_record (UndoHandle);
       }
    }
 }
@@ -533,19 +561,32 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
       PropertyWidget *pe (0);
 
       const String Type = config_to_string ("type", property);
-      const String Name = config_to_string ("name", property);
+      String name = config_to_string ("name", property);
       const Handle Attribute = _defs.create_named_handle (
          config_to_string ("attribute", property, ObjectAttributeDefaultName));
-      const Int32 Column = count; count++;
+      const Int32 Column = count;
       const Boolean Editable = config_to_boolean ("editable", property, True);
 
-      if (Type == "line") {
+      const String Prefix = config_to_string ("prefix", property);
+      const String Suffix = config_to_string ("suffix", property);
 
-         pe = new LineWidget (Attribute, Column, Editable);
+      if ((Type == "line") || (Type == "line-label")) {
+
+         const int MaxLength = config_to_int32 ("max-length", property);
+
+         pe = new LineWidget (
+            Attribute,
+            name,
+            Column,
+            (Type == "line-label" ? False : Editable),
+            MaxLength);
+
+         if (Prefix) { name << " (" << Prefix << ")"; }
+         else if (Suffix) { name << " (" << Suffix << ")"; }
+
          activate_object_attribute (Attribute, ObjectTextMask);
       }
-      else if (Type == "text") { } // Ignore
-      else if (Type == "scalar") {
+      else if ((Type == "scalar") || (Type == "scalar-label")) {
 
          const double Scale = config_to_float64 ("scale", property, 1.0);
          const int Decimals = (int)config_to_int32 ("decimals", property, 2);
@@ -555,21 +596,24 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
 
          pe = new ScalarWidget (
             Attribute,
+            name,
             Column,
-            Editable,
+            (Type == "scalar-label" ? False : Editable),
             Scale,
             Decimals,
             Max,
             Min,
             Step);
 
+         if (Prefix) { name << " (" << Prefix << ")"; }
+         else if (Suffix) { name << " (" << Suffix << ")"; }
+
          activate_object_attribute (Attribute, ObjectScalarMask);
       }
-      else if (Type == "calc-label") {
-
-      }
-      else if (Type == "state") { } // Ignore
+      else if (Type == "calc-label") { }
       else if (Type == "link-label") { } // Ignore
+      else if (Type == "text") { } // Ignore
+      else if (Type == "state") { } // Ignore
 
       if (pe) {
 
@@ -579,9 +623,10 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
 
             }
 
-            labels << Name.get_buffer ();
+            count++;
+            labels << name.get_buffer ();
          }
-         else { delete pe; pe = 0; count--; }
+         else { delete pe; pe = 0; }
       }
    }
 
@@ -614,6 +659,21 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
       _create_properties (list);
    }
+
+   QHeaderView *header (_ui.tableView->horizontalHeader ());
+
+   if (header) {
+
+      HashTableHandleIterator it;
+      PropertyWidget *pw (0);
+
+      while (_attrTable.get_next (it, pw)) {
+
+_log.error << "Resizing: " << pw->Name << " " << (Int32)pw->Column << endl;
+         header->setResizeMode (pw->Column, QHeaderView::ResizeToContents);
+      }
+   }
+
 
    connect (
       &_model, SIGNAL (itemChanged (QStandardItem *)),

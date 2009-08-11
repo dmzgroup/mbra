@@ -10,6 +10,7 @@
 #include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <dmzTypesHashTableUInt32Template.h>
+
 #include <QtGui/QItemDelegate>
 #include <QtGui/QWidget>
 #include <QtGui/QSortFilterProxyModel>
@@ -34,16 +35,9 @@ namespace dmz {
 
             public:
                const Handle Attribute;
+               const String Name;
                const Int32 Column;
                const Boolean Editable;
-
-               PropertyWidget (
-                     const Handle TheAttribute,
-                     const Int32 TheColumn,
-                     const Boolean IsEditable) :
-                     Attribute (TheAttribute),
-                     Column (TheColumn),
-                     Editable (IsEditable) {;}
 
                virtual ~PropertyWidget () {;}
 
@@ -55,6 +49,17 @@ namespace dmz {
                   ObjectModule &module) = 0;
 
                virtual QVariant update_variant (const QVariant &data) = 0;
+
+            protected:
+               PropertyWidget (
+                     const Handle TheAttribute,
+                     const String &TheName,
+                     const Int32 TheColumn,
+                     const Boolean IsEditable) :
+                     Attribute (TheAttribute),
+                     Name (TheName),
+                     Column (TheColumn),
+                     Editable (IsEditable) {;}
          };
 
          MBRAPluginPropertyTable (const PluginInfo &Info, Config &local);
@@ -168,6 +173,7 @@ namespace dmz {
 
          Log _log;
          Definitions _defs;
+         Undo _undo;
 
          Ui::PropertyTable _ui;
 

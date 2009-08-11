@@ -34,7 +34,7 @@
       <title value="Component Properties"/>
       <edit-message name="FTComponentEditMessage"/>
       <property-list>
-         <property type="line" name="Name" attribute="FT_Name"/>
+         <property type="line" name="Name" attribute="FT_Name" max-length="12"/>
       </property-list>
    </ft-component-properties>
    <ft-threat-properties>
@@ -44,7 +44,7 @@
       </object-type-list>
       <edit-message name="FTThreatEditMessage"/>
       <property-list>
-         <property type="line" name="Name" attribute="FT_Name"/>
+         <property type="line" name="Name" attribute="FT_Name" max-length="12"/>
          <property
             type="scalar"
             name="Threat"
@@ -78,6 +78,20 @@
             type="scalar"
             name="Consequence"
             attribute="FT_Threat_Consequence"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Reduced Vulnerability"
+            attribute="FT_Vulnerability_Reduced_Value"
+            scale="100"
+            decimals="0"
+            suffix="%"
+         />
+         <property
+            type="scalar-label"
+            name="Allocation"
+            attribute="FT_Threat_Allocation"
             prefix="$"
          />
       </property-list>
@@ -276,21 +290,6 @@
          <canvas name="FTCanvas"/>
       </module>
    </dmzMBRAPluginFaultTreeAutoLayout>
-   <dmzMBRAPluginFTTable>
-      <vulnerability>
-         <operator type="multiply">
-            <const value="100.0"/>
-            <operator type="subtract">
-               <const value="1.0"/>
-               <operator type="divide">
-                  <attribute name="FT_Threat_Allocation"/>
-                  <attribute name="FT_Threat_Elimination_Cost"/>
-               </operator>
-            </operator>
-         </operator>
-      </vulnerability>
-      <dockWidget title="Fault Tree Threat Data Table"/>
-   </dmzMBRAPluginFTTable>
    <dmzMBRAPluginFTCalculate>
       <!-- <widget>
          <stylesheet file="stylesheets:ActionButton.qss"/>
