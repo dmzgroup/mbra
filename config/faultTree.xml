@@ -22,7 +22,11 @@
          unique="FaultTreeThreatProperties"
          scope="ft-threat-properties"
       />
-      <plugin name="dmzMBRAPluginFTTable"/>
+      <plugin
+         name="dmzMBRAPluginPropertyTable"
+         unique="FaultTreePropertyTable"
+         scope="ft-threat-properties"
+      />
       <plugin name="dmzMBRAPluginFTCalculate"/>
       <plugin name="dmzObjectPluginFlagGroup"/>
    </plugin-list>
@@ -35,6 +39,9 @@
    </ft-component-properties>
    <ft-threat-properties>
       <title value="Threat Properties"/>
+      <object-type-list>
+         <object-type name="ft_threat"/>
+      </object-type-list>
       <edit-message name="FTThreatEditMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="FT_Name"/>
