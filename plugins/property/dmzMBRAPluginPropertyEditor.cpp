@@ -1,5 +1,4 @@
 #include "dmzMBRAPluginPropertyEditor.h"
-#include <dmzObjectCalc.h>
 #include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMainWindow.h>
@@ -153,31 +152,6 @@ class ScalarWidget : public pedit {
       ScalarWidget ();
       ScalarWidget (const ScalarWidget &);
       ScalarWidget &operator= (const ScalarWidget &);
-};
-
-class CalcLabel : public pedit {
-
-   public:
-      CalcLabel (
-         const Handle AttrHandle,
-         const String &Name,
-         ObjectAttributeCalculator *calc);
-
-      virtual pupdate *create_widgets (
-         const Handle Object,
-         ObjectModule &module,
-         QWidget *parent,
-         QFormLayout *layout);
-
-   protected:
-      virtual ~CalcLabel () {;}
-
-      ObjectAttributeCalculator *_calc;
-
-   private:
-      CalcLabel ();
-      CalcLabel (const CalcLabel &);
-      CalcLabel &operator= (const CalcLabel &);
 };
 
 class LinkLabel : public pedit {
@@ -435,43 +409,6 @@ ScalarWidget::create_widgets (
    }
 
    return _Editable ? new ScalarUpdater (AttrHandle, edit, _Scale) : 0;
-}
-
-
-CalcLabel::CalcLabel (
-      const Handle AttrHandle,
-      const String &Name,
-      ObjectAttributeCalculator *calc) :
-      pedit (AttrHandle, Name),
-      _calc (calc) {;}
-
-
-pupdate *
-CalcLabel::create_widgets (
-      const Handle Object,
-      ObjectModule &module,
-      QWidget *parent,
-      QFormLayout *layout) {
-
-   const Handle RealObject = get_real_object (Object, module);
-
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
-
-   Float64 value (0.0);
-
-   if (_calc) {
-
-      _calc->store_object_module (&module);
-      value = _calc->calculate (RealObject);
-      _calc->store_object_module (0);
-   }
-
-   QLabel *data = new QLabel (parent);
-   data->setNum (value);
-
-   layout->addRow (label, data);
-
-   return 0;
 }
 
 
@@ -818,19 +755,6 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
             Prefix,
             Step,
             Suffix);
-      }
-      else if (Type == "calc-label") {
-
-         ConfigIterator it;
-         Config root;
-
-         ObjectAttributeCalculator *calc = config_to_object_attribute_calculator (
-            "",
-            widget,
-            get_plugin_runtime_context (),
-            &_log);
-
-         pe = new CalcLabel (AttrHandle, Name, calc);
       }
       else if (Type == "state") {
 
