@@ -57,6 +57,7 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
 
 dmz::MBRAPluginFileToolBar::~MBRAPluginFileToolBar () {
 
+   if (_toolBar) { delete _toolBar; _toolBar = 0; }
 }
 
 
@@ -117,7 +118,12 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-         _mainWindowModule->remove_tool_bar (_toolBar);
+         if (_toolBar) {
+            
+            _mainWindowModule->remove_tool_bar (_toolBar);
+            _toolBar->setParent (0);
+         }
+         
          _mainWindowModule = 0;
       }
    }

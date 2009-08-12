@@ -7,6 +7,7 @@
 #include <QtGui/QToolBar>
 #include "ui_dmzMBRAModeForm.h"
 
+
 class QMainWindow;
 class QToolBar;
 
@@ -18,7 +19,7 @@ namespace dmz {
 
 
    class MBRAPluginModeToolBar :
-         public QWidget,
+         public QObject,
          public Plugin,
          public ArchiveObserverUtil {
 
