@@ -1,8 +1,8 @@
 require "lmkQt"
-lmkQt.set_name "dmzMBRAPluginProperties"
+lmkQt.set_name "dmzMBRAPluginPropertyEditor"
 lmk.set_type "plugin"
-lmk.add_files {"NodeProperties.ui",}
-lmk.add_files {"dmzMBRAPluginProperties.cpp",}
+lmk.add_files {"PropertyEditor.ui",}
+lmk.add_files {"dmzMBRAPluginPropertyEditor.cpp",}
 lmk.add_libs {
    "dmzObjectUtil",
    "dmzKernel",

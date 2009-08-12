@@ -1,5 +1,4 @@
-#include "dmzMBRAPluginProperties.h"
-#include <dmzObjectCalc.h>
+#include "dmzMBRAPluginPropertyEditor.h"
 #include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMainWindow.h>
@@ -14,14 +13,14 @@
 #include <dmzTypesMask.h>
 
 #include <QtGui/QtGui>
-#include "ui_NodeProperties.h"
+#include "ui_PropertyEditor.h"
 
 using namespace dmz;
 
 namespace {
 
-typedef dmz::MBRAPluginProperties::PropertyWidget pedit;
-typedef dmz::MBRAPluginProperties::PropertyUpdater pupdate;
+typedef dmz::MBRAPluginPropertyEditor::PropertyWidget pedit;
+typedef dmz::MBRAPluginPropertyEditor::PropertyUpdater pupdate;
 
 class LineUpdater : public pupdate {
 
@@ -42,8 +41,7 @@ class LineUpdater : public pupdate {
 class LineWidget : public pedit {
 
    public:
-      LineWidget (const Handle AttrHandle, const String &Name) :
-            pedit (AttrHandle, Name) {;}
+      LineWidget (const Handle AttrHandle, const String &Name, const int MaxLength);
 
       virtual pupdate *create_widgets (
          const Handle Object,
@@ -53,6 +51,8 @@ class LineWidget : public pedit {
 
    protected:
       virtual ~LineWidget () {;}
+
+      const int _MaxLength;
 
    private:
       LineWidget ();
@@ -120,6 +120,7 @@ class ScalarWidget : public pedit {
       ScalarWidget (
          const Handle AttrHandle,
          const String &Name,
+         const Boolean Editable,
          const double DefaultValue,
          const double Scale,
          const int Decimals,
@@ -137,6 +138,7 @@ class ScalarWidget : public pedit {
 
    protected:
       virtual ~ScalarWidget () {;}
+      const Boolean _Editable;
       const double _DefaultValue;
       const double _Scale;
       const int _Decimals;
@@ -150,31 +152,6 @@ class ScalarWidget : public pedit {
       ScalarWidget ();
       ScalarWidget (const ScalarWidget &);
       ScalarWidget &operator= (const ScalarWidget &);
-};
-
-class CalcLabel : public pedit {
-
-   public:
-      CalcLabel (
-         const Handle AttrHandle,
-         const String &Name,
-         ObjectAttributeCalculator *calc);
-
-      virtual pupdate *create_widgets (
-         const Handle Object,
-         ObjectModule &module,
-         QWidget *parent,
-         QFormLayout *layout);
-
-   protected:
-      virtual ~CalcLabel () {;}
-
-      ObjectAttributeCalculator *_calc;
-
-   private:
-      CalcLabel ();
-      CalcLabel (const CalcLabel &);
-      CalcLabel &operator= (const CalcLabel &);
 };
 
 class LinkLabel : public pedit {
@@ -279,6 +256,14 @@ LineUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
+LineWidget::LineWidget (
+      const Handle AttrHandle,
+      const String &Name,
+      const int MaxLength) :
+      pedit (AttrHandle, Name),
+      _MaxLength (MaxLength) {;}
+
+
 pupdate *
 LineWidget::create_widgets (
       const Handle Object,
@@ -295,6 +280,8 @@ LineWidget::create_widgets (
    if (!module.lookup_text (RealObject, AttrHandle, text)) { text = ""; }
 
    QLineEdit *edit= new QLineEdit (text.get_buffer (), parent);
+
+   if (_MaxLength > 0) { edit->setMaxLength (_MaxLength); }
 
    layout->addRow (label, edit);
 
@@ -365,6 +352,7 @@ ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
 ScalarWidget::ScalarWidget (
       const Handle AttrHandle,
       const String &Name,
+      const Boolean Editable,
       const double DefaultValue,
       const double Scale,
       const int Decimals,
@@ -374,6 +362,7 @@ ScalarWidget::ScalarWidget (
       const double Step,
       const String Suffix) :
       pedit (AttrHandle, Name),
+      _Editable (Editable),
       _DefaultValue (DefaultValue),
       _Scale (Scale > 0.0 ? Scale : 1.0),
       _Decimals (Decimals),
@@ -399,54 +388,27 @@ ScalarWidget::create_widgets (
 
    module.lookup_scalar (RealObject, AttrHandle, value);
 
-   QDoubleSpinBox *edit = new QDoubleSpinBox (parent);
-   edit->setDecimals (_Decimals);
-   edit->setRange (_Min, _Max),
-   edit->setPrefix (_Prefix.get_buffer ());
-   edit->setSingleStep (_Step);
-   edit->setSuffix (_Suffix.get_buffer ());
-   edit->setValue (value * _Scale);
+   QDoubleSpinBox *edit (0);
 
-   layout->addRow (label, edit);
+   if (_Editable) {
 
-   return new ScalarUpdater (AttrHandle, edit, _Scale);
-}
+      edit = new QDoubleSpinBox (parent);
+      edit->setDecimals (_Decimals);
+      edit->setRange (_Min, _Max),
+      edit->setPrefix (_Prefix.get_buffer ());
+      edit->setSingleStep (_Step);
+      edit->setSuffix (_Suffix.get_buffer ());
+      edit->setValue (value * _Scale);
 
+      layout->addRow (label, edit);
+   }
+   else {
 
-CalcLabel::CalcLabel (
-      const Handle AttrHandle,
-      const String &Name,
-      ObjectAttributeCalculator *calc) :
-      pedit (AttrHandle, Name),
-      _calc (calc) {;}
-
-
-pupdate *
-CalcLabel::create_widgets (
-      const Handle Object,
-      ObjectModule &module,
-      QWidget *parent,
-      QFormLayout *layout) {
-
-   const Handle RealObject = get_real_object (Object, module);
-
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
-
-   Float64 value (0.0);
-
-   if (_calc) {
-
-      _calc->store_object_module (&module);
-      value = _calc->calculate (RealObject);
-      _calc->store_object_module (0);
+      QLabel *vlabel = new QLabel (QString::number (value, 'f', _Decimals), parent);
+      layout->addRow (label, vlabel);
    }
 
-   QLabel *data = new QLabel (parent);
-   data->setNum (value);
-
-   layout->addRow (label, data);
-
-   return 0;
+   return _Editable ? new ScalarUpdater (AttrHandle, edit, _Scale) : 0;
 }
 
 
@@ -598,8 +560,8 @@ StateWidget::create_widgets (
 }
 
 
-// Start MBRAPluginProperties class
-dmz::MBRAPluginProperties::MBRAPluginProperties (
+// Start MBRAPluginPropertyEditor class
+dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       const PluginInfo &Info,
       Config &local) :
       Plugin (Info),
@@ -617,7 +579,7 @@ dmz::MBRAPluginProperties::MBRAPluginProperties (
 }
 
 
-dmz::MBRAPluginProperties::~MBRAPluginProperties () {
+dmz::MBRAPluginPropertyEditor::~MBRAPluginPropertyEditor () {
 
    if (_widgets) { delete _widgets; _widgets = 0; }
 }
@@ -625,7 +587,7 @@ dmz::MBRAPluginProperties::~MBRAPluginProperties () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginProperties::update_plugin_state (
+dmz::MBRAPluginPropertyEditor::update_plugin_state (
       const PluginStateEnum State,
       const UInt32 Level) {
 
@@ -645,7 +607,7 @@ dmz::MBRAPluginProperties::update_plugin_state (
 
 
 void
-dmz::MBRAPluginProperties::discover_plugin (
+dmz::MBRAPluginPropertyEditor::discover_plugin (
       const PluginDiscoverEnum Mode,
       const Plugin *PluginPtr) {
 
@@ -664,7 +626,7 @@ dmz::MBRAPluginProperties::discover_plugin (
 
 // Message Observer Interface
 void
-dmz::MBRAPluginProperties::receive_message (
+dmz::MBRAPluginPropertyEditor::receive_message (
       const Message &Type,
       const UInt32 MessageSendHandle,
       const Handle TargetObserverHandle,
@@ -691,15 +653,15 @@ dmz::MBRAPluginProperties::receive_message (
 }
 
 
-// dmzMBRAPluginProperties Interface
+// dmzMBRAPluginPropertyEditor Interface
 void
-dmz::MBRAPluginProperties::_edit (const Handle Object, const Boolean Created) {
+dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created) {
 
    if (_objMod && _window) {
 
       QDialog dialog (_window->get_widget ());
 
-      Ui::NodeProperties ui;
+      Ui::PropertyEditor ui;
       ui.setupUi (&dialog);
       dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
@@ -747,8 +709,8 @@ dmz::MBRAPluginProperties::_edit (const Handle Object, const Boolean Created) {
 }
 
 
-dmz::MBRAPluginProperties::PropertyWidget *
-dmz::MBRAPluginProperties::_create_widgets (Config &list) {
+dmz::MBRAPluginPropertyEditor::PropertyWidget *
+dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
 
    ConfigIterator it;
    Config widget;
@@ -764,9 +726,13 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
       const Handle AttrHandle = _defs.create_named_handle (
          config_to_string ("attribute", widget, ObjectAttributeDefaultName));
 
-      if (Type == "line") { pe = new LineWidget (AttrHandle, Name); }
+      if (Type == "line") {
+
+         const int MaxLength = config_to_int32 ("max-length", widget);
+         pe = new LineWidget (AttrHandle, Name, MaxLength);
+      }
       else if (Type == "text") { pe = new TextWidget (AttrHandle, Name); }
-      else if (Type == "scalar") {
+      else if ((Type == "scalar") || (Type == "scalar-label")) {
 
          const double DefaultValue = config_to_float64 ("default", widget, 0.0);
          const double Scale = config_to_float64 ("scale", widget, 1.0);
@@ -780,6 +746,7 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
          pe = new ScalarWidget (
             AttrHandle,
             Name,
+            Type == "scalar" ? True : False,
             DefaultValue,
             Scale,
             Decimals,
@@ -788,20 +755,6 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
             Prefix,
             Step,
             Suffix);
-      }
-      else if (Type == "calc-label") {
-
-         ConfigIterator it;
-         Config root;
-         widget.get_first_config (it, root);
-
-         ObjectAttributeCalculator *calc = config_to_object_attribute_calculator (
-            "",
-            root,
-            get_plugin_runtime_context (),
-            &_log);
-
-         pe = new CalcLabel (AttrHandle, Name, calc);
       }
       else if (Type == "state") {
 
@@ -846,7 +799,7 @@ dmz::MBRAPluginProperties::_create_widgets (Config &list) {
 
 
 void
-dmz::MBRAPluginProperties::_init (Config &local) {
+dmz::MBRAPluginPropertyEditor::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
 
@@ -878,12 +831,12 @@ dmz::MBRAPluginProperties::_init (Config &local) {
 extern "C" {
 
 DMZ_PLUGIN_FACTORY_LINK_SYMBOL dmz::Plugin *
-create_dmzMBRAPluginProperties (
+create_dmzMBRAPluginPropertyEditor (
       const dmz::PluginInfo &Info,
       dmz::Config &local,
       dmz::Config &global) {
 
-   return new dmz::MBRAPluginProperties (Info, local);
+   return new dmz::MBRAPluginPropertyEditor (Info, local);
 }
 
 };

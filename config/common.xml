@@ -46,7 +46,7 @@
          <widget name="FTCanvas"/>
       </group>
       <group area="bottom">
-         <widget name="dmzMBRAPluginFTTable" title="Fault Tree Threat Data Table"/>
+         <widget name="FaultTreePropertyTable" title="Fault Tree Threat Data Table"/>
          <widget name="dmzMBRAPluginFTCalculate" title="Calculations"/>
       </group>
    </channel>

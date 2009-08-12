@@ -44,14 +44,25 @@ function receive_end (self, type, data)
             if otype and otype:is_of_type (NodeType) then
                local undoHandle = dmz.undo.start_record ("Link Nodes")
                local linkHandle = dmz.object.link ("Node_Link", self.handle, handle)
+               local attrObj = nil
                if linkHandle then
+                  attrObj = dmz.object.create ("na_link_attribute")
+                  dmz.object.link_attribute_object (linkHandle, attrObj)
                   local outData = dmz.data.new ()
                   outData:store_handle ("object", 1, linkHandle)
                   outData:store_handle ("created", 1, linkHandle)
                   self.editMessage:send ("NetworkAnalysisLinkProperties", outData)
                end
-               if dmz.object.is_link (linkHandle) then dmz.undo.stop_record (undoHandle)
-               else dmz.undo.abort_record (undoHandle)
+               if dmz.object.is_link (linkHandle) then
+                  if attrObj and dmz.object.is_object (attrObj) then
+                     dmz.object.activate (attrObj)
+                  end
+                  dmz.undo.stop_record (undoHandle)
+               else
+                  if attrObj and dmz.object.is_object (attrObj) then
+                     dmz.object.destroy (attrObj)
+                  end
+                  dmz.undo.abort_record (undoHandle)
                end
             end
          end

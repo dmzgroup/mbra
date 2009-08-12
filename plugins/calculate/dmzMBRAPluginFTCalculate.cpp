@@ -319,8 +319,6 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 
          if (index >= 0) { _ui.rootBox->setCurrentIndex (index); }
 
-         objMod->activate_object (root);
-
          Data out;
          out.store_handle (_objectDataHandle, 0, root);
          out.store_handle (_createdDataHandle, 0, root);
@@ -328,7 +326,11 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 
          _log.debug << "Created Fault Tree Root: " << root << endl;
 
-         if (objMod->is_object (root)) { _undo.stop_record (UndoHandle); }
+         if (objMod->is_object (root)) {
+
+            objMod->activate_object (root);
+            _undo.stop_record (UndoHandle);
+         }
          else { _undo.abort_record (UndoHandle); }
       }
       else { _undo.abort_record (UndoHandle); }

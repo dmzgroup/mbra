@@ -14,17 +14,21 @@
       <plugin name="dmzQtPluginMapProperties"/>
       <plugin name="dmzQtPluginButtonToChannel"/>
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="NetworkAnalysisNodeProperties"
          scope="na-node-properties"
       />
       <plugin
-         name="dmzMBRAPluginProperties"
+         name="dmzMBRAPluginPropertyEditor"
          unique="NetworkAnalysisLinkProperties"
          scope="na-link-properties"
       />
+      <plugin
+         name="dmzMBRAPluginPropertyTable"
+         unique="NetworkAnalysisPropertyTable"
+         scope="na-node-properties"
+      />
       <plugin name="dmzMBRAPluginCalculate"/>
-      <plugin name="dmzMBRAPluginNodeTable"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
@@ -32,7 +36,7 @@
    </plugin-list>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
-      <widget name="dmzMBRAPluginNodeTable" title="Network Table Data"/>
+      <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
    <NACanvas>
@@ -185,6 +189,10 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-node-properties>
+      <object-type-list>
+         <object-type name="na_node"/>
+         <object-type name="na_link_attribute"/>
+      </object-type-list>
       <title value="Node Properties"/>
       <edit-message name="EditObjectAttributesMessage"/>
       <property-list>
@@ -202,9 +210,13 @@
             prefix="$"
          />
          <property type="text" name="Description" attribute="NA_Node_Description"/>
-         <property type="calc-label" name="Degrees">
-            <link name="Node_Link" super="true" sub="true"/>
-         </property>
+         <property
+            type="scalar-label"
+            name="Degrees"
+            attribute="NA_Node_Degrees"
+            decimals="0"
+         />
+         <property type="line-label" name="Rank" attribute="NA_Node_Rank"/>
       </property-list>
    </na-node-properties>
    <na-link-properties>
@@ -230,8 +242,8 @@
             <state label="reverse" name="NA_Flow_Reverse"/>
          </property>
          <property type="text" name="Description" attribute="NA_Node_Description"/>
-         <property type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
-         <property type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+         <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
+         <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
       </property-list>
    </na-link-properties>
    <dmzQtPluginButtonToChannel>
@@ -418,12 +430,6 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
-   <dmzMBRAPluginNodeTable>
-      <degrees>
-         <link name="Node_Link" super="true" sub="true"/>
-      </degrees>
-      <dockWidget title="Network Table Data"/>
-   </dmzMBRAPluginNodeTable>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>
