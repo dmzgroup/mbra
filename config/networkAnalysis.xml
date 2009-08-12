@@ -251,8 +251,8 @@
             <state label="reverse" name="NA_Flow_Reverse"/>
          </property>
          <property type="text" name="Description" attribute="NA_Node_Description"/>
-         <property type="link-label" name="From:" attribute="NA_Node_Name" super="true"/>
-         <property type="link-label" name="To:" attribute="NA_Node_Name" super="false"/>
+         <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
+         <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
       </property-list>
    </na-link-properties>
    <dmzQtPluginButtonToChannel>

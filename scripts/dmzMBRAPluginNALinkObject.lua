@@ -38,6 +38,7 @@ function update_link_object (self, LinkHandle, AttrHandle, Super, Sub, AttrObj, 
          self.list[Super][LinkHandle].attr == PrevObj then
       self.list[Super][LinkHandle] = nil
       self.list[Sub][LinkHandle] = nil
+      dmz.object.destroy (PrevObj)
    end
 end
 
