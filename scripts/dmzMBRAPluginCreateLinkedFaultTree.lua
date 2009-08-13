@@ -16,6 +16,7 @@ function receive (self, type, data)
             dmz.object.activate (ft)
          end
          dmz.object.flag (ft, "FT_Active_Fault_Tree", true)
+         dmz.input.channel ("NetworkAnalysisChannel", false)
          dmz.input.channel ("FaultTreeChannel", true)
       end
    end
