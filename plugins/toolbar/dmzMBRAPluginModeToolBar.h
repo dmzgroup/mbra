@@ -2,6 +2,7 @@
 #define DMZ_MBRA_PLUGIN_MODE_TOOL_BAR_DOT_H
 
 #include <dmzArchiveObserverUtil.h>
+#include <dmzInputObserverUtil.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimePlugin.h>
 #include <QtGui/QToolBar>
@@ -20,7 +21,8 @@ namespace dmz {
    class MBRAPluginModeToolBar :
          public QWidget,
          public Plugin,
-         public ArchiveObserverUtil {
+         public ArchiveObserverUtil,
+         public InputObserverUtil {
 
       Q_OBJECT
 
@@ -47,6 +49,9 @@ namespace dmz {
             const Handle ArchiveHandle,
             Config &local,
             Config &global);
+
+         // InputObserverUtil Interface
+         virtual void update_channel_state (const Handle Channel, const Boolean State);
 
       protected slots:
          void _slot_network_analysis ();

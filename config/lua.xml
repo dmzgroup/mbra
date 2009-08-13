@@ -19,5 +19,6 @@
    <instance name="dmzMBRAPluginNALinkObject"/>
    <instance name="dmzMBRAPluginFaultTree"/>
    <instance name="dmzMBRAPluginLayerActive"/>
+   <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
 </dmzLuaModuleBasic>
 </dmz>

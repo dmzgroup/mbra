@@ -1,6 +1,7 @@
 #include <dmzArchiveModule.h>
 #include <dmzInputConsts.h>
 #include <dmzInputModule.h>
+#include <dmzInputEventMasks.h>
 #include "dmzMBRAPluginModeToolBar.h"
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
@@ -16,6 +17,7 @@ dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (
       QWidget (0),
       Plugin (Info),
       ArchiveObserverUtil (Info, local),
+      InputObserverUtil (Info, local),
       _log (Info),
       _inputModule (0),
       _inputModuleName (),
@@ -146,6 +148,23 @@ dmz::MBRAPluginModeToolBar::process_archive (
 }
 
 
+// InputObserverUtil Interface
+void
+dmz::MBRAPluginModeToolBar::update_channel_state (
+      const Handle Channel,
+      const Boolean State) {
+
+   if ((Channel == _networkAnalysisChannel) && State) {
+
+      _ui.networkButton->click ();
+   }
+   else if ((Channel == _faultTreeChannel) && State) {
+
+      _ui.faultTreeButton->click ();
+   }
+}
+
+
 void
 dmz::MBRAPluginModeToolBar::_slot_network_analysis () {
 
@@ -184,6 +203,9 @@ dmz::MBRAPluginModeToolBar::_init (Config &local) {
 
    _faultTreeChannel = defs.create_named_handle (
       config_to_string ("faultTree.channel", local, "FaultTreeChannel"));
+
+   activate_input_channel (_networkAnalysisChannel, InputEventChannelStateMask);
+   activate_input_channel (_faultTreeChannel, InputEventChannelStateMask);
 
    _toolBar = new QToolBar ("Mode", 0);
    _toolBar->setObjectName (get_plugin_name ().get_buffer ());

@@ -124,9 +124,11 @@ namespace dmz {
          QtModuleMainWindow *_window;
 
          Message _editMessage;
+         Message _ftMessage;
 
          Handle _objectDataHandle;
          Handle _createdDataHandle;
+         Handle _ftHandle;
 
          String _dialogTitle;
 

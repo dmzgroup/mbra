@@ -160,6 +160,7 @@ class LinkLabel : public pedit {
       LinkLabel (
          const Handle AttrHandle,
          const String &Name,
+         const Handle TextHandle,
          const Boolean Super);
 
       virtual pupdate *create_widgets (
@@ -170,6 +171,7 @@ class LinkLabel : public pedit {
 
    protected:
       virtual ~LinkLabel () {;}
+      const Handle _TextHandle;
       const Boolean _Super;
 
    private:
@@ -415,8 +417,10 @@ ScalarWidget::create_widgets (
 LinkLabel::LinkLabel (
       const Handle AttrHandle,
       const String &Name,
+      const Handle TextHandle,
       const Boolean Super) :
       pedit (AttrHandle, Name),
+      _TextHandle (TextHandle),
       _Super (Super) {;}
 
 
@@ -429,20 +433,38 @@ LinkLabel::create_widgets (
 
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
-   Handle linkAttr (0);
-   Handle sub (0);
-   Handle super (0);
+   if (module.is_link (Object)) {
 
-   module.lookup_linked_objects (Object, linkAttr, super, sub);
+      Handle linkAttr (0);
+      Handle sub (0);
+      Handle super (0);
 
-   String value;
+      module.lookup_linked_objects (Object, linkAttr, super, sub);
 
-   if (_Super) { module.lookup_text (super, AttrHandle, value); }
-   else { module.lookup_text (sub, AttrHandle, value); }
+      String value;
 
-   QLabel *data = new QLabel (value.get_buffer (), parent);
+      if (_Super) { module.lookup_text (super, AttrHandle, value); }
+      else { module.lookup_text (sub, AttrHandle, value); }
 
-   layout->addRow (label, data);
+      QLabel *data = new QLabel (value.get_buffer (), parent);
+
+      layout->addRow (label, data);
+   }
+   else if (module.is_object (Object)) {
+
+      HandleContainer container;
+
+      if (_Super) { module.lookup_super_links (Object, AttrHandle, container); }
+      else { module.lookup_sub_links (Object, AttrHandle, container); }
+
+      String value;
+
+      module.lookup_text (container.get_first (), _TextHandle, value);
+
+      QLabel *data = new QLabel (value.get_buffer (), parent);
+
+      layout->addRow (label, data);
+   }
 
    return 0;
 }
@@ -573,6 +595,7 @@ dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       _window (0),
       _objectDataHandle (0),
       _createdDataHandle (0),
+      _ftHandle (0),
       _widgets (0) {
 
    _init (local);
@@ -663,6 +686,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
       Ui::PropertyEditor ui;
       ui.setupUi (&dialog);
+      ui.ftCheck->hide ();
       dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
       QFormLayout *layout = new QFormLayout (ui.attributes);
@@ -696,6 +720,13 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
             current = current->next;
          }
 
+         if (ui.ftCheck->isChecked ()) {
+
+            Data out;
+            out.store_handle (_objectDataHandle, 0, Object);
+            _ftMessage.send (_ftHandle, &out, 0);
+         }
+
          _undo.stop_record (UndoHandle);
       }
       else if (Created) {
@@ -716,6 +747,8 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
    Config widget;
 
    PropertyWidget *result (0);
+
+   RuntimeContext *context (get_plugin_runtime_context ());
 
    while (list.get_prev_config (it, widget)) {
 
@@ -775,7 +808,7 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
 
                se->add_state (
                   Name,
-                  config_to_state ("name", state, get_plugin_runtime_context ()));
+                  config_to_state ("name", state, context));
 
                if (config_to_boolean ("default", state, False)) {
 
@@ -788,7 +821,11 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
       }
       else if (Type == "link-label") {
 
-         pe = new LinkLabel (AttrHandle, Name, config_to_boolean ("super", widget));
+         pe = new LinkLabel (
+            AttrHandle,
+            Name,
+            config_to_named_handle ("text-attribute", widget, context),
+            config_to_boolean ("super", widget));
       }
 
       if (pe) { pe->next = result; result = pe; }
@@ -811,11 +848,23 @@ dmz::MBRAPluginPropertyEditor::_init (Config &local) {
 
    subscribe_to_message (_editMessage);
 
+   _ftMessage = config_create_message (
+      "ft-message.name",
+      local,
+      "CreateLinkedFaultTreeMessage",
+      context);
+
    _objectDataHandle =
       config_to_named_handle ("attribute.object.name", local, "object", context);
 
    _createdDataHandle =
       config_to_named_handle ("attribute.created.name", local, "created", context);
+
+   _ftHandle = config_to_named_handle (
+      "attribute.fault-tree.name",
+      local,
+      "dmzMBRAPluginCreateLinkedFaultTree",
+      context);
 
    _dialogTitle = config_to_string ("title.value", local, "Node Properties");
 

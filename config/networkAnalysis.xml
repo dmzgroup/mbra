@@ -226,6 +226,13 @@
             decimals="0"
          />
          <property type="line-label" name="Rank" attribute="NA_Node_Rank"/>
+         <property
+            type="link-label"
+            name="Fault Tree"
+            attribute="NA_Fault_Tree_Link"
+            text-attribute="FT_Name"
+            super="false"
+         />
       </property-list>
    </na-node-properties>
    <na-link-properties>
