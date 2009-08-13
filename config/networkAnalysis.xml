@@ -189,6 +189,7 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-node-properties>
+      <fault-tree-button value="true"/>
       <object-type-list>
          <object-type name="na_node"/>
          <object-type name="na_link_attribute"/>

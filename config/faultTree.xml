@@ -38,7 +38,6 @@
       </property-list>
    </ft-component-properties>
    <ft-threat-properties>
-      <fault-tree-button value="false"/>
       <title value="Threat Properties"/>
       <object-type-list>
          <object-type name="ft_threat"/>

@@ -614,7 +614,7 @@ dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       _defs (Info),
       _objMod (0),
       _window (0),
-      _showFTButton (True),
+      _showFTButton (False),
       _objectDataHandle (0),
       _createdDataHandle (0),
       _ftHandle (0),
