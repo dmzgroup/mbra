@@ -717,7 +717,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
       PropertyWidget *pe (_widgets);
       PropertyUpdater *head (0), *current (0);
 
-      QWidget *prev (0);
+      QWidget *prevWidget (0);
 
       while (pe) {
 
@@ -736,16 +736,17 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
             if (widget) {
 
-               if (prev) { QWidget::setTabOrder (prev, widget); }
+               if (prevWidget) { QWidget::setTabOrder (prevWidget, widget); }
+               else { widget->setFocus (); }
 
-               prev = widget;
+               prevWidget = widget;
             }
          }
 
          pe = pe->next;
       }
 
-      if (prev && _showFTButton) { QWidget::setTabOrder (prev, ui.ftButton); }
+      if (prevWidget && _showFTButton) { QWidget::setTabOrder (prevWidget, ui.ftButton); }
 
       if (dialog.exec () == QDialog::Accepted) {
 
