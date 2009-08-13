@@ -113,6 +113,7 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
 void
 dmz::MBRAPluginModeToolBar::create_archive (
       const Handle ArchiveHandle,
+      const Int32 Version,
       Config &local,
       Config &global) {
 
@@ -133,6 +134,7 @@ dmz::MBRAPluginModeToolBar::create_archive (
 void
 dmz::MBRAPluginModeToolBar::process_archive (
       const Handle ArchiveHandle,
+      const Int32 Version,
       Config &local,
       Config &global) {
 
