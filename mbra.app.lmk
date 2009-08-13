@@ -32,6 +32,7 @@ lmk.add_preqs {
    "dmzLuaExtPick",
    "dmzQtExtLuaConsole",
    "dmzQtPluginLuaProfiler",
+   "dmzQtPluginVersion",
    "dmzInputPluginMouseEventToMessage",
    "dmzQtModuleMapBasic",
    "dmzQtPluginRenderPickMap",
