@@ -14,7 +14,7 @@
 dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (
       const PluginInfo &Info,
       Config &local) :
-      QWidget (0),
+      QObject (0),
       Plugin (Info),
       ArchiveObserverUtil (Info, local),
       InputObserverUtil (Info, local),
@@ -30,14 +30,13 @@ dmz::MBRAPluginModeToolBar::MBRAPluginModeToolBar (
 
    setObjectName (get_plugin_name ().get_buffer ());
 
-   _ui.setupUi (this);
-
    _init (local);
 }
 
 
 dmz::MBRAPluginModeToolBar::~MBRAPluginModeToolBar () {
 
+   if (_toolBar) { delete _toolBar; _toolBar = 0; }
 }
 
 
@@ -98,8 +97,12 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-         _mainWindowModule->remove_tool_bar (_toolBar);
-         _toolBar->setParent (0);
+         if (_toolBar) {
+            
+            _mainWindowModule->remove_tool_bar (_toolBar);
+            _toolBar->setParent (0);
+         }
+         
          _mainWindowModule = 0;
       }
    }
@@ -212,7 +215,10 @@ dmz::MBRAPluginModeToolBar::_init (Config &local) {
 
    qtoolbar_config_read ("toolBar", local, _toolBar);
 
-   _toolBar->addWidget (this);
+   QWidget *modeWidget = new QWidget;
+   _ui.setupUi (modeWidget);
+   
+   _toolBar->addWidget (modeWidget);
 
    qpushbutton_config_read ("networkAnalysis", local, _ui.networkButton);
 
