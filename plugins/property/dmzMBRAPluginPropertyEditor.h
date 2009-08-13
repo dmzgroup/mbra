@@ -37,6 +37,8 @@ namespace dmz {
                   }
                }
 
+               virtual QWidget *get_widget () = 0;
+
                virtual void update_object (const Handle Object, ObjectModule &module) = 0;
 
             protected:
@@ -122,6 +124,8 @@ namespace dmz {
 
          ObjectModule *_objMod;
          QtModuleMainWindow *_window;
+
+         Boolean _showFTButton;
 
          Message _editMessage;
          Message _ftMessage;

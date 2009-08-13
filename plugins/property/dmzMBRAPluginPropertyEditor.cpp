@@ -27,6 +27,7 @@ class LineUpdater : public pupdate {
    public:
       LineUpdater (const Handle AttrHandle, QLineEdit *edit);
       virtual void update_object (const Handle Object, ObjectModule &module);
+      virtual QWidget *get_widget ();
 
    protected:
       virtual ~LineUpdater () {;}
@@ -65,6 +66,7 @@ class TextUpdater : public pupdate {
    public:
       TextUpdater (const Handle AttrHandle, QTextEdit *edit);
       virtual void update_object (const Handle Object, ObjectModule &module);
+      virtual QWidget *get_widget ();
 
    protected:
       virtual ~TextUpdater () {;}
@@ -102,6 +104,7 @@ class ScalarUpdater : public pupdate {
    public:
       ScalarUpdater (const Handle AttrHandle, QDoubleSpinBox *edit, const double Scale);
       virtual void update_object (const Handle Object, ObjectModule &module);
+      virtual QWidget *get_widget ();
 
    protected:
       virtual ~ScalarUpdater () {;}
@@ -187,6 +190,7 @@ class StateUpdater : public pupdate {
    public:
       StateUpdater (const Handle AttrHandle, QComboBox *edit, StateWidget &table);
       virtual void update_object (const Handle Object, ObjectModule &module);
+      virtual QWidget *get_widget ();
 
    protected:
       virtual ~StateUpdater () {;}
@@ -258,6 +262,10 @@ LineUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
+QWidget *
+LineUpdater::get_widget () { return _edit; }
+
+
 LineWidget::LineWidget (
       const Handle AttrHandle,
       const String &Name,
@@ -311,6 +319,10 @@ TextUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
+QWidget *
+TextUpdater::get_widget () { return _edit; }
+
+
 pupdate *
 TextWidget::create_widgets (
       const Handle Object,
@@ -326,7 +338,8 @@ TextWidget::create_widgets (
 
    if (!module.lookup_text (RealObject, AttrHandle, text)) { text = ""; }
 
-   QTextEdit *edit= new QTextEdit (text.get_buffer (), parent);
+   QTextEdit *edit = new QTextEdit (text.get_buffer (), parent);
+   edit->setTabChangesFocus (true);
 
    layout->addRow (label, edit);
 
@@ -349,6 +362,10 @@ ScalarUpdater::update_object (const Handle Object, ObjectModule &module) {
    const Handle RealObject = get_real_object (Object, module);
    if (_edit) { module.store_scalar (RealObject, AttrHandle, _edit->value () / _Scale); }
 }
+
+
+QWidget *
+ScalarUpdater::get_widget () { return _edit; }
 
 
 ScalarWidget::ScalarWidget (
@@ -500,6 +517,10 @@ StateUpdater::update_object (const Handle Object, ObjectModule &module) {
 }
 
 
+QWidget *
+StateUpdater::get_widget () { return _edit; }
+
+
 Boolean
 StateWidget::add_state (const String &Name, const Mask &State) {
 
@@ -593,6 +614,7 @@ dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       _defs (Info),
       _objMod (0),
       _window (0),
+      _showFTButton (True),
       _objectDataHandle (0),
       _createdDataHandle (0),
       _ftHandle (0),
@@ -687,12 +709,15 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
       Ui::PropertyEditor ui;
       ui.setupUi (&dialog);
       ui.ftCheck->hide ();
+      if (!_showFTButton) { ui.ftButton->hide (); }
       dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
       QFormLayout *layout = new QFormLayout (ui.attributes);
 
       PropertyWidget *pe (_widgets);
       PropertyUpdater *head (0), *current (0);
+
+      QWidget *prev (0);
 
       while (pe) {
 
@@ -702,11 +727,25 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
             &dialog,
             layout);
 
-         if (!current) { head = current = next; }
-         else if (next) { current->next = next; current = next; }
+         if (next) {
+
+            if (!current) { head = current = next; }
+            else { current->next = next; current = next; }
+
+            QWidget *widget = next->get_widget ();
+
+            if (widget) {
+
+               if (prev) { QWidget::setTabOrder (prev, widget); }
+
+               prev = widget;
+            }
+         }
 
          pe = pe->next;
       }
+
+      if (prev && _showFTButton) { QWidget::setTabOrder (prev, ui.ftButton); }
 
       if (dialog.exec () == QDialog::Accepted) {
 
@@ -839,6 +878,8 @@ void
 dmz::MBRAPluginPropertyEditor::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
+
+   _showFTButton = config_to_boolean ("fault-tree-button.value", local, _showFTButton);
 
    _editMessage = config_create_message (
       "edit-message.name",
