@@ -34,7 +34,7 @@
       <title value="Component Properties"/>
       <edit-message name="FTComponentEditMessage"/>
       <property-list>
-         <property type="line" name="Name" attribute="FT_Name" max-length="12"/>
+         <property type="line" name="Name" attribute="FT_Name"/>
       </property-list>
    </ft-component-properties>
    <ft-threat-properties>
@@ -44,7 +44,7 @@
       </object-type-list>
       <edit-message name="FTThreatEditMessage"/>
       <property-list>
-         <property type="line" name="Name" attribute="FT_Name" max-length="12"/>
+         <property type="line" name="Name" attribute="FT_Name"/>
          <property
             type="scalar"
             name="Threat"

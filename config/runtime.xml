@@ -128,6 +128,7 @@
                      <string value="black"/>
                   </textColor>
                   <alignment value="center"/>
+                  <max-length value="12"/>
                   <enableBackground value="false"/>
                </text>
             </group>
@@ -217,6 +218,7 @@
                    </textColor>
                    <alignment value="center"/>
                    <enableBackground value="false"/>
+                   <max-length value="12"/>
                    <translate x="8" y="-6"/>
                 </text>
              </group>
