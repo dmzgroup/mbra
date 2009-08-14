@@ -450,7 +450,7 @@ LinkLabel::create_widgets (
 
    QLabel *label = new QLabel (Name.get_buffer (), parent);
 
-   if (module.is_link (Object)) {
+   if (!_TextHandle) {
 
       Handle linkAttr (0);
       Handle sub (0);
@@ -467,12 +467,14 @@ LinkLabel::create_widgets (
 
       layout->addRow (label, data);
    }
-   else if (module.is_object (Object)) {
+   else {
+
+      const Handle RealObject = get_real_object (Object, module);
 
       HandleContainer container;
 
-      if (_Super) { module.lookup_super_links (Object, AttrHandle, container); }
-      else { module.lookup_sub_links (Object, AttrHandle, container); }
+      if (_Super) { module.lookup_super_links (RealObject, AttrHandle, container); }
+      else { module.lookup_sub_links (RealObject, AttrHandle, container); }
 
       String value;
 

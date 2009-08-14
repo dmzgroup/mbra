@@ -253,6 +253,13 @@
          <property type="text" name="Description" attribute="NA_Node_Description"/>
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
+         <property
+            type="link-label"
+            name="Fault Tree"
+            attribute="NA_Fault_Tree_Link"
+            text-attribute="FT_Name"
+            super="false"
+         />
       </property-list>
    </na-link-properties>
    <dmzQtPluginButtonToChannel>
