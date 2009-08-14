@@ -762,8 +762,10 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
          if (ui.ftCheck->isChecked ()) {
 
+            const Handle RealObject = get_real_object (Object, *_objMod);
+
             Data out;
-            out.store_handle (_objectDataHandle, 0, Object);
+            out.store_handle (_objectDataHandle, 0, RealObject);
             _ftMessage.send (_ftHandle, &out, 0);
          }
 
