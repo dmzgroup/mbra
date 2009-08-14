@@ -30,9 +30,9 @@
    <channel name="NetworkAnalysisChannel">
       <group area="main">
          <widget name="NACanvasMap"/>
-         <!-- <widget name="NAMap"/> -->
       </group>
-      <group area="right">
+      <group area="right" visible="true" floating="true">
+         <allowed-areas left="true" right="true" top="true" botton="true" all="true" none="true"/>
          <widget name="NACanvasLayer" title="Networks"/>
          <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
          <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
