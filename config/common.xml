@@ -26,19 +26,33 @@
 -->
 </plugin-list>
 <window>
+   <showUnifiedTitleAndToolBar value="true"/>
    <window title="MBRA" icon="images:IconFiles/AppIconMBRA_32x32.png"/>
+   <corners>
+      <top left="true" right="true"/>
+      <bottom left="false" right="true"/>
+   </corners>
    <channel name="NetworkAnalysisChannel">
       <group area="main">
          <widget name="NACanvasMap"/>
       </group>
-      <group area="right" visible="true" floating="true">
-         <allowed-areas left="true" right="true" top="true" botton="true" all="true" none="true"/>
-         <widget name="NACanvasLayer" title="Networks"/>
-         <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
-         <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
+      <group area="right">
+         <widget name="NACanvasLayer" title="Networks" visible="true" floating="true">
+            <allowed-areas left="true" right="true" bottom="true"/>
+         </widget>
+         <widget name="dmzQtPluginButtonToChannel" title="Actions" visible="true" floating="false">
+            <allowed-areas all="true"/>
+         </widget>
+         <widget 
+            name="dmzMBRAPluginCalculate"
+            title="Calculations"
+            visible="true"
+            floating="false">
+            <allowed-areas all="true"/>
+         </widget>
       </group>
       <group area="bottom">
-         <widget name="NABottomTab" title="Data"/>
+         <widget name="NABottomTab" title="Data" visible="true" floating="false"/>
       </group>
    </channel>
    <channel name="FaultTreeChannel">
