@@ -194,6 +194,7 @@
          <object-type name="na_link_attribute"/>
       </object-type-list>
       <title value="Node Properties"/>
+      <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
@@ -228,6 +229,7 @@
    </na-node-properties>
    <na-link-properties>
       <title value="Link Properties"/>
+      <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
@@ -251,6 +253,13 @@
          <property type="text" name="Description" attribute="NA_Node_Description"/>
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
+         <property
+            type="link-label"
+            name="Fault Tree"
+            attribute="NA_Fault_Tree_Link"
+            text-attribute="FT_Name"
+            super="false"
+         />
       </property-list>
    </na-link-properties>
    <dmzQtPluginButtonToChannel>

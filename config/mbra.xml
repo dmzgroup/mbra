@@ -3,6 +3,7 @@
    <plugin-list>
       <plugin name="dmzMBRAPluginFileToolBar"/>
       <plugin name="dmzMBRAPluginModeToolBar"/>
+      <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginFileToolBar>
       <toolBar movable="False" floatable="False">

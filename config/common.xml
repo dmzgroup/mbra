@@ -9,7 +9,7 @@
 </dmzFileCacheLocal>
 <plugin-list>
    <plugin name="dmzQtModuleMainWindowBasic" scope="window"/>
-   <plugin name="dmzArchiveModuleBasic"/>
+   <plugin name="dmzArchiveModuleBasic" scope="archive-module"/>
    <plugin name="dmzArchivePluginAutoLoad"/>
    <plugin name="dmzArchivePluginAutoSave"/>
    <plugin name="dmzArchivePluginObject"/>
@@ -25,6 +25,9 @@
    <plugin name="dmzPluginUndoDump"/>
 -->
 </plugin-list>
+<archive-module>
+   <archive version="0"/>
+</archive-module>
 <window>
    <!-- <showUnifiedTitleAndToolBar value="true"/> -->
    <window title="MBRA" icon="images:IconFiles/AppIconMBRA_32x32.png"/>

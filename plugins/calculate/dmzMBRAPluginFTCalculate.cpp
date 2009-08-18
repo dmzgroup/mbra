@@ -21,6 +21,7 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       QtWidget (Info),
       _log (Info),
       _undo (Info),
+      _inCreate (False),
       _defaultAttrHandle (0),
       _channel (0),
       _budgetAttrHandle (0),
@@ -79,12 +80,16 @@ dmz::MBRAPluginFTCalculate::create_object (
       const ObjectType &Type,
       const ObjectLocalityEnum Locality) {
 
+   _inCreate = True;
+
    int index = _ui.rootBox->findData (QVariant (qlonglong (ObjectHandle)));
 
    if ((index < 0) && Type.is_of_exact_type (_rootType)) {
 
       _ui.rootBox->addItem ("", QVariant (qlonglong (ObjectHandle)));
    }
+
+   _inCreate = False;
 }
 
 
@@ -341,7 +346,7 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 void
 dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
 
-   if (index >= 0) {
+   if (index >= 0 && !_inCreate) {
 
       QVariant data = _ui.rootBox->itemData (index);
 
@@ -354,16 +359,6 @@ dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
          objMod->store_flag (obj, _activeAttrHandle, True);
          _undo.stop_record (UndoHandle);
       }
-
-     // Should not be needed. The script resets it self when the root changes.
-#if 0
-      if (_ui.calculateButton->isChecked ()) {
-
-         // If calculation is on, toggle it off and on to reset it
-         _slot_calculate (false);
-         _slot_calculate (true);
-      }
-#endif // 0
    }
 }
 
