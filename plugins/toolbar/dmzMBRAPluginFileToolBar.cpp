@@ -22,7 +22,6 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       UndoObserver (Info),
       ExitObserver (Info),
       _log (Info),
-      _version (global),
       _appStateDirty (False),
       _appState (Info),
       _archiveModule (0),
@@ -44,8 +43,7 @@ dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       _undoAction (0),
       _redoAction (0),
       _clearAction (0),
-      _mapPropertiesEditAction (0),
-      _aboutAction (0) {
+      _mapPropertiesEditAction (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -77,22 +75,6 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
       if (!_mainWindowModule) {
 
          _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
-
-         if (_mainWindowModule && _aboutAction) {
-
-            QMenuBar *menu = _mainWindowModule->get_menu_bar ();
-
-            if (menu) {
-
-#if defined(__APPLE__) || defined(MACOSX)
-               QMenu *appMenu = menu->addMenu ("Application Menu");
-#else
-               _aboutAction->setText ("About");
-               QMenu *appMenu = menu->addMenu ("Help");
-#endif
-               if (appMenu) { appMenu->addAction (_aboutAction); }
-            }
-         }
 
          if (_mainWindowModule && _toolBar) {
 
@@ -424,13 +406,6 @@ dmz::MBRAPluginFileToolBar::_slot_map_properties_edit () {
 
 
 void
-dmz::MBRAPluginFileToolBar::_slot_about () {
-
-   _version.show ();
-}
-
-
-void
 dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
 
    if (!FileName.isEmpty ()) {
@@ -629,17 +604,6 @@ dmz::MBRAPluginFileToolBar::_init (Config &local, Config &global) {
          this, SLOT (_slot_map_properties_edit ()));
 
       _toolBar->addAction (_mapPropertiesEditAction);
-   }
-
-   _aboutAction = new QAction (this);
-
-   if (_aboutAction) {
-
-      _aboutAction->setMenuRole (QAction::AboutRole);
-
-      connect (
-         _aboutAction, SIGNAL (triggered ()),
-         this, SLOT (_slot_about ()));
    }
 }
 

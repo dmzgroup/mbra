@@ -7,7 +7,6 @@
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
-#include <dmzQtVersion.h>
 #include <QtCore/QObject>
 
 class QAction;
@@ -73,7 +72,6 @@ namespace dmz {
          void _slot_redo ();
          void _slot_clear ();
          void _slot_map_properties_edit ();
-         void _slot_about ();
 
       protected:
          void _load_file (const QString &FileName);
@@ -81,7 +79,6 @@ namespace dmz {
          void _init (Config &local, Config &global);
 
          Log _log;
-         QtVersion _version;
          QString _startFile;
          Boolean _appStateDirty;
          ApplicationStateWrapper _appState;
@@ -105,7 +102,6 @@ namespace dmz {
          QAction *_redoAction;
          QAction *_clearAction;
          QAction *_mapPropertiesEditAction;
-         QAction *_aboutAction;
 
       private:
          MBRAPluginFileToolBar ();
