@@ -2,8 +2,11 @@
 #define DMZ_MBRA_PLUGIN_LINK_EDITOR_DOT_H
 
 #include <dmzObjectObserverUtil.h>
+#include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
+#include <dmzTypesHashTableHandleTemplate.h>
 
 #include <QtGui/QWidget>
 
@@ -14,7 +17,8 @@ namespace dmz {
    class MBRAPluginLinkEditor :
          public QWidget,
          public Plugin,
-         public ObjectObserverUtil {
+         public ObjectObserverUtil,
+         public QtWidget {
 
       Q_OBJECT
 
@@ -39,23 +43,6 @@ namespace dmz {
             const ObjectLocalityEnum Locality);
 
          virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
-
-         virtual void update_object_uuid (
-            const Handle ObjectHandle,
-            const UUID &Identity,
-            const UUID &PrevIdentity);
-
-         virtual void remove_object_attribute (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Mask &AttrMask);
-
-         virtual void update_object_locality (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const ObjectLocalityEnum Locality,
-            const ObjectLocalityEnum PrevLocality);
 
          virtual void link_objects (
             const Handle LinkHandle,
@@ -85,103 +72,12 @@ namespace dmz {
             const UUID &PrevAttributeIdentity,
             const Handle PrevAttributeObjectHandle);
 
-         virtual void update_object_counter (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Int64 Value,
-            const Int64 *PreviousValue);
-
-         virtual void update_object_counter_minimum (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Int64 Value,
-            const Int64 *PreviousValue);
-
-         virtual void update_object_counter_maximum (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Int64 Value,
-            const Int64 *PreviousValue);
-
-         virtual void update_object_alternate_type (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const ObjectType &Value,
-            const ObjectType *PreviousValue);
-
-         virtual void update_object_state (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Mask &Value,
-            const Mask *PreviousValue);
-
          virtual void update_object_flag (
             const UUID &Identity,
             const Handle ObjectHandle,
             const Handle AttributeHandle,
             const Boolean Value,
             const Boolean *PreviousValue);
-
-         virtual void update_object_time_stamp (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Float64 &Value,
-            const Float64 *PreviousValue);
-
-         virtual void update_object_position (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Vector &Value,
-            const Vector *PreviousValue);
-
-         virtual void update_object_orientation (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Matrix &Value,
-            const Matrix *PreviousValue);
-
-         virtual void update_object_velocity (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Vector &Value,
-            const Vector *PreviousValue);
-
-         virtual void update_object_acceleration (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Vector &Value,
-            const Vector *PreviousValue);
-
-         virtual void update_object_scale (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Vector &Value,
-            const Vector *PreviousValue);
-
-         virtual void update_object_vector (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Vector &Value,
-            const Vector *PreviousValue);
-
-         virtual void update_object_scalar (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Float64 Value,
-            const Float64 *PreviousValue);
 
          virtual void update_object_text (
             const UUID &Identity,
@@ -190,19 +86,41 @@ namespace dmz {
             const String &Value,
             const String *PreviousValue);
 
-         virtual void update_object_data (
-            const UUID &Identity,
-            const Handle ObjectHandle,
-            const Handle AttributeHandle,
-            const Data &Value,
-            const Data *PreviousValue);
+         // QtWidget Interface
+         virtual QWidget *get_qt_widget ();
+
+      protected slots:
+         void on_linkButton_clicked ();
+         void on_unlinkButton_clicked ();
 
       protected:
+         struct LinkStruct {
+
+            QListWidgetItem *item;
+            String naName;
+            String ftName;
+
+            LinkStruct () : item (0) {;}
+            ~LinkStruct () { if (item) { delete item; item = 0; } ;}
+         };
+
          void _init (Config &local);
 
          Log _log;
 
          Ui::LinkEditor _ui;
+
+         Handle _linkAttrHandle;
+         Handle _naNameAttrHandle;
+         Handle _ftNameAttrHandle;
+
+         ObjectType _naNodeType;
+         ObjectType _ftRootType;
+
+         HashTableHandleTemplate<QListWidgetItem> _objTable;
+         HashTableHandleTemplate<LinkStruct> _linkTable;
+         HashTableHandleTemplate<LinkStruct> _superTable;
+         HashTableHandleTemplate<LinkStruct> _subTable;
 
       private:
          MBRAPluginLinkEditor ();

@@ -12,6 +12,7 @@
       <plugin name="dmzQtPluginMenuToMessage" unique="FTLogicMenu"/>
       <plugin name="dmzMBRAPluginFaultTreeBuilder"/>
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
+      <plugin name="dmzMBRAPluginLinkEditor"/>
       <plugin
          name="dmzMBRAPluginPropertyEditor"
          unique="FaultTreeComponentProperties"

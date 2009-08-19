@@ -104,7 +104,7 @@
         <item>
          <widget class="QPushButton" name="linkButton">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>Link</string>
@@ -143,7 +143,7 @@
         <item>
          <widget class="QPushButton" name="unlinkButton">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="text">
            <string>Unlink</string>

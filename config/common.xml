@@ -48,6 +48,9 @@
       <group area="main">
          <widget name="FTCanvas"/>
       </group>
+      <group area="right">
+         <widget name="dmzMBRAPluginLinkEditor" title="Link Editor"/>
+      </group>
       <group area="bottom">
          <widget name="FaultTreePropertyTable" title="Fault Tree Threat Data Table"/>
          <widget name="dmzMBRAPluginFTCalculate" title="Calculations"/>
