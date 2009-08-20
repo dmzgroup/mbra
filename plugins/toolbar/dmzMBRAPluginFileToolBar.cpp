@@ -78,14 +78,16 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
 
          if (_mainWindowModule && _toolBar) {
 
-            _mainWindowModule->add_tool_bar (_toolBar);
+            QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+            if (mainWindow) {
+               
+               mainWindow->addToolBar (_toolBar);
+               
+               if (!_startFile.isEmpty ()) {
 
-            QWidget *widget (_mainWindowModule->get_widget ());
-
-            if (!_startFile.isEmpty () && widget) {
-
-               QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
-               widget->setWindowTitle (name);
+                  QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
+                  mainWindow->setWindowTitle (name);
+               }
             }
          }
       }
@@ -100,9 +102,10 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-         if (_toolBar) {
+         QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+         if (_toolBar && mainWindow) {
             
-            _mainWindowModule->remove_tool_bar (_toolBar);
+            mainWindow->removeToolBar (_toolBar);
             _toolBar->setParent (0);
          }
          
@@ -135,7 +138,7 @@ dmz::MBRAPluginFileToolBar::receive_message (
             msg += "?";
 
             const QMessageBox::StandardButton Button (QMessageBox::warning (
-               _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
                "Save changes before opening file.",
                msg,
                QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save));
@@ -216,7 +219,7 @@ dmz::MBRAPluginFileToolBar::exit_requested (
    if (_appStateDirty) {
 
       const QMessageBox::StandardButton Value (QMessageBox::question (
-         _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+         _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
          "Save before exit.",
          "Do you want to save your changes?",
          QMessageBox::Save | QMessageBox::Discard,
@@ -236,7 +239,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_load () {
 
       QString fileName =
          QFileDialog::getOpenFileName (
-            _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
             tr ("Import File"),
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
@@ -253,7 +256,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
 
       QString fileName =
          QFileDialog::getSaveFileName (
-            _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
             tr ("Export File"),
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
@@ -266,7 +269,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
          if (QFileInfo (fileName).isFile ()) {
 
             const QMessageBox::StandardButton Button (QMessageBox::warning (
-               _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
                "File already exists",
                fileName + "already exists. Do you want to replace it?",
                QMessageBox::Cancel | QMessageBox::Save));
@@ -298,8 +301,13 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
             if (_mainWindowModule) {
 
                QString name (_mainWindowModule->get_window_name () + ": " + fileName);
-               _mainWindowModule->get_widget ()->setWindowTitle (name);
-               _mainWindowModule->get_status_bar ()->showMessage (msg, 5000);
+               
+               QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+               if (mainWindow) {
+
+                  mainWindow->setWindowTitle (name);
+                  mainWindow->statusBar ()->showMessage (msg, 5000);
+               }
             }
 
             close_file (file);
@@ -340,7 +348,7 @@ dmz::MBRAPluginFileToolBar::_slot_undo () {
 
             if (widget == mouseWidget) {
 
-               _undoAction->showStatusText (_mainWindowModule->get_widget ());
+               _undoAction->showStatusText (_mainWindowModule->get_qt_main_window ());
             }
          }
       }
@@ -369,7 +377,7 @@ dmz::MBRAPluginFileToolBar::_slot_redo () {
 
             if (widget == mouseWidget) {
 
-               _redoAction->showStatusText (_mainWindowModule->get_widget ());
+               _redoAction->showStatusText (_mainWindowModule->get_qt_main_window ());
             }
          }
       }
@@ -384,7 +392,7 @@ dmz::MBRAPluginFileToolBar::_slot_clear () {
     if (_appStateDirty) {
 
       const QMessageBox::StandardButton Value (QMessageBox::question (
-         _mainWindowModule ? _mainWindowModule->get_widget () : 0,
+         _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
          "Save before clearing.",
          "Do you want to save your changes before clearing?",
          QMessageBox::Save | QMessageBox::Discard,
@@ -408,9 +416,11 @@ dmz::MBRAPluginFileToolBar::_slot_map_properties_edit () {
 void
 dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
 
-   if (!FileName.isEmpty ()) {
+   if (!FileName.isEmpty () && _mainWindowModule) {
 
       qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
+
+      QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
 
       Config global ("global");
 
@@ -418,10 +428,7 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
 
          QString msg (QString ("Loading file: ") + FileName);
 
-         if (_mainWindowModule) {
-
-            _mainWindowModule->get_status_bar ()->showMessage (msg);
-         }
+         if (mainWindow) { mainWindow->statusBar ()->showMessage (msg); }
 
          Config archiveConfig;
          global.lookup_all_config_merged ("dmz", archiveConfig);
@@ -436,11 +443,11 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
          msg = QString ("File loaded: ") + FileName;
          _log.info << qPrintable (msg) << endl;
 
-         if (_mainWindowModule) {
+         if (mainWindow) {
 
             QString name (_mainWindowModule->get_window_name () + ": " + FileName);
-            _mainWindowModule->get_widget ()->setWindowTitle (name);
-            _mainWindowModule->get_status_bar ()->showMessage (msg, 5000);
+            mainWindow->setWindowTitle (name);
+            mainWindow->statusBar ()->showMessage (msg, 5000);
          }
 
          _appState.set_default_directory (qPrintable (FileName));

@@ -1,28 +1,46 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>calculateForm</class>
- <widget class="QWidget" name="calculateForm" >
-  <property name="geometry" >
+ <widget class="QWidget" name="calculateForm">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
-    <height>82</height>
+    <width>187</width>
+    <height>78</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QToolButton" name="calculateButton" />
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="calculateButton"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="infoLabel">
+       <property name="text">
+        <string>Calculate &amp; Identify
+Critical Nodes</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QLabel" name="infoLabel" >
-     <property name="text" >
-      <string>Calculate &amp; Identify
-Critical Nodes</string>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-    </widget>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

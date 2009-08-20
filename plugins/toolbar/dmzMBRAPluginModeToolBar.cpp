@@ -81,9 +81,13 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
 
          _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
 
-         if (_mainWindowModule && _toolBar) {
+         if (_mainWindowModule) {
 
-            _mainWindowModule->add_tool_bar (_toolBar);
+            QMainWindow *mainWindow (_mainWindowModule->get_qt_main_window ());
+            if (mainWindow && _toolBar) {
+
+               mainWindow->addToolBar (_toolBar);
+            }
          }
       }
    }
@@ -97,9 +101,10 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
       if (_mainWindowModule &&
             (_mainWindowModule == QtModuleMainWindow::cast (PluginPtr))) {
 
-         if (_toolBar) {
-            
-            _mainWindowModule->remove_tool_bar (_toolBar);
+         QMainWindow *mainWindow (_mainWindowModule->get_qt_main_window ());
+         if (_toolBar && mainWindow) {
+
+            mainWindow->removeToolBar (_toolBar);
             _toolBar->setParent (0);
          }
          

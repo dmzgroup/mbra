@@ -706,7 +706,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
    if (_objMod && _window) {
 
-      QDialog dialog (_window->get_widget ());
+      QDialog dialog (_window->get_qt_main_window ());
 
       Ui::PropertyEditor ui;
       ui.setupUi (&dialog);

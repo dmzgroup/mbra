@@ -33,7 +33,21 @@
       <plugin name="dmzQtPluginGraph"/>
       <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
+      <plugin name="dmzQtPluginTabWidget" unique="NAToolTab"/>
    </plugin-list>
+   <central-widget>
+      <widget name="NACanvasMap" title="Network Analysis" channel="NetworkAnalysisChannel"/>
+   </central-widget>
+   <tool-palette>
+      <channel name="NetworkAnalysisChannel" widget="NAToolTab"/>
+   </tool-palette>
+   <data-palette>
+      <channel name="NetworkAnalysisChannel" widget="NABottomTab"/>
+   </data-palette>
+   <NAToolTab>
+      <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
+      <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
+   </NAToolTab>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
       <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
