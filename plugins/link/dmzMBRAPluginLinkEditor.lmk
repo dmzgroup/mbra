@@ -1,0 +1,13 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginLinkEditor"
+lmk.set_type "plugin"
+lmk.add_files {"LinkEditor.ui",}
+lmk.add_files ({"dmzMBRAPluginLinkEditor.h",}, {src="moc",})
+lmk.add_files {"dmzMBRAPluginLinkEditor.cpp",}
+lmk.add_libs {
+   "dmzObjectUtil",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzObjectFramework",}
+lmk.add_preqs {"dmzObjectFramework","dmzQtFramework",}
+lmkQt.add_libs {"QtCore", "QtGui",}
