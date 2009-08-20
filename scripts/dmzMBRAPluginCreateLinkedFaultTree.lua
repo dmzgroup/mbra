@@ -12,8 +12,8 @@ function receive (self, type, data)
             if not name then name = "Root" end
             ft = dmz.object.create ("ft_component_root")
             dmz.object.text (ft, "FT_Name", name)
-            dmz.object.link (LinkHandle, handle, ft)
             dmz.object.activate (ft)
+            dmz.object.link (LinkHandle, handle, ft)
          end
          dmz.object.flag (ft, "FT_Active_Fault_Tree", true)
          dmz.input.channel ("NetworkAnalysisChannel", false)
