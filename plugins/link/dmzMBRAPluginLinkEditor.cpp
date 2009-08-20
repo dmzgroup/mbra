@@ -13,6 +13,7 @@ static const dmz::String LinkStr (" --> ");
 
 };
 
+
 dmz::MBRAPluginLinkEditor::MBRAPluginLinkEditor (const PluginInfo &Info, Config &local) :
       Plugin (Info),
       ObjectObserverUtil (Info, local),
@@ -140,10 +141,7 @@ dmz::MBRAPluginLinkEditor::link_objects (
    QListWidgetItem *super = _objTable.lookup (SuperHandle);
    QListWidgetItem *sub = _objTable.lookup (SubHandle);
 
-_log.error << "Linked!" << endl;
-
    if (super && sub) {
-
 
       int row = _ui.NAList->row (super);
       _ui.NAList->takeItem (row);

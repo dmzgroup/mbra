@@ -108,7 +108,7 @@
       <channel name="FaultTreeChannel" widget="FTDataTab"/>
    </data-palette>
    <FTDataTab>
-      <widget name="FaultTreePropertyTable" title="Calculations"/>
+      <widget name="FaultTreePropertyTable" title="Fault Tree Threat Data Table"/>
       <widget name="dmzMBRAPluginLinkEditor" title="Link Editor"/>
    </FTDataTab>
    <FTCanvas>

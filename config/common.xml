@@ -46,14 +46,11 @@
       </group>
       <group area="bottom">
          <widget name="data-palette" title="Data" visible="false" floating="true">
-            <allowed-areas none="true"/>
+            <allowed-areas all="true"/>
          </widget>
       </group>
    </dock-windows>
 </window>
-<central-widget>
-   <!-- <tab position="north" document-mode="true"/> -->
-</central-widget>
 <dmzArchivePluginObject>
    <scope>
       <string value="archive"/>
