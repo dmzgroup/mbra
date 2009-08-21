@@ -94,32 +94,15 @@
                </backgroundColor>
                <translate x="50" y="0"/>
             </text>
-            <text name="info">
-               <textColor>
-                  <string value="white"/>
-                  <alpha value="0.75"/>
-               </textColor>
-               <outlineColor>
-                  <string value="black"/>
-                  <alpha value="0.75"/>
-               </outlineColor>
-               <backgroundColor>
-                  <string value="black"/>
-                  <alpha value="0.75"/>
-               </backgroundColor>
-               <translate x="50" y="30"/>
-            </text>
          </items>
          <text>
             <item name="number" attribute="NA_Node_Rank"/>
             <item name="name" attribute="NA_Node_Name"/>
-            <item name="info" attribute="NA_Node_Name"/>
          </text>
          <switch>
             <state>
                <item name="node"/>
                <item name="name"/>
-               <item name="info"/>
             </state>
             <state name="NA_Node_Overlay" group="overlay">
                <item name="overlay"/>
