@@ -20,5 +20,6 @@
    <instance name="dmzMBRAPluginFaultTree"/>
    <instance name="dmzMBRAPluginLayerActive"/>
    <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
+   <instance name="dmzMBRAPluginNALabelFormatter"/>
 </dmzLuaModuleBasic>
 </dmz>
