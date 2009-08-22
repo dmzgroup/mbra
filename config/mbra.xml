@@ -2,11 +2,11 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzMBRAPluginFileToolBar"/>
-      <plugin name="dmzMBRAPluginModeToolBar"/>
+      <!-- <plugin name="dmzMBRAPluginModeToolBar"/> -->
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginFileToolBar>
-      <toolBar movable="True" floatable="True">
+      <toolBar movable="false" floatable="false">
          <!-- <widget windowTitle="File">
             <stylesheet file="stylesheets:FileButton.qss"/>
          </widget> -->
