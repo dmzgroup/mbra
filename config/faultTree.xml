@@ -28,6 +28,7 @@
          scope="ft-threat-properties"
       />
       <plugin name="dmzMBRAPluginFTCalculate"/>
+      <plugin name="dmzMBRAPluginFTViewState"/>
       <plugin name="dmzObjectPluginFlagGroup"/>
       <plugin name="dmzQtPluginTabWidget" unique="FTDataTab"/>
    </plugin-list>
