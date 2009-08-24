@@ -50,7 +50,7 @@ dmz::MBRAPluginModeToolBar::update_plugin_state (
 
       if (!_currentChannel) {
 
-         _ui.networkButton->click ();
+//         _ui.networkButton->click ();
       }
    }
 }
@@ -69,11 +69,11 @@ dmz::MBRAPluginModeToolBar::discover_plugin (
 
          if (_inputModule) {
 
-            _inputModule->create_channel (_networkAnalysisChannel);
-            _inputModule->create_channel (_faultTreeChannel);
-
-            _inputModule->set_channel_state (_faultTreeChannel, False);
-            _inputModule->set_channel_state (_networkAnalysisChannel, False);
+            // _inputModule->create_channel (_networkAnalysisChannel);
+            // _inputModule->create_channel (_faultTreeChannel);
+            // 
+            // _inputModule->set_channel_state (_faultTreeChannel, False);
+            // _inputModule->set_channel_state (_networkAnalysisChannel, False);
          }
       }
 

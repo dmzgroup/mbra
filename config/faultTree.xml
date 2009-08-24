@@ -12,7 +12,6 @@
       <plugin name="dmzQtPluginMenuToMessage" unique="FTLogicMenu"/>
       <plugin name="dmzMBRAPluginFaultTreeBuilder"/>
       <plugin name="dmzMBRAPluginFaultTreeAutoLayout"/>
-      <plugin name="dmzMBRAPluginLinkEditor"/>
       <plugin
          name="dmzMBRAPluginPropertyEditor"
          unique="FaultTreeComponentProperties"
@@ -105,12 +104,8 @@
       <channel name="FaultTreeChannel" widget="dmzMBRAPluginFTCalculate"/>
    </tool-palette>
    <data-palette>
-      <channel name="FaultTreeChannel" widget="FTDataTab"/>
+      <channel name="FaultTreeChannel" widget="FaultTreePropertyTable"/>
    </data-palette>
-   <FTDataTab>
-      <widget name="FaultTreePropertyTable" title="Fault Tree Threat Data Table"/>
-      <widget name="dmzMBRAPluginLinkEditor" title="Link Editor"/>
-   </FTDataTab>
    <FTCanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="FaultTreeChannel"/>

@@ -36,7 +36,11 @@
       <plugin name="dmzQtPluginTabWidget" unique="NAToolTab"/>
    </plugin-list>
    <central-widget>
-      <widget name="NACanvasMap" title="Network Analysis" channel="NetworkAnalysisChannel"/>
+      <widget
+         name="NACanvasMap"
+         title="Network Analysis"
+         channel="NetworkAnalysisChannel"
+         default="true"/>
    </central-widget>
    <tool-palette>
       <channel name="NetworkAnalysisChannel" widget="NAToolTab"/>
