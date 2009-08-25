@@ -65,7 +65,6 @@ lmk.add_preqs {
    "dmzMBRAPluginFaultTreeAutoLayout",
    "dmzMBRAPluginFTCalculate",
    "dmzMBRAPluginFileToolBar",
---   "dmzMBRAPluginModeToolBar",
 -- dev plugins
    "dmzLuaPluginReset",
    "dmzPluginMsgDump",
