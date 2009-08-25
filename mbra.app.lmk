@@ -18,6 +18,7 @@ lmk.add_preqs {
    "dmzArchivePluginAutoLoad",
    "dmzArchivePluginAutoSave",
    "dmzArchivePluginObject",
+   "dmzArchivePluginInputChannelState",
    "dmzArchivePluginUndo",
    "dmzObjectModuleBasic",
    "dmzObjectPluginFlagGroup",
@@ -64,7 +65,7 @@ lmk.add_preqs {
    "dmzMBRAPluginFaultTreeAutoLayout",
    "dmzMBRAPluginFTCalculate",
    "dmzMBRAPluginFileToolBar",
-   "dmzMBRAPluginModeToolBar",
+--   "dmzMBRAPluginModeToolBar",
 -- dev plugins
    "dmzLuaPluginReset",
    "dmzPluginMsgDump",

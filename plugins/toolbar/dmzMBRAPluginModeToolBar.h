@@ -5,27 +5,15 @@
 #include <dmzInputObserverUtil.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimePlugin.h>
-#include <QtGui/QToolBar>
-#include "ui_dmzMBRAModeForm.h"
-
-
-class QMainWindow;
-class QToolBar;
-
 
 namespace dmz {
 
    class InputModule;
-   class QtModuleMainWindow;
-
 
    class MBRAPluginModeToolBar :
-         public QObject,
          public Plugin,
          public ArchiveObserverUtil,
          public InputObserverUtil {
-
-      Q_OBJECT
 
       public:
          MBRAPluginModeToolBar (const PluginInfo &Info, Config &local);
@@ -56,21 +44,12 @@ namespace dmz {
          // InputObserverUtil Interface
          virtual void update_channel_state (const Handle Channel, const Boolean State);
 
-      protected slots:
-         void _slot_network_analysis ();
-         void _slot_fault_tree ();
-
       protected:
          void _init (Config &local);
 
          Log _log;
          InputModule *_inputModule;
          String _inputModuleName;
-         QtModuleMainWindow *_mainWindowModule;
-         String _mainWindowModuleName;
-         QMainWindow *_mainWindow;
-         QToolBar *_toolBar;
-         Ui::modeForm _ui;
          Handle _networkAnalysisChannel;
          Handle _faultTreeChannel;
          Handle _currentChannel;

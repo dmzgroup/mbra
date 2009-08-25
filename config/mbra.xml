@@ -2,7 +2,6 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzMBRAPluginFileToolBar"/>
-      <!-- <plugin name="dmzMBRAPluginModeToolBar"/> -->
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginFileToolBar>
@@ -45,15 +44,5 @@
          <mapPropertiesEdit target="dmzQtPluginMapProperties" />
       </message>
    </dmzMBRAPluginFileToolBar>
-   <dmzMBRAPluginModeToolBar>
-      <toolBar movable="False" floatable="False">
-         <widget windowTitle="Mode"/>
-      </toolBar>
-      <networkAnalysis>
-         <button text="Network"/>
-      </networkAnalysis>
-      <faultTree>
-         <button text="Fault Tree"/>
-      </faultTree>
-   </dmzMBRAPluginModeToolBar>
+
 </dmz>

@@ -13,6 +13,7 @@
    <plugin name="dmzArchivePluginAutoLoad"/>
    <plugin name="dmzArchivePluginAutoSave"/>
    <plugin name="dmzArchivePluginObject"/>
+   <plugin name="dmzArchivePluginInputChannelState" scope="archive-channel-state"/>
    <plugin name="dmzArchivePluginUndo"/>
    <plugin name="dmzObjectModuleBasic"/>
    <plugin name="dmzObjectPluginUndo"/>
@@ -86,6 +87,14 @@
       <state name="FT_Threat_Level_10"/>
    </archive>
 </dmzArchivePluginObject>
+<archive-channel-state>
+   <scope>
+      <string value="active-channel-list"/>
+      <string value="dmzMBRAPluginModeToolBar"/>
+   </scope>
+   <channel name="NetworkAnalysisChannel"/>
+   <channel name="FaultTreeChannel"/>
+</archive-channel-state>
 <dmzObjectPluginCleanup>
    <cleanup>
       <type name="na_node"/>
