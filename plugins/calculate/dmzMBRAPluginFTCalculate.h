@@ -97,7 +97,6 @@ namespace dmz {
 
          Log _log;
          Undo _undo;
-         Boolean _inCreate;
          Handle _defaultAttrHandle;
          Handle _channel;
          Handle _budgetAttrHandle;
