@@ -10,7 +10,6 @@
 #include <QtCore/QObject>
 
 class QAction;
-class QMainWindow;
 class QToolBar;
 
 
@@ -107,7 +106,6 @@ namespace dmz {
          MBRAPluginFileToolBar ();
          MBRAPluginFileToolBar (const MBRAPluginFileToolBar &);
          MBRAPluginFileToolBar &operator= (const MBRAPluginFileToolBar &);
-
    };
 };
 

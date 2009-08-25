@@ -12,6 +12,7 @@
 #include <dmzXMLUtil.h>
 #include <QtGui/QtGui>
 
+
 dmz::MBRAPluginFileToolBar::MBRAPluginFileToolBar (
       const PluginInfo &Info,
       Config &local,

@@ -2,6 +2,7 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzMBRAPluginFileToolBar"/>
+      <plugin name="dmzMBRAPluginMenuEdit"/>
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginFileToolBar>
@@ -44,5 +45,34 @@
          <mapPropertiesEdit target="dmzQtPluginMapProperties" />
       </message>
    </dmzMBRAPluginFileToolBar>
-
+   <dmzMBRAPluginMenuEdit>
+      <toolBar movable="false" floatable="false">
+         <!-- <widget windowTitle="File">
+            <stylesheet file="stylesheets:FileButton.qss"/>
+         </widget> -->
+      </toolBar>
+      <undo text="Undo" statusTip="Undo">
+         <icon>
+            <image file="images:Button_Undo.png"/>
+         </icon>
+      </undo>
+      <redo text="Redo" statusTip="Redo">
+         <icon>
+            <image file="images:Button_Redo.png"/>
+         </icon>
+      </redo>
+      <clear text="Clear" statusTip="Clear">
+         <icon>
+            <image file="images:Button_Reset.png"/>
+         </icon>
+      </clear>
+      <mapPropertiesEdit text="Map Properties..." statusTip="Edit Map Properties...">
+         <icon>
+            <image file="images:Button_Map.png"/>
+         </icon>
+      </mapPropertiesEdit>
+      <message>
+         <mapPropertiesEdit target="dmzQtPluginMapProperties" />
+      </message>
+   </dmzMBRAPluginMenuEdit>
 </dmz>

@@ -3,6 +3,7 @@
 <plugin-list>
    <plugin name="dmzLuaModuleBasic"/>
    <plugin name="dmzQtPluginLuaProfiler"/>
+   <plugin name="dmzLuaExtRuntime"/>
 </plugin-list>
 <dmzLuaModuleBasic>
    <path value="./scripts/?.lua"/>
