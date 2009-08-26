@@ -1,5 +1,6 @@
 <dmz>
 <plugin-list>
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="MouseMoveEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="CreateObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DestroyObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="LinkObjectsEvent"/>
@@ -14,6 +15,24 @@
 <!--   <instance name="dmzMBRAPluginUnlinkObjects"/> -->
    <instance name="dmzMBRAPluginMoveObject"/>
 </dmzLuaModuleBasic>
+<MouseMoveEvent>
+   <input>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginNAHighlightNode"/>
+   <converter type="2D" start="first">
+      <state name="first" type="basic">
+         <condition
+               action="moved"
+               result="position"
+               next="first"
+               message="MouseMoveEvent">
+            <attribute type="position" name="position"/>
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+   </converter>
+</MouseMoveEvent>
 <CreateObjectEvent>
    <input>
       <channel name="NA_Create_Object_Channel"/>
