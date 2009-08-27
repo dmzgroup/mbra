@@ -74,6 +74,7 @@
          <mask name="scalar"/>
       </attribute>
       <state name="NA_Node_Overlay"/>
+      <state name="NA_Node_Highlight"/>
       <state name="FT_Threat_Level_0"/>
       <state name="FT_Threat_Level_1"/>
       <state name="FT_Threat_Level_2"/>

@@ -6,14 +6,15 @@ function receive (self, type, data)
 
       local handle = data:lookup_handle ("object", 1)
 
-      if handle then
-         if dmz.object.is_object (handle) then
-            local state = dmz.object.state (handle)
-            if not state then state = dmz.mask.new () end
-            state = state + HighlightState
-            dmz.object.state (handle, nil, state)
-         elseif dmz.object.is_link (handle) then
-         end
+      if handle and dmz.object.is_link (handle) then
+         handle = dmz.object.link_attribute_object (handle)
+      end
+
+      if handle and dmz.object.is_object (handle) then
+         local state = dmz.object.state (handle)
+         if not state then state = dmz.mask.new () end
+         state = state + HighlightState
+         dmz.object.state (handle, nil, state)
       end
 
       if handle ~= self.handle then
