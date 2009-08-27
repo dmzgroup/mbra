@@ -19,19 +19,36 @@ function receive (self, type, data)
 
       if handle ~= self.handle then
          if self.handle then
-            if dmz.object.is_object (self.handle) then
-               local state = dmz.object.state (self.handle)
+            local prev = self.handle
+            self.handle = handle
+print (handle, self.handle, prev)
+            if dmz.object.is_object (prev) then
+               local state = dmz.object.state (prev)
                if state then
                   state:unset (HighlightState)
-                  dmz.object.state (self.handle, nil, state)
+                  dmz.object.state (prev, nil, state)
                end
             end
+         else self.handle = handle
          end
-         self.handle = handle
       end
 
    end
 end
+
+local cb = {
+
+update_object_state = function (self, object, attribute, value)
+   if value:contains (HighlightState) and self.handle ~= object then
+      local state = dmz.object.state (object)
+      if state then
+         state:unset (HighlightState);
+         dmz.object.state (object, nil, state)
+      end
+   end
+end,
+
+}
 
 function new (config, name)
 
@@ -39,10 +56,12 @@ function new (config, name)
       log = dmz.log.new ("lua." .. name),
       message = config:to_message ("message.name", "MouseMoveEvent"),
       obs = dmz.message_observer.new (name),
+      objObs = dmz.object_observer.new (name),
    }
 
    self.log:info ("Creating plugin: " .. name)
    self.obs:register (self.message, receive, self)
+   self.objObs:register (nil, cb, self)
 
    return self
 end
