@@ -261,21 +261,23 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
 
+      // This check is for when the file is missing the extension so we have to 
+      // manually check if the file already exists.
       if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
 
          fileName += ".";
          fileName += _suffix.get_buffer ();
-      }
 
-      if (QFileInfo (fileName).isFile ()) {
+         if (QFileInfo (fileName).isFile ()) {
 
-         const QMessageBox::StandardButton Button (QMessageBox::warning (
-            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-            "File already exists",
-            fileName + "already exists. Do you want to replace it?",
-            QMessageBox::Cancel | QMessageBox::Save));
+            const QMessageBox::StandardButton Button (QMessageBox::warning (
+               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
+               "File already exists",
+               fileName + "already exists. Do you want to replace it?",
+               QMessageBox::Cancel | QMessageBox::Save));
 
-         if (Button & QMessageBox::Cancel) { fileName.clear (); }
+            if (Button & QMessageBox::Cancel) { fileName.clear (); }
+         }
       }
 
       if (!fileName.isEmpty ()) {

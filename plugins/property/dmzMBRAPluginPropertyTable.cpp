@@ -559,20 +559,22 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
          "",
          QString ("*.csv"));
 
+   // This check is for when the file is missing the extension so we have to 
+   // manually check if the file already exists.
    if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
 
       fileName += ".csv";
-   }
 
-   if (QFileInfo (fileName).isFile ()) {
+      if (QFileInfo (fileName).isFile ()) {
 
-      const QMessageBox::StandardButton Button (QMessageBox::warning (
-         this,
-         "File already exists",
-         fileName + "already exists. Do you want to replace it?",
-         QMessageBox::Cancel | QMessageBox::Save));
+         const QMessageBox::StandardButton Button (QMessageBox::warning (
+            this,
+            "File already exists",
+            fileName + "already exists. Do you want to replace it?",
+            QMessageBox::Cancel | QMessageBox::Save));
 
-      if (Button & QMessageBox::Cancel) { fileName.clear (); }
+         if (Button & QMessageBox::Cancel) { fileName.clear (); }
+      }
    }
 
    if (!fileName.isEmpty ()) {
@@ -592,11 +594,10 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
 
          while (_attrTable.get_next (it, pw)) {
 
-            if (!first) { out << ", "; }
+            if (!first) { out << ","; }
             else { first = False; }
 
-            //out << "\"" << pw->Name << "\"";
-            out << pw->Name;
+            out << "\"" << pw->Name << "\"";
          }
 
          out << endl;
@@ -612,22 +613,21 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
 
             for (int ix = 0; ix < Columns; ix++) {
 
-               if (!first) { out << ", "; }
+               if (!first) { out << ","; }
                else { first = False; }
 
                QStandardItem *item = list->at (ix);
 
                if (item) {
 
-                  //out << "\"" << qPrintable (item->text ()) << "\"";
-                  out << qPrintable (item->text ());
+                  out << "\"" << qPrintable (item->text ()) << "\"";
                }
-               //else { out << "\"\""; }
-               else { out << " "; }
+               else { out << "\"\""; }
             }
 
             out << endl;
          }
+
          QString msg (QString ("File exported as: ") + fileName);
 
          _log.info << qPrintable (msg) << endl;

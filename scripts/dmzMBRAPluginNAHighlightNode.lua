@@ -21,7 +21,6 @@ function receive (self, type, data)
          if self.handle then
             local prev = self.handle
             self.handle = handle
-print (handle, self.handle, prev)
             if dmz.object.is_object (prev) then
                local state = dmz.object.state (prev)
                if state then
