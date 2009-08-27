@@ -49,8 +49,8 @@
       <channel name="NetworkAnalysisChannel" widget="NABottomTab"/>
    </data-palette>
    <NAToolTab>
-      <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
-      <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
+      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+      <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </NAToolTab>
    <NABottomTab>
       <minimum-size width="300" height="250"/>

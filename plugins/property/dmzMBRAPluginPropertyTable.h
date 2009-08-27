@@ -164,6 +164,7 @@ namespace dmz {
 
       protected slots:
          void _item_changed (QStandardItem *item);
+         void on_exportButton_clicked ();
 
       protected:
          typedef QList<QStandardItem *> QStandardItemList;

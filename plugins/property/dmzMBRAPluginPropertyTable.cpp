@@ -6,6 +6,8 @@
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
+#include <dmzSystemFile.h>
+#include <dmzSystemStreamFile.h>
 
 #include <QtGui/QtGui>
 
@@ -543,6 +545,97 @@ dmz::MBRAPluginPropertyTable::_item_changed (QStandardItem *item) {
          pw->update_property (Object, item->data (Qt::DisplayRole), *objMod);
          _undo.stop_record (UndoHandle);
       }
+   }
+}
+
+
+void
+dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
+
+   QString fileName =
+      QFileDialog::getSaveFileName (
+         this,
+         tr ("Export Data"),
+         "",
+         QString ("*.csv"));
+
+   if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
+
+      fileName += ".csv";
+   }
+
+   if (QFileInfo (fileName).isFile ()) {
+
+      const QMessageBox::StandardButton Button (QMessageBox::warning (
+         this,
+         "File already exists",
+         fileName + "already exists. Do you want to replace it?",
+         QMessageBox::Cancel | QMessageBox::Save));
+
+      if (Button & QMessageBox::Cancel) { fileName.clear (); }
+   }
+
+   if (!fileName.isEmpty ()) {
+
+      qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
+
+      FILE *file = open_file (qPrintable (fileName), "wb");
+
+      if (file) {
+
+         StreamFile out (file);
+
+         HashTableHandleIterator it;
+         PropertyWidget *pw (0);
+
+         Boolean first (True);
+
+         while (_attrTable.get_next (it, pw)) {
+
+            if (!first) { out << ", "; }
+            else { first = False; }
+
+            //out << "\"" << pw->Name << "\"";
+            out << pw->Name;
+         }
+
+         out << endl;
+
+         const int Columns = _model.columnCount ();
+
+         it.reset ();
+         QStandardItemList *list (0);
+
+         while (_rowTable.get_next (it, list)) {
+
+            first = True;
+
+            for (int ix = 0; ix < Columns; ix++) {
+
+               if (!first) { out << ", "; }
+               else { first = False; }
+
+               QStandardItem *item = list->at (ix);
+
+               if (item) {
+
+                  //out << "\"" << qPrintable (item->text ()) << "\"";
+                  out << qPrintable (item->text ());
+               }
+               //else { out << "\"\""; }
+               else { out << " "; }
+            }
+
+            out << endl;
+         }
+         QString msg (QString ("File exported as: ") + fileName);
+
+         _log.info << qPrintable (msg) << endl;
+
+         close_file (file);
+      }
+
+      qApp->restoreOverrideCursor ();
    }
 }
 

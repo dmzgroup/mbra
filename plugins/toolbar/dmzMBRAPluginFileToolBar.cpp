@@ -265,17 +265,17 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
 
          fileName += ".";
          fileName += _suffix.get_buffer ();
+      }
 
-         if (QFileInfo (fileName).isFile ()) {
+      if (QFileInfo (fileName).isFile ()) {
 
-            const QMessageBox::StandardButton Button (QMessageBox::warning (
-               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-               "File already exists",
-               fileName + "already exists. Do you want to replace it?",
-               QMessageBox::Cancel | QMessageBox::Save));
+         const QMessageBox::StandardButton Button (QMessageBox::warning (
+            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
+            "File already exists",
+            fileName + "already exists. Do you want to replace it?",
+            QMessageBox::Cancel | QMessageBox::Save));
 
-            if (Button & QMessageBox::Cancel) { fileName.clear (); }
-         }
+         if (Button & QMessageBox::Cancel) { fileName.clear (); }
       }
 
       if (!fileName.isEmpty ()) {
