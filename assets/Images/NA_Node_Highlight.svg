@@ -3,12 +3,12 @@
 <svg version="1.2" baseProfile="tiny" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
 	 x="0px" y="0px" width="20.941px" height="20.941px" viewBox="0 0 20.941 20.941" xml:space="preserve">
 <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="3.0244" y1="4.2227" x2="17.9174" y2="16.7194">
-	<stop  offset="0" style="stop-color:#FFB3B3"/>
-	<stop  offset="0.0884" style="stop-color:#FCABAB"/>
-	<stop  offset="0.2233" style="stop-color:#F39696"/>
-	<stop  offset="0.3869" style="stop-color:#E47474"/>
-	<stop  offset="0.522" style="stop-color:#D55252"/>
-	<stop  offset="1" style="stop-color:#800000"/>
+	<stop  offset="0" style="stop-color:#ffffb2"/>
+	<stop  offset="0.0884" style="stop-color:#fcfcac"/>
+	<stop  offset="0.2233" style="stop-color:#f2f296"/>
+	<stop  offset="0.3869" style="stop-color:#e3e374"/>
+	<stop  offset="0.522" style="stop-color:#d6d651"/>
+	<stop  offset="1" style="stop-color:#808000"/>
 </linearGradient>
-<circle fill="url(#SVGID_1_)" stroke="#FF6666" stroke-width="1.5" cx="10.471" cy="10.471" r="9.721"/>
+<circle fill="url(#SVGID_1_)" stroke="#ffff66" stroke-width="1.5" cx="10.471" cy="10.471" r="9.721"/>
 </svg>

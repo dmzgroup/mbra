@@ -6,6 +6,7 @@
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
+#include <dmzRuntimeSession.h>
 #include <dmzSystemFile.h>
 #include <dmzSystemStreamFile.h>
 
@@ -216,6 +217,7 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       _log (Info),
       _defs (Info, &_log),
       _undo (Info),
+      _lastPath (get_home_directory ()),
       _model (this),
       _proxyModel (this),
       _ignoreChange (False),
@@ -254,9 +256,19 @@ dmz::MBRAPluginPropertyTable::update_plugin_state (
    }
    else if (State == PluginStateStart) {
 
+      Config session (get_session_config (
+         get_plugin_name (),
+         get_plugin_runtime_context ()));
+
+      _lastPath = config_to_string ("last-path.value", session, _lastPath);
    }
    else if (State == PluginStateStop) {
 
+      Config session (get_plugin_name ());
+      Config data ("last-path");
+      data.store_attribute ("value", _lastPath);
+      session.add_config (data);
+      set_session_config (get_plugin_runtime_context (), session);
    }
    else if (State == PluginStateShutdown) {
 
@@ -556,7 +568,7 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
       QFileDialog::getSaveFileName (
          this,
          tr ("Export Data"),
-         "",
+         _lastPath.get_buffer (),
          QString ("*.csv"));
 
    // This check is for when the file is missing the extension so we have to 
@@ -578,6 +590,8 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
    }
 
    if (!fileName.isEmpty ()) {
+
+      _lastPath = qPrintable (fileName);
 
       qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
 

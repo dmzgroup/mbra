@@ -184,7 +184,7 @@
       </attribute>
       <state-color-list>
          <state-color name="NA_Node_Highlight">
-            <rgb x="1" y="0" z="0"/>
+            <rgb x="1" y="1" z="0"/>
             <alpha value="0.75"/>
          </state-color>
       </state-color-list>

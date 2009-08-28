@@ -176,6 +176,8 @@ namespace dmz {
          Definitions _defs;
          Undo _undo;
 
+         String _lastPath;
+
          Ui::PropertyTable _ui;
 
          QStandardItemModel _model;
