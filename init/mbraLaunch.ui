@@ -76,7 +76,7 @@
       <bool>true</bool>
      </property>
      <property name="rowCount">
-      <number>20</number>
+      <number>0</number>
      </property>
      <property name="columnCount">
       <number>2</number>
@@ -105,26 +105,6 @@
      <attribute name="horizontalHeaderDefaultSectionSize">
       <number>200</number>
      </attribute>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
-     <row/>
      <column>
       <property name="text">
        <string>File Name</string>
