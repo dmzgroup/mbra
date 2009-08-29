@@ -780,7 +780,6 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
       }
    }
 
-
    connect (
       &_model, SIGNAL (itemChanged (QStandardItem *)),
       this, SLOT (_item_changed (QStandardItem *)));
