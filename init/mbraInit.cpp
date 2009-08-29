@@ -20,8 +20,9 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (
 
    ui.setupUi (this);
 
+   const String DocPath (get_home_directory () + "/Documents/");
    PathContainer c;
-   if (get_file_list ("/Users/barker/Documents", c)) {
+   if (get_file_list (DocPath, c)) {
 
       //ui.fileTable->setRowCount (c.get_count ());
       String file;
@@ -32,7 +33,7 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (
 ui.fileTable->setSortingEnabled (false);
       while (found) {
 
-         file = String ("/Users/barker/Documents/") + file;
+         file = DocPath + file;
          QFileInfo info (file.get_buffer ());
          if (info.completeSuffix () == "mbra") {
 
