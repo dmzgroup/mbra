@@ -262,6 +262,8 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
 
+      // This check is for when the file is missing the extension so we have to 
+      // manually check if the file already exists.
       if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
 
          fileName += ".";

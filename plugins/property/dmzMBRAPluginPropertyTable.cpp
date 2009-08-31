@@ -6,6 +6,9 @@
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
+#include <dmzRuntimeSession.h>
+#include <dmzSystemFile.h>
+#include <dmzSystemStreamFile.h>
 
 #include <QtGui/QtGui>
 
@@ -214,6 +217,7 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       _log (Info),
       _defs (Info, &_log),
       _undo (Info),
+      _lastPath (get_home_directory ()),
       _model (this),
       _proxyModel (this),
       _ignoreChange (False),
@@ -252,9 +256,19 @@ dmz::MBRAPluginPropertyTable::update_plugin_state (
    }
    else if (State == PluginStateStart) {
 
+      Config session (get_session_config (
+         get_plugin_name (),
+         get_plugin_runtime_context ()));
+
+      _lastPath = config_to_string ("last-path.value", session, _lastPath);
    }
    else if (State == PluginStateStop) {
 
+      Config session (get_plugin_name ());
+      Config data ("last-path");
+      data.store_attribute ("value", _lastPath);
+      session.add_config (data);
+      set_session_config (get_plugin_runtime_context (), session);
    }
    else if (State == PluginStateShutdown) {
 
@@ -548,6 +562,99 @@ dmz::MBRAPluginPropertyTable::_item_changed (QStandardItem *item) {
 
 
 void
+dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
+
+   QString fileName =
+      QFileDialog::getSaveFileName (
+         this,
+         tr ("Export Data"),
+         _lastPath.get_buffer (),
+         QString ("*.csv"));
+
+   // This check is for when the file is missing the extension so we have to 
+   // manually check if the file already exists.
+   if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
+
+      fileName += ".csv";
+
+      if (QFileInfo (fileName).isFile ()) {
+
+         const QMessageBox::StandardButton Button (QMessageBox::warning (
+            this,
+            "File already exists",
+            fileName + "already exists. Do you want to replace it?",
+            QMessageBox::Cancel | QMessageBox::Save));
+
+         if (Button & QMessageBox::Cancel) { fileName.clear (); }
+      }
+   }
+
+   if (!fileName.isEmpty ()) {
+
+      _lastPath = qPrintable (fileName);
+
+      qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
+
+      FILE *file = open_file (qPrintable (fileName), "wb");
+
+      if (file) {
+
+         StreamFile out (file);
+
+         HashTableHandleIterator it;
+         PropertyWidget *pw (0);
+
+         Boolean first (True);
+
+         while (_attrTable.get_next (it, pw)) {
+
+            if (!first) { out << ","; }
+            else { first = False; }
+
+            out << "\"" << pw->Name << "\"";
+         }
+
+         out << endl;
+
+         const int Columns = _model.columnCount ();
+
+         it.reset ();
+         QStandardItemList *list (0);
+
+         while (_rowTable.get_next (it, list)) {
+
+            first = True;
+
+            for (int ix = 0; ix < Columns; ix++) {
+
+               if (!first) { out << ","; }
+               else { first = False; }
+
+               QStandardItem *item = list->at (ix);
+
+               if (item) {
+
+                  out << "\"" << qPrintable (item->text ()) << "\"";
+               }
+               else { out << "\"\""; }
+            }
+
+            out << endl;
+         }
+
+         QString msg (QString ("File exported as: ") + fileName);
+
+         _log.info << qPrintable (msg) << endl;
+
+         close_file (file);
+      }
+
+      qApp->restoreOverrideCursor ();
+   }
+}
+
+
+void
 dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
 
    ConfigIterator it;
@@ -672,7 +779,6 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
          header->setResizeMode (pw->Column, QHeaderView::ResizeToContents);
       }
    }
-
 
    connect (
       &_model, SIGNAL (itemChanged (QStandardItem *)),

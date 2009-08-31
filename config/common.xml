@@ -57,11 +57,11 @@
    </dock-windows>
 </window>
 <dmzArchivePluginObject>
-   <scope>
+   <archive-scope>
       <string value="archive"/>
       <string value="objects"/>
       <string value="dmzObjectPluginArchive"/>
-   </scope>
+   </archive-scope>
    <archive>
       <object-type-set>
          <object-type name="na_tool_link_node"/>
@@ -74,6 +74,7 @@
          <mask name="scalar"/>
       </attribute>
       <state name="NA_Node_Overlay"/>
+      <state name="NA_Node_Highlight"/>
       <state name="FT_Threat_Level_0"/>
       <state name="FT_Threat_Level_1"/>
       <state name="FT_Threat_Level_2"/>
@@ -88,10 +89,10 @@
    </archive>
 </dmzArchivePluginObject>
 <archive-channel-state>
-   <scope>
+   <archive-scope>
       <string value="active-channel-list"/>
       <string value="dmzMBRAPluginModeToolBar"/>
-   </scope>
+   </archive-scope>
    <channel name="NetworkAnalysisChannel"/>
    <channel name="FaultTreeChannel"/>
 </archive-channel-state>

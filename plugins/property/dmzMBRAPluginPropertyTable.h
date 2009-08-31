@@ -164,6 +164,7 @@ namespace dmz {
 
       protected slots:
          void _item_changed (QStandardItem *item);
+         void on_exportButton_clicked ();
 
       protected:
          typedef QList<QStandardItem *> QStandardItemList;
@@ -174,6 +175,8 @@ namespace dmz {
          Log _log;
          Definitions _defs;
          Undo _undo;
+
+         String _lastPath;
 
          Ui::PropertyTable _ui;
 

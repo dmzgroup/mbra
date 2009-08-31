@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="mbra" >
+    <file>MBRA-Splash.png</file>
+  </qresource>
+</RCC>

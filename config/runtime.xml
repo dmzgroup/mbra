@@ -5,6 +5,7 @@
       <frequency value="128.0"/>
    </time>
    <state name="NA_Node_Overlay"/>
+   <state name="NA_Node_Highlight"/>
    <state name="NA_Flow_Forward"/>
    <state name="NA_Flow_Reverse"/>
    <state name="FT_Logic_And"/>
@@ -63,9 +64,14 @@
       <NACanvasObject/>
       <NACanvasObjectBasic>
          <items>
-            <image name="node" file="NA_Node.svg">
-               <translate x="-10" y="-10"/>
-            </image>
+            <group name="base node">
+               <image name="node" file="NA_Node.svg">
+                  <translate x="-10" y="-10"/>
+               </image>
+               <image name="node-highlight" file="NA_Node_Highlight.svg">
+                  <translate x="-10" y="-10"/>
+               </image>
+            </group>
             <group name="overlay">
                <image file="NA_ResultsOverlay.svg">
                   <translate x="-19.5" y="-37.5"/>
@@ -101,8 +107,13 @@
          </text>
          <switch>
             <state>
-               <item name="node"/>
                <item name="name"/>
+            </state>
+            <state group="base node">
+               <item name="node"/>
+            </state>
+            <state name="NA_Node_Highlight" group="base node">
+               <item name="node-highlight"/>
             </state>
             <state name="NA_Node_Overlay" group="overlay">
                <item name="overlay"/>

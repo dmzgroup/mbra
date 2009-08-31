@@ -49,8 +49,8 @@
       <channel name="NetworkAnalysisChannel" widget="NABottomTab"/>
    </data-palette>
    <NAToolTab>
-      <widget name="dmzMBRAPluginCalculate" title="Calculations"/>
-      <widget name="dmzQtPluginButtonToChannel" title="Actions"/>
+      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+      <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </NAToolTab>
    <NABottomTab>
       <minimum-size width="300" height="250"/>
@@ -182,6 +182,12 @@
       <attribute>
          <position name="Alt_Position_Attribute"/>
       </attribute>
+      <state-color-list>
+         <state-color name="NA_Node_Highlight">
+            <rgb x="1" y="1" z="0"/>
+            <alpha value="0.75"/>
+         </state-color>
+      </state-color-list>
    </NACanvasLink>
    <NACanvasLayer>
       <dockWidget title="Networks"/>
