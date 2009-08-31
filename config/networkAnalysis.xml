@@ -69,7 +69,8 @@
    <NAMap>
       <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
       <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/>
-      <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/>
+      <!-- <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/> -->
+      <startCoordinate latitude="38.341648" longitude="-96.943349"/>
    </NAMap>
    <NACanvasMap>
       <module>
@@ -82,7 +83,8 @@
    <NACanvasMapZoom>
       <scrollDelta value="10"/>
       <slidder min="0" max="17"/>
-      <zoom min="0" max="17" step="1" default="6"/>
+      <!-- <zoom min="0" max="17" step="1" default="6"/> -->
+      <zoom min="0" max="17" step="1" default="4"/>
       <module>
          <canvas name="NACanvas"/>
          <map name="NAMap"/>
