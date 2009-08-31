@@ -16,7 +16,11 @@
 
 using namespace dmz;
 
-dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (False) {
+dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
+      init (theInit),
+      launchNA (False),
+      launchFT (False),
+      _start (False) {
 
    ui.setupUi (this);
 
@@ -30,7 +34,8 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (
 
       int row = 0;
 
-ui.fileTable->setSortingEnabled (false);
+      ui.fileTable->setSortingEnabled (false);
+
       while (found) {
 
          file = DocPath + file;
@@ -50,13 +55,16 @@ ui.fileTable->setSortingEnabled (false);
 
          found = c.get_next (file);   
       }
-ui.fileTable->setSortingEnabled (true);
+
+      ui.fileTable->setSortingEnabled (true);
    }
 }
+
 
 dmz::mbraInit::~mbraInit () {
 
 }
+
 
 void
 dmz::mbraInit::on_fileTable_itemDoubleClicked (QTableWidgetItem * item) {
@@ -68,6 +76,7 @@ dmz::mbraInit::on_fileTable_itemDoubleClicked (QTableWidgetItem * item) {
 void
 dmz::mbraInit::on_naButton_clicked () {
 
+   launchNA = True;
    _start = True;
    close ();
 }
@@ -76,6 +85,7 @@ dmz::mbraInit::on_naButton_clicked () {
 void
 dmz::mbraInit::on_ftButton_clicked () {
 
+   launchFT = True;
    _start = True;
    close ();
 }
@@ -178,7 +188,18 @@ dmz_init_mbra (AppShellInitStruct &init) {
 
       if (init.app.is_running ()) {
 
-         if (!minit.selectedFile.isEmpty ()) {
+         if (minit.launchNA || minit.launchFT) {
+
+            CommandLineArgs args ("f");
+
+            if (minit.launchNA) { args.append_arg ("config/start_network.xml"); }
+            else if (minit.launchFT) { args.append_arg ("config/start_fault_tree.xml"); }
+
+            CommandLine cl;
+            cl.add_args (args);
+            init.app.process_command_line (cl);
+         }
+         else if (!minit.selectedFile.isEmpty ()) {
 
             init.launchFile = qPrintable (minit.selectedFile);
          }
