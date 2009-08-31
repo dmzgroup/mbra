@@ -2,9 +2,12 @@
 #include <dmzApplication.h>
 #include <dmzAppShellExt.h>
 #include <dmzCommandLine.h>
+#include <dmzQtConfigRead.h>
+#include <dmzQtConfigWrite.h>
 #include <dmzRuntimeConfig.h>
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
+#include <dmzRuntimeSession.h>
 #include <dmzRuntimeVersion.h>
 #include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
@@ -15,6 +18,32 @@
 #include <QtGui/QCloseEvent>
 
 using namespace dmz;
+
+namespace {
+
+static const String MBRAName ("mbraInit");
+static const String GeometryName ("geometry");
+
+static void
+local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
+
+   Config session = get_session_config (MBRAName, init.app.get_context ());
+
+   Config geometry;
+
+   if (session.lookup_config (GeometryName, geometry)) {
+
+      cInit.restoreGeometry (config_to_qbytearray (geometry));
+   }
+   else {
+
+      QRect rect = QApplication::desktop ()->availableGeometry (&cInit);
+      cInit.move(rect.center () - cInit.rect ().center ());
+   }
+}
+
+};
+
 
 dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
       init (theInit),
@@ -140,14 +169,17 @@ dmz::mbraInit::closeEvent (QCloseEvent * event) {
 
       init.app.quit ("Cancel Button Pressed");
    }
+   else {
+
+      Config session (MBRAName);
+
+      session.add_config (qbytearray_to_config ("geometry", saveGeometry ()));
+
+      set_session_config (init.app.get_context (), session);
+   }
 
    event->accept ();
 }
-
-
-namespace {
-
-};
 
 extern "C" {
 
@@ -159,6 +191,8 @@ dmz_init_mbra (AppShellInitStruct &init) {
    if (!init.launchFile) {
 
       mbraInit minit (init);
+
+      local_restore_session (init, minit);
 
       if (init.VersionFile) {
 
