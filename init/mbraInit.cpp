@@ -12,6 +12,7 @@
 #include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
 #include <dmzXMLUtil.h>
+#include <ui_mbraDialog.h>
 
 #include <QtCore/QUrl>
 #include <QtGui/QDesktopServices>
@@ -47,8 +48,10 @@ local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
 }
 
 
-static const void
-find_mbra_files (const String &Path, Int32 depth, PathContainer &list) {
+static const Boolean
+find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContainer &list) {
+
+   Boolean result (True);
 
    depth++;
 
@@ -74,25 +77,31 @@ find_mbra_files (const String &Path, Int32 depth, PathContainer &list) {
 
       PathContainer pathList;
 
+      QApplication::sendPostedEvents (0, -1);
+      QApplication::processEvents ();
+      if (!dialog.isVisible ()) { result = False; }
+
       if (get_directory_list (Path, pathList)) {
 
          dmz::PathContainerIterator it;
          String dirName;
 
-         while (pathList.get_next (it, dirName)) {
+         while (result && pathList.get_next (it, dirName)) {
 
 #if defined(__APPLE__) || defined(MACOSX)
             // We need to skip Directories called "Library on the Mac.
             if (dirName != "Library") {
 
-               find_mbra_files (Path + dirName + "/", depth, list);
+               result = find_mbra_files (dialog, Path + dirName + "/", depth, list);
             }
 #else
-            find_mbra_files (Path + dirName + "/", depth, list);
+            result = find_mbra_files (dialog, Path + dirName + "/", depth, list);
 #endif
          }
       }
    }
+
+   return result;
 }
 
 
@@ -101,7 +110,7 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
 
    Config session = get_session_config (MBRAFileList, init.app.get_context ());
 
-   if (session) {
+   if (0 && session) {
 
       ConfigIterator it;
       Config file;
@@ -115,8 +124,16 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
    }
    else {
 
+      QDialog dialog;
+      Ui::mbraDialog ui;
+      ui.setupUi (&dialog);
+      dialog.setModal (true);
+      QRect rect = QApplication::desktop ()->availableGeometry (&dialog);
+      dialog.move(rect.center () - dialog.rect ().center ());
+      dialog.show ();
+      dialog.raise ();
       Int32 depth = 0;
-      find_mbra_files (get_home_directory () + "/", depth, list);
+      find_mbra_files (dialog, get_home_directory () + "/", depth, list);
    }
 
    if (list.get_count () > 0) {
@@ -262,6 +279,7 @@ dmz::mbraInit::closeEvent (QCloseEvent * event) {
 
    event->accept ();
 }
+
 
 extern "C" {
 
