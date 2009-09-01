@@ -7,11 +7,17 @@
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
+#include <dmzRuntimeSession.h>
 #include <dmzSystemFile.h>
 #include <dmzSystemStreamFile.h>
 #include <dmzXMLUtil.h>
 #include <QtGui/QtGui>
 
+namespace {
+
+static const dmz::String MBRAFileList ("mbra-file-list");
+
+};
 
 dmz::MBRAPluginMenu::MBRAPluginMenu (
       const PluginInfo &Info,
@@ -56,6 +62,56 @@ dmz::MBRAPluginMenu::~MBRAPluginMenu () {
 
 
 // Plugin Interface
+void
+dmz::MBRAPluginMenu::update_plugin_state (
+      const PluginStateEnum State,
+      const UInt32 Level) {
+
+   if (State == PluginStateInit) {
+
+      Config session = get_session_config (MBRAFileList, get_plugin_runtime_context ());
+
+      if (session) {
+
+         ConfigIterator it;
+         Config file;
+
+         while (session.get_next_config (it, file)) {
+
+            const String FileName = config_to_string ("name", file);
+
+            if (is_valid_path (FileName)) { _fileCache.add_path (FileName); }
+         }
+      }
+   }
+   else if (State == PluginStateStart) {
+
+   }
+   else if (State == PluginStateStop) {
+
+   }
+   else if (State == PluginStateShutdown) {
+
+      if (_fileCache.get_count () > 0) {
+
+         Config fileList (MBRAFileList);
+
+         PathContainerIterator it;
+         String file;
+
+         while (_fileCache.get_next (it, file)) {
+
+            Config data ("file");
+            data.store_attribute ("name", file);
+            fileList.add_config (data);
+         }
+
+         set_session_config (get_plugin_runtime_context (), fileList);
+      }
+   }
+}
+
+
 void
 dmz::MBRAPluginMenu::discover_plugin (
       const PluginDiscoverEnum Mode,
@@ -417,6 +473,8 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
 
       if (xml_to_config (qPrintable (FileName), global, &_log)) {
 
+         _fileCache.add_path (qPrintable (FileName));
+
          QString msg (QString ("Loading file: ") + FileName);
 
          if (mainWindow) { mainWindow->statusBar ()->showMessage (msg); }
@@ -463,6 +521,8 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
       FILE *file = open_file (qPrintable (FileName), "wb");
 
       if (file) {
+
+         _fileCache.add_path (qPrintable (FileName));
 
          _appStateDirty = False;
 

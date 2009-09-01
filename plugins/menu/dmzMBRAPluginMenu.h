@@ -7,6 +7,7 @@
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
+#include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
 #include <QtCore/QObject>
 #include <QtGui/QAction>
@@ -34,7 +35,7 @@ namespace dmz {
          // Plugin Interface
          virtual void update_plugin_state (
             const PluginStateEnum State,
-            const UInt32 Level) {;}
+            const UInt32 Level);
 
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
@@ -92,6 +93,7 @@ namespace dmz {
          String _mainWindowModuleName;
          Handle _archive;
          Undo _undo;
+         PathContainer _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
          Message _mapPropertiesMsg;

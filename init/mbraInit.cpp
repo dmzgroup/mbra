@@ -19,9 +19,13 @@
 
 using namespace dmz;
 
+#include <qdb.h>
+static qdb out;
+
 namespace {
 
-static const String MBRAName ("mbraInit");
+static const String MBRAName ("mbra-init");
+static const String MBRAFileList ("mbra-file-list");
 static const String GeometryName ("geometry");
 
 static void
@@ -42,6 +46,97 @@ local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
    }
 }
 
+
+static const void
+find_mbra_files (const String &Path, Int32 depth, PathContainer &list) {
+
+   depth++;
+
+   // Only go 8 directories deep
+   if (depth <= 8) {
+
+      PathContainer fileList;
+
+      if (get_file_list (Path, fileList)) {
+
+         dmz::PathContainerIterator it;
+         String file;
+
+         while (fileList.get_next (it, file)) {
+
+            String tmp, fileRoot, fileExt;
+
+            split_path_file_ext (file, tmp, fileRoot, fileExt);
+
+            if (fileExt == ".mbra") { list.add_path (Path + file); }
+         }
+      }
+
+      PathContainer pathList;
+
+      if (get_directory_list (Path, pathList)) {
+
+         dmz::PathContainerIterator it;
+         String dirName;
+
+         while (pathList.get_next (it, dirName)) {
+
+#if defined(__APPLE__) || defined(MACOSX)
+            // We need to skip Directories called "Library on the Mac.
+            if (dirName != "Library") {
+
+               find_mbra_files (Path + dirName + "/", depth, list);
+            }
+#else
+            find_mbra_files (Path + dirName + "/", depth, list);
+#endif
+         }
+      }
+   }
+}
+
+
+static const void
+local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
+
+   Config session = get_session_config (MBRAFileList, init.app.get_context ());
+
+   if (session) {
+
+      ConfigIterator it;
+      Config file;
+
+      while (session.get_next_config (it, file)) {
+
+         const String FileName = config_to_string ("name", file);
+
+         if (is_valid_path (FileName)) { list.add_path (FileName); }
+      }
+   }
+   else {
+
+      Int32 depth = 0;
+      find_mbra_files (get_home_directory () + "/", depth, list);
+   }
+
+   if (list.get_count () > 0) {
+
+      Config fileList (MBRAFileList);
+
+      PathContainerIterator it;
+      String file;
+
+      while (list.get_next (it, file)) {
+
+         Config data ("file");
+         data.store_attribute ("name", file);
+         fileList.add_config (data);
+      }
+
+      set_session_config (init.app.get_context (), fileList);
+   }
+}
+
 };
 
 
@@ -53,40 +148,30 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
 
    ui.setupUi (this);
 
-   const String DocPath (get_home_directory () + "/Documents/");
-   PathContainer c;
-   if (get_file_list (DocPath, c)) {
+   PathContainer list;
+   local_init_file_list (init, list);
 
-      //ui.fileTable->setRowCount (c.get_count ());
-      String file;
-      Boolean found = c.get_first (file);   
+   PathContainerIterator it;
+   String file;
+   int row = 0;
 
-      int row = 0;
+   ui.fileTable->setSortingEnabled (false);
 
-      ui.fileTable->setSortingEnabled (false);
+   while (list.get_next (it, file)) {
 
-      while (found) {
-
-         file = DocPath + file;
-         QFileInfo info (file.get_buffer ());
-         if (info.completeSuffix () == "mbra") {
-
-            ui.fileTable->setRowCount (row + 1);
-            QTableWidgetItem *name = new QTableWidgetItem (
-               info.completeBaseName () + "." + info.completeSuffix ());
-            name->setData (Qt::UserRole, info.absoluteFilePath ());
-            QTableWidgetItem *date = new QTableWidgetItem;
-            date->setData (Qt::DisplayRole, info.lastModified ());
-            ui.fileTable->setItem (row, 0, name);
-            ui.fileTable->setItem (row, 1, date);
-            row++;
-         }
-
-         found = c.get_next (file);   
-      }
-
-      ui.fileTable->setSortingEnabled (true);
+      QFileInfo info (file.get_buffer ());
+      ui.fileTable->setRowCount (row + 1);
+      QTableWidgetItem *name = new QTableWidgetItem (
+         info.completeBaseName () + "." + info.completeSuffix ());
+      name->setData (Qt::UserRole, info.absoluteFilePath ());
+      QTableWidgetItem *date = new QTableWidgetItem;
+      date->setData (Qt::DisplayRole, info.lastModified ());
+      ui.fileTable->setItem (row, 0, name);
+      ui.fileTable->setItem (row, 1, date);
+      row++;
    }
+
+   ui.fileTable->setSortingEnabled (true);
 }
 
 
