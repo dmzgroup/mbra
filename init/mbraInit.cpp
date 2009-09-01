@@ -110,7 +110,7 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
 
    Config session = get_session_config (MBRAFileList, init.app.get_context ());
 
-   if (0 && session) {
+   if (session) {
 
       ConfigIterator it;
       Config file;
