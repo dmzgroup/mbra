@@ -2,9 +2,12 @@
 #include <dmzApplication.h>
 #include <dmzAppShellExt.h>
 #include <dmzCommandLine.h>
+#include <dmzQtConfigRead.h>
+#include <dmzQtConfigWrite.h>
 #include <dmzRuntimeConfig.h>
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
+#include <dmzRuntimeSession.h>
 #include <dmzRuntimeVersion.h>
 #include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
@@ -16,7 +19,37 @@
 
 using namespace dmz;
 
-dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (False) {
+namespace {
+
+static const String MBRAName ("mbraInit");
+static const String GeometryName ("geometry");
+
+static void
+local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
+
+   Config session = get_session_config (MBRAName, init.app.get_context ());
+
+   Config geometry;
+
+   if (session.lookup_config (GeometryName, geometry)) {
+
+      cInit.restoreGeometry (config_to_qbytearray (geometry));
+   }
+   else {
+
+      QRect rect = QApplication::desktop ()->availableGeometry (&cInit);
+      cInit.move(rect.center () - cInit.rect ().center ());
+   }
+}
+
+};
+
+
+dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
+      init (theInit),
+      launchNA (False),
+      launchFT (False),
+      _start (False) {
 
    ui.setupUi (this);
 
@@ -30,7 +63,8 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) : init (theInit), _start (
 
       int row = 0;
 
-ui.fileTable->setSortingEnabled (false);
+      ui.fileTable->setSortingEnabled (false);
+
       while (found) {
 
          file = DocPath + file;
@@ -50,13 +84,16 @@ ui.fileTable->setSortingEnabled (false);
 
          found = c.get_next (file);   
       }
-ui.fileTable->setSortingEnabled (true);
+
+      ui.fileTable->setSortingEnabled (true);
    }
 }
+
 
 dmz::mbraInit::~mbraInit () {
 
 }
+
 
 void
 dmz::mbraInit::on_fileTable_itemDoubleClicked (QTableWidgetItem * item) {
@@ -68,6 +105,7 @@ dmz::mbraInit::on_fileTable_itemDoubleClicked (QTableWidgetItem * item) {
 void
 dmz::mbraInit::on_naButton_clicked () {
 
+   launchNA = True;
    _start = True;
    close ();
 }
@@ -76,6 +114,7 @@ dmz::mbraInit::on_naButton_clicked () {
 void
 dmz::mbraInit::on_ftButton_clicked () {
 
+   launchFT = True;
    _start = True;
    close ();
 }
@@ -130,14 +169,17 @@ dmz::mbraInit::closeEvent (QCloseEvent * event) {
 
       init.app.quit ("Cancel Button Pressed");
    }
+   else {
+
+      Config session (MBRAName);
+
+      session.add_config (qbytearray_to_config ("geometry", saveGeometry ()));
+
+      set_session_config (init.app.get_context (), session);
+   }
 
    event->accept ();
 }
-
-
-namespace {
-
-};
 
 extern "C" {
 
@@ -149,6 +191,8 @@ dmz_init_mbra (AppShellInitStruct &init) {
    if (!init.launchFile) {
 
       mbraInit minit (init);
+
+      local_restore_session (init, minit);
 
       if (init.VersionFile) {
 
@@ -178,7 +222,18 @@ dmz_init_mbra (AppShellInitStruct &init) {
 
       if (init.app.is_running ()) {
 
-         if (!minit.selectedFile.isEmpty ()) {
+         if (minit.launchNA || minit.launchFT) {
+
+            CommandLineArgs args ("f");
+
+            if (minit.launchNA) { args.append_arg ("config/start_network.xml"); }
+            else if (minit.launchFT) { args.append_arg ("config/start_fault_tree.xml"); }
+
+            CommandLine cl;
+            cl.add_args (args);
+            init.app.process_command_line (cl);
+         }
+         else if (!minit.selectedFile.isEmpty ()) {
 
             init.launchFile = qPrintable (minit.selectedFile);
          }

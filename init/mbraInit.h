@@ -19,6 +19,8 @@ class mbraInit : public QWidget {
       AppShellInitStruct &init;
       Ui::mbraLaunch ui;
       QString selectedFile;
+		Boolean launchNA;
+      Boolean launchFT;
 
    protected slots:
       void on_fileTable_itemDoubleClicked (QTableWidgetItem * item);

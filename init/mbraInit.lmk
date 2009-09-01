@@ -6,6 +6,6 @@ lmk.add_files {"mbraInit.qrc",}
 lmk.add_files {"mbraLaunch.ui",}
 lmk.add_files ({"mbraInit.h",}, {src="moc",})
 lmk.add_files {"mbraInit.cpp",}
-lmk.add_libs {"dmzXML", "dmzApplication", "dmzKernel",}
+lmk.add_libs {"dmzQtUtil", "dmzXML", "dmzApplication", "dmzKernel",}
 lmkQt.add_libs {"QtCore","QtGui",}
 
