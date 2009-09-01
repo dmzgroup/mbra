@@ -39,7 +39,8 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _openFileMsg (0),
       _mapPropertiesMsg (0),
       _undoAction (0),
-      _redoAction (0) {
+      _redoAction (0),
+      _exportName (QString::null) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -151,7 +152,7 @@ dmz::MBRAPluginMenu::receive_message (
                msg,
                QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save));
 
-            if (Button & QMessageBox::Save) { on_exportAction_triggered (); }
+            if (Button & QMessageBox::Save) { on_saveAction_triggered (); }
             else if (Button & QMessageBox::Cancel) { fileName.flush (); }
          }
 
@@ -233,7 +234,7 @@ dmz::MBRAPluginMenu::exit_requested (
          QMessageBox::Save | QMessageBox::Discard,
          QMessageBox::Save));
 
-      if (Value & QMessageBox::Save) { on_exportAction_triggered (); }
+      if (Value & QMessageBox::Save) { on_saveAction_triggered (); }
    }
 
    _appStateDirty = False;
@@ -258,75 +259,45 @@ dmz::MBRAPluginMenu::on_openAction_triggered () {
 
 
 void
-dmz::MBRAPluginMenu::on_exportAction_triggered () {
+dmz::MBRAPluginMenu::on_saveAction_triggered () {
 
-   if (_archiveModule) {
+   if (_exportName.isEmpty ()) { on_saveAsAction_triggered (); }
+   else { _save_file (_exportName); }
+}
 
-      QString fileName =
-         QFileDialog::getSaveFileName (
+
+void
+dmz::MBRAPluginMenu::on_saveAsAction_triggered () {
+
+   QString fileName =
+      QFileDialog::getSaveFileName (
+         _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
+         tr ("Save File"),
+         _get_last_path (),
+         QString ("*.") + _suffix.get_buffer ());
+
+   // This check is for when the file is missing the extension so we have to 
+   // manually check if the file already exists.
+   if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
+
+      fileName += ".";
+      fileName += _suffix.get_buffer ();
+
+      if (QFileInfo (fileName).isFile ()) {
+
+         const QMessageBox::StandardButton Button (QMessageBox::warning (
             _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-            tr ("Export File"),
-            _get_last_path (),
-            QString ("*.") + _suffix.get_buffer ());
+            "File already exists",
+            fileName + "already exists. Do you want to replace it?",
+            QMessageBox::Cancel | QMessageBox::Save));
 
-      // This check is for when the file is missing the extension so we have to 
-      // manually check if the file already exists.
-      if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
-
-         fileName += ".";
-         fileName += _suffix.get_buffer ();
-
-         if (QFileInfo (fileName).isFile ()) {
-
-            const QMessageBox::StandardButton Button (QMessageBox::warning (
-               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-               "File already exists",
-               fileName + "already exists. Do you want to replace it?",
-               QMessageBox::Cancel | QMessageBox::Save));
-
-            if (Button & QMessageBox::Cancel) { fileName.clear (); }
-         }
+         if (Button & QMessageBox::Cancel) { fileName.clear (); }
       }
+   }
 
-      if (!fileName.isEmpty ()) {
-         qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
-
-         FILE *file = open_file (qPrintable (fileName), "wb");
-
-         if (file) {
-
-            _appStateDirty = False;
-
-            StreamFile out (file);
-
-            Config config = _archiveModule->create_archive (_archive);
-
-            write_xml_header (out);
-            format_config_to_xml (config, out);
-
-            QString msg (QString ("File exported as: ") + fileName);
-
-            _log.info << qPrintable (msg) << endl;
-
-            if (_mainWindowModule) {
-
-               QString name (_mainWindowModule->get_window_name () + ": " + fileName);
-               
-               QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
-               if (mainWindow) {
-
-                  mainWindow->setWindowTitle (name);
-                  mainWindow->statusBar ()->showMessage (msg, 5000);
-               }
-            }
-
-            close_file (file);
-
-            _appState.set_default_directory (qPrintable (fileName));
-         }
-
-         qApp->restoreOverrideCursor ();
-      }
+   if (!fileName.isEmpty ()) {
+   
+      _save_file (fileName);
    }
 }
 
@@ -408,11 +379,19 @@ dmz::MBRAPluginMenu::on_clearAction_triggered () {
          QMessageBox::Save | QMessageBox::Discard,
          QMessageBox::Save));
 
-      if (Value & QMessageBox::Save) { on_exportAction_triggered (); }
+      if (Value & QMessageBox::Save) { on_saveAction_triggered (); }
    }
 
    _cleanUpObjMsg.send ();
    _undo.reset ();
+   _appStateDirty = False;
+   _exportName = QString::null;
+   
+   QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+   if (mainWindow) {
+      
+      mainWindow->setWindowTitle (_mainWindowModule->get_window_name ());
+   }
 }
 
 
@@ -429,6 +408,8 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
    if (!FileName.isEmpty () && _mainWindowModule) {
 
       qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
+
+      _exportName = QString::null;
 
       QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
 
@@ -463,11 +444,62 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
          _appState.set_default_directory (qPrintable (FileName));
 
          _appStateDirty = False;
+         
+         _exportName = FileName;
       }
 
       qApp->restoreOverrideCursor ();
    }
 }
+
+
+void
+dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
+
+   if (_archiveModule && !FileName.isEmpty ()) {
+
+      qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
+
+      FILE *file = open_file (qPrintable (FileName), "wb");
+
+      if (file) {
+
+         _appStateDirty = False;
+
+         _exportName = FileName;
+
+         StreamFile out (file);
+
+         Config config = _archiveModule->create_archive (_archive);
+
+         write_xml_header (out);
+         format_config_to_xml (config, out);
+
+         QString msg (QString ("File saved as: ") + _exportName);
+
+         _log.info << qPrintable (msg) << endl;
+
+         if (_mainWindowModule) {
+
+            QString name (_mainWindowModule->get_window_name () + ": " + _exportName);
+            
+            QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+            if (mainWindow) {
+
+               mainWindow->setWindowTitle (name);
+               mainWindow->statusBar ()->showMessage (msg, 5000);
+            }
+         }
+
+         close_file (file);
+
+         _appState.set_default_directory (qPrintable (_exportName));
+      }
+
+      qApp->restoreOverrideCursor ();
+   }
+}
+
 
 QString
 dmz::MBRAPluginMenu::_get_last_path () {

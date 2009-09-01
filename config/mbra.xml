@@ -12,11 +12,17 @@
                <image file="images:Button_File.png"/>
             </icon>
          </action>
-         <action text="Export" statusTip="Export Exercise" shortcut="saveas">
-            <object name="exportAction"/>
+         <action text="Save" statusTip="Save Exercise" shortcut="save">
+            <object name="saveAction"/>
             <icon>
                <image file="images:Button_Export.png"/>
             </icon>
+         </action>
+         <action text="Save As..." statusTip="Save Exercise As..." shortcut="saveas">
+            <object name="saveAsAction"/>
+            <!-- <icon>
+               <image file="images:Button_Export.png"/>
+            </icon> -->
          </action>
       </menu>
       <menu name="&amp;Edit">

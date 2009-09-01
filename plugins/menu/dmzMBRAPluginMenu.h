@@ -65,22 +65,18 @@ namespace dmz {
             
       protected slots:
          void on_openAction_triggered ();
-         void on_exportAction_triggered ();
+         void on_saveAction_triggered ();
+         void on_saveAsAction_triggered ();
          void on_undoAction_triggered ();
          void on_redoAction_triggered ();
          void on_clearAction_triggered ();
          void on_mapPropertiesAction_triggered ();
 
       protected:
-         struct MenuStruct {
-
-            const String Name;
-            QList<QAction *> actionList;
-            
-            MenuStruct (const String &TheName) : Name (TheName) {;}
-         };
+         struct MenuStruct;
          
          void _load_file (const QString &FileName);
+         void _save_file (const QString &FileName);
          QString _get_last_path ();
          void _init_action_list (Config &actionList, MenuStruct &ms);
          void _init_menu_list (Config &menuList);
@@ -105,6 +101,16 @@ namespace dmz {
          String _defaultExportName;
          QAction *_undoAction;
          QAction *_redoAction;
+         QString _exportName;
+         
+         struct MenuStruct {
+
+            const String Name;
+            QList<QAction *> actionList;
+            
+            MenuStruct (const String &TheName) : Name (TheName) {;}
+         };
+         
          HashTableStringTemplate<MenuStruct> _menuTable;
 
       private:
