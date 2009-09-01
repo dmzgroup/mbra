@@ -1,78 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
    <plugin-list>
-      <plugin name="dmzMBRAPluginFileToolBar"/>
-      <plugin name="dmzMBRAPluginMenuEdit"/>
+      <plugin name="dmzMBRAPluginMenu"/>
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
-   <dmzMBRAPluginFileToolBar>
-      <toolBar movable="false" floatable="false">
-         <!-- <widget windowTitle="File">
-            <stylesheet file="stylesheets:FileButton.qss"/>
-         </widget> -->
-      </toolBar>
-      <open text="Open" statusTip="Open Exercise">
-         <icon>
-            <image file="images:Button_File.png"/>
-         </icon>
-      </open>
-      <export text="Export" statusTip="Export Exercise">
-         <icon>
-            <image file="images:Button_Export.png"/>
-         </icon>
-      </export>
-      <undo text="Undo" statusTip="Undo">
-         <icon>
-            <image file="images:Button_Undo.png"/>
-         </icon>
-      </undo>
-      <redo text="Redo" statusTip="Redo">
-         <icon>
-            <image file="images:Button_Redo.png"/>
-         </icon>
-      </redo>
-      <clear text="Clear" statusTip="Clear">
-         <icon>
-            <image file="images:Button_Reset.png"/>
-         </icon>
-      </clear>
-      <mapPropertiesEdit text="Map Properties..." statusTip="Edit Map Properties...">
-         <icon>
-            <image file="images:Button_Map.png"/>
-         </icon>
-      </mapPropertiesEdit>
+   <dmzMBRAPluginMenu>
+      <menu name="&amp;File">
+         <action text="Open" statusTip="Open Exercise" shortcut="open">
+            <object name="openAction"/>
+            <icon>
+               <image file="images:Button_File.png"/>
+            </icon>
+         </action>
+         <action text="Export" statusTip="Export Exercise" shortcut="saveas">
+            <object name="exportAction"/>
+            <icon>
+               <image file="images:Button_Export.png"/>
+            </icon>
+         </action>
+      </menu>
+      <menu name="&amp;Edit">
+         <action text="Undo" statusTip="Undo" shortcut="undo">
+            <object name="undoAction"/>
+            <icon>
+               <image file="images:Button_Undo.png"/>
+            </icon>
+         </action>
+         <action text="Redo" statusTip="Redo" shortcut="redo">
+            <object name="redoAction"/>
+            <icon>
+               <image file="images:Button_Redo.png"/>
+            </icon>
+         </action>
+         <action separator="true"/>
+         <action text="Clear" statusTip="Clear">
+            <object name="clearAction"/>
+            <icon>
+               <image file="images:Button_Reset.png"/>
+            </icon>
+         </action>
+         <action text="Map Properties..." statusTip="Map Properties...">
+            <object name="mapPropertiesAction"/>
+            <icon>
+               <image file="images:Button_Map.png"/>
+            </icon>
+         </action>
+      </menu>
       <message>
-         <mapPropertiesEdit target="dmzQtPluginMapProperties" />
+         <mapProperties target="dmzQtPluginMapProperties" />
       </message>
-   </dmzMBRAPluginFileToolBar>
-   <dmzMBRAPluginMenuEdit>
-      <toolBar movable="false" floatable="false">
-         <!-- <widget windowTitle="File">
-            <stylesheet file="stylesheets:FileButton.qss"/>
-         </widget> -->
-      </toolBar>
-      <undo text="Undo" statusTip="Undo">
-         <icon>
-            <image file="images:Button_Undo.png"/>
-         </icon>
-      </undo>
-      <redo text="Redo" statusTip="Redo">
-         <icon>
-            <image file="images:Button_Redo.png"/>
-         </icon>
-      </redo>
-      <clear text="Clear" statusTip="Clear">
-         <icon>
-            <image file="images:Button_Reset.png"/>
-         </icon>
-      </clear>
-      <mapPropertiesEdit text="Map Properties..." statusTip="Edit Map Properties...">
-         <icon>
-            <image file="images:Button_Map.png"/>
-         </icon>
-      </mapPropertiesEdit>
-      <message>
-         <mapPropertiesEdit target="dmzQtPluginMapProperties" />
-      </message>
-   </dmzMBRAPluginMenuEdit>
+   </dmzMBRAPluginMenu>
 </dmz>

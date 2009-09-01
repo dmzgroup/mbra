@@ -401,26 +401,6 @@
             minZoom="0" 
             maxZoom="17"/>
          <map-adapter 
-            name="demis" 
-            type="wms" 
-            server="www2.demis.nl" 
-            path="/wms/wms.ashx" 
-            service="WMS" 
-            wms="WorldMap" 
-            projection="EPSG:4326" 
-            layers="Countries,Borders,Coastlines" 
-            imageFormat="image/gif"/>
-         <map-adapter 
-            name="BlueMarble" 
-            type="wms" 
-            server="www2.demis.nl" 
-            path="/wms/wms.asp" 
-            service="WMS"
-            wms="BlueMarble" 
-            projection="EPSG:4326" 
-            layers="Earth%20Image,Borders,Coastlines" 
-            imageFormat="image/gif"/>
-         <map-adapter 
             name="Internal Dystopia" 
             type="wms" 
             server="172.20.90.188" 
