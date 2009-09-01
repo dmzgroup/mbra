@@ -208,16 +208,13 @@ dmz::mbraInit::on_ftButton_clicked () {
 void
 dmz::mbraInit::on_buttonBox_accepted () {
 
-   const int Row = ui.fileTable->currentRow ();
+   QList<QTableWidgetItem *> list = ui.fileTable->selectedItems ();
 
-   if (Row >= 0) {
+   if (!list.isEmpty ()) {
 
-      QTableWidgetItem *item = ui.fileTable->item (Row, 0);
+      QTableWidgetItem *item = list.first ();
 
-      if (item) {
-
-         selectedFile = item->data (Qt::UserRole).toString ();
-      }
+      if (item) { selectedFile = item->data (Qt::UserRole).toString (); }
    }
 
    _start = True;

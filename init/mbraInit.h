@@ -8,7 +8,7 @@
 
 namespace dmz {
 
-class mbraInit : public QWidget {
+class mbraInit : public QDialog {
 
    Q_OBJECT
 
