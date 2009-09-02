@@ -165,6 +165,13 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
 
    ui.setupUi (this);
 
+#if (QT_VERSION < QT_VERSION_CHECK(4, 5, 0))
+   ui.fileTable->horizontalHeader()->setDefaultSectionSize(200);
+   ui.fileTable->horizontalHeader()->setStretchLastSection(true);
+   ui.fileTable->verticalHeader()->setVisible(false);
+   ui.fileTable->verticalHeader()->setHighlightSections(true);
+#endif
+
    PathContainer list;
    local_init_file_list (init, list);
 
