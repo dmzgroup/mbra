@@ -6,6 +6,7 @@
    </time>
    <state name="NA_Node_Overlay"/>
    <state name="NA_Node_Highlight"/>
+   <state name="NA_Node_Flagged"/>
    <state name="NA_Flow_Forward"/>
    <state name="NA_Flow_Reverse"/>
    <state name="FT_Logic_And"/>
@@ -36,6 +37,11 @@
       <NACanvasObject/>
       <NACanvasObjectBasic>
          <items>
+            <group name ="flag">
+               <image name="node-flag" file="NA_Node_Flag.png">
+                  <translate x="-4" y="-38"/>
+               </image>
+            </group>
             <group name="overlay">
                <image file="NA_ResultsOverlayLinks.svg">
                   <translate x="0" y="-38"/>
@@ -54,6 +60,9 @@
             <item name="number" attribute="NA_Node_Rank"/>
          </text>
          <switch>
+            <state name="NA_Node_Flagged" group="flag">
+               <item name="node-flag"/>
+            </state>
             <state name="NA_Node_Overlay" group="overlay">
                <item name="overlay"/>
             </state>
@@ -64,6 +73,11 @@
       <NACanvasObject/>
       <NACanvasObjectBasic>
          <items>
+            <group name ="flag">
+               <image name="node-flag" file="NA_Node_Flag.png">
+                  <translate x="-2" y="-38"/>
+               </image>
+            </group>
             <group name="base node">
                <image name="node" file="NA_Node.svg">
                   <translate x="-10" y="-10"/>
@@ -106,6 +120,9 @@
             <item name="name" attribute="NA_Node_Label"/>
          </text>
          <switch>
+            <state name="NA_Node_Flagged" group="flag">
+               <item name="node-flag"/>
+            </state>
             <state>
                <item name="name"/>
             </state>
