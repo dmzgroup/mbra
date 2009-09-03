@@ -340,11 +340,9 @@
                <iconSize width="32" height="32"/>
             </button>
             <action text="Flag" statusTip="Flag" checkable="True">
-<!--
                <icon>
-                  <image file="images:Button_Delete.png"/>
+                  <image file="images:Button_Flag.png"/>
                </icon>
--->
             </action>
          </toolButton>
       </buttons>
