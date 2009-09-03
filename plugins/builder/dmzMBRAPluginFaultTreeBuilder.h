@@ -10,6 +10,7 @@
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
+#include <dmzTypesHandleContainer.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <dmzTypesMask.h>
 
@@ -57,6 +58,12 @@ namespace dmz {
 
          virtual void destroy_object (const UUID &Identity, const Handle ObjectHandle);
 
+         virtual void remove_object_attribute (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Mask &AttrMask);
+
          virtual void link_objects (
             const Handle LinkHandle,
             const Handle AttributeHandle,
@@ -72,6 +79,13 @@ namespace dmz {
             const Handle SuperHandle,
             const UUID &SubIdentity,
             const Handle SubHandle);
+
+         virtual void update_object_state (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Mask &Value,
+            const Mask *PreviousValue);
 
       protected:
          struct ThreatStruct {
@@ -117,6 +131,7 @@ namespace dmz {
          void _cut (const Handle Parent);
          void _copy (const Handle Parent);
          void _paste (const Handle Parent);
+         void _create_from_flagged ();
 
          void _init (Config &local);
 
@@ -132,8 +147,12 @@ namespace dmz {
          Handle _objectDataHandle;
          Handle _createdDataHandle;
          Handle _linkAttrHandle;
+         Handle _naLinkAttrHandle;
          Handle _logicAttrHandle;
          Handle _hideAttrHandle;
+         Handle _naNameAttrHandle;
+         Handle _ftNameAttrHandle;
+         Handle _activeFTAttrHandle;
          Handle _clipBoardHandle;
          Handle _clipBoardAttrHandle;
          Handle _componentEditTarget;
@@ -150,6 +169,7 @@ namespace dmz {
          Message _cutMessage;
          Message _copyMessage;
          Message _pasteMessage;
+         Message _createFromFlaggedMessage;
          ObjectType _rootType;
          ObjectType _componentType;
          ObjectType _threatType;
@@ -157,7 +177,9 @@ namespace dmz {
          ObjectType _clipBoardType;
          Mask _logicAndMask;
          Mask _logicOrMask;
+         Mask _flaggedMask;
          HashTableHandleTemplate<Int32> _linkTable;
+         HandleContainer _flaggedNodes;
 
       private:
          MBRAPluginFaultTreeBuilder ();

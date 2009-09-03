@@ -337,6 +337,16 @@
                </icon>
             </action>
          </toolButton>
+         <toolButton channel="NA_Flag_Object_Channel" autoRaise="True">
+            <button>
+               <iconSize width="32" height="32"/>
+            </button>
+            <action text="Flag" statusTip="Flag" checkable="True">
+               <icon>
+                  <image file="images:Button_Flag.png"/>
+               </icon>
+            </action>
+         </toolButton>
       </buttons>
    </dmzQtPluginButtonToChannel>
    <NACanvasArchive>

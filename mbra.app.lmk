@@ -97,8 +97,9 @@ app.add_data {
    "assets/Images/FT_ThreatFillSolid.svg",
    "assets/Images/NA_Node.svg",
    "assets/Images/NA_Node_Highlight.svg",
-   "assets/Images/NA_ResultsOverlay.svg",
-   "assets/Images/NA_ResultsOverlayLinks.svg",
+   "assets/Images/NA_Node_Flag.png",
+   "assets/Images/NA_ResultsOverlay180.svg",
+   "assets/Images/NA_ResultsOverlayLinks180.svg",
 }
 
 app.add_scripts {

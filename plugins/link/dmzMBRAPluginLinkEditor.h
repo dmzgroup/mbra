@@ -6,6 +6,7 @@
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
+#include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 
 #include <QtGui/QWidget>
@@ -107,6 +108,7 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
+         Undo _undo;
 
          Ui::LinkEditor _ui;
 

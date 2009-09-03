@@ -4,7 +4,10 @@
    <plugin name="dmzInputPluginMouseEventToMessage" unique="CreateObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DestroyObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="LinkObjectsEvent"/>
+<!--
    <plugin name="dmzInputPluginMouseEventToMessage" unique="UnlinkObjectsEvent"/>
+-->
+   <plugin name="dmzInputPluginMouseEventToMessage" unique="FlagObjectEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DefaultEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="FTDefaultEvent"/>
 </plugin-list>
@@ -14,6 +17,7 @@
    <instance name="dmzMBRAPluginLinkObjects"/>
 <!--   <instance name="dmzMBRAPluginUnlinkObjects"/> -->
    <instance name="dmzMBRAPluginMoveObject"/>
+   <instance name="dmzMBRAPluginFlagObject"/>
 </dmzLuaModuleBasic>
 <MouseMoveEvent>
    <input>
@@ -140,6 +144,25 @@
       </state>
    </converter>
 </LinkObjectsEvent>
+<FlagObjectEvent>
+   <input>
+      <channel name="NA_Flag_Object_Channel"/>
+      <source name="NACanvas"/>
+   </input>
+   <target name="dmzMBRAPluginFlagObject"/>
+   <converter type="2D">
+      <state name="first" type="basic">
+         <condition
+               button="1"
+               action="released"
+               result="object"
+               message="FlagObjectMessage">
+            <attribute type="object" name="object"/>
+         </condition>
+      </state>
+   </converter>
+</FlagObjectEvent>
+<!--
 <UnlinkObjectsEvent>
    <input>
       <channel name="NA_Unlink_Objects_Channel"/>
@@ -158,6 +181,7 @@
       </state>
    </converter>
 </UnlinkObjectsEvent>
+-->
 <DefaultEvent>
    <input>
       <channel name="NA_Default_Channel"/>

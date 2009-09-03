@@ -6,6 +6,7 @@
    </time>
    <state name="NA_Node_Overlay"/>
    <state name="NA_Node_Highlight"/>
+   <state name="NA_Node_Flagged"/>
    <state name="NA_Flow_Forward"/>
    <state name="NA_Flow_Reverse"/>
    <state name="FT_Logic_And"/>
@@ -36,16 +37,27 @@
       <NACanvasObject/>
       <NACanvasObjectBasic>
          <items>
+            <group name ="flag">
+               <image name="node-flag" file="NA_Node_Flag.png">
+                  <translate x="-4" y="-38"/>
+               </image>
+            </group>
             <group name="overlay">
-               <image file="NA_ResultsOverlayLinks.svg">
+               <image file="NA_ResultsOverlayLinks180.svg">
+                  <translate x="-38" y="0"/>
+<!--
                   <translate x="0" y="-38"/>
+-->
                   </image>
                <text name="number">
                   <textColor>
                      <string value="white"/>
                   </textColor>
                   <enableBackground value="false"/>
+                  <translate x="-27" y="20"/>
+<!--
                   <translate x="20" y="-20"/>
+-->
                   <scale x="2.0" y="2.0"/>
                </text>
             </group>
@@ -54,6 +66,9 @@
             <item name="number" attribute="NA_Node_Rank"/>
          </text>
          <switch>
+            <state name="NA_Node_Flagged" group="flag">
+               <item name="node-flag"/>
+            </state>
             <state name="NA_Node_Overlay" group="overlay">
                <item name="overlay"/>
             </state>
@@ -64,6 +79,30 @@
       <NACanvasObject/>
       <NACanvasObjectBasic>
          <items>
+            <group name="overlay">
+               <image file="NA_ResultsOverlay180.svg">
+<!--
+                  <translate x="-19.5" y="-37.5"/>
+-->
+                  <translate x="-37.5" y="-19.0"/>
+               </image>
+               <text name="number">
+                  <textColor>
+                     <string value="white"/>
+                  </textColor>
+                  <enableBackground value="false"/>
+<!--
+                  <translate x="20" y="-20"/>
+-->
+                  <translate x="-27" y="20"/>
+                  <scale x="2.0" y="2.0"/>
+               </text>
+            </group>
+            <group name ="flag">
+               <image name="node-flag" file="NA_Node_Flag.png">
+                  <translate x="-1" y="-34"/>
+               </image>
+            </group>
             <group name="base node">
                <image name="node" file="NA_Node.svg">
                   <translate x="-10" y="-10"/>
@@ -71,56 +110,58 @@
                <image name="node-highlight" file="NA_Node_Highlight.svg">
                   <translate x="-10" y="-10"/>
                </image>
-            </group>
-            <group name="overlay">
-               <image file="NA_ResultsOverlay.svg">
-                  <translate x="-19.5" y="-37.5"/>
-               </image>
-               <text name="number">
+               <text name="name">
                   <textColor>
                      <string value="white"/>
+                     <alpha value="0.75"/>
                   </textColor>
-                  <enableBackground value="false"/>
-                  <translate x="20" y="-20"/>
-                  <scale x="2.0" y="2.0"/>
+                  <outlineColor>
+                     <string value="black"/>
+                     <alpha value="0.75"/>
+                  </outlineColor>
+                  <backgroundColor>
+                     <string value="black"/>
+                     <alpha value="0.75"/>
+                  </backgroundColor>
+                  <translate x="30" y="0"/>
+               </text>
+               <text name="name-highlight">
+                  <textColor>
+                     <string value="yellow"/>
+                     <alpha value="1.0"/>
+                  </textColor>
+                  <outlineColor>
+                     <string value="black"/>
+                     <alpha value="1.0"/>
+                  </outlineColor>
+                  <backgroundColor>
+                     <string value="black"/>
+                     <alpha value="0.8"/>
+                  </backgroundColor>
+                  <translate x="30" y="0"/>
                </text>
             </group>
-            <text name="name">
-               <textColor>
-                  <string value="white"/>
-                  <alpha value="0.75"/>
-               </textColor>
-               <outlineColor>
-                  <string value="black"/>
-                  <alpha value="0.75"/>
-               </outlineColor>
-               <backgroundColor>
-                  <string value="black"/>
-                  <alpha value="0.75"/>
-               </backgroundColor>
-               <translate x="50" y="0"/>
-            </text>
          </items>
          <text>
             <item name="number" attribute="NA_Node_Rank"/>
             <item name="name" attribute="NA_Node_Label"/>
+            <item name="name-highlight" attribute="NA_Node_Label"/>
          </text>
          <switch>
-            <state>
-               <item name="name"/>
-            </state>
             <state group="base node">
                <item name="node"/>
+               <item name="name"/>
             </state>
             <state name="NA_Node_Highlight" group="base node">
                <item name="node-highlight"/>
+               <item name="name-highlight"/>
             </state>
             <state name="NA_Node_Overlay" group="overlay">
                <item name="overlay"/>
             </state>
-            <!-- <flag attribute="NA_Node_Overlay">
-               <item name="overlay"/>
-            </flag> -->
+            <state name="NA_Node_Flagged" group="flag">
+               <item name="node-flag"/>
+            </state>
          </switch>
       </NACanvasObjectBasic>
    </object-type>
@@ -374,7 +415,7 @@
                 <item name="s10"/>
              </state>
           </switch>
-       </FTCanvasObjectBasic>         
+       </FTCanvasObjectBasic>
    </object-type>
    <object-type name="ft_logic" parent="ft_node">
       <FTCanvasObject/>

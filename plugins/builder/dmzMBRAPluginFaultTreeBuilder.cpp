@@ -32,8 +32,12 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _objectDataHandle (0),
       _createdDataHandle (0),
       _linkAttrHandle (0),
+      _naLinkAttrHandle (0),
       _logicAttrHandle (0),
       _hideAttrHandle (0),
+      _naNameAttrHandle (0),
+      _ftNameAttrHandle (0),
+      _activeFTAttrHandle (0),
       _clipBoardHandle (0),
       _clipBoardAttrHandle (0),
       _componentEditTarget (0),
@@ -125,8 +129,10 @@ dmz::MBRAPluginFaultTreeBuilder::receive_message (
          else if (Msg == _cutMessage) { _cut (obj); }
          else if (Msg == _copyMessage) { _copy (obj); }
          else if (Msg == _pasteMessage) { _paste (obj); }
+         else if (Msg == _createFromFlaggedMessage) { _create_from_flagged (); }
       }
    }
+   else if (Msg == _createFromFlaggedMessage) { _create_from_flagged (); }
 }
 
 
@@ -156,6 +162,20 @@ dmz::MBRAPluginFaultTreeBuilder::destroy_object (
    if (ObjectHandle == _clipBoardHandle) {
 
       _clipBoardHandle = 0;
+   }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::remove_object_attribute (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Mask &AttrMask) {
+
+   if (AttrMask.contains (ObjectStateMask)) {
+
+      _flaggedNodes.remove_handle (ObjectHandle);
    }
 }
 
@@ -230,6 +250,24 @@ dmz::MBRAPluginFaultTreeBuilder::unlink_objects (
 
       if (!_undo.is_in_undo ()) { _component_delete (SubHandle); }
    }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::update_object_state (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Mask &Value,
+      const Mask *PreviousValue) {
+
+   const Boolean IsFlagged = Value.contains (_flaggedMask);
+
+   const Boolean WasFlagged =
+      PreviousValue ? PreviousValue->contains (_flaggedMask) : False;
+
+   if (IsFlagged && !WasFlagged) { _flaggedNodes.add_handle (ObjectHandle); }
+   else if (!IsFlagged && WasFlagged) { _flaggedNodes.remove_handle (ObjectHandle); }
 }
 
 
@@ -759,6 +797,68 @@ dmz::MBRAPluginFaultTreeBuilder::_paste (const Handle Parent) {
 
 
 void
+dmz::MBRAPluginFaultTreeBuilder::_create_from_flagged () {
+
+   ObjectModule *objMod = get_object_module ();
+
+   if (objMod) {
+
+      const Handle UndoHandle = _undo.start_record ("Create Composite Fault Tree");
+
+      const Handle Root = objMod->create_object (_rootType, ObjectLocal);
+      objMod->store_text (Root, _ftNameAttrHandle, "Root Node");
+      objMod->activate_object (Root);
+
+      HandleContainerIterator it;
+      Handle node (0);
+
+      while (_flaggedNodes.get_next (it, node)) {
+
+         HandleContainer list;
+
+         if (objMod->lookup_sub_links (node, _naLinkAttrHandle, list)) {
+
+            const Handle FaultTree = list.get_first ();
+            const Handle Parent = objMod->create_object (_componentType, ObjectLocal);
+
+            String name;
+            objMod->lookup_text (FaultTree, _ftNameAttrHandle, name);
+            objMod->store_text (Parent, _ftNameAttrHandle, name);
+            objMod->activate_object (Parent);
+            _copy (FaultTree);
+            _paste (Parent);
+
+            objMod->link_objects (_linkAttrHandle, Root, Parent);
+            HandleContainer logic;
+
+            if (objMod->lookup_sub_links (FaultTree, _logicAttrHandle, logic)) {
+
+               const Handle LogicObj = logic.get_first ();
+
+               if (objMod->lookup_sub_links (Parent, _logicAttrHandle, logic)) {
+
+                  const Handle NewLogicObj = logic.get_first ();
+
+                  Mask state;
+
+                  if (objMod->lookup_state (LogicObj, _defaultAttrHandle, state)) {
+
+                     objMod->store_state (NewLogicObj, _defaultAttrHandle, state);
+                  }
+               }
+            }
+         }
+      }
+
+      _set_component_hide_state (Root, True, *objMod);
+      objMod->store_flag (Root, _activeFTAttrHandle, True);
+
+      _undo.stop_record (UndoHandle);
+   }
+}
+
+
+void
 dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
 
    RuntimeContext *context (get_plugin_runtime_context ());
@@ -767,7 +867,7 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
 
    _defaultAttrHandle = activate_default_object_attribute (
-      ObjectCreateMask | ObjectDestroyMask);
+      ObjectCreateMask | ObjectDestroyMask | ObjectRemoveAttributeMask | ObjectStateMask);
 
    _objectDataHandle = config_to_named_handle (
       "attribute.object.name", local, "object", context);
@@ -858,6 +958,12 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _pasteMessage =
       config_create_message ("message.paste", local, "FTPasteMessage", context);
 
+   _createFromFlaggedMessage = config_create_message (
+      "message.create-from-flagged-nodes",
+      local,
+      "FTCreateFromFlaggedNodesMessage",
+      context);
+
    subscribe_to_message (_componentAddMessage);
    subscribe_to_message (_componentEditMessage);
    subscribe_to_message (_componentDeleteMessage);
@@ -872,6 +978,8 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    subscribe_to_message (_cutMessage);
    subscribe_to_message (_copyMessage);
    subscribe_to_message (_pasteMessage);
+
+   subscribe_to_message (_createFromFlaggedMessage);
 
    _rootType = config_to_object_type ("type.root", local, "ft_component_root", context);
 
@@ -891,6 +999,22 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _defs.lookup_state (
       config_to_string ("state.logic.or", local, "FT_Logic_Or"),
       _logicOrMask);
+
+   _defs.lookup_state (
+      config_to_string ("state.flagged", local, "NA_Node_Flagged"),
+      _flaggedMask);
+
+   _naLinkAttrHandle = _defs.create_named_handle (
+      config_to_string ("na-ft-link.name", local, "NA_Fault_Tree_Link"));
+
+   _naNameAttrHandle = _defs.create_named_handle (
+      config_to_string ("na-name.name", local, "NA_Node_Name"));
+
+   _ftNameAttrHandle = _defs.create_named_handle (
+      config_to_string ("ft-name.name", local, "FT_Name"));
+
+   _activeFTAttrHandle = _defs.create_named_handle (
+      config_to_string ("ft-active.name", local, "FT_Active_Fault_Tree"));
 }
 
 

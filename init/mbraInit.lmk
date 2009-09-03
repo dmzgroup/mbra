@@ -3,7 +3,7 @@ require "lmkQt"
 lmkQt.set_name "mbraInit"
 lmk.set_type "plugin"
 lmk.add_files {"mbraInit.qrc",}
-lmk.add_files {"mbraLaunch.ui",}
+lmk.add_files {"mbraDialog.ui", "mbraLaunch.ui",}
 lmk.add_files ({"mbraInit.h",}, {src="moc",})
 lmk.add_files {"mbraInit.cpp",}
 lmk.add_libs {"dmzQtUtil", "dmzXML", "dmzApplication", "dmzKernel",}
