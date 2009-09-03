@@ -55,7 +55,7 @@
          <widget name="data-palette" title="Data" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-         <widget name="dmzMBRAPluginLinkEditor" title="Link Editor" visible="false" floating="true">
+         <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
       </group>
