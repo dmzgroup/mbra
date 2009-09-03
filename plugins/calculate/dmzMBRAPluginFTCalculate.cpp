@@ -35,6 +35,7 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _root (0),
       _target (0),
       _editTarget (0),
+      _createTarget (0),
       _objectDataHandle (0),
       _createdDataHandle (0) {
 
@@ -339,6 +340,16 @@ dmz::MBRAPluginFTCalculate::on_createRootButton_released () {
 
 
 void
+dmz::MBRAPluginFTCalculate::on_FlaggedNodesButton_clicked () {
+
+   if (_createTarget && _createFromFlaggedNodes) {
+
+      _createFromFlaggedNodes.send (_createTarget);
+   }
+}
+
+
+void
 dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
 
    if (index >= 0) {
@@ -416,6 +427,12 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       "FTComponentEditMessage",
       context);
 
+   _createFromFlaggedNodes = config_create_message (
+      "message.create-from-flagged-nodes",
+      local,
+      "FTCreateFromFlaggedNodesMessage",
+      context);
+
    _target = config_to_named_handle (
       "message.target",
       local,
@@ -423,9 +440,15 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       get_plugin_runtime_context ());
 
    _editTarget = config_to_named_handle (
-      "thread-edit-target.name",
+      "threat-edit-target.name",
       local,
       "FaultTreeComponentProperties",
+      get_plugin_runtime_context ());
+
+   _createTarget = config_to_named_handle (
+      "create-from-flagged-nodes-target.name",
+      local,
+      "dmzMBRAPluginFaultTreeBuilder",
       get_plugin_runtime_context ());
 
    _objectDataHandle = config_to_named_handle (

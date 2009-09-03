@@ -82,6 +82,7 @@ namespace dmz {
          void _slot_calculate (bool On);
          void _slot_update_budget (int budget);
          void on_createRootButton_released ();
+         void on_FlaggedNodesButton_clicked ();
          void on_rootBox_currentIndexChanged (int index);
 
       protected:
@@ -111,9 +112,11 @@ namespace dmz {
          Message _calculateOnMessage;
          Message _calculateOffMessage;
          Message _componentEditMessage;
+         Message _createFromFlaggedNodes;
          Handle _root;
          Handle _target;
          Handle _editTarget;
+         Handle _createTarget;
          Handle _objectDataHandle;
          Handle _createdDataHandle;
          ObjectType _rootType;

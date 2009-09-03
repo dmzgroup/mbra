@@ -75,7 +75,7 @@
          <items>
             <group name ="flag">
                <image name="node-flag" file="NA_Node_Flag.png">
-                  <translate x="-2" y="-38"/>
+                  <translate x="-1" y="-34"/>
                </image>
             </group>
             <group name="base node">
