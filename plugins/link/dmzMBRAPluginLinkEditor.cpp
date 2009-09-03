@@ -19,6 +19,7 @@ dmz::MBRAPluginLinkEditor::MBRAPluginLinkEditor (const PluginInfo &Info, Config 
       ObjectObserverUtil (Info, local),
       QtWidget (Info),
       _log (Info),
+      _undo (Info),
       _linkAttrHandle (0),
       _naNameAttrHandle (0),
       _ftNameAttrHandle (0) {
@@ -280,7 +281,9 @@ dmz::MBRAPluginLinkEditor::on_linkButton_clicked () {
 
       if (SuperObject && SubObject && objMod) {
 
+         const Handle UndoHandle = _undo.start_record ("Node and Fault Tree");
          objMod->link_objects (_linkAttrHandle, SuperObject, SubObject);
+         _undo.stop_record (UndoHandle);
       }
    }
 }
@@ -299,7 +302,9 @@ dmz::MBRAPluginLinkEditor::on_unlinkButton_clicked () {
 
       if (LinkHandle && objMod) {
 
+         const Handle UndoHandle = _undo.start_record ("Unlink Node and Fault Tree");
          objMod->unlink_objects (LinkHandle);
+         _undo.stop_record (UndoHandle);
       }
    }
 }
