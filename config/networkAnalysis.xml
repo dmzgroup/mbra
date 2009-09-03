@@ -53,7 +53,9 @@
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </NAToolTab>
    <NABottomTab>
-      <minimum-size width="300" height="250"/>
+      <tab>
+         <minimum-size width="300" height="250"/>
+      </tab>
       <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
       <widget name="dmzQtPluginGraph" title="Degree Graph"/>
    </NABottomTab>
@@ -489,7 +491,7 @@
       <map name="NAMap"/>
    </source>
 </dmzQtPluginMapObjectPosition>
-<archive>
+<!-- <archive>
    <object type="canvas">
       <attributes>
          <position x="0.0" y="0.0" z="0.0"/>
@@ -501,6 +503,6 @@
          <scalar value="0.000000"/>
       </attributes>
    </object>
-</archive>
+</archive> -->
 </dmz>
 

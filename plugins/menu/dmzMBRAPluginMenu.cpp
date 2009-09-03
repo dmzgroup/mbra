@@ -44,6 +44,7 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _cleanUpObjMsg (0),
       _openFileMsg (0),
       _mapPropertiesMsg (0),
+      _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
       _undoAction (0),
       _redoAction (0),
       _exportName (QString::null) {
@@ -140,16 +141,8 @@ dmz::MBRAPluginMenu::discover_plugin (
                   _mainWindowModule->add_menu_action (ms->Name, action);
                }
             }
-            
-            QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
-            if (mainWindow) {
-               
-               if (!_startFile.isEmpty ()) {
 
-                  QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
-                  mainWindow->setWindowTitle (name);
-               }
-            }
+            if (!_startFile.isEmpty ()) { _set_current_file (_startFile); }
          }
       }
    }
@@ -242,35 +235,33 @@ dmz::MBRAPluginMenu::update_current_undo_names (
 
    if (_undoAction) {
 
+      Boolean on (False);
       QString tip ("Undo");
 
       if (NextUndoName) {
 
          tip = tip + ": " + NextUndoName->get_buffer ();
-         _undoAction->setEnabled (True);
-      }
-      else {
-
-         _undoAction->setEnabled (False);
+         on = True;
       }
 
+      _undoAction->setEnabled (on);
+      _undoAction->setText (tip);
       _undoAction->setStatusTip (tip);
    }
 
    if (_redoAction) {
 
+      Boolean on (False);
       QString tip ("Redo");
 
       if (NextRedoName) {
 
          tip = tip + ": " + NextRedoName->get_buffer ();
-         _redoAction->setEnabled (True);
-      }
-      else {
-
-         _redoAction->setEnabled (False);
+         on = True;
       }
 
+      _redoAction->setEnabled (on);
+      _redoAction->setText (tip);
       _redoAction->setStatusTip (tip);
    }
 }
@@ -305,7 +296,7 @@ dmz::MBRAPluginMenu::on_openAction_triggered () {
       QString fileName =
          QFileDialog::getOpenFileName (
             _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-            tr ("Import File"),
+            tr ("Load File"),
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
 
@@ -332,8 +323,9 @@ dmz::MBRAPluginMenu::on_saveAsAction_triggered () {
          _get_last_path (),
          QString ("*.") + _suffix.get_buffer ());
 
-   // This check is for when the file is missing the extension so we have to 
+   // This check is for when the file is missing the extension we have to 
    // manually check if the file already exists.
+
    if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
 
       fileName += ".";
@@ -440,14 +432,8 @@ dmz::MBRAPluginMenu::on_clearAction_triggered () {
 
    _cleanUpObjMsg.send ();
    _undo.reset ();
-   _appStateDirty = False;
-   _exportName = QString::null;
    
-   QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
-   if (mainWindow) {
-      
-      mainWindow->setWindowTitle (_mainWindowModule->get_window_name ());
-   }
+   _set_current_file (QString::null);
 }
 
 
@@ -455,6 +441,18 @@ void
 dmz::MBRAPluginMenu::on_mapPropertiesAction_triggered () {
 
    _mapPropertiesMsg.send (_mapPropertiesTarget, 0, 0);
+}
+
+
+void
+dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
+
+   if (_onlineHelpUrl) {
+
+      QUrl Url (_onlineHelpUrl.get_buffer ());
+
+      QDesktopServices::openUrl (Url);
+   }
 }
 
 
@@ -492,18 +490,9 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
          msg = QString ("File loaded: ") + FileName;
          _log.info << qPrintable (msg) << endl;
 
-         if (mainWindow) {
-
-            QString name (_mainWindowModule->get_window_name () + ": " + FileName);
-            mainWindow->setWindowTitle (name);
-            mainWindow->statusBar ()->showMessage (msg, 5000);
-         }
-
-         _appState.set_default_directory (qPrintable (FileName));
-
-         _appStateDirty = False;
+         _set_current_file (FileName);
          
-         _exportName = FileName;
+          if (mainWindow) { mainWindow->statusBar ()->showMessage (msg, 5000); }
       }
 
       qApp->restoreOverrideCursor ();
@@ -524,10 +513,6 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 
          _fileCache.add_path (qPrintable (FileName));
 
-         _appStateDirty = False;
-
-         _exportName = FileName;
-
          StreamFile out (file);
 
          Config config = _archiveModule->create_archive (_archive);
@@ -535,18 +520,16 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
          write_xml_header (out);
          format_config_to_xml (config, out);
 
-         QString msg (QString ("File saved as: ") + _exportName);
-
+         QString msg (QString ("File saved as: ") + FileName);
          _log.info << qPrintable (msg) << endl;
 
+         _set_current_file (FileName);
+         
          if (_mainWindowModule) {
 
-            QString name (_mainWindowModule->get_window_name () + ": " + _exportName);
-            
             QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
             if (mainWindow) {
 
-               mainWindow->setWindowTitle (name);
                mainWindow->statusBar ()->showMessage (msg, 5000);
             }
          }
@@ -558,6 +541,33 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 
       qApp->restoreOverrideCursor ();
    }
+}
+
+
+void
+dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
+
+   if (_mainWindowModule) {
+
+      QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+      if (mainWindow) {
+
+         QString title (_mainWindowModule->get_window_name ());
+         
+         if (!FileName.isEmpty ()) {
+
+            title = title + ": " + FileName;
+
+            _appState.set_default_directory (qPrintable (FileName));
+         }
+
+         mainWindow->setWindowTitle (title);
+
+         _exportName = FileName;
+      }
+   }
+   
+   _appStateDirty = False;
 }
 
 
@@ -682,6 +692,8 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       "suffix.value",
       local,
       _suffix);
+      
+   _onlineHelpUrl = config_to_string ("help.url", local, _onlineHelpUrl);
    
    Config menuList;
    if (local.lookup_all_config ("menu", menuList)) {

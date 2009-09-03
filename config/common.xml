@@ -41,6 +41,7 @@
       <menu text="&amp;File"/>
       <menu text="&amp;Edit"/>
       <menu text="&amp;Window"/>
+      <menu text="&amp;Help"/>
    </menu-bar>
    <dock-windows>
       <group area="right">

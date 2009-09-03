@@ -72,12 +72,14 @@ namespace dmz {
          void on_redoAction_triggered ();
          void on_clearAction_triggered ();
          void on_mapPropertiesAction_triggered ();
+         void on_onlineHelpAction_triggered ();
 
       protected:
          struct MenuStruct;
          
          void _load_file (const QString &FileName);
          void _save_file (const QString &FileName);
+         void _set_current_file (const QString &FileName);
          QString _get_last_path ();
          void _init_action_list (Config &actionList, MenuStruct &ms);
          void _init_menu_list (Config &menuList);
@@ -101,6 +103,7 @@ namespace dmz {
          Handle _mapPropertiesTarget;
          String _suffix;
          String _defaultExportName;
+         String _onlineHelpUrl;
          QAction *_undoAction;
          QAction *_redoAction;
          QString _exportName;

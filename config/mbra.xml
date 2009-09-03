@@ -52,6 +52,12 @@
             </icon>
          </action>
       </menu>
+      <menu name="&amp;Help">
+         <action text="Online help..." statusTip="Launch online help...">
+            <object name="onlineHelpAction"/>
+         </action>
+         <action separator="true"/>
+      </menu>
       <message>
          <mapProperties target="dmzQtPluginMapProperties" />
       </message>

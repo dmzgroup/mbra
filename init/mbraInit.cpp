@@ -12,7 +12,6 @@
 #include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
 #include <dmzXMLUtil.h>
-
 #include <QtCore/QUrl>
 #include <QtGui/QDesktopServices>
 #include <QtGui/QCloseEvent>
