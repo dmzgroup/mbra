@@ -49,6 +49,8 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
    _ui.vulnerabilityReducedLabel->setText (QString::number (0.0, 'f', 2) + QString ("%"));
 
    _init (local);
+
+   adjustSize ();
 }
 
 
