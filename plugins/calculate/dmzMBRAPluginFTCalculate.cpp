@@ -385,7 +385,7 @@ dmz::MBRAPluginFTCalculate::_update_budget () {
    // _log.error << "Total: " << total << endl;
    _ui.budgetSlider->setMaximum (int (total));
    _ui.budgetSpinBox->setMaximum (int (total));
-   _ui.maxBudgetLabel->setNum (int (total));
+   _ui.maxBudgetLabel->setText (QString ("$") + QString::number (int (total)));
 }
 
 
