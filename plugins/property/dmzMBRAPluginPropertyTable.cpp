@@ -228,6 +228,8 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
    _ui.setupUi (this);
 
    _init (local);
+   
+   adjustSize ();
 }
 
 

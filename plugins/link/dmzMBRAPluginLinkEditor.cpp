@@ -27,6 +27,8 @@ dmz::MBRAPluginLinkEditor::MBRAPluginLinkEditor (const PluginInfo &Info, Config 
    _ui.setupUi (this);
 
    _init (local);
+   
+   adjustSize ();
 }
 
 
