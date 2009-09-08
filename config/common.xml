@@ -53,7 +53,7 @@
          </widget>
       </group>
       <group area="bottom">
-         <widget name="data-palette" title="Data" visible="false" floating="true">
+         <widget name="data-palette" title="Data Table" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
          <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
