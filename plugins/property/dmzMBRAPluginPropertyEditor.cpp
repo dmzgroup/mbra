@@ -726,7 +726,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
          PropertyUpdater *next = pe->create_widgets (
             Object,
             *_objMod,
-            &dialog,
+            ui.attributes,
             layout);
 
          if (next) {
