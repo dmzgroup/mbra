@@ -23,6 +23,7 @@
    <plugin name="dmzQtPluginStackedWidget" unique="tool-palette"/>
    <plugin name="dmzQtPluginStackedWidget" unique="data-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
+   <plugin name="dmzMBRAPluginMenu"/>
 
 <!--
    <plugin name="dmzObjectPluginDump"/>

@@ -38,12 +38,10 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _archive (0),
       _undo (Info),
       _fileHandle (0),
-      _mapPropertiesTarget (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
       _cleanUpObjMsg (0),
       _openFileMsg (0),
-      _mapPropertiesMsg (0),
       _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
       _undoAction (0),
       _redoAction (0),
@@ -415,6 +413,7 @@ dmz::MBRAPluginMenu::on_redoAction_triggered () {
    _appState.pop_mode ();
 }
 
+
 void
 dmz::MBRAPluginMenu::on_clearAction_triggered () {
 
@@ -434,13 +433,6 @@ dmz::MBRAPluginMenu::on_clearAction_triggered () {
    _undo.reset ();
    
    _set_current_file (QString::null);
-}
-
-
-void
-dmz::MBRAPluginMenu::on_mapPropertiesAction_triggered () {
-
-   _mapPropertiesMsg.send (_mapPropertiesTarget, 0, 0);
 }
 
 
@@ -674,19 +666,6 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       "CleanupObjectsMessage",
       get_plugin_runtime_context (),
       &_log);
-
-   _mapPropertiesMsg = config_create_message (
-      "message.mapProperties.name",
-      local,
-      "MapPropertiesEditMessage",
-      get_plugin_runtime_context (),
-      &_log);
-      
-   _mapPropertiesTarget = config_to_named_handle (
-      "message.mapProperties.target",
-      local,
-      "dmzQtPluginMapProperties",
-      get_plugin_runtime_context ());
 
    _suffix = config_to_string (
       "suffix.value",

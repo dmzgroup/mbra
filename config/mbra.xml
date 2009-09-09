@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
    <plugin-list>
-      <plugin name="dmzMBRAPluginMenu"/>
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">
-         <action text="Open" statusTip="Open Exercise" shortcut="open">
+         <action text="New" statusTip="New File" shortcut="new">
+            <object name="clearAction"/>
+            <!-- <icon>
+               <image file="images:Button_Reset.png"/>
+            </icon> -->
+         </action>
+         <action text="Open..." statusTip="Open Exercise" shortcut="open">
             <object name="openAction"/>
             <icon>
                <image file="images:Button_File.png"/>
@@ -39,18 +44,6 @@
             </icon>
          </action>
          <action separator="true"/>
-         <action text="Clear" statusTip="Clear">
-            <object name="clearAction"/>
-            <icon>
-               <image file="images:Button_Reset.png"/>
-            </icon>
-         </action>
-         <action text="Map Properties..." statusTip="Map Properties...">
-            <object name="mapPropertiesAction"/>
-            <icon>
-               <image file="images:Button_Map.png"/>
-            </icon>
-         </action>
       </menu>
       <menu name="&amp;Help">
          <action text="Online help..." statusTip="Launch online help...">

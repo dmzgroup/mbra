@@ -68,10 +68,10 @@ namespace dmz {
          void on_openAction_triggered ();
          void on_saveAction_triggered ();
          void on_saveAsAction_triggered ();
+//         void on_screenGrab_triggered ();
          void on_undoAction_triggered ();
          void on_redoAction_triggered ();
          void on_clearAction_triggered ();
-         void on_mapPropertiesAction_triggered ();
          void on_onlineHelpAction_triggered ();
 
       protected:
@@ -98,9 +98,7 @@ namespace dmz {
          PathContainer _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
-         Message _mapPropertiesMsg;
          Handle _fileHandle;
-         Handle _mapPropertiesTarget;
          String _suffix;
          String _defaultExportName;
          String _onlineHelpUrl;
