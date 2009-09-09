@@ -268,6 +268,10 @@
       <title value="Link Properties"/>
       <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
@@ -287,7 +291,11 @@
             <state label="forward" name="NA_Flow_Forward"/>
             <state label="reverse" name="NA_Flow_Reverse"/>
          </property>
-         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"/>
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
          <property
