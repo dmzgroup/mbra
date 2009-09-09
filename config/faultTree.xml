@@ -34,6 +34,9 @@
    </plugin-list>
    <ft-component-properties>
       <title value="Component Properties"/>
+      <tab-list>
+         <tab name="Properties"/>
+      </tab-list>
       <edit-message name="FTComponentEditMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="FT_Name"/>
@@ -44,6 +47,10 @@
       <object-type-list>
          <object-type name="ft_threat"/>
       </object-type-list>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <edit-message name="FTThreatEditMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="FT_Name"/>

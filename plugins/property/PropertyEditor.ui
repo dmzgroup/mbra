@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>123</height>
+    <height>138</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,10 +15,15 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="attributes">
-     <property name="title">
-      <string>Properties</string>
+    <widget class="QTabWidget" name="attributes">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string/>
+      </attribute>
+     </widget>
     </widget>
    </item>
    <item>
@@ -29,7 +34,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>204</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>

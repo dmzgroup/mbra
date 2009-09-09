@@ -224,6 +224,10 @@
       <title value="Node Properties"/>
       <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
@@ -238,7 +242,12 @@
             attribute="NA_Node_Consequence"
             prefix="$"
          />
-         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"
+         />
          <property
             type="scalar-label"
             name="Degrees"
