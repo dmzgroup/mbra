@@ -27,7 +27,9 @@
          name="dmzMBRAPluginPropertyTable"
          unique="NetworkAnalysisPropertyTable"
          scope="na-node-properties"
-      />
+      >
+         <additional-scope name="na-node-table"/>
+      </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph"/>
@@ -216,6 +218,12 @@
          </action>
       </deleteLayer>\
    </NACanvasLayer>
+   <na-node-table>
+      <module>
+         <canvas name="NACanvas"/>
+         <map name="NAMap"/>
+      </module>
+   </na-node-table>
    <na-node-properties>
       <object-type-list>
          <object-type name="na_node"/>
