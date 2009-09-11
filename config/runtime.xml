@@ -81,9 +81,6 @@
          <items>
             <group name="overlay">
                <image file="NA_ResultsOverlay180.svg">
-<!--
-                  <translate x="-19.5" y="-37.5"/>
--->
                   <translate x="-37.5" y="-19.0"/>
                </image>
                <text name="number">
@@ -91,9 +88,6 @@
                      <string value="white"/>
                   </textColor>
                   <enableBackground value="false"/>
-<!--
-                  <translate x="20" y="-20"/>
--->
                   <translate x="-27" y="20"/>
                   <scale x="2.0" y="2.0"/>
                </text>

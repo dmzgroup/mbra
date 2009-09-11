@@ -1,0 +1,10 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginArchiveSuport"
+lmk.set_type "plugin"
+lmk.add_files {"dmzMBRAPluginArchiveSuport.cpp",}
+lmk.add_libs {
+   "dmzArchiveUtil",
+   "dmzObjectUtil",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzQtFramework", "dmzArchiveFramework", "dmzObjectFramework",}
