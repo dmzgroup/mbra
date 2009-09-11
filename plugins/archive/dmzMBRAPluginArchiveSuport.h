@@ -4,6 +4,7 @@
 #include <dmzArchiveObserverUtil.h>
 #include <dmzObjectObserverUtil.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimeUndo.h>
@@ -61,7 +62,11 @@ namespace dmz {
          Float64 _offsetX;
          Float64 _offsetY;
 
+         Message _toggleMapMessage;
+
          Handle _defaultAttrHandle;
+         Handle _toggleHandle;
+         Handle _toggleTargetHandle;
          Boolean _storeObjects;
          Int32 _version;
 

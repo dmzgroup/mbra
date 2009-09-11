@@ -2,6 +2,8 @@
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMap.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
+#include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
 #include <dmzTypesVector.h>
@@ -18,6 +20,8 @@ dmz::MBRAPluginArchiveSuport::MBRAPluginArchiveSuport (
       _offsetX (0.5),
       _offsetY (0.5),
       _defaultAttrHandle (0),
+      _toggleHandle (0),
+      _toggleTargetHandle (0),
       _storeObjects (False),
       _version (-1) {
 
@@ -129,7 +133,7 @@ dmz::MBRAPluginArchiveSuport::post_process_archive (
 
          const Float64 OffsetX = minx + ((maxx - minx) * 0.5);
          const Float64 OffsetY = miny + ((maxy - miny) * 0.5);
-         const Float64 Scale = is_zero64 (maxx - minx) ? 1.0 : 0.5 / (maxx - minx);
+         const Float64 Scale = is_zero64 (maxx - minx) ? 1.0 : 0.6 / (maxx - minx);
 
          it.reset ();
 
@@ -149,6 +153,10 @@ dmz::MBRAPluginArchiveSuport::post_process_archive (
 
             _map->center_on (0.0, 0.0);
             _map->set_zoom (10.0);
+
+            Data out;
+            out.store_boolean (_toggleHandle, 0, False);
+            _toggleMapMessage.send (_toggleTargetHandle, &out);
          }
 
          _undo.reset ();
@@ -174,6 +182,21 @@ dmz::MBRAPluginArchiveSuport::_init (Config &local) {
 
       _typeSet.add_object_type ("na_node", context);
    }
+
+   _toggleMapMessage = config_create_message (
+      "message.toggle-map.name",
+      local,
+      "ToggleMapMessage",
+      context,
+      &_log);
+
+   _toggleHandle = config_to_named_handle ("toggle.name", local, "toggle", context);
+
+   _toggleTargetHandle = config_to_named_handle (
+      "toggle-target.name",
+      local,
+      "dmzQtPluginMapProperties",
+      context);
 }
 
 
