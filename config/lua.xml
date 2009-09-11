@@ -23,5 +23,6 @@
    <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
    <instance name="dmzMBRAPluginNALabelFormatter"/>
    <instance name="dmzMBRAPluginNAHighlightNode"/>
+   <instance name="toggle"/>
 </dmzLuaModuleBasic>
 </dmz>

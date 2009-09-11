@@ -26,7 +26,9 @@
          name="dmzMBRAPluginPropertyTable"
          unique="FaultTreePropertyTable"
          scope="ft-threat-properties"
-      />
+      >
+         <additional-scope name="ft-threat-table"/>
+      </plugin>
       <plugin name="dmzMBRAPluginFTCalculate"/>
       <plugin name="dmzMBRAPluginFTViewState"/>
       <plugin name="dmzObjectPluginFlagGroup"/>
@@ -39,6 +41,11 @@
          <property type="line" name="Name" attribute="FT_Name"/>
       </property-list>
    </ft-component-properties>
+   <ft-threat-table>
+      <module>
+         <canvas name="FTCanvas"/>
+      </module>
+   </ft-threat-table>
    <ft-threat-properties>
       <title value="Threat Properties"/>
       <object-type-list>
