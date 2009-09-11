@@ -1,5 +1,10 @@
 #include <dmzArchiveModule.h>
+#include <dmzInputEventMasks.h>
+#include <dmzInputModule.h>
+#include <dmzInputConsts.h>
 #include "dmzMBRAPluginMenu.h"
+#include <dmzQtModuleCanvas.h>
+#include <dmzQtModuleMap.h>
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
 #include <dmzRuntimeConfigToNamedHandle.h>
@@ -12,6 +17,8 @@
 #include <dmzSystemStreamFile.h>
 #include <dmzXMLUtil.h>
 #include <QtGui/QtGui>
+#include <qmapcontrol.h>
+
 
 namespace {
 
@@ -27,6 +34,7 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       Plugin (Info),
       MessageObserver (Info),
       UndoObserver (Info),
+      InputObserverUtil (Info, local),
       ExitObserver (Info),
       _log (Info),
       _appStateDirty (False),
@@ -35,19 +43,27 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _archiveModuleName (),
       _mainWindowModule (0),
       _mainWindowModuleName (),
+      _ftCanvasModule (0),
+      _ftCanvasModuleName (),
+      _naCanvasModule (0),
+      _naCanvasModuleName (),
+      _naMapModule (0),
+      _naMapModuleName (),
       _archive (0),
       _undo (Info),
       _fileHandle (0),
-      _mapPropertiesTarget (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
       _cleanUpObjMsg (0),
       _openFileMsg (0),
-      _mapPropertiesMsg (0),
       _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
       _undoAction (0),
       _redoAction (0),
-      _exportName (QString::null) {
+      _exportName (QString::null),
+      _ftChannel (0),
+      _naChannel (0),
+      _naActive (0),
+      _ftActive (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -125,6 +141,21 @@ dmz::MBRAPluginMenu::discover_plugin (
          _archiveModule = ArchiveModule::cast (PluginPtr, _archiveModuleName);
       }
 
+      if (!_ftCanvasModule) {
+
+         _ftCanvasModule = QtModuleCanvas::cast (PluginPtr, _ftCanvasModuleName);
+      }
+
+      if (!_naCanvasModule) {
+
+         _naCanvasModule = QtModuleCanvas::cast (PluginPtr, _naCanvasModuleName);
+      }
+
+      if (!_naMapModule) {
+
+         _naMapModule = QtModuleMap::cast (PluginPtr, _naMapModuleName);
+      }
+
       if (!_mainWindowModule) {
 
          _mainWindowModule = QtModuleMainWindow::cast (PluginPtr, _mainWindowModuleName);
@@ -151,6 +182,21 @@ dmz::MBRAPluginMenu::discover_plugin (
       if (_archiveModule && (_archiveModule == ArchiveModule::cast (PluginPtr))) {
 
          _archiveModule = 0;
+      }
+
+      if (_ftCanvasModule && (_ftCanvasModule == QtModuleCanvas::cast (PluginPtr))) {
+
+         _ftCanvasModule = 0;
+      }
+
+      if (_naCanvasModule && (_naCanvasModule == QtModuleCanvas::cast (PluginPtr))) {
+
+         _naCanvasModule = 0;
+      }
+
+      if (_naMapModule && (_naMapModule == QtModuleMap::cast (PluginPtr))) {
+
+         _naMapModule = 0;
       }
 
       if (_mainWindowModule &&
@@ -267,6 +313,21 @@ dmz::MBRAPluginMenu::update_current_undo_names (
 }
 
 
+// Input Observer Interface
+void
+dmz::MBRAPluginMenu::update_channel_state (const Handle Channel, const Boolean State) {
+
+   if (Channel == _naChannel) {
+
+      _naActive += (State ? 1 : -1);
+   }
+   else if (Channel == _ftChannel) {
+      
+      _ftActive += (State ? 1 : -1);
+   }
+}
+
+
 void
 dmz::MBRAPluginMenu::exit_requested (
       const ExitStatusEnum Status,
@@ -316,36 +377,128 @@ dmz::MBRAPluginMenu::on_saveAction_triggered () {
 void
 dmz::MBRAPluginMenu::on_saveAsAction_triggered () {
 
-   QString fileName =
-      QFileDialog::getSaveFileName (
-         _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
+   if (_mainWindowModule) {
+      
+      const QString Extension = QString::fromAscii(_suffix.get_buffer ());
+      const QString Filter (tr ("MBRA files (*.%1)").arg (Extension));
+   
+      const QString FileName (get_save_file_name_with_extension (
+         _mainWindowModule->get_qt_main_window (),
          tr ("Save File"),
          _get_last_path (),
-         QString ("*.") + _suffix.get_buffer ());
+         Filter,
+         Extension));
 
-   // This check is for when the file is missing the extension we have to 
-   // manually check if the file already exists.
-
-   if (!fileName.isEmpty () && QFileInfo (fileName).suffix ().isEmpty ()) {
-
-      fileName += ".";
-      fileName += _suffix.get_buffer ();
-
-      if (QFileInfo (fileName).isFile ()) {
-
-         const QMessageBox::StandardButton Button (QMessageBox::warning (
-            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-            "File already exists",
-            fileName + "already exists. Do you want to replace it?",
-            QMessageBox::Cancel | QMessageBox::Save));
-
-         if (Button & QMessageBox::Cancel) { fileName.clear (); }
-      }
+      if (!FileName.isEmpty ()) { _save_file (FileName); }
    }
+}
 
-   if (!fileName.isEmpty ()) {
+
+void
+dmz::MBRAPluginMenu::on_screenGrabAction_triggered () {
+
+   if (_mainWindowModule) {
+      
+      QMainWindow *mainWindow (_mainWindowModule->get_qt_main_window ());
+      
+      const char *format = "png";
+      const QString Extension = QString::fromAscii (format);
+      const QString Filter = tr ("Image files (*.%1)").arg (Extension);
+
+      QImage image;
    
-      _save_file (fileName);
+      do {
+   
+         const QString FileName (get_save_file_name_with_extension (
+            mainWindow, tr ("Save Image"), QString::null, Filter, Extension));
+
+         if (FileName.isEmpty ()) { break; }
+
+         if (image.isNull ()) {
+
+            QPixmap pixmap = _screen_grab ();
+
+            if (!pixmap.isNull ()) { image = pixmap.toImage (); }
+         }
+
+         if (image.save (FileName, format)) {
+
+            if (mainWindow) {
+               
+               QString msg = tr ("Saved image %1.").arg (QFileInfo (FileName).fileName ()); 
+               mainWindow->statusBar ()->showMessage (msg, 2000);
+            }
+
+            break;
+          }
+
+          QMessageBox box (
+             QMessageBox::Warning,
+             tr("Save Image"),
+             tr("The file %1 could not be written.").arg (FileName),
+             QMessageBox::Retry | QMessageBox::Cancel,
+             mainWindow);
+             
+           if (box.exec () == QMessageBox::Cancel) { break; }
+      } while (True);
+   }
+}
+
+
+void
+dmz::MBRAPluginMenu::on_printAction_triggered () {
+
+   if (_mainWindowModule) {
+      
+      QMainWindow *mainWindow (_mainWindowModule->get_qt_main_window ());
+      
+      QPrinter printer;
+      printer.setFullPage (False);
+
+      // Grab the image to be able to suggest suitable orientation
+      const QPixmap pixmap (_screen_grab ());
+
+      if (!pixmap.isNull ()) {
+
+         const QSizeF pixmapSize (pixmap.size ());
+         printer.setOrientation (
+            pixmapSize.width () > pixmapSize.height () ? QPrinter::Landscape : QPrinter::Portrait);
+
+         QPrintDialog dialog (&printer, mainWindow);
+
+         if (dialog.exec () == QDialog::Accepted) {
+
+            qApp->setOverrideCursor (QCursor (Qt::WaitCursor));
+
+            QPainter painter (&printer);
+            painter.setRenderHint (QPainter::SmoothPixmapTransform);
+
+            const QRectF page =  painter.viewport ();
+         
+            const double scaling =
+               qMin( page.size ().width () / pixmapSize.width (),
+                     page.size ().height () / pixmapSize.height ());
+                  
+            const double xOffset =
+               page.left () + qMax (0.0, (page.size ().width () - scaling * pixmapSize.width ())  / 2.0);
+               
+            const double yOffset =
+               page.top ()  + qMax (0.0, (page.size ().height () - scaling * pixmapSize.height ()) / 2.0);
+
+            // Draw
+            painter.translate (xOffset, yOffset);
+            painter.scale (scaling, scaling);
+
+            painter.drawPixmap (0, 0, pixmap);
+
+            qApp->restoreOverrideCursor ();
+
+            if (mainWindow) {
+       
+                mainWindow->statusBar ()->showMessage ("Printing finished.", 2000);
+            }
+         }
+      }
    }
 }
 
@@ -415,6 +568,7 @@ dmz::MBRAPluginMenu::on_redoAction_triggered () {
    _appState.pop_mode ();
 }
 
+
 void
 dmz::MBRAPluginMenu::on_clearAction_triggered () {
 
@@ -438,13 +592,6 @@ dmz::MBRAPluginMenu::on_clearAction_triggered () {
 
 
 void
-dmz::MBRAPluginMenu::on_mapPropertiesAction_triggered () {
-
-   _mapPropertiesMsg.send (_mapPropertiesTarget, 0, 0);
-}
-
-
-void
 dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
 
    if (_onlineHelpUrl) {
@@ -453,6 +600,74 @@ dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
 
       QDesktopServices::openUrl (Url);
    }
+}
+
+
+QPixmap
+dmz::MBRAPluginMenu::_screen_grab () {
+   
+   QPixmap screenGrab;
+   
+   qApp->setOverrideCursor (QCursor (Qt::WaitCursor));
+   if (_naActive) { screenGrab = _na_screen_grab (); }
+   else if (_ftActive) { screenGrab = _ft_screen_grab (); }
+   qApp->restoreOverrideCursor ();
+   
+   return screenGrab;
+}
+
+
+QPixmap
+dmz::MBRAPluginMenu::_na_screen_grab () {
+   
+   QPixmap screenGrab;
+   
+   if (_naCanvasModule && _naMapModule) {
+
+      qmapcontrol::MapControl *map (_naMapModule->get_map_control ());
+      QGraphicsView *canvas (_naCanvasModule->get_view ());
+      
+      if (map && canvas) {
+         
+         screenGrab = QPixmap (canvas->viewport ()->rect ().size ());
+         
+         QPainter painter (&screenGrab);
+         painter.setRenderHint( QPainter::Antialiasing);
+         
+         map->render (&painter);
+         canvas->render (&painter);
+         
+         painter.end ();
+      }
+   }
+   
+   return screenGrab;
+}
+
+
+QPixmap
+dmz::MBRAPluginMenu::_ft_screen_grab () {
+
+   QPixmap screenGrab;
+
+   if (_ftCanvasModule) {
+
+      QGraphicsView *view (_ftCanvasModule->get_view ());
+      
+      if (view) {
+
+         screenGrab = QPixmap (view->viewport ()->rect ().size ());
+
+         QPainter painter (&screenGrab);
+         painter.setRenderHint( QPainter::Antialiasing);
+
+         view->render (&painter);
+
+         painter.end ();
+      }
+   }
+   
+   return screenGrab;
 }
 
 
@@ -654,6 +869,10 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
    _archiveModuleName = config_to_string ("module.archive.name", local);
    _mainWindowModuleName = config_to_string ("module.mainWindow.name", local);
 
+   _ftCanvasModuleName = config_to_string ("module.ft-canvas.name", local);
+   _naCanvasModuleName = config_to_string ("module.na-canvas.name", local);
+   _naMapModuleName = config_to_string ("module.na-map.name", local);
+
    _archive = defs.create_named_handle (
       config_to_string ("archive.name", local, ArchiveDefaultName));
 
@@ -675,25 +894,22 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       get_plugin_runtime_context (),
       &_log);
 
-   _mapPropertiesMsg = config_create_message (
-      "message.mapProperties.name",
-      local,
-      "MapPropertiesEditMessage",
-      get_plugin_runtime_context (),
-      &_log);
-      
-   _mapPropertiesTarget = config_to_named_handle (
-      "message.mapProperties.target",
-      local,
-      "dmzQtPluginMapProperties",
-      get_plugin_runtime_context ());
-
    _suffix = config_to_string (
       "suffix.value",
       local,
       _suffix);
       
    _onlineHelpUrl = config_to_string ("help.url", local, _onlineHelpUrl);
+   
+   _ftChannel =
+      activate_input_channel (
+         config_to_string ("ft.channel", local, "FaultTreeChannel"),
+         InputEventChannelStateMask);
+
+   _naChannel =
+      activate_input_channel (
+         config_to_string ("na.channel", local, "NetworkAnalysisChannel"),
+         InputEventChannelStateMask);
    
    Config menuList;
    if (local.lookup_all_config ("menu", menuList)) {

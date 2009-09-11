@@ -440,6 +440,16 @@
             minZoom="0" 
             maxZoom="17"/>
       </default-map-adapter-list>
+      <show-map-action
+         text="Enable Map"
+         checkable="true"
+         statusTip="Enable Map"
+         shortcut="Ctrl+M"/>
+      <show-action text="Map Preferences..." statusTip="Edit Map Preferences...">
+         <icon>
+            <image file="images:Button_Map.png"/>
+         </icon>
+      </show-action>
    </dmzQtPluginMapProperties>
    <NARenderPickCanvas>
       <order x="0" y="2" z="1"/>

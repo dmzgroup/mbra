@@ -23,6 +23,7 @@
    <plugin name="dmzQtPluginStackedWidget" unique="tool-palette"/>
    <plugin name="dmzQtPluginStackedWidget" unique="data-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
+   <plugin name="dmzMBRAPluginMenu"/>
 
 <!--
    <plugin name="dmzObjectPluginDump"/>
@@ -48,7 +49,7 @@
          <widget name="tool-palette" title="Tool Palette" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-         <widget name="NACanvasLayer" title="Networks" visible="false" floating="true">
+         <widget name="NACanvasLayer" title="Network Layers" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
       </group>
