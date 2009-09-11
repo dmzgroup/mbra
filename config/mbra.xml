@@ -48,6 +48,14 @@
             </icon>
          </action>
          <action separator="true"/>
+         <action 
+            text="Toggle Labels"
+            statusTip="Toggle Labels"
+            shortcut="Ctrl+L"
+            checkable="true"
+            checked="true">
+            <object name="toggleLabelsAction"/>
+         </action>
       </menu>
       <menu name="&amp;Help">
          <action text="Online help..." statusTip="Launch online help...">

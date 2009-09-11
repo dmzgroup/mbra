@@ -98,6 +98,7 @@ namespace dmz {
             
       protected slots:
          void on_openAction_triggered ();
+         void on_openRecentAction_triggered (QAction *);
          void on_saveAction_triggered ();
          void on_saveAsAction_triggered ();
          void on_screenGrabAction_triggered ();
@@ -105,13 +106,16 @@ namespace dmz {
          void on_undoAction_triggered ();
          void on_redoAction_triggered ();
          void on_clearAction_triggered ();
+         void on_toggleLabelsAction_triggered ();
          void on_onlineHelpAction_triggered ();
 
       protected:
          struct MenuStruct;
+         void _update_recent_actions ();
          QPixmap _screen_grab ();
          QPixmap _na_screen_grab ();
          QPixmap _ft_screen_grab ();
+         Boolean _ok_to_load (const QString &FileName);
          void _load_file (const QString &FileName);
          void _save_file (const QString &FileName);
          void _set_current_file (const QString &FileName);
@@ -139,18 +143,24 @@ namespace dmz {
          PathContainer _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
+         Message _toggleLabelsMsg;
+         Handle _toggleLabelsTarget;
+         Handle _toggleLabelsAttr;
          Handle _fileHandle;
          String _suffix;
          String _defaultExportName;
          String _onlineHelpUrl;
          QAction *_undoAction;
          QAction *_redoAction;
+         QMenu *_recentFilesMenu;
+         QActionGroup *_recentFilesActionGroup;
          QString _exportName;
          Handle _naChannel;
          Handle _ftChannel;
          Int32 _naActive;
          Int32 _ftActive;
-
+         Int32 _maxRecentFiles;
+         
          struct MenuStruct {
 
             const String Name;

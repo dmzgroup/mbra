@@ -81,8 +81,6 @@
          <canvas name="NACanvas"/>
          <map name="NAMap"/>
       </module>
-      <canvas name="NACanvas"/>
-      <map name="NAMap"/>
    </NACanvasMap>
    <NACanvasMapZoom>
       <scrollDelta value="10"/>

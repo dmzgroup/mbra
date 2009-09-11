@@ -56,14 +56,20 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _defaultExportName ("NetworkAnalysisExport"),
       _cleanUpObjMsg (0),
       _openFileMsg (0),
+      _toggleLabelsMsg (0),
+      _toggleLabelsTarget (0),
+      _toggleLabelsAttr (0),
       _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
       _undoAction (0),
       _redoAction (0),
+      _recentFilesMenu (0),
+      _recentFilesActionGroup (0),
       _exportName (QString::null),
       _ftChannel (0),
       _naChannel (0),
       _naActive (0),
-      _ftActive (0) {
+      _ftActive (0),
+      _maxRecentFiles (10) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -99,6 +105,8 @@ dmz::MBRAPluginMenu::update_plugin_state (
 
             if (is_valid_path (FileName)) { _fileCache.add_path (FileName); }
          }
+         
+         _update_recent_actions ();
       }
    }
    else if (State == PluginStateStart) {
@@ -170,6 +178,17 @@ dmz::MBRAPluginMenu::discover_plugin (
                foreach (QAction *action, ms->actionList) {
                
                   _mainWindowModule->add_menu_action (ms->Name, action);
+                  
+                  if (action->objectName () == "openAction") {
+
+                     QMenu *menu (_mainWindowModule->lookup_menu ("&File"));
+                     
+                     if (menu && !_recentFilesMenu) {
+                        
+                        _recentFilesMenu = new QMenu ("Open Recent", menu);
+                        menu->addMenu (_recentFilesMenu);
+                     }
+                  }
                }
             }
 
@@ -235,24 +254,8 @@ dmz::MBRAPluginMenu::receive_message (
          String fileName;
          InData->lookup_string (_fileHandle, 0, fileName);
 
-         if (_appStateDirty) {
-
-            QString msg ("Would like to save changes before opening file: ");
-            msg += fileName.get_buffer ();
-            msg += "?";
-
-            const QMessageBox::StandardButton Button (QMessageBox::warning (
-               _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
-               "Save changes before opening file.",
-               msg,
-               QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save));
-
-            if (Button & QMessageBox::Save) { on_saveAction_triggered (); }
-            else if (Button & QMessageBox::Cancel) { fileName.flush (); }
-         }
-
-         if (fileName) {
-
+         if (_ok_to_load (fileName.get_buffer ())) {
+         
             _load_file (fileName.get_buffer ());
          }
       }
@@ -361,7 +364,21 @@ dmz::MBRAPluginMenu::on_openAction_triggered () {
             _get_last_path (),
             QString ("*.") + _suffix.get_buffer ());
 
-      _load_file (fileName);
+      if (_ok_to_load (fileName)) {
+         
+         _load_file (fileName);
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginMenu::on_openRecentAction_triggered (QAction *action) {
+   
+   if (action) {
+      
+      const QString FileName (action->data ().toString ());
+      if (_ok_to_load (FileName)) { _load_file (FileName); }
    }
 }
 
@@ -592,6 +609,21 @@ dmz::MBRAPluginMenu::on_clearAction_triggered () {
 
 
 void
+dmz::MBRAPluginMenu::on_toggleLabelsAction_triggered () {
+   
+   QAction *action = qobject_cast<QAction *>(sender ());
+   
+   if (action) {
+      
+      Data data;
+      data.store_float64 (_toggleLabelsAttr, 0, action->isChecked ());
+
+      _toggleLabelsMsg.send (_toggleLabelsTarget, &data, 0);
+   }
+}
+
+
+void
 dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
 
    if (_onlineHelpUrl) {
@@ -599,6 +631,47 @@ dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
       QUrl Url (_onlineHelpUrl.get_buffer ());
 
       QDesktopServices::openUrl (Url);
+   }
+}
+
+
+void
+dmz::MBRAPluginMenu::_update_recent_actions () {
+
+   if (_recentFilesActionGroup) {
+      
+      QList<QAction *>actionList = _recentFilesActionGroup->actions ();
+      
+      foreach (QAction *action, actionList) {
+         
+         _recentFilesMenu->removeAction (action);
+         _recentFilesActionGroup->removeAction (action);
+         
+         delete action;
+      }
+      
+      if (_fileCache.get_count () > 0) {
+
+         String file;
+         PathContainerIterator it;
+         Boolean found (_fileCache.get_last (it, file));
+         Int32 count (0);
+
+          while (found && (count++ < _maxRecentFiles)) {
+
+            QFileInfo fi (file.get_buffer ());
+            
+            QAction *action = new QAction (this);
+            action->setText (fi.fileName ());
+            action->setData (fi.filePath ());
+            action->setStatusTip (fi.filePath ());
+            
+            _recentFilesMenu->addAction (action);
+            _recentFilesActionGroup->addAction (action);
+            
+            found = _fileCache.get_prev (it, file);
+         }
+      }
    }
 }
 
@@ -671,6 +744,35 @@ dmz::MBRAPluginMenu::_ft_screen_grab () {
 }
 
 
+dmz::Boolean
+dmz::MBRAPluginMenu::_ok_to_load (const QString &FileName) {
+
+   Boolean retVal (False);
+   
+   if (!FileName.isEmpty ()) {
+      
+      retVal = True;
+      
+      if (_appStateDirty) {
+
+         QString msg = 
+            tr ("Would like to save changes before opening file: %1?").arg (FileName);
+
+         const QMessageBox::StandardButton Button (QMessageBox::warning (
+            _mainWindowModule ? _mainWindowModule->get_qt_main_window () : 0,
+            "Save changes before opening file.",
+            msg,
+            QMessageBox::Discard | QMessageBox::Cancel | QMessageBox::Save));
+
+         if (Button & QMessageBox::Save) { on_saveAction_triggered (); }
+         else if (Button & QMessageBox::Cancel) { retVal = False; }
+      }
+   }
+   
+   return retVal;
+}
+
+
 void
 dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
 
@@ -685,8 +787,6 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
       Config global ("global");
 
       if (xml_to_config (qPrintable (FileName), global, &_log)) {
-
-         _fileCache.add_path (qPrintable (FileName));
 
          QString msg (QString ("Loading file: ") + FileName);
 
@@ -725,8 +825,6 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
       FILE *file = open_file (qPrintable (FileName), "wb");
 
       if (file) {
-
-         _fileCache.add_path (qPrintable (FileName));
 
          StreamFile out (file);
 
@@ -779,6 +877,9 @@ dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
          mainWindow->setWindowTitle (title);
 
          _exportName = FileName;
+         _fileCache.add_path (qPrintable (FileName));
+         
+         _update_recent_actions ();
       }
    }
    
@@ -893,6 +994,25 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       "CleanupObjectsMessage",
       get_plugin_runtime_context (),
       &_log);
+      
+   _toggleLabelsMsg = config_create_message (
+      "message.toggle-labels.name",
+      local,
+      "ToggleNodeLabelMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
+   _toggleLabelsTarget = config_to_named_handle (
+      "message.toggle-labels.target",
+      local,
+      "dmzMBRAPluginNALabelFormatter",
+      get_plugin_runtime_context ());
+
+   _toggleLabelsAttr = config_to_named_handle (
+      "message.toggle-labels.attribute",
+      local,
+      "toggle",
+      get_plugin_runtime_context ());
 
    _suffix = config_to_string (
       "suffix.value",
@@ -910,13 +1030,15 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       activate_input_channel (
          config_to_string ("na.channel", local, "NetworkAnalysisChannel"),
          InputEventChannelStateMask);
+
+   _maxRecentFiles = config_to_int32 ("max-recent-files.value", local, _maxRecentFiles);
+   
+   _recentFilesActionGroup = new QActionGroup (this);
+   _recentFilesActionGroup->setObjectName ("openRecentAction");
    
    Config menuList;
-   if (local.lookup_all_config ("menu", menuList)) {
-
-      _init_menu_list (menuList);
-   }
-
+   if (local.lookup_all_config ("menu", menuList)) { _init_menu_list (menuList); }
+   
    QMetaObject::connectSlotsByName (this);
 }
 
