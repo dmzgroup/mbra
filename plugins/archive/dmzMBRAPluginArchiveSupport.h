@@ -14,14 +14,14 @@ namespace dmz {
 
    class QtModuleMap;
 
-   class MBRAPluginArchiveSuport :
+   class MBRAPluginArchiveSupport :
          public Plugin,
          public ObjectObserverUtil,
          public ArchiveObserverUtil {
 
       public:
-         MBRAPluginArchiveSuport (const PluginInfo &Info, Config &local);
-         ~MBRAPluginArchiveSuport ();
+         MBRAPluginArchiveSupport (const PluginInfo &Info, Config &local);
+         ~MBRAPluginArchiveSupport ();
 
          // Plugin Interface
          virtual void update_plugin_state (
@@ -71,9 +71,9 @@ namespace dmz {
          Int32 _version;
 
       private:
-         MBRAPluginArchiveSuport ();
-         MBRAPluginArchiveSuport (const MBRAPluginArchiveSuport &);
-         MBRAPluginArchiveSuport &operator= (const MBRAPluginArchiveSuport &);
+         MBRAPluginArchiveSupport ();
+         MBRAPluginArchiveSupport (const MBRAPluginArchiveSupport &);
+         MBRAPluginArchiveSupport &operator= (const MBRAPluginArchiveSupport &);
 
    };
 };
