@@ -1,4 +1,4 @@
-#include "dmzMBRAPluginArchiveSuport.h"
+#include "dmzMBRAPluginArchiveSupport.h"
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMap.h>
@@ -8,7 +8,7 @@
 #include <dmzRuntimePluginInfo.h>
 #include <dmzTypesVector.h>
 
-dmz::MBRAPluginArchiveSuport::MBRAPluginArchiveSuport (
+dmz::MBRAPluginArchiveSupport::MBRAPluginArchiveSupport (
       const PluginInfo &Info,
       Config &local) :
       Plugin (Info),
@@ -29,14 +29,14 @@ dmz::MBRAPluginArchiveSuport::MBRAPluginArchiveSuport (
 }
 
 
-dmz::MBRAPluginArchiveSuport::~MBRAPluginArchiveSuport () {
+dmz::MBRAPluginArchiveSupport::~MBRAPluginArchiveSupport () {
 
 }
 
 
 // Plugin Interface
 void
-dmz::MBRAPluginArchiveSuport::update_plugin_state (
+dmz::MBRAPluginArchiveSupport::update_plugin_state (
       const PluginStateEnum State,
       const UInt32 Level) {
 
@@ -56,7 +56,7 @@ dmz::MBRAPluginArchiveSuport::update_plugin_state (
 
 
 void
-dmz::MBRAPluginArchiveSuport::discover_plugin (
+dmz::MBRAPluginArchiveSupport::discover_plugin (
       const PluginDiscoverEnum Mode,
       const Plugin *PluginPtr) {
 
@@ -73,7 +73,7 @@ dmz::MBRAPluginArchiveSuport::discover_plugin (
 
 // Object Observer Interface
 void
-dmz::MBRAPluginArchiveSuport::create_object (
+dmz::MBRAPluginArchiveSupport::create_object (
       const UUID &Identity,
       const Handle ObjectHandle,
       const ObjectType &Type,
@@ -87,7 +87,7 @@ dmz::MBRAPluginArchiveSuport::create_object (
 
 // Archive Observer Interface
 void
-dmz::MBRAPluginArchiveSuport::pre_process_archive (
+dmz::MBRAPluginArchiveSupport::pre_process_archive (
       const Handle ArchiveHandle,
       const Int32 Version) {
 
@@ -100,7 +100,7 @@ dmz::MBRAPluginArchiveSuport::pre_process_archive (
 
 
 void
-dmz::MBRAPluginArchiveSuport::post_process_archive (
+dmz::MBRAPluginArchiveSupport::post_process_archive (
       const Handle ArchiveHandle,
       const Int32 Version) {
 
@@ -168,7 +168,7 @@ dmz::MBRAPluginArchiveSuport::post_process_archive (
 
 
 void
-dmz::MBRAPluginArchiveSuport::_init (Config &local) {
+dmz::MBRAPluginArchiveSupport::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
 
@@ -203,12 +203,12 @@ dmz::MBRAPluginArchiveSuport::_init (Config &local) {
 extern "C" {
 
 DMZ_PLUGIN_FACTORY_LINK_SYMBOL dmz::Plugin *
-create_dmzMBRAPluginArchiveSuport (
+create_dmzMBRAPluginArchiveSupport (
       const dmz::PluginInfo &Info,
       dmz::Config &local,
       dmz::Config &global) {
 
-   return new dmz::MBRAPluginArchiveSuport (Info, local);
+   return new dmz::MBRAPluginArchiveSupport (Info, local);
 }
 
 };
