@@ -3,7 +3,7 @@ local NodeLinkType = dmz.object_type.new ("na_link_attribute")
 local LinkHandle = dmz.handle.new ("Node_Link")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
-local PCHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
+local PreventionCostHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
 local RankHandle = dmz.handle.new ("NA_Node_Rank")
 local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
@@ -39,29 +39,37 @@ local function calc_weight_degrees (self, object)
    return result
 end
 
+local function add_to_link_betweenness_counter (self, link)
+   local linkObj = dmz.object.link_attribute_object (link)
+   if linkObj then
+      local value = dmz.object.add_to_counter (linkObj, BetweennessHandle)
+      if value > self.maxBetweenness then self.maxBetweenness = value end
+   end
+end
+
 local function find_betweenness (self, current, target, visited)
    local list = {}
    local subs = dmz.object.sub_links (current.object, LinkHandle)
    if subs then
       for _, sub in ipairs (subs) do
-         if sub == target then current.found = true
+         local link = dmz.object.lookup_link_handle (LinkHandle, current.object, sub)
+         if sub == target then
+            current.found = true
+            add_to_link_betweenness_counter (self, link)
          elseif not visited[sub] then
-            list[#list + 1] = {
-               object = sub,
-               link = dmz.object.lookup_link_handle (LinkHandle, current.object, sub),
-            }
+            list[#list + 1] = { object = sub, link = link, }
          end
       end
    end
    local supers = dmz.object.super_links (current.object, LinkHandle)
    if supers then
       for _, super in ipairs (supers) do
-         if super == target then current.found = true
+         local link = dmz.object.lookup_link_handle (LinkHandle, super, current.object)
+         if super == target then
+            current.found = true
+            add_to_link_betweenness_counter (self, link)
          elseif not visited[super] then
-            list[#list + 1] = {
-               object = super,
-               link = dmz.object.lookup_link_handle (LinkHandle, super, current.object),
-            }
+            list[#list + 1] = { object = super, link = link, }
          end
       end
    end
@@ -73,11 +81,7 @@ local function find_betweenness (self, current, target, visited)
          if node.found then
             local value = dmz.object.add_to_counter (group.object, BetweennessHandle)
             if value > self.maxBetweenness then self.maxBetweenness = value end
-            local linkObj = dmz.object.link_attribute_object (group.link)
-            if linkObj then
-               local value = dmz.object.add_to_counter (linkObj, BetweennessHandle)
-               if value > self.maxBetweenness then self.maxBetweenness = value end
-            end
+            add_to_link_betweenness_counter (self, group.link)
             current.found = true
          end
       end
@@ -90,17 +94,19 @@ local function setup_weight_betweenness (self)
       dmz.object.counter (object, BetweennessHandle, 0)
    end
    for root in pairs (self.objects) do
-      for target in pairs (self.objects) do
-         if root ~= target then
-            local list = {object = root}
-            local visited = {}
-            visited[root] = true
-            find_betweenness (self, list, target, visited)
-            if list.found then
-               local value = dmz.object.add_to_counter (root, BetweennessHandle)
-               if value > self.maxBetweenness then self.maxBetweenness = value end
-               value = dmz.object.add_to_counter (target, BetweennessHandle)
-               if value > self.maxBetweenness then self.maxBetweenness = value end
+      if (dmz.object.type (root):is_of_type (NodeType)) then
+         for target in pairs (self.objects) do
+            if root ~= target and dmz.object.type (target):is_of_type (NodeType) then
+               local list = {object = root}
+               local visited = {}
+               visited[root] = true
+               find_betweenness (self, list, target, visited)
+               if list.found then
+                  local value = dmz.object.add_to_counter (root, BetweennessHandle)
+                  if value > self.maxBetweenness then self.maxBetweenness = value end
+                  value = dmz.object.add_to_counter (target, BetweennessHandle)
+                  if value > self.maxBetweenness then self.maxBetweenness = value end
+               end
             end
          end
       end
@@ -241,7 +247,9 @@ function new (config, name)
    self.objObs:register (nil, cb, self)
 
    cb = { update_object_scalar = update_object_scalar }
-   self.objObs:register (ECHandle, cb, self)
+   self.objObs:register (ThreatHandle, cb, self)
+   self.objObs:register (VulnerabilityHandle, cb, self)
+   self.objObs:register (PreventionCostHandle, cb, self)
    self.objObs:register (ConsequenceHandle, cb, self)
    self.objObs:register (DegreeHandle, cb, self)
 
