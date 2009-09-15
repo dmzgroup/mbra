@@ -24,19 +24,28 @@ local function calc_objective_risk (self, object)
    return result
 end
 
-local function setup_weight_degrees (self)
+local weight_degrees = {
+
+setup = function (self)
    self.maxDegrees = 0
    for object in pairs (self.objects) do
       local value = dmz.object.scalar (object, DegreeHandle)
       if value and (value > self.maxDegrees) then self.maxDegrees = value end
    end
-end
+end,
 
-local function calc_weight_degrees (self, object)
+calc = function (self, object)
    local result = 0
    local value = dmz.object.scalar (object, DegreeHandle)
    if value and (self.maxDegrees > 0) then result = value / self.maxDegrees end
    return result
+end,
+
+}
+
+local function add_to_node_betweenness_counter (self, object)
+   local value = dmz.object.add_to_counter (object, BetweennessHandle)
+   if value > self.maxBetweenness then self.maxBetweenness = value end
 end
 
 local function add_to_link_betweenness_counter (self, link)
@@ -48,47 +57,52 @@ local function add_to_link_betweenness_counter (self, link)
 end
 
 local function find_betweenness (self, current, target, visited)
+   for _, item in ipairs (current) do visited[item.object] = true end
+   local found = false
    local list = {}
-   local subs = dmz.object.sub_links (current.object, LinkHandle)
-   if subs then
-      for _, sub in ipairs (subs) do
-         local link = dmz.object.lookup_link_handle (LinkHandle, current.object, sub)
-         if sub == target then
-            current.found = true
-            add_to_link_betweenness_counter (self, link)
-         elseif not visited[sub] then
-            list[#list + 1] = { object = sub, link = link, }
+   for _, item in ipairs (current) do
+      local subs = dmz.object.sub_links (item.object, LinkHandle)
+      if subs then
+         for _, sub in ipairs (subs) do
+            local link = dmz.object.lookup_link_handle (LinkHandle, item.object, sub)
+            if sub == target then
+               found = true
+               item.found = true
+               add_to_link_betweenness_counter (self, link)
+            elseif not visited[sub] then
+               list[#list + 1] = { object = sub, link = link, parent = item, }
+            end
+         end
+      end
+      local supers = dmz.object.super_links (item.object, LinkHandle)
+      if supers then
+         for _, super in ipairs (supers) do
+            local link = dmz.object.lookup_link_handle (LinkHandle, super, item.object)
+            if super == target then
+               found = true
+               item.found = true
+               add_to_link_betweenness_counter (self, link)
+            elseif not visited[super] then
+               list[#list + 1] = { object = super, link = link, parent = item, }
+            end
          end
       end
    end
-   local supers = dmz.object.super_links (current.object, LinkHandle)
-   if supers then
-      for _, super in ipairs (supers) do
-         local link = dmz.object.lookup_link_handle (LinkHandle, super, current.object)
-         if super == target then
-            current.found = true
-            add_to_link_betweenness_counter (self, link)
-         elseif not visited[super] then
-            list[#list + 1] = { object = super, link = link, }
-         end
-      end
-   end
-   if not current.found then
-      for _, group in ipairs (list) do
-         visited[group.object] = true
-         local node = { object = group.object }
-         find_betweenness (self, node, target, visited)
-         if node.found then
-            local value = dmz.object.add_to_counter (group.object, BetweennessHandle)
-            if value > self.maxBetweenness then self.maxBetweenness = value end
-            add_to_link_betweenness_counter (self, group.link)
-            current.found = true
+   if not found and #list > 0 then
+      find_betweenness (self, list, target, visited)
+      for _, item in ipairs (list) do
+         if item.found then
+            add_to_node_betweenness_counter (self, item.object)
+            add_to_link_betweenness_counter (self, item.link)
+            item.parent.found = true
          end
       end
    end
 end
 
-local function setup_weight_betweenness (self)
+local weight_betweenness = {
+
+setup = function (self)
    self.maxBetweenness = 0
    for object in pairs (self.objects) do
       dmz.object.counter (object, BetweennessHandle, 0)
@@ -97,35 +111,36 @@ local function setup_weight_betweenness (self)
       if (dmz.object.type (root):is_of_type (NodeType)) then
          for target in pairs (self.objects) do
             if root ~= target and dmz.object.type (target):is_of_type (NodeType) then
-               local list = {object = root}
+               local list = {}
+               list[#list + 1] = {object = root}
                local visited = {}
-               visited[root] = true
                find_betweenness (self, list, target, visited)
-               if list.found then
-                  local value = dmz.object.add_to_counter (root, BetweennessHandle)
-                  if value > self.maxBetweenness then self.maxBetweenness = value end
-                  value = dmz.object.add_to_counter (target, BetweennessHandle)
-                  if value > self.maxBetweenness then self.maxBetweenness = value end
+               if list[1].found then
+                  add_to_node_betweenness_counter (self, root)
+                  add_to_node_betweenness_counter (self, target)
                end
             end
          end
       end
    end
-end
+end,
 
-local function calc_weight_betweenness (self, object)
+calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, BetweennessHandle)
+--cprint (tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), object, dmz.object.type (object):get_name ())
    if value and (self.maxBetweenness > 0) then result = value / self.maxBetweenness end
    return result
-end
+end,
+
+}
 
 local function rank_object (self, object)
    local result = 0
    if self.objective then
       result = self.objective (self, object)
-      for _, calc in pairs (self.weightList) do
-         result = result * calc (self, object)
+      for _, weight in pairs (self.weightList) do
+         result = result * weight.calc (self, object)
       end
    end
    return result
@@ -134,8 +149,8 @@ end
 local function receive_rank (self)
    self.visible = true
    local list = {}
-   for _, setup in pairs (self.setupList) do
-      setup (self)
+   for _, weight in pairs (self.weightList) do
+      weight.setup (self)
    end
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
@@ -152,6 +167,7 @@ local function receive_rank (self)
          list[#list + 1] = object
       end
    end
+--cprint ("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
    table.sort (list, function (obj1, obj2) return obj1.rank > obj2.rank end)
    local count = 1
    local lastRank = nil
@@ -162,7 +178,7 @@ local function receive_rank (self)
          lastRank = object.rank
       end
       dmz.object.text (object.handle, RankHandle, tostring (count))
-      if self.rankLimit and index <= self.rankLimit and object.rank > 0 then
+      if self.rankLimit and count <= self.rankLimit and object.rank > 0 then
          local state = dmz.object.state (object.handle)
          if not state then state = dmz.mask.new () end
          state = state:bit_or (OverlayState)
@@ -215,6 +231,10 @@ local function unlink_objects (self, link, attr, super, sub)
    if self.visible and self.objects[super] then receive_rank (self) end
 end
 
+local function update_link_object (self, link, attr, super, sub, object)
+   if self.visible and object and self.objects[object] then receive_rank (self) end
+end
+
 function new (config, name)
 
    local self = {
@@ -229,14 +249,11 @@ function new (config, name)
       objObs = dmz.object_observer.new (),
       objects = {},
       objective = calc_objective_risk,
-      setupList = {},
       weightList = {},
    }
 
---   self.setupList[WeightDegreesHandle] = setup_weight_degrees
---   self.weightList[WeightDegreesHandle] = calc_weight_degrees
-   self.setupList[WeightBetweennessHandle] = setup_weight_betweenness
-   self.weightList[WeightBetweennessHandle] = calc_weight_betweenness
+--   self.weightList[WeightDegreesHandle] = weight_degrees
+   self.weightList[WeightBetweennessHandle] = weight_betweenness
 
    self.log:info ("Creating plugin: " .. name)
 
@@ -253,7 +270,12 @@ function new (config, name)
    self.objObs:register (ConsequenceHandle, cb, self)
    self.objObs:register (DegreeHandle, cb, self)
 
-   cb = { link_objects = link_objects, unlink_objects = unlink_objects, }
+   cb = {
+      link_objects = link_objects,
+      unlink_objects = unlink_objects,
+      update_link_object = update_link_object,
+   }
+
    self.objObs:register (LinkHandle, cb, self)
 
    return self
