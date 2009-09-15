@@ -3,6 +3,7 @@
 #include <dmzObjectModule.h>
 #include <dmzQtModuleMap.h>
 #include <dmzRuntimeConfigToNamedHandle.h>
+#include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
@@ -20,6 +21,10 @@ dmz::MBRAPluginArchiveSupport::MBRAPluginArchiveSupport (
       _offsetX (0.5),
       _offsetY (0.5),
       _defaultAttrHandle (0),
+      _threatAttrHandle (0),
+      _vulAttrHandle (0), // Vulnerability
+      _ecAttrHandle (0), // Elimination Cost
+      _pcAttrHandle (0), // Prevention Cost
       _toggleHandle (0),
       _toggleTargetHandle (0),
       _storeObjects (False),
@@ -85,6 +90,30 @@ dmz::MBRAPluginArchiveSupport::create_object (
    }
 }
 
+
+void
+dmz::MBRAPluginArchiveSupport::update_object_scalar (
+      const UUID &Identity,
+      const Handle ObjectHandle,
+      const Handle AttributeHandle,
+      const Float64 Value,
+      const Float64 *PreviousValue) {
+
+   if (AttributeHandle == _ecAttrHandle) {
+
+      ObjectModule *objMod = get_object_module ();
+
+      if (objMod && _pcAttrHandle) {
+
+         objMod->store_scalar (ObjectHandle, _pcAttrHandle, Value);
+         objMod->remove_attribute (ObjectHandle, _ecAttrHandle, ObjectScalarMask);
+
+         _ecObjects.add_handle (ObjectHandle);
+      }
+   }
+}
+
+
 // Archive Observer Interface
 void
 dmz::MBRAPluginArchiveSupport::pre_process_archive (
@@ -96,6 +125,8 @@ dmz::MBRAPluginArchiveSupport::pre_process_archive (
       _objects.clear ();
       _storeObjects = True;
    }
+
+   _ecObjects.clear ();
 }
 
 
@@ -104,11 +135,11 @@ dmz::MBRAPluginArchiveSupport::post_process_archive (
       const Handle ArchiveHandle,
       const Int32 Version) {
 
-   if (_storeObjects) {
+   ObjectModule *objMod = get_object_module ();
 
-      ObjectModule *objMod = get_object_module ();
+   if (objMod && _storeObjects) {
 
-      if ((_objects.get_count () > 0) && objMod) {
+      if (_objects.get_count () > 0) {
 
          Float64 minx = 1.0e32, miny = 1.0e32, maxx = -1.0e32, maxy = -1.0e32;
          HandleContainerIterator it;
@@ -163,6 +194,27 @@ dmz::MBRAPluginArchiveSupport::post_process_archive (
       }
    }
 
+   if (objMod) {
+
+      HandleContainerIterator it;
+      Handle object (0);
+
+      while (_ecObjects.get_next (it, object)) {
+
+         Float64 value (0.0);
+
+         if (!objMod->lookup_scalar (object, _threatAttrHandle, value)) {
+
+            objMod->store_scalar (object, _threatAttrHandle, 1.0);
+         }
+
+         if (!objMod->lookup_scalar (object, _vulAttrHandle, value)) {
+
+            objMod->store_scalar (object, _vulAttrHandle, 1.0);
+         }
+      }
+   }
+
    _storeObjects = False;
 }
 
@@ -175,6 +227,10 @@ dmz::MBRAPluginArchiveSupport::_init (Config &local) {
    init_archive (local);
 
    _defaultAttrHandle = activate_default_object_attribute (ObjectCreateMask);
+
+   _ecAttrHandle = activate_object_attribute (
+      config_to_string ("elimination-cost.name", local, "NA_Node_Elimination_Cost"),
+      ObjectScalarMask);
 
    _typeSet = config_to_object_type_set ("object-type-list", local, context);
 
@@ -189,6 +245,25 @@ dmz::MBRAPluginArchiveSupport::_init (Config &local) {
       "ToggleMapMessage",
       context,
       &_log);
+
+   _threatAttrHandle = config_to_named_handle (
+      "threat.name",
+      local,
+      "NA_Node_Threat",
+      context);
+
+   _vulAttrHandle = config_to_named_handle (
+      "vulnerability.name",
+      local,
+      "NA_Node_Vulnerability",
+      context);
+
+   _pcAttrHandle = config_to_named_handle (
+      "prevention-cost.name",
+      local,
+      "NA_Node_Prevention_Cost",
+      context);
+
 
    _toggleHandle = config_to_named_handle ("toggle.name", local, "toggle", context);
 

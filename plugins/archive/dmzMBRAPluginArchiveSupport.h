@@ -39,6 +39,13 @@ namespace dmz {
             const ObjectType &Type,
             const ObjectLocalityEnum Locality);
 
+         virtual void update_object_scalar (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Float64 Value,
+            const Float64 *PreviousValue);
+
          // Archive Observer Interface
          virtual void pre_process_archive (
             const Handle ArchiveHandle,
@@ -58,6 +65,7 @@ namespace dmz {
 
          ObjectTypeSet _typeSet;
          HandleContainer _objects;
+         HandleContainer _ecObjects;
 
          Float64 _offsetX;
          Float64 _offsetY;
@@ -65,6 +73,10 @@ namespace dmz {
          Message _toggleMapMessage;
 
          Handle _defaultAttrHandle;
+         Handle _threatAttrHandle;
+         Handle _vulAttrHandle; // Vulnerability
+         Handle _ecAttrHandle; // Elimination Cost
+         Handle _pcAttrHandle; // Prevention Cost
          Handle _toggleHandle;
          Handle _toggleTargetHandle;
          Boolean _storeObjects;
