@@ -45,11 +45,13 @@
          <additional-scope name="na"/>
       </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
+      <plugin name="dmzMBRAPluginNASimulator"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-data-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
+      <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
    </plugin-list>
    <na>
@@ -74,8 +76,12 @@
    <charts-palette>
       <channel name="NetworkAnalysisChannel" widget="na-charts-tab"/>
    </charts-palette>
+   <na-tool-simulator>
+      <widget name="dmzMBRAPluginCalculate"/>
+      <widget name="dmzMBRAPluginNASimulator"/>
+   </na-tool-simulator>
    <na-tool-tab>
-      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+      <widget name="na-tool-simulator" title="Simulator"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </na-tool-tab>
    <na-charts-tab>
@@ -525,6 +531,12 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
+   <dmzMBRAPluginNASimulator>
+      <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
+      <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
+      <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
+      <objective-function text="Risk" attribute="NA_Objective_Risk"/>
+   </dmzMBRAPluginNASimulator>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>

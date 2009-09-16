@@ -229,7 +229,7 @@ local function update_simulator_flag (self, handle, attr, value)
          self.weightList[WeightBetweennessHandle] = weight_betweenness
       elseif attr == ObjectiveNoneHandle then
          self.objective = calc_objective_none
-      elseif attr == ObjectiveRiskHandke then
+      elseif attr == ObjectiveRiskHandle then
          self.objective = calc_objective_risk
       end
    else self.weightList[attr] = nil
