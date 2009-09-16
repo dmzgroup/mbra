@@ -51,7 +51,7 @@
       <channel name="NetworkAnalysisChannel" widget="NABottomTab"/>
    </data-palette>
    <NAToolTab>
-      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+      <widget name="dmzMBRAPluginCalculate" title="Simulator"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </NAToolTab>
    <NABottomTab>
