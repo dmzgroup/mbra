@@ -83,6 +83,7 @@
    <archive>
       <object-type-set>
          <object-type name="na_tool_link_node"/>
+         <object-type name="na_simulator"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">

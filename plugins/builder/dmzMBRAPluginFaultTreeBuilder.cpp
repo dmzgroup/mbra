@@ -852,6 +852,7 @@ dmz::MBRAPluginFaultTreeBuilder::_create_from_flagged () {
 
       _set_component_hide_state (Root, True, *objMod);
       objMod->store_flag (Root, _activeFTAttrHandle, True);
+      _set_component_hide_state (Root, False, *objMod);
 
       _undo.stop_record (UndoHandle);
    }

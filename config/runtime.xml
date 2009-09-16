@@ -30,6 +30,7 @@
    <object-type name="root_layer" parent="layer">
       <dmzQtPluginCanvasLayer/>
    </object-type>
+   <object-type name="na_simulator"/>
    <object-type name="na_tool_link_node">
       <NACanvasObject/>
    </object-type>
