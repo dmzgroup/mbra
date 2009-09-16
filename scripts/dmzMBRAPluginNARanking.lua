@@ -273,8 +273,6 @@ function new (config, name)
       weightList = {},
    }
 
-   self.weightList[WeightBetweennessHandle] = weight_betweenness
-
    self.log:info ("Creating plugin: " .. name)
 
    self.msgObs:register (self.rankMessage, receive_rank, self)
