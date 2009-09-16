@@ -246,14 +246,38 @@
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
             type="scalar"
-            name="Elimination Cost"
-            attribute="NA_Node_Elimination_Cost"
-            prefix="$"
+            name="Threat"
+            attribute="NA_Node_Threat"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <property
+            type="scalar"
+            name="Vulnerability"
+            attribute="NA_Node_Vulnerability"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
          />
          <property
             type="scalar"
             name="Consequence"
             attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <property
+            type="scalar"
+            name="Prevention Cost"
+            attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
          <property type="text" name="Description" attribute="NA_Node_Description"/>
@@ -281,14 +305,38 @@
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
             type="scalar"
-            name="Elimination Cost"
-            attribute="NA_Node_Elimination_Cost"
-            prefix="$"
+            name="Threat"
+            attribute="NA_Node_Threat"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <property
+            type="scalar"
+            name="Vulnerability"
+            attribute="NA_Node_Vulnerability"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
          />
          <property
             type="scalar"
             name="Consequence"
             attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <property
+            type="scalar"
+            name="Prevention Cost"
+            attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
          <property type="state" name="Flow" attribute="NA_Link_Flow">
