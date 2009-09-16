@@ -1,5 +1,6 @@
 local NodeType = dmz.object_type.new ("na_node")
 local NodeLinkType = dmz.object_type.new ("na_link_attribute")
+local SimType = dmz.object_type.new ("na_simulator")
 local LinkHandle = dmz.handle.new ("Node_Link")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
@@ -12,6 +13,11 @@ local OverlayState = dmz.definitions.lookup_state ("NA_Node_Overlay")
 
 local WeightDegreesHandle = dmz.handle.new ("NA_Weight_Degrees")
 local WeightBetweennessHandle = dmz.handle.new ("NA_Weight_Betweenness")
+
+local ObjectiveNoneHandle = dmz.handle.new ("NA_Objective_None")
+local ObjectiveRiskHandle = dmz.handle.new ("NA_Objective_Risk")
+
+local function calc_objective_none () return 1 end
 
 local function calc_objective_risk (self, object)
    local result = 0
@@ -68,6 +74,7 @@ local function find_betweenness (self, current, target, visited)
             if sub == target then
                found = true
                item.found = true
+               add_to_node_betweenness_counter (self, target)
                add_to_link_betweenness_counter (self, link)
             elseif not visited[sub] then
                list[#list + 1] = { object = sub, link = link, parent = item, }
@@ -81,6 +88,7 @@ local function find_betweenness (self, current, target, visited)
             if super == target then
                found = true
                item.found = true
+               add_to_node_betweenness_counter (self, target)
                add_to_link_betweenness_counter (self, link)
             elseif not visited[super] then
                list[#list + 1] = { object = super, link = link, parent = item, }
@@ -115,10 +123,7 @@ setup = function (self)
                list[#list + 1] = {object = root}
                local visited = {}
                find_betweenness (self, list, target, visited)
-               if list[1].found then
-                  add_to_node_betweenness_counter (self, root)
-                  add_to_node_betweenness_counter (self, target)
-               end
+               if list[1].found then add_to_node_betweenness_counter (self, root) end
             end
          end
       end
@@ -216,6 +221,22 @@ local function update_object_scalar (self, handle, attr, value)
    if self.visible and self.objects[handle] then receive_rank (self) end
 end
 
+local function update_simulator_flag (self, handle, attr, value)
+   if value then
+      if attr == WeightDegreesHandle then
+         self.weightList[WeightDegreesHandle] = weight_degrees
+      elseif attr == WeightBetweennessHandle then
+         self.weightList[WeightBetweennessHandle] = weight_betweenness
+      elseif attr == ObjectiveNoneHandle then
+         self.objective = calc_objective_none
+      elseif attr == ObjectiveRiskHandke then
+         self.objective = calc_objective_risk
+      end
+   else self.weightList[attr] = nil
+   end
+   if self.visible then receive_rank (self) end
+end
+
 local function destroy_object (self, handle)
    local updateRank = false
    if self.visible and self.objects[handle] then updateRank = true end
@@ -248,11 +269,10 @@ function new (config, name)
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       objects = {},
-      objective = calc_objective_risk,
+      objective = calc_objective_none,
       weightList = {},
    }
 
---   self.weightList[WeightDegreesHandle] = weight_degrees
    self.weightList[WeightBetweennessHandle] = weight_betweenness
 
    self.log:info ("Creating plugin: " .. name)
@@ -263,12 +283,18 @@ function new (config, name)
    local cb = { create_object = create_object, destroy_object = destroy_object }
    self.objObs:register (nil, cb, self)
 
-   cb = { update_object_scalar = update_object_scalar }
+   cb = { update_object_scalar = update_object_scalar, }
    self.objObs:register (ThreatHandle, cb, self)
    self.objObs:register (VulnerabilityHandle, cb, self)
    self.objObs:register (PreventionCostHandle, cb, self)
    self.objObs:register (ConsequenceHandle, cb, self)
    self.objObs:register (DegreeHandle, cb, self)
+
+   cb = { update_object_flag = update_simulator_flag, }
+   self.objObs:register (WeightDegreesHandle, cb, self)
+   self.objObs:register (WeightBetweennessHandle, cb, self)
+   self.objObs:register (ObjectiveNoneHandle, cb, self)
+   self.objObs:register (ObjectiveRiskHandle, cb, self)
 
    cb = {
       link_objects = link_objects,
