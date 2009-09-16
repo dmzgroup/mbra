@@ -28,6 +28,7 @@ namespace {
 static const String MBRAName ("mbra-init");
 static const String MBRAFileList ("mbra-file-list");
 static const String GeometryName ("geometry");
+static const String HeaderStateName ("header-state");
 
 static void
 local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
@@ -44,6 +45,15 @@ local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
 
       QRect rect = QApplication::desktop ()->availableGeometry (&cInit);
       cInit.move(rect.center () - cInit.rect ().center ());
+   }
+
+   Config state;
+
+   if (session.lookup_config (HeaderStateName, state)) {
+
+      QHeaderView *header = cInit.ui.fileTable->horizontalHeader ();
+
+      if (header) { header->restoreState (config_to_qbytearray (state)); }
    }
 }
 
@@ -279,8 +289,16 @@ dmz::mbraInit::closeEvent (QCloseEvent * event) {
 
       Config session (MBRAName);
 
-      session.add_config (qbytearray_to_config ("geometry", saveGeometry ()));
+      session.add_config (qbytearray_to_config (GeometryName, saveGeometry ()));
 
+      QHeaderView *header = ui.fileTable->horizontalHeader ();
+
+      if (header) {
+
+         session.add_config (
+            qbytearray_to_config (HeaderStateName, header->saveState ()));
+      }
+   
       set_session_config (init.app.get_context (), session);
    }
 
