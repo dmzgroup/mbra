@@ -2,16 +2,30 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzQtModuleMapBasic" unique="NAMap" unload="false" delete="false"/>
-      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPickMap"/>
-      <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap"/>
+      <plugin name="dmzQtPluginRenderPickMap" unique="NARenderPickMap">
+	      <additional-scope name="na"/>
+      </plugin>
+      <plugin name="dmzQtPluginCanvasMap" unique="NACanvasMap">
+	      <additional-scope name="na"/>
+      </plugin>
       <plugin name="dmzQtModuleCanvasBasic" unique="NACanvas"/>
-      <plugin name="dmzQtPluginCanvasZoomPanMap" unique="NACanvasMapZoom"/>
+      <plugin name="dmzQtPluginCanvasZoomPanMap" unique="NACanvasMapZoom">
+	      <additional-scope name="na"/>
+      </plugin>
       <plugin name="dmzQtPluginCanvasObject" unique="NACanvasObject"/>
       <plugin name="dmzQtPluginCanvasLink" unique="NACanvasLink"/>
-      <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer"/>
-      <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPickCanvas"/>
-      <plugin name="dmzQtPluginMapArchive" unique="NAMapArchive"/>
-      <plugin name="dmzQtPluginMapProperties"/>
+      <plugin name="dmzQtPluginCanvasLayer" unique="NACanvasLayer">
+	      <additional-scope name="na"/>
+      </plugin>
+      <plugin name="dmzQtPluginRenderPickCanvas" unique="NARenderPickCanvas">
+	      <additional-scope name="na"/>
+      </plugin>
+      <plugin name="dmzQtPluginMapArchive" unique="NAMapArchive">
+	      <additional-scope name="na"/>
+      </plugin>
+      <plugin name="dmzQtPluginMapProperties">
+	      <additional-scope name="na"/>
+      </plugin>
       <plugin name="dmzQtPluginButtonToChannel"/>
       <plugin
          name="dmzMBRAPluginPropertyEditor"
@@ -27,14 +41,25 @@
          name="dmzMBRAPluginPropertyTable"
          unique="NetworkAnalysisPropertyTable"
          scope="na-node-properties"
-      />
+      >
+         <additional-scope name="na"/>
+      </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
+      <plugin name="dmzMBRAPluginNASimulator"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
-      <plugin name="dmzQtPluginGraph"/>
-      <plugin name="dmzQtPluginTabWidget" unique="NABottomTab"/>
+      <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
+      <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
+      <plugin name="dmzQtPluginTabWidget" unique="na-data-tab"/>
+      <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
+      <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
-      <plugin name="dmzQtPluginTabWidget" unique="NAToolTab"/>
    </plugin-list>
+   <na>
+      <module>
+         <canvas name="NACanvas"/>
+         <map name="NAMap"/>
+      </module>
+   </na>
    <central-widget>
       <widget
          name="NACanvasMap"
@@ -43,22 +68,34 @@
          default="true"/>
    </central-widget>
    <tool-palette>
-      <channel name="NetworkAnalysisChannel" widget="NAToolTab"/>
+      <channel name="NetworkAnalysisChannel" widget="na-tool-tab"/>
    </tool-palette>
    <data-palette>
-      <channel name="NetworkAnalysisChannel" widget="NABottomTab"/>
+      <channel name="NetworkAnalysisChannel" widget="na-data-tab"/>
    </data-palette>
-   <NAToolTab>
-      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+   <charts-palette>
+      <channel name="NetworkAnalysisChannel" widget="na-charts-tab"/>
+   </charts-palette>
+   <na-tool-simulator>
+      <widget name="dmzMBRAPluginCalculate"/>
+      <widget name="dmzMBRAPluginNASimulator"/>
+   </na-tool-simulator>
+   <na-tool-tab>
+      <widget name="na-tool-simulator" title="Simulator"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
-   </NAToolTab>
-   <NABottomTab>
+   </na-tool-tab>
+   <na-charts-tab>
       <tab>
-         <minimum-size width="300" height="250"/>
+         <minimum-size width="250" height="250"/>
+      </tab>
+      <widget name="na-degree-graph" title="Degree Graph"/>
+   </na-charts-tab>
+   <na-data-tab>
+      <tab>
+         <minimum-size width="350" height="250"/>
       </tab>
       <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
-      <widget name="dmzQtPluginGraph" title="Degree Graph"/>
-   </NABottomTab>
+   </na-data-tab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
@@ -70,27 +107,17 @@
    </NACanvas>
    <NAMap>
       <!-- <tileMapAdapter url="tile.openstreetmap.org" path="/%1/%2/%3.png" /> -->
-      <tileMapAdapter url="tile.cloudmade.com" path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/>
+      <tileMapAdapter
+         url="tile.cloudmade.com"
+         path="/742140f4b12f5326be6b4c4e584c6528/2/256/%1/%2/%3.png"/>
       <!-- <startCoordinate latitude="36.5973550921921" longitude="-121.876788139343"/> -->
       <startCoordinate latitude="38.341648" longitude="-96.943349"/>
    </NAMap>
-   <NACanvasMap>
-      <module>
-         <canvas name="NACanvas"/>
-         <map name="NAMap"/>
-      </module>
-      <canvas name="NACanvas"/>
-      <map name="NAMap"/>
-   </NACanvasMap>
    <NACanvasMapZoom>
       <scrollDelta value="10"/>
       <slidder min="0" max="17"/>
       <!-- <zoom min="0" max="17" step="1" default="6"/> -->
       <zoom min="0" max="17" step="1" default="4"/>
-      <module>
-         <canvas name="NACanvas"/>
-         <map name="NAMap"/>
-      </module>
       <!-- <widget>
          <stylesheet file="stylesheets:FileButton.qss"/>
       </widget> -->
@@ -195,9 +222,6 @@
    </NACanvasLink>
    <NACanvasLayer>
       <dockWidget title="Networks"/>
-      <module>
-         <canvas name="NACanvas"/>
-      </module>
       <!-- <widget>
          <stylesheet file="stylesheets:FileButton.qss"/>
       </widget> -->
@@ -232,14 +256,38 @@
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
             type="scalar"
-            name="Elimination Cost"
-            attribute="NA_Node_Elimination_Cost"
-            prefix="$"
+            name="Threat"
+            attribute="NA_Node_Threat"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <property
+            type="scalar"
+            name="Vulnerability"
+            attribute="NA_Node_Vulnerability"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
          />
          <property
             type="scalar"
             name="Consequence"
             attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <property
+            type="scalar"
+            name="Prevention Cost"
+            attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
          <property
@@ -276,14 +324,38 @@
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
             type="scalar"
-            name="Elimination Cost"
-            attribute="NA_Node_Elimination_Cost"
-            prefix="$"
+            name="Threat"
+            attribute="NA_Node_Threat"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
+         />
+         <property
+            type="scalar"
+            name="Vulnerability"
+            attribute="NA_Node_Vulnerability"
+            default="1.0"
+            scale="100"
+            decimals="0"
+            min="0"
+            max="100"
+            step="5"
+            suffix="%"
          />
          <property
             type="scalar"
             name="Consequence"
             attribute="NA_Node_Consequence"
+            prefix="$"
+         />
+         <property
+            type="scalar"
+            name="Prevention Cost"
+            attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
          <property type="state" name="Flow" attribute="NA_Link_Flow">
@@ -295,7 +367,8 @@
             type="text"
             name="Description"
             attribute="NA_Node_Description"
-            tab="1"/>
+            tab="1"
+         />
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
          <property
@@ -366,21 +439,7 @@
          </toolButton>
       </buttons>
    </dmzQtPluginButtonToChannel>
-   <NACanvasArchive>
-      <module>
-         <canvas name="NACanvas"/>
-      </module>
-   </NACanvasArchive>
-   <NAMapArchive>
-      <module>
-         <map name="NAMap"/>
-      </module>
-   </NAMapArchive>
    <dmzQtPluginMapProperties>
-      <module>
-         <map name="NAMap"/>
-         <canvas name="NACanvas"/>
-      </module>
       <default-map-adapter-list>
          <current index="1"/>
          <map-adapter 
@@ -449,12 +508,21 @@
             minZoom="0" 
             maxZoom="17"/>
       </default-map-adapter-list>
+      <show-map-action
+         text="Enable Map"
+         checkable="true"
+         statusTip="Enable Map"
+         shortcut="Ctrl+M"/>
+      <show-action text="Map Preferences..." statusTip="Edit Map Preferences...">
+         <icon>
+            <image file="images:Button_Map.png"/>
+         </icon>
+      </show-action>
    </dmzQtPluginMapProperties>
    <NARenderPickCanvas>
       <order x="0" y="2" z="1"/>
       <source name="NACanvas"/>
       <module>
-         <canvas name="NACanvas"/>
          <pickConvert name="NAMap"/>
       </module>s
       <discover pickConvert="True"/>
@@ -481,13 +549,19 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
+   <dmzMBRAPluginNASimulator>
+      <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
+      <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
+      <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
+      <objective-function text="Risk" attribute="NA_Objective_Risk"/>
+   </dmzMBRAPluginNASimulator>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>
          <type name="na_link_attribute"/>
       </link>
    </dmzQtPluginCanvasAutoLink>
-<dmzQtPluginGraph>
+<na-degree-graph>
    <start value="1"/>
    <ascending value="true"/>
    <set>
@@ -502,7 +576,7 @@
          <color red="0.5" green="0.5" blue="1"/>
       </fill>
    </bar>
-</dmzQtPluginGraph>
+</na-degree-graph>
 <dmzQtPluginMapObjectPosition>
    <order x="0" y="2" z="1"/>
    <set>
@@ -518,18 +592,5 @@
       <map name="NAMap"/>
    </source>
 </dmzQtPluginMapObjectPosition>
-<!-- <archive>
-   <object type="canvas">
-      <attributes>
-         <position x="0.0" y="0.0" z="0.0"/>
-      </attributes>
-      <attributes name="Canvas_Zoom">
-         <scalar value="0.000000"/>
-      </attributes>
-      <attributes name="Canvas_Base">
-         <scalar value="0.000000"/>
-      </attributes>
-   </object>
-</archive> -->
 </dmz>
 

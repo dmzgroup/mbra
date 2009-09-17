@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dmz>
    <plugin-list>
-      <plugin name="dmzMBRAPluginMenu"/>
       <plugin name="dmzQtPluginVersion"/>
    </plugin-list>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">
-         <action text="Open" statusTip="Open Exercise" shortcut="open">
+         <action text="New" statusTip="New File" shortcut="new">
+            <object name="clearAction"/>
+            <!-- <icon>
+               <image file="images:Button_Reset.png"/>
+            </icon> -->
+         </action>
+         <action text="Open..." statusTip="Open Exercise" shortcut="open">
             <object name="openAction"/>
             <icon>
                <image file="images:Button_File.png"/>
@@ -20,9 +25,13 @@
          </action>
          <action text="Save As..." statusTip="Save Exercise As..." shortcut="saveas">
             <object name="saveAsAction"/>
-            <!-- <icon>
-               <image file="images:Button_Export.png"/>
-            </icon> -->
+         </action>
+         <action separator="true"/>
+         <action text="Print..." statusTip="Print" shortcut="print">
+            <object name="printAction"/>
+         </action>
+         <action text="Save Image..." statusTip="Save screen grab as image...">
+            <object name="screenGrabAction"/>
          </action>
       </menu>
       <menu name="&amp;Edit">
@@ -39,17 +48,13 @@
             </icon>
          </action>
          <action separator="true"/>
-         <action text="Clear" statusTip="Clear">
-            <object name="clearAction"/>
-            <icon>
-               <image file="images:Button_Reset.png"/>
-            </icon>
-         </action>
-         <action text="Map Properties..." statusTip="Map Properties...">
-            <object name="mapPropertiesAction"/>
-            <icon>
-               <image file="images:Button_Map.png"/>
-            </icon>
+         <action 
+            text="Toggle Labels"
+            statusTip="Toggle Labels"
+            shortcut="Ctrl+L"
+            checkable="true"
+            checked="true">
+            <object name="toggleLabelsAction"/>
          </action>
       </menu>
       <menu name="&amp;Help">
@@ -61,5 +66,10 @@
       <message>
          <mapProperties target="dmzQtPluginMapProperties" />
       </message>
+      <module>
+         <ft-canvas name="FTCanvas"/>
+         <na-canvas name="NACanvas"/>
+         <na-map name="NAMap"/>
+      </module>
    </dmzMBRAPluginMenu>
 </dmz>

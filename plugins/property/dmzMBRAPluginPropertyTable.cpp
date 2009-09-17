@@ -2,6 +2,8 @@
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
+#include <dmzQtModuleCanvas.h>
+#include <dmzQtModuleMap.h>
 #include <dmzRuntimeConfig.h>
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
@@ -9,6 +11,7 @@
 #include <dmzRuntimeSession.h>
 #include <dmzSystemFile.h>
 #include <dmzSystemStreamFile.h>
+#include <dmzTypesVector.h>
 
 #include <QtGui/QtGui>
 
@@ -217,10 +220,13 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       _log (Info),
       _defs (Info, &_log),
       _undo (Info),
+      _canvas (0),
+      _map (0),
       _lastPath (get_home_directory ()),
       _model (this),
       _proxyModel (this),
       _ignoreChange (False),
+      _defaultAttrHandle (0),
       _hideAttrHandle (0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
@@ -258,6 +264,21 @@ dmz::MBRAPluginPropertyTable::update_plugin_state (
    }
    else if (State == PluginStateStart) {
 
+      if (!_canvas && !_map) {
+
+         if (_canvasName) {
+
+             _log.error << "Canvas Module: " << _canvasName << " not found." << endl;
+         }
+
+         if (_mapName) {
+
+             _log.error << "Map Module: " << _mapName << " not found." << endl;
+         }
+
+         _ui.centerButton->hide ();
+      }
+
       Config session (get_session_config (
          get_plugin_name (),
          get_plugin_runtime_context ()));
@@ -285,9 +306,21 @@ dmz::MBRAPluginPropertyTable::discover_plugin (
 
    if (Mode == PluginDiscoverAdd) {
 
+      if (!_canvas && _canvasName) {
+
+         _canvas = QtModuleCanvas::cast (PluginPtr, _canvasName);
+      }
+
+      if (!_map && _mapName) {
+
+         _map = QtModuleMap::cast (PluginPtr, _mapName);
+      }
    }
    else if (Mode == PluginDiscoverRemove) {
 
+      if (_canvas && (_canvas == QtModuleCanvas::cast (PluginPtr))) { _canvas = 0; }
+
+      if (_map && (_map == QtModuleMap::cast (PluginPtr))) { _map = 0; }
    }
 }
 
@@ -657,6 +690,63 @@ dmz::MBRAPluginPropertyTable::on_exportButton_clicked () {
 
 
 void
+dmz::MBRAPluginPropertyTable::on_centerButton_clicked () {
+
+   if (_canvas || _map) {
+
+      QItemSelectionModel *selectionModel = _ui.tableView->selectionModel ();
+
+      if (selectionModel) {
+
+         QModelIndexList list = _proxyModel.mapSelectionToSource (
+            selectionModel->selection ()).indexes ();
+
+         if (!list.empty ()) {
+
+            QModelIndex &index = list.first ();
+            // itemFromIndex returns NULL even with valid index.
+            //QStandardItem *item = _model.itemFromIndex (index);
+            QStandardItem *item = _model.item (index.row (), index.column ());
+
+            if (item) {
+
+               const Handle Object (item->data (HandleRole).toULongLong ());
+
+               if (Object) {
+
+                  if (_map) {
+
+                     ObjectModule *objMod = get_object_module ();
+
+                     Vector pos;
+
+                     if (objMod &&
+                           objMod->lookup_position (Object, _defaultAttrHandle, pos)) {
+
+                        _map->center_on (pos.get_x (), pos.get_z ());
+                        _map->set_zoom (_map->get_zoom ());
+                     }
+                  }
+                  else if (_canvas) { _canvas->center_on (Object); }
+               }
+            }
+         }
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginPropertyTable::on_filter_textChanged (const QString &Text) {
+
+   _proxyModel.setFilterFixedString (Text);
+
+   QHeaderView *header (_ui.tableView->horizontalHeader ());
+   if (header) { header->setResizeMode (0, QHeaderView::ResizeToContents); }
+}
+
+
+void
 dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
 
    ConfigIterator it;
@@ -750,7 +840,8 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
    _typeSet = config_to_object_type_set ("object-type-list", local, context);
 
-   activate_default_object_attribute (ObjectCreateMask | ObjectDestroyMask);
+   _defaultAttrHandle =
+      activate_default_object_attribute (ObjectCreateMask | ObjectDestroyMask);
 
    _hideAttrHandle = activate_object_attribute (
       ObjectAttributeHideName,
@@ -781,6 +872,14 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
          header->setResizeMode (pw->Column, QHeaderView::ResizeToContents);
       }
    }
+
+   _canvasName = config_to_string ("module.canvas.name", local);
+
+   if (_canvasName) { _log.info << "Canvas Module Name: " << _canvasName << endl; }
+
+   _mapName = config_to_string ("module.map.name", local);
+
+   if (_mapName) { _log.info << "Map Module Name: " << _mapName << endl; }
 
    connect (
       &_model, SIGNAL (itemChanged (QStandardItem *)),

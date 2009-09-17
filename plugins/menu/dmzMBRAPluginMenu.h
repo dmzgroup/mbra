@@ -2,6 +2,7 @@
 #define DMZ_MBRA_PLUING_MENU_DOT_H
 
 #include <dmzApplicationState.h>
+#include <dmzInputObserverUtil.h>
 #include <dmzRuntimeExit.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
@@ -16,6 +17,8 @@
 namespace dmz {
 
    class ArchiveModule;
+   class QtModuleMap;
+   class QtModuleCanvas;
    class QtModuleMainWindow;
    
    
@@ -24,6 +27,7 @@ namespace dmz {
          public Plugin,
          public MessageObserver,
          public UndoObserver,
+         public InputObserverUtil,
          public ExitObserver {
 
       Q_OBJECT
@@ -48,7 +52,7 @@ namespace dmz {
             const Handle TargetObserverHandle,
             const Data *InData,
             Data *outData);
-
+            
          // Undo Observer Interface
          virtual void update_recording_state (
             const UndoRecordingStateEnum RecordingState,
@@ -59,6 +63,34 @@ namespace dmz {
             const String *NextUndoName,
             const String *NextRedoName);
 
+         // Input Observer Interface
+         virtual void update_channel_state (const Handle Channel, const Boolean State);
+
+         virtual void receive_axis_event (
+            const Handle Channel,
+            const InputEventAxis &Value) {;}
+
+         virtual void receive_button_event (
+            const Handle Channel,
+            const InputEventButton &Value) {;}
+
+         virtual void receive_switch_event (
+            const Handle Channel,
+            const InputEventSwitch &Value) {;}
+
+         virtual void receive_key_event (
+            const Handle Channel,
+            const InputEventKey &Value) {;}
+
+         virtual void receive_mouse_event (
+            const Handle Channel,
+            const InputEventMouse &Value) {;}
+
+         virtual void receive_data_event (
+            const Handle Channel,
+            const Handle Source,
+            const Data &Value) {;}
+
          // Exit Observer Interface
          virtual void exit_requested (
             const ExitStatusEnum Status,
@@ -66,17 +98,24 @@ namespace dmz {
             
       protected slots:
          void on_openAction_triggered ();
+         void on_openRecentAction_triggered (QAction *);
          void on_saveAction_triggered ();
          void on_saveAsAction_triggered ();
+         void on_screenGrabAction_triggered ();
+         void on_printAction_triggered ();
          void on_undoAction_triggered ();
          void on_redoAction_triggered ();
          void on_clearAction_triggered ();
-         void on_mapPropertiesAction_triggered ();
+         void on_toggleLabelsAction_triggered ();
          void on_onlineHelpAction_triggered ();
 
       protected:
          struct MenuStruct;
-         
+         void _update_recent_actions ();
+         QPixmap _screen_grab ();
+         QPixmap _na_screen_grab ();
+         QPixmap _ft_screen_grab ();
+         Boolean _ok_to_load (const QString &FileName);
          void _load_file (const QString &FileName);
          void _save_file (const QString &FileName);
          void _set_current_file (const QString &FileName);
@@ -93,20 +132,34 @@ namespace dmz {
          String _archiveModuleName;
          QtModuleMainWindow *_mainWindowModule;
          String _mainWindowModuleName;
+         QtModuleCanvas *_ftCanvasModule;
+         String _ftCanvasModuleName;
+         QtModuleCanvas *_naCanvasModule;
+         String _naCanvasModuleName;
+         QtModuleMap *_naMapModule;
+         String _naMapModuleName;
          Handle _archive;
          Undo _undo;
          PathContainer _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
-         Message _mapPropertiesMsg;
+         Message _toggleLabelsMsg;
+         Handle _toggleLabelsTarget;
+         Handle _toggleLabelsAttr;
          Handle _fileHandle;
-         Handle _mapPropertiesTarget;
          String _suffix;
          String _defaultExportName;
          String _onlineHelpUrl;
          QAction *_undoAction;
          QAction *_redoAction;
+         QMenu *_recentFilesMenu;
+         QActionGroup *_recentFilesActionGroup;
          QString _exportName;
+         Handle _naChannel;
+         Handle _ftChannel;
+         Int32 _naActive;
+         Int32 _ftActive;
+         Int32 _maxRecentFiles;
          
          struct MenuStruct {
 
@@ -117,7 +170,7 @@ namespace dmz {
          };
          
          HashTableStringTemplate<MenuStruct> _menuTable;
-
+         
       private:
          MBRAPluginMenu ();
          MBRAPluginMenu (const MBRAPluginMenu &);

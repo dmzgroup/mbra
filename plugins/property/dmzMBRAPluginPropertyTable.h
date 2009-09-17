@@ -22,6 +22,9 @@ class QStandarItem;
 
 namespace dmz {
 
+   class QtModuleCanvas;
+   class QtModuleMap;
+
    class MBRAPluginPropertyTable :
          public QWidget,
          public Plugin,
@@ -165,6 +168,8 @@ namespace dmz {
       protected slots:
          void _item_changed (QStandardItem *item);
          void on_exportButton_clicked ();
+         void on_centerButton_clicked ();
+         void on_filter_textChanged (const QString &Text);
 
       protected:
          typedef QList<QStandardItem *> QStandardItemList;
@@ -175,6 +180,12 @@ namespace dmz {
          Log _log;
          Definitions _defs;
          Undo _undo;
+
+         QtModuleCanvas *_canvas;
+         String _canvasName;
+
+         QtModuleMap *_map;
+         String _mapName;
 
          String _lastPath;
 
@@ -187,6 +198,7 @@ namespace dmz {
 
          Boolean _ignoreChange;
 
+         Handle _defaultAttrHandle;
          Handle _hideAttrHandle;
 
          HashTableHandleTemplate<QStandardItemList> _rowTable;

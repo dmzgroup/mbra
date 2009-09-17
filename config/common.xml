@@ -15,6 +15,7 @@
    <plugin name="dmzArchivePluginObject"/>
    <plugin name="dmzArchivePluginInputChannelState" scope="archive-channel-state"/>
    <plugin name="dmzArchivePluginUndo"/>
+   <plugin name="dmzMBRAPluginArchiveSupport"/>
    <plugin name="dmzObjectModuleBasic"/>
    <plugin name="dmzObjectPluginUndo"/>
    <plugin name="dmzObjectPluginCleanup"/>
@@ -22,7 +23,9 @@
    <plugin name="dmzQtPluginTabWidget" unique="central-widget"/>
    <plugin name="dmzQtPluginStackedWidget" unique="tool-palette"/>
    <plugin name="dmzQtPluginStackedWidget" unique="data-palette"/>
+   <plugin name="dmzQtPluginStackedWidget" unique="charts-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
+   <plugin name="dmzMBRAPluginMenu"/>
 
 <!--
    <plugin name="dmzObjectPluginDump"/>
@@ -45,10 +48,7 @@
    </menu-bar>
    <dock-windows>
       <group area="right">
-         <widget name="tool-palette" title="Tool Palette" visible="false" floating="true">
-            <allowed-areas none="true"/>
-         </widget>
-         <widget name="NACanvasLayer" title="Networks" visible="false" floating="true">
+         <widget name="charts-palette" title="Charts Palette" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
       </group>
@@ -56,6 +56,18 @@
          <widget name="data-palette" title="Data Table" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
+      </group>
+      <group area="right">
+         <widget name="tool-palette" title="Tool Palette" visible="false" floating="true">
+            <allowed-areas none="true"/>
+         </widget>
+      </group>
+      <group area="right">
+         <widget name="NACanvasLayer" title="Network Layers" visible="false" floating="true">
+            <allowed-areas none="true"/>
+         </widget>
+      </group>
+      <group area="bottom">
          <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
@@ -71,6 +83,7 @@
    <archive>
       <object-type-set>
          <object-type name="na_tool_link_node"/>
+         <object-type name="na_simulator"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">

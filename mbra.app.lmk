@@ -5,7 +5,7 @@ lmk.add_vars {
    majorVersion = "2",
    minorVersion = "0",
    bugVersion = "0",
-   releaseType = "test 6",
+   releaseType = "test 7",
    aboutImage = "images:IconFiles/AppIconMBRA_128x128.png",
 }
 lmk.add_files ({"version.xml",}, {src="version"})
@@ -50,9 +50,11 @@ lmk.add_preqs {
    "dmzQtPluginRenderPickCanvas",
    "dmzQtPluginMapArchive",
    "dmzQtPluginButtonToChannel",
+   "dmzMBRAPluginArchiveSupport",
    "dmzMBRAPluginPropertyEditor",
    "dmzMBRAPluginPropertyTable",
    "dmzMBRAPluginCalculate",
+   "dmzMBRAPluginNASimulator",
    "dmzMBRAPluginFTViewState",
    "dmzMBRAPluginLinkEditor",
    "dmzMBRAPluginMenu",
