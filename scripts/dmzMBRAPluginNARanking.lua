@@ -1,6 +1,7 @@
 local NodeType = dmz.object_type.new ("na_node")
 local NodeLinkType = dmz.object_type.new ("na_link_attribute")
 local SimType = dmz.object_type.new ("na_simulator")
+local LabelHandle = dmz.handle.new ("NA_Node_Objective_Label")
 local LinkHandle = dmz.handle.new ("Node_Link")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
@@ -16,8 +17,15 @@ local WeightBetweennessHandle = dmz.handle.new ("NA_Weight_Betweenness")
 
 local ObjectiveNoneHandle = dmz.handle.new ("NA_Objective_None")
 local ObjectiveRiskHandle = dmz.handle.new ("NA_Objective_Risk")
+local ObjectiveTxVHandle = dmz.handle.new ("NA_Objective_TxV")
+local ObjectiveThreatHandle = dmz.handle.new ("NA_Objective_Threat")
+local ObjectiveVulnerabilityHandle = dmz.handle.new ("NA_Objective_Vulnerability")
+local ObjectiveConsequenceHandle = dmz.handle.new ("NA_Objective_Consequence")
 
-local function calc_objective_none () return 1 end
+local function calc_objective_none (self, object)
+   dmz.object.text (object, LabelHandle, "")
+   return 1
+end
 
 local function calc_objective_risk (self, object)
    local result = 0
@@ -27,6 +35,39 @@ local function calc_objective_risk (self, object)
    if Threat and Vulnerability and Consequence then
       result = Threat * Vulnerability * Consequence
    end
+   dmz.object.text (object, LabelHandle, "Risk = " .. tostring (result))
+   return result
+end
+
+local function calc_objective_txv (self, object)
+   local result = 0
+   local Threat = dmz.object.scalar (object, ThreatHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
+   if Threat and Vulnerability then
+      result = Threat * Vulnerability
+   end
+   dmz.object.text (object, LabelHandle, "T x V = " .. tostring (result))
+   return result
+end
+
+local function calc_objective_threat (self, object)
+   local result = dmz.object.scalar (object, ThreatHandle)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Threat = " .. tostring (result))
+   return result
+end
+
+local function calc_objective_vulnerability (self, object)
+   local result = dmz.object.scalar (object, VulnerabilityHandle)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Vulnerability = " .. tostring (result))
+   return result
+end
+
+local function calc_objective_consequence (self, object)
+   local result = dmz.object.scalar (object, ConsequenceHandle)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Consequence = " .. tostring (result))
    return result
 end
 
@@ -232,6 +273,14 @@ local function update_simulator_flag (self, handle, attr, value)
          self.objective = calc_objective_none
       elseif attr == ObjectiveRiskHandle then
          self.objective = calc_objective_risk
+      elseif attr == ObjectiveTxVHandle then
+         self.objective = calc_objective_txv
+      elseif attr == ObjectiveThreatHandle then
+         self.objective = calc_objective_threat
+      elseif attr == ObjectiveVulnerabilityHandle then
+         self.objective = calc_objective_vulnerability
+      elseif attr == ObjectiveConsequenceHandle then
+         self.objective = calc_objective_consequence
       end
    else self.weightList[attr] = nil
    end
@@ -294,6 +343,10 @@ function new (config, name)
    self.objObs:register (WeightBetweennessHandle, cb, self)
    self.objObs:register (ObjectiveNoneHandle, cb, self)
    self.objObs:register (ObjectiveRiskHandle, cb, self)
+   self.objObs:register (ObjectiveTxVHandle, cb, self)
+   self.objObs:register (ObjectiveThreatHandle, cb, self)
+   self.objObs:register (ObjectiveVulnerabilityHandle, cb, self)
+   self.objObs:register (ObjectiveConsequenceHandle, cb, self)
 
    cb = {
       link_objects = link_objects,

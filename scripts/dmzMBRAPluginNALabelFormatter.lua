@@ -4,9 +4,8 @@ local function update_object (self, obj)
    local value = ""
    if self.toggle then
       value = obj.name
-      if self.currentAttr then
-         local str = obj[self.currentAttr]
-         if str then value = value .. "\n" .. str end
+      if obj.objective and obj.objective ~= "" then
+         value = value .. "\n" .. obj.objective
       end
    end
    dmz.object.text (obj.handle, "NA_Node_Label", value)
@@ -39,6 +38,20 @@ end,
 
 }
 
+local objectiveAttr = {
+
+update_object_text = function (self, handle, attr, value)
+
+   local obj = self.objects[handle]
+
+   if obj then
+      obj.objective = value
+      update_object (self, obj)
+   end
+end,
+
+}
+
 local function receive_toggle (self, message, data)
    if dmz.data.is_a (data) then
       self.toggle = data:lookup_boolean ("toggle", 1)
@@ -61,5 +74,6 @@ function new (config, name)
 
    self.obs:register (nil, defaultAttr, self)
    self.obs:register ("NA_Node_Name", nameAttr, self)
+   self.obs:register ("NA_Node_Objective_Label", objectiveAttr, self)
    self.msgObs:register (self.message, receive_toggle, self)
 end
