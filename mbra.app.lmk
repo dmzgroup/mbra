@@ -54,6 +54,7 @@ lmk.add_preqs {
    "dmzMBRAPluginPropertyEditor",
    "dmzMBRAPluginPropertyTable",
    "dmzMBRAPluginCalculate",
+   "dmzMBRAPluginNASimulator",
    "dmzMBRAPluginFTViewState",
    "dmzMBRAPluginLinkEditor",
    "dmzMBRAPluginMenu",
