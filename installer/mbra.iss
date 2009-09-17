@@ -1,6 +1,6 @@
 #define BuildMode "opt"
 #define AppName "MBRA"
-#define AppVerName "MBRA 1.1"
+#define AppVerName "MBRA 2.0"
 #define Publisher "CHDS"
 #define AppURL "http://svndmz.nps.edu"
 #define AppExeName "mbra.exe"
