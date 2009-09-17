@@ -2,6 +2,7 @@
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectConsts.h>
 #include <dmzObjectModule.h>
+#include <dmzQtConfigRead.h>
 #include <dmzQtModuleCanvas.h>
 #include <dmzQtModuleMap.h>
 #include <dmzRuntimeConfig.h>
@@ -213,7 +214,7 @@ LocalDelegate::createEditor(
 dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       const PluginInfo &Info,
       Config &local) :
-      QWidget (0),
+      QFrame (0),
       Plugin (Info),
       ObjectObserverUtil (Info, local),
       QtWidget (Info),
@@ -837,6 +838,8 @@ void
 dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
+   
+   qframe_config_read ("frame", local, this);
 
    _typeSet = config_to_object_type_set ("object-type-list", local, context);
 

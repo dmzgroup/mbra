@@ -49,7 +49,6 @@
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
-      <plugin name="dmzQtPluginTabWidget" unique="na-data-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
       <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
@@ -71,7 +70,7 @@
       <channel name="NetworkAnalysisChannel" widget="na-tool-tab"/>
    </tool-palette>
    <data-palette>
-      <channel name="NetworkAnalysisChannel" widget="na-data-tab"/>
+      <channel name="NetworkAnalysisChannel" widget="NetworkAnalysisPropertyTable"/>
    </data-palette>
    <charts-palette>
       <channel name="NetworkAnalysisChannel" widget="na-charts-tab"/>
@@ -90,12 +89,6 @@
       </tab>
       <widget name="na-degree-graph" title="Degree Graph"/>
    </na-charts-tab>
-   <na-data-tab>
-      <tab>
-         <minimum-size width="350" height="250"/>
-      </tab>
-      <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
-   </na-data-tab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
@@ -241,6 +234,11 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-node-properties>
+      <frame>
+         <widget>
+            <minimum-size width="350" height="250"/>
+         </widget>
+      </frame>
       <object-type-list>
          <object-type name="na_node"/>
          <object-type name="na_link_attribute"/>
