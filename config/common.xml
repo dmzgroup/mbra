@@ -74,6 +74,9 @@
       </group>
    </dock-windows>
 </window>
+<central-widget>
+   <remember-state value="false"/>
+</central-widget>
 <dmzArchivePluginObject>
    <archive-scope>
       <string value="archive"/>

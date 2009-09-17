@@ -198,6 +198,7 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
       QTableWidgetItem *name = new QTableWidgetItem (
          info.completeBaseName () + "." + info.completeSuffix ());
       name->setData (Qt::UserRole, info.absoluteFilePath ());
+      name->setToolTip (info.absoluteFilePath ());
       QTableWidgetItem *date = new QTableWidgetItem;
       date->setData (Qt::DisplayRole, info.lastModified ());
       ui.fileTable->setItem (row, 0, name);
