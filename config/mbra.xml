@@ -71,8 +71,5 @@
          <na-canvas name="NACanvas"/>
          <na-map name="NAMap"/>
       </module>
-      _ftCanvasModuleName = config_to_string ("module.ft-canvas.name", local);
-      _naCanvasModuleName = config_to_string ("module.na-canvas.name", local);
-      _naMapModuleName = config_to_string ("module.na-map.name", local);
    </dmzMBRAPluginMenu>
 </dmz>

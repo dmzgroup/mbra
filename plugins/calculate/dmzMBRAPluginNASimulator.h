@@ -1,0 +1,70 @@
+#ifndef DMZ_MBRA_PLUGIN_NA_SIMULATOR_DOT_H
+#define DMZ_MBRA_PLUGIN_NA_SIMULATOR_DOT_H
+
+#include <dmzObjectObserverUtil.h>
+#include <dmzQtWidget.h>
+#include <dmzRuntimeLog.h>
+#include <dmzRuntimeObjectType.h>
+#include <dmzRuntimePlugin.h>
+#include <dmzTypesHandleContainer.h>
+#include <QtGui/QFrame>
+#include <QtGui/QButtonGroup>
+
+
+namespace dmz {
+
+   class MBRAPluginNASimulator :
+         public QFrame,
+         public QtWidget,
+         public Plugin,
+         public ObjectObserverUtil {
+
+      Q_OBJECT
+      
+      public:
+         MBRAPluginNASimulator (const PluginInfo &Info, Config &local);
+         ~MBRAPluginNASimulator ();
+
+         // QtWidget Interface
+         virtual QWidget *get_qt_widget ();
+         
+         // Plugin Interface
+         virtual void update_plugin_state (
+            const PluginStateEnum State,
+            const UInt32 Level);
+
+         virtual void discover_plugin (
+            const PluginDiscoverEnum Mode,
+            const Plugin *PluginPtr);
+
+         // Object Observer Interface
+         virtual void update_object_flag (
+            const UUID &Identity,
+            const Handle ObjectHandle,
+            const Handle AttributeHandle,
+            const Boolean Value,
+            const Boolean *PreviousValue);
+
+      protected slots:
+         void _slot_weight_by_clicked (int id);
+         void _slot_objective_function_clicked (int id);
+         
+      protected:
+         void _init (Config &local);
+
+         Log _log;
+         Handle _simulatorHandle;
+         ObjectType _simulatorType;
+         HandleContainer _weightByHandles;
+         HandleContainer _objectiveFunctionHandles;
+         QButtonGroup _weightByGroup;
+         QButtonGroup _objectiveFunctionGroup;
+
+      private:
+         MBRAPluginNASimulator ();
+         MBRAPluginNASimulator (const MBRAPluginNASimulator &);
+         MBRAPluginNASimulator &operator= (const MBRAPluginNASimulator &);
+   };
+};
+
+#endif // DMZ_MBRA_PLUGIN_NA_SIMULATOR_DOT_H
