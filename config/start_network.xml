@@ -3,4 +3,7 @@
 <central-widget>
    <focus widget="NACanvasMap"/>
 </central-widget>
+<dmzQtPluginMapProperties>
+   <show-map value="true"/>
+</dmzQtPluginMapProperties>
 </dmz>

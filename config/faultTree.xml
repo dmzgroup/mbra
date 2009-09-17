@@ -51,6 +51,10 @@
       <object-type-list>
          <object-type name="ft_threat"/>
       </object-type-list>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <edit-message name="FTThreatEditMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="FT_Name"/>
@@ -102,6 +106,12 @@
             name="Allocation"
             attribute="FT_Threat_Allocation"
             prefix="$"
+         />
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"
          />
       </property-list>
    </ft-threat-properties>

@@ -44,6 +44,7 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.scalar (object, DegreeHandle)
    if value and (self.maxDegrees > 0) then result = value / self.maxDegrees end
+--cprint ("Degree", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
@@ -133,8 +134,8 @@ end,
 calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, BetweennessHandle)
---cprint (tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), object, dmz.object.type (object):get_name ())
    if value and (self.maxBetweenness > 0) then result = value / self.maxBetweenness end
+--cprint ("Between", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 

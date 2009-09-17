@@ -19,6 +19,14 @@ using namespace dmz;
 
 namespace {
 
+struct TabStruct {
+
+   QWidget *widget;
+   QFormLayout *layout;
+
+   TabStruct () : widget (0), layout (0) {;}
+};
+
 typedef dmz::MBRAPluginPropertyEditor::PropertyWidget pedit;
 typedef dmz::MBRAPluginPropertyEditor::PropertyUpdater pupdate;
 
@@ -629,6 +637,8 @@ dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
 dmz::MBRAPluginPropertyEditor::~MBRAPluginPropertyEditor () {
 
    if (_widgets) { delete _widgets; _widgets = 0; }
+
+   _tabNameTable.empty ();
 }
 
 
@@ -714,41 +724,88 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
       if (!_showFTButton) { ui.ftButton->hide (); }
       dialog.setWindowTitle (_dialogTitle.get_buffer ());
 
-      QFormLayout *layout = new QFormLayout (ui.attributes);
-
       PropertyWidget *pe (_widgets);
       PropertyUpdater *head (0), *current (0);
 
       QWidget *prevWidget (0);
 
+      HashTableUInt32Template<TabStruct> tabs;
+
+      const Boolean Tabbed  (_tabNameTable.get_count () > 0);
+
+      if (Tabbed) { ui.stack->setCurrentIndex (0); }
+      else { ui.stack->setCurrentIndex (1); }
+
       while (pe) {
 
-         PropertyUpdater *next = pe->create_widgets (
-            Object,
-            *_objMod,
-            ui.attributes,
-            layout);
+         TabStruct *ts = tabs.lookup (pe->tab);
 
-         if (next) {
+         if (!ts) {
 
-            if (!current) { head = current = next; }
-            else { current->next = next; current = next; }
+            ts = new TabStruct;
 
-            QWidget *widget = next->get_widget ();
+            if (tabs.store (pe->tab, ts)) {
 
-            if (widget) {
+               String title ("");
 
-               if (prevWidget) { QWidget::setTabOrder (prevWidget, widget); }
-               else { widget->setFocus (); }
+               String *ptr = _tabNameTable.lookup (pe->tab);
 
-               prevWidget = widget;
+               if (ptr) { title = *ptr; }
+
+               if (Tabbed) {
+
+                  ts->widget = ui.attributesTab->widget (pe->tab);
+               }
+               else { ts->widget = ui.attributes; }
+
+               if (!ts->widget) {
+
+                  ts->widget = new QWidget (ui.attributes);
+
+                  ui.attributesTab->insertTab (pe->tab, ts->widget, title.get_buffer ());
+               }
+               else if (Tabbed) {
+
+                  ui.attributesTab->setTabText (pe->tab, title.get_buffer ());
+               }
+
+               ts->layout = new QFormLayout (ts->widget);
+            }
+         }
+
+         if (ts) {
+
+            PropertyUpdater *next = pe->create_widgets (
+               Object,
+               *_objMod,
+               ts->widget,
+               ts->layout);
+
+            if (next) {
+
+               if (!current) { head = current = next; }
+               else { current->next = next; current = next; }
+
+               QWidget *widget = next->get_widget ();
+
+               if (widget) {
+
+                  if (prevWidget) { QWidget::setTabOrder (prevWidget, widget); }
+                  else { widget->setFocus (); }
+
+                  prevWidget = widget;
+               }
             }
          }
 
          pe = pe->next;
       }
 
+      tabs.empty ();
+
       if (prevWidget && _showFTButton) { QWidget::setTabOrder (prevWidget, ui.ftButton); }
+
+//      dialog.adjustSize ();
 
       if (dialog.exec () == QDialog::Accepted) {
 
@@ -802,6 +859,8 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
       const String Name = config_to_string ("name", widget) + ":";
       const Handle AttrHandle = _defs.create_named_handle (
          config_to_string ("attribute", widget, ObjectAttributeDefaultName));
+
+      const UInt32 Tab = config_to_uint32 ("tab", widget, 0);
 
       if (Type == "line") {
 
@@ -872,7 +931,7 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
             config_to_boolean ("super", widget));
       }
 
-      if (pe) { pe->next = result; result = pe; }
+      if (pe) { pe->tab = Tab; pe->next = result; result = pe; }
    }
 
    return result;
@@ -919,6 +978,28 @@ dmz::MBRAPluginPropertyEditor::_init (Config &local) {
    if (local.lookup_all_config ("property-list.property", list)) {
 
       _widgets = _create_widgets (list);
+   }
+
+   Config tabList;
+
+   if (local.lookup_all_config ("tab-list.tab", tabList)) {
+
+      ConfigIterator it;
+      Config tab;
+      UInt32 count = 0;
+
+      while (tabList.get_next_config (it, tab)) {
+
+         const String Name = config_to_string ("name", tab);
+
+         if (Name) {
+
+            String *ptr = new String (Name);
+
+            if (ptr && _tabNameTable.store (count, ptr)) { count++; }
+            else if (ptr) { delete ptr; ptr = 0; }
+         }
+      }
    }
 }
 
