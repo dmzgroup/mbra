@@ -238,6 +238,7 @@ local function receive_hide (self)
    self.visible = false
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
+         dmz.object.text (handle, LabelHandle, "")
          local state = dmz.object.state (handle)
          if state then 
             state:unset (OverlayState)
