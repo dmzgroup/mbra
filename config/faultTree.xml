@@ -36,9 +36,6 @@
    </plugin-list>
    <ft-component-properties>
       <title value="Component Properties"/>
-      <tab-list>
-         <tab name="Properties"/>
-      </tab-list>
       <edit-message name="FTComponentEditMessage"/>
       <property-list>
          <property type="line" name="Name" attribute="FT_Name"/>
@@ -109,6 +106,12 @@
             name="Allocation"
             attribute="FT_Threat_Allocation"
             prefix="$"
+         />
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"
          />
       </property-list>
    </ft-threat-properties>

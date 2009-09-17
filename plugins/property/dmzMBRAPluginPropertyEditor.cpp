@@ -731,6 +731,11 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
       HashTableUInt32Template<TabStruct> tabs;
 
+      const Boolean Tabbed  (_tabNameTable.get_count () > 0);
+
+      if (Tabbed) { ui.stack->setCurrentIndex (0); }
+      else { ui.stack->setCurrentIndex (1); }
+
       while (pe) {
 
          TabStruct *ts = tabs.lookup (pe->tab);
@@ -747,17 +752,21 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
                if (ptr) { title = *ptr; }
 
-               ts->widget = ui.attributes->widget (pe->tab);
+               if (Tabbed) {
+
+                  ts->widget = ui.attributesTab->widget (pe->tab);
+               }
+               else { ts->widget = ui.attributes; }
 
                if (!ts->widget) {
 
                   ts->widget = new QWidget (ui.attributes);
 
-                  ui.attributes->insertTab (pe->tab, ts->widget, title.get_buffer ());
+                  ui.attributesTab->insertTab (pe->tab, ts->widget, title.get_buffer ());
                }
-               else {
+               else if (Tabbed) {
 
-                  ui.attributes->setTabText (pe->tab, title.get_buffer ());
+                  ui.attributesTab->setTabText (pe->tab, title.get_buffer ());
                }
 
                ts->layout = new QFormLayout (ts->widget);
@@ -796,7 +805,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
       if (prevWidget && _showFTButton) { QWidget::setTabOrder (prevWidget, ui.ftButton); }
 
-      dialog.adjustSize ();
+//      dialog.adjustSize ();
 
       if (dialog.exec () == QDialog::Accepted) {
 
