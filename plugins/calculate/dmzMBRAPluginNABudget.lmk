@@ -1,0 +1,14 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginNABudget"
+lmk.set_type "plugin"
+lmk.add_files {"BudgetForm.ui"}
+lmk.add_files ({"dmzMBRAPluginNABudget.h",}, {src="moc"})
+lmk.add_files {"dmzMBRAPluginNABudget.cpp",}
+lmk.add_libs {
+   "dmzQtUtil",
+   "dmzObjectUtil",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzQtFramework", "dmzObjectFramework",}
+lmkQt.add_libs {"QtCore","QtGui",}
+

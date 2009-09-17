@@ -177,22 +177,21 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>$0</string>
+        <string>$ 0</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout">
-     <item>
+     <item row="5" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Budget</string>
+        <string>Budget:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="5" column="1">
       <widget class="QSpinBox" name="budgetSpinBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -204,10 +203,13 @@
         <string/>
        </property>
        <property name="prefix">
-        <string>($) </string>
+        <string>$ </string>
        </property>
        <property name="maximum">
         <number>0</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
        </property>
       </widget>
      </item>
