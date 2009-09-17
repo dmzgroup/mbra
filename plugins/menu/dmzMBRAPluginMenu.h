@@ -140,7 +140,7 @@ namespace dmz {
          String _naMapModuleName;
          Handle _archive;
          Undo _undo;
-         PathContainer _fileCache;
+         QStringList _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
          Message _toggleLabelsMsg;
