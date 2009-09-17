@@ -3,6 +3,9 @@
 <central-widget>
    <focus widget="NACanvas"/>
 </central-widget>
+<dmzQtPluginMapProperties>
+   <show-map value="true"/>
+</dmzQtPluginMapProperties>
 <archive>
    <object type="ft_component_root">
       <attributes>
