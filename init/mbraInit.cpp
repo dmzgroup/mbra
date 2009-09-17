@@ -250,6 +250,7 @@ dmz::mbraInit::on_buttonBox_accepted () {
 
       if (item) { selectedFile = item->data (Qt::UserRole).toString (); }
    }
+   else { launchNA = True; }
 
    _start = True;
    close ();
