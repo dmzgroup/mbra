@@ -36,6 +36,7 @@ lmk.add_preqs {
    "dmzLuaExtRuntime",
    "dmzQtPluginLuaProfiler",
    "dmzQtPluginVersion",
+   "dmzQtPluginWidget",
    "dmzQtPluginStackedWidget",
    "dmzInputPluginMouseEventToMessage",
    "dmzQtModuleMapBasic",
