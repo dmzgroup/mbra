@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="weightGroupBox">
      <property name="title">
-      <string>Weight by</string>
+      <string>Weight By</string>
      </property>
      <property name="flat">
       <bool>true</bool>
