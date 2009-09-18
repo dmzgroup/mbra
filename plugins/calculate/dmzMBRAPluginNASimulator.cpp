@@ -11,7 +11,9 @@
 #include <QtGui/QtGui>
 
 
-dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (const PluginInfo &Info, Config &local) :
+dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (
+      const PluginInfo &Info,
+      Config &local) :
       QFrame (0),
       QtWidget (Info),
       Plugin (Info),

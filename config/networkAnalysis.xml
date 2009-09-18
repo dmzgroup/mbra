@@ -46,6 +46,7 @@
       </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
       <plugin name="dmzMBRAPluginNASimulator"/>
+      <plugin name="dmzMBRAPluginNABudget"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
@@ -77,6 +78,7 @@
    </charts-palette>
    <na-tool-simulator>
       <widget name="dmzMBRAPluginCalculate"/>
+      <widget name="dmzMBRAPluginNABudget"/>
       <widget name="dmzMBRAPluginNASimulator"/>
    </na-tool-simulator>
    <na-tool-tab>
