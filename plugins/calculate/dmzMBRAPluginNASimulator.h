@@ -9,6 +9,7 @@
 #include <dmzTypesHandleContainer.h>
 #include <QtGui/QFrame>
 #include <QtGui/QButtonGroup>
+#include "ui_NASimulatorForm.h"
 
 
 namespace dmz {
@@ -47,18 +48,19 @@ namespace dmz {
 
       protected slots:
          void _slot_weight_by_clicked (int id);
-         void _slot_objective_function_clicked (int id);
+         void on_objectiveComboBox_currentIndexChanged (int id);
          
       protected:
          void _init (Config &local);
 
          Log _log;
+         Ui::NASimulatorForm _ui;
          Handle _simulatorHandle;
          ObjectType _simulatorType;
          HandleContainer _weightByHandles;
-         HandleContainer _objectiveFunctionHandles;
          QButtonGroup _weightByGroup;
-         QButtonGroup _objectiveFunctionGroup;
+         QList<Handle> _objectiveFunctionHandles;
+         Boolean _ignoreUpdates;
 
       private:
          MBRAPluginNASimulator ();
