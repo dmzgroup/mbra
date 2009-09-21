@@ -9,11 +9,13 @@ local PreventionCostHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
 local RankHandle = dmz.handle.new ("NA_Node_Rank")
 local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
-local Betweennessandle = dmz.handle.new ("NA_Node_Betweenness")
+local BetweennessHandle = dmz.handle.new ("NA_Node_Betweenness")
+local HeightHandle = dmz.handle.new ("NA_Node_Height")
 local OverlayState = dmz.definitions.lookup_state ("NA_Node_Overlay")
 
 local WeightDegreesHandle = dmz.handle.new ("NA_Weight_Degrees")
 local WeightBetweennessHandle = dmz.handle.new ("NA_Weight_Betweenness")
+local WeightHeightHandle = dmz.handle.new ("NA_Weight_Height")
 
 local ObjectiveNoneHandle = dmz.handle.new ("NA_Objective_None")
 local ObjectiveRiskHandle = dmz.handle.new ("NA_Objective_Risk")
@@ -182,6 +184,69 @@ end,
 
 }
 
+local function find_height (self, current, target, visited, depth)
+   depth = depth + 1
+   for _, object in ipairs (current) do visited[object] = true end
+   local found = false
+   local list = {}
+   for _, object in ipairs (current) do
+      local subs = dmz.object.sub_links (object, LinkHandle)
+      if subs then
+         for _, sub in ipairs (subs) do
+            if sub == target then found = true
+            elseif not visited[sub] then list[#list + 1] = sub
+            end
+         end
+      end
+      local supers = dmz.object.super_links (object, LinkHandle)
+      if supers then
+         for _, super in ipairs (supers) do
+            if super == target then found = true
+            elseif not visited[super] then list[#list + 1] = super
+            end
+         end
+      end
+   end
+   if not found and #list > 0 then
+      depth = find_height (self, list, target, visited, depth)
+   end
+   return depth
+end
+
+local weight_height = {
+
+setup = function (self)
+   self.maxHeight = 0
+   for object in pairs (self.objects) do
+      dmz.object.counter (object, HeightHandle, 0)
+   end
+   for root in pairs (self.objects) do
+      if (dmz.object.type (root):is_of_type (NodeType)) then
+         local height = 0
+         for target in pairs (self.objects) do
+            if root ~= target and dmz.object.type (target):is_of_type (NodeType) then
+               local list = {}
+               list[#list + 1] = root
+               local visited = {}
+               height = height + find_height(self, list, target, visited, 0)
+            end
+         end
+         if self.maxHeight < height then self.maxHeight = height end
+         dmz.object.counter (root, HeightHandle, height)
+      end
+   end
+end,
+
+calc = function (self, object)
+   local result = 0
+   local value = dmz.object.counter (object, HeightHandle)
+   if value and (self.maxHeight > 0) then result = value / self.maxHeight end
+cprint ("Height", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
+   return result
+end,
+
+}
+
 local function rank_object (self, object)
    local result = 0
    if self.objective then
@@ -270,6 +335,8 @@ local function update_simulator_flag (self, handle, attr, value)
          self.weightList[WeightDegreesHandle] = weight_degrees
       elseif attr == WeightBetweennessHandle then
          self.weightList[WeightBetweennessHandle] = weight_betweenness
+      elseif attr == WeightHeightHandle then
+         self.weightList[WeightHeightHandle] = weight_height
       elseif attr == ObjectiveNoneHandle then
          self.objective = calc_objective_none
       elseif attr == ObjectiveRiskHandle then
@@ -342,6 +409,7 @@ function new (config, name)
    cb = { update_object_flag = update_simulator_flag, }
    self.objObs:register (WeightDegreesHandle, cb, self)
    self.objObs:register (WeightBetweennessHandle, cb, self)
+   self.objObs:register (WeightHeightHandle, cb, self)
    self.objObs:register (ObjectiveNoneHandle, cb, self)
    self.objObs:register (ObjectiveRiskHandle, cb, self)
    self.objObs:register (ObjectiveTxVHandle, cb, self)

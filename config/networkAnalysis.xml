@@ -552,6 +552,7 @@
    <dmzMBRAPluginNASimulator>
       <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
       <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
+      <weight-by text="Height" attribute="NA_Weight_Height"/>
       <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
       <objective-function text="Risk" attribute="NA_Objective_Risk"/>
       <objective-function text="Threat x Vulnerability" attribute="NA_Objective_TxV"/>
