@@ -11,7 +11,9 @@
 #include <QtGui/QtGui>
 
 
-dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (const PluginInfo &Info, Config &local) :
+dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (
+      const PluginInfo &Info,
+      Config &local) :
       QFrame (0),
       QtWidget (Info),
       Plugin (Info),
@@ -20,10 +22,12 @@ dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (const PluginInfo &Info, Confi
       _simulatorHandle (0),
       _simulatorType (),
       _weightByHandles (),
-      _objectiveFunctionHandles (),
       _weightByGroup (),
-      _objectiveFunctionGroup () {
+      _objectiveFunctionHandles (),
+      _ignoreUpdates (False) {
 
+   _ui.setupUi (this);
+   
    _init (local);
 }
 
@@ -92,19 +96,21 @@ dmz::MBRAPluginNASimulator::update_object_flag (
       const Boolean Value,
       const Boolean *PreviousValue) {
 
-   if (_weightByHandles.contains (AttributeHandle)) {
+   if (!_ignoreUpdates) {
+      
+      if (_weightByHandles.contains (AttributeHandle)) {
 
-      QAbstractButton *button =
-         _weightByGroup.button ((qlonglong)AttributeHandle);
+         QAbstractButton *button =
+            _weightByGroup.button ((qlonglong)AttributeHandle);
 
-      if (button) { button->setChecked (Value); }
-   }
-   else if (_objectiveFunctionHandles.contains (AttributeHandle)) {
+         if (button) { button->setChecked (Value); }
+      }
+      else if (_objectiveFunctionHandles.contains (AttributeHandle) && Value) {
 
-      QAbstractButton *button =
-         _objectiveFunctionGroup.button ((qlonglong)AttributeHandle);
+         Int32 index = _objectiveFunctionHandles.indexOf (AttributeHandle);
 
-      if (button) { button->setChecked (Value); }
+         if (index != -1) { _ui.objectiveComboBox->setCurrentIndex (index); }
+      }
    }
 }
 
@@ -123,34 +129,36 @@ dmz::MBRAPluginNASimulator::_slot_weight_by_clicked (int id) {
       if (button) {
          
          Boolean value = button->isChecked ();
+         _ignoreUpdates = True;
          objMod->store_flag (_simulatorHandle, AttrHandle, value);
+         _ignoreUpdates = False;
       }
    }
 }
 
 
 void
-dmz::MBRAPluginNASimulator::_slot_objective_function_clicked (int id) {
+dmz::MBRAPluginNASimulator::on_objectiveComboBox_currentIndexChanged (int id) {
 
    ObjectModule *objMod = get_object_module ();
 
    if (objMod && _simulatorHandle) {
-
-      const Handle CurrentAttrHandle (id);
-
-      HandleContainerIterator it;
-      Handle attrHandle;
       
-      while (_objectiveFunctionHandles.get_next (it, attrHandle)) {
-      
+      const Handle ActiveHandle (_ui.objectiveComboBox->itemData (id).toLongLong ());
+
+      foreach (Handle attrHandle, _objectiveFunctionHandles) {
+         
          Boolean value (False);
-         if (CurrentAttrHandle == attrHandle) { value = True; }
+         if (ActiveHandle == attrHandle) { value = True; }
+         
+         _ignoreUpdates = True;
          objMod->store_flag (_simulatorHandle, attrHandle, value);
+         _ignoreUpdates = False;
       }
    }
 }
 
-      
+
 void
 dmz::MBRAPluginNASimulator::_init (Config &local) {
 
@@ -160,9 +168,6 @@ dmz::MBRAPluginNASimulator::_init (Config &local) {
 
    QVBoxLayout *layout = new QVBoxLayout;
    
-   QGroupBox *groupBox = new QGroupBox ("Weight by");
-   groupBox->setFlat (True);
-
    _weightByGroup.setExclusive (False);
    
    connect (
@@ -170,7 +175,7 @@ dmz::MBRAPluginNASimulator::_init (Config &local) {
       this, SLOT (_slot_weight_by_clicked (int)));
       
    QVBoxLayout *vbox = new QVBoxLayout;
-
+   
    Config itemList;
    
    if (local.lookup_all_config ("weight-by", itemList)) {
@@ -202,18 +207,9 @@ dmz::MBRAPluginNASimulator::_init (Config &local) {
       }
    }
    
-   groupBox->setLayout (vbox);
-   layout->addWidget (groupBox);
+   _ui.weightGroupBox->setLayout (vbox);
       
-   groupBox = new QGroupBox ("Objective Function");
-   groupBox->setFlat (True);
 
-   connect (
-      &_objectiveFunctionGroup, SIGNAL (buttonClicked (int)),
-      this, SLOT (_slot_objective_function_clicked (int)));
-
-   vbox = new QVBoxLayout;
-   
    if (local.lookup_all_config ("objective-function", itemList)) {
       
       ConfigIterator it;
@@ -225,29 +221,15 @@ dmz::MBRAPluginNASimulator::_init (Config &local) {
          
          const String AttrName (config_to_string ("attribute", cd));
          
-         const Boolean Checked (config_to_boolean ("checked", cd));
-         
          if (Text && AttrName) {
             
             const Handle AttrHandle (activate_object_attribute (AttrName, ObjectFlagMask));
-            
-            QRadioButton *radioButton = new QRadioButton (Text.get_buffer ());
-            radioButton->setObjectName (Text.get_buffer ());
-            radioButton->setChecked (Checked);
-            
-            vbox->addWidget (radioButton);
-            _objectiveFunctionGroup.addButton (radioButton, (qlonglong)AttrHandle);
-            
-            _objectiveFunctionHandles.add_handle (AttrHandle);
+
+            _ui.objectiveComboBox->addItem (Text.get_buffer (), (qlonglong)AttrHandle);
+            _objectiveFunctionHandles.append (AttrHandle);
          }
       }
    }
-   
-   groupBox->setLayout (vbox);
-   layout->addWidget (groupBox);
-   layout->addStretch (1);
-   
-   setLayout (layout);
    
    _simulatorType = config_to_object_type (
       "type.simulator", local, "na_simulator", get_plugin_runtime_context ());

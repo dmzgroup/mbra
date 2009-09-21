@@ -1,6 +1,7 @@
 require "lmkQt"
 lmkQt.set_name "dmzMBRAPluginNASimulator"
 lmk.set_type "plugin"
+lmk.add_files {"NASimulatorForm.ui",}
 lmk.add_files ({"dmzMBRAPluginNASimulator.h",},{src="moc"})
 lmk.add_files {"dmzMBRAPluginNASimulator.cpp",}
 lmk.add_libs {
