@@ -7,6 +7,8 @@ local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
 local PreventionCostHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
+local WeightHandle = dmz.handle.new ("NA_Node_Weight")
+local WeightAndObjectiveHandle = dmz.handle.new ("NA_Node_Weight_And_Objective")
 local RankHandle = dmz.handle.new ("NA_Node_Rank")
 local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
 local BetweennessHandle = dmz.handle.new ("NA_Node_Betweenness")
@@ -241,20 +243,32 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, HeightHandle)
    if value and (self.maxHeight > 0) then result = value / self.maxHeight end
-cprint ("Height", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
+--cprint ("Height", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
 }
 
-local function rank_object (self, object)
-   local result = 0
-   if self.objective then
-      result = self.objective (self, object)
-      for _, weight in pairs (self.weightList) do
-         result = result * weight.calc (self, object)
-      end
+local function weigh_object (self, object)
+   local value = 1
+   for _, weight in pairs (self.weightList) do
+      value = value * weight.calc (self, object)
    end
+   dmz.object.scalar (object, WeightHandle, value)
+end
+
+local function allocate_budget (self)
+   for object in pairs (self.object) do
+   end
+end
+
+local function rank_object (self, object)
+   local result = dmz.object.scalar (object, WeightHandle)
+   if not result then result = 1 end
+   if self.objective then
+      result = result * self.objective (self, object)
+   end
+   dmz.object.scalar (object, WeightAndObjectiveHandle, result)
    return result
 end
 
@@ -264,6 +278,10 @@ local function receive_rank (self)
    for _, weight in pairs (self.weightList) do
       weight.setup (self)
    end
+   for object in pairs (self.objects) do
+      weigh_object (self, object)
+   end
+   allocate_budget (self)
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
