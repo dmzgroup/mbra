@@ -431,7 +431,11 @@ ScalarWidget::create_widgets (
    }
    else {
 
-      QLabel *vlabel = new QLabel (QString::number (value, 'f', _Decimals), parent);
+      QLabel *vlabel = new QLabel (
+         QString (_Prefix.get_buffer ()) + QString::number (value, 'f', _Decimals) +
+            QString (_Suffix.get_buffer ()),
+         parent);
+
       layout->addRow (label, vlabel);
    }
 

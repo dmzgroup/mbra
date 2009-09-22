@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>116</height>
+    <width>300</width>
+    <height>222</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,14 +19,14 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Max Budget:</string>
+        <string>Max Prevention Budget:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="maxBudgetLabel">
+      <widget class="QLabel" name="maxPreventionBudgetLabel">
        <property name="text">
-        <string>$ 0</string>
+        <string>$0</string>
        </property>
       </widget>
      </item>
@@ -50,12 +50,12 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Budget:</string>
+        <string>Prevention Budget:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="budgetBox">
+      <widget class="QSpinBox" name="preventionBudgetBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -69,7 +69,7 @@
         </size>
        </property>
        <property name="prefix">
-        <string>$ </string>
+        <string>$</string>
        </property>
        <property name="maximum">
         <number>0</number>
@@ -82,7 +82,79 @@
     </layout>
    </item>
    <item>
-    <widget class="QSlider" name="budgetSlider">
+    <widget class="QSlider" name="preventionBudgetSlider">
+     <property name="maximum">
+      <number>0</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Max Response Budget:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="maxResponseBudgetLabel">
+       <property name="text">
+        <string>$0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Response Budget:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="responseBudgetBox">
+       <property name="prefix">
+        <string>$</string>
+       </property>
+       <property name="maximum">
+        <number>0</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QSlider" name="responseBudgetSlider">
      <property name="maximum">
       <number>0</number>
      </property>
@@ -93,37 +165,75 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>preventionBudgetBox</tabstop>
+  <tabstop>responseBudgetBox</tabstop>
+  <tabstop>preventionBudgetSlider</tabstop>
+  <tabstop>responseBudgetSlider</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>budgetSlider</sender>
+   <sender>preventionBudgetSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>budgetBox</receiver>
+   <receiver>preventionBudgetBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>59</y>
+     <x>92</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
-     <x>182</x>
-     <y>33</y>
+     <x>237</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>budgetBox</sender>
+   <sender>preventionBudgetBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>budgetSlider</receiver>
+   <receiver>preventionBudgetSlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>97</x>
-     <y>20</y>
+     <x>235</x>
+     <y>63</y>
     </hint>
     <hint type="destinationlabel">
-     <x>151</x>
-     <y>55</y>
+     <x>92</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>responseBudgetBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>responseBudgetSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>responseBudgetSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>responseBudgetBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>

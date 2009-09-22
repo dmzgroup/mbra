@@ -291,6 +291,18 @@
             prefix="$"
          />
          <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
+         <property
             type="text"
             name="Description"
             attribute="NA_Node_Description"
@@ -356,6 +368,18 @@
             type="scalar"
             name="Prevention Cost"
             attribute="NA_Node_Prevention_Cost"
+            prefix="$"
+         />
+         <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
             prefix="$"
          />
          <property type="state" name="Flow" attribute="NA_Link_Flow">

@@ -1,6 +1,8 @@
 #include "dmzMBRAPluginNABudget.h"
 #include <dmzObjectAttributeMasks.h>
+#include <dmzRuntimeConfigToNamedHandle.h>
 #include <dmzRuntimeConfigToTypesBase.h>
+#include <dmzRuntimeData.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
 #include <dmzRuntimePluginInfo.h>
 
@@ -9,9 +11,11 @@ dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &loc
       Plugin (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
+      _budgetHandle (0),
       _pcAttrHandle (0),
       _rcAttrHandle (0),
-      _maxBudget (0.0) {
+      _maxPreventionBudget (0.0),
+      _maxResponseBudget (0.0) {
 
    _ui.setupUi (this);
 
@@ -72,7 +76,7 @@ dmz::MBRAPluginNABudget::create_object (
       const ObjectType &Type,
       const ObjectLocalityEnum Locality) {
 
-   if (Type.is_of_type (_nodeType)) {
+   if (Type.is_of_type (_nodeType) || Type.is_of_type (_linkType)) {
 
       ObjectStruct *os = new ObjectStruct;
 
@@ -92,7 +96,8 @@ dmz::MBRAPluginNABudget::destroy_object (
 
       delete os; os = 0;
 
-      _update_max_budget ();
+      _update_max_prevention_budget ();
+      _update_max_response_budget ();
    }
 }
 
@@ -111,13 +116,13 @@ dmz::MBRAPluginNABudget::remove_object_attribute (
       if (AttributeHandle == _pcAttrHandle) {
 
          os->pc = 0.0;
+         _update_max_prevention_budget ();
       }
       else if (AttributeHandle == _rcAttrHandle) {
 
          os->rc = 0.0;
+         _update_max_response_budget ();
       }
-
-      _update_max_budget ();
    }
 }
 
@@ -137,34 +142,74 @@ dmz::MBRAPluginNABudget::update_object_scalar (
       if (AttributeHandle == _pcAttrHandle) {
 
          os->pc = Value;
+         _update_max_prevention_budget ();
       }
       else if (AttributeHandle == _rcAttrHandle) {
 
          os->rc = Value;
+         _update_max_response_budget ();
       }
-
-      _update_max_budget ();
    }
 }
 
 
 void
-dmz::MBRAPluginNABudget::_update_max_budget () {
+dmz::MBRAPluginNABudget::on_preventionBudgetBox_valueChanged (int value) {
 
-   _maxBudget = 0.0;
+   Data data;
+   data.store_float64 (_budgetHandle, 0, (Float64)value);
+   data.store_float64 (_budgetHandle, 1, _maxPreventionBudget);
+
+   _preventionBudgetMessage.send (&data);
+}
+
+
+void
+dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
+
+   Data data;
+   data.store_float64 (_budgetHandle, 0, (Float64)value);
+   data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
+
+   _responseBudgetMessage.send (&data);
+}
+
+
+void
+dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
+
+   _maxPreventionBudget = 0.0;
 
    HashTableHandleIterator it;
    ObjectStruct *os (0);
 
-   while (_objectTable.get_next (it, os)) {
+   while (_objectTable.get_next (it, os)) { _maxPreventionBudget += os->pc; }
 
-      _maxBudget += os->pc;
-      _maxBudget += os->rc;
-   }
+   _ui.preventionBudgetSlider->setMaximum (int (_maxPreventionBudget));
+   _ui.preventionBudgetBox->setMaximum (int (_maxPreventionBudget));
+   _ui.maxPreventionBudgetLabel->setText (
+      QString ("$") + QString::number (int (_maxPreventionBudget)));
 
-   _ui.budgetSlider->setMaximum (int (_maxBudget));
-   _ui.budgetBox->setMaximum (int (_maxBudget));
-   _ui.maxBudgetLabel->setText (QString ("$ ") + QString::number (int (_maxBudget)));
+   on_preventionBudgetBox_valueChanged (_ui.preventionBudgetBox->value ());
+}
+
+
+void
+dmz::MBRAPluginNABudget::_update_max_response_budget () {
+
+   _maxResponseBudget = 0.0;
+
+   HashTableHandleIterator it;
+   ObjectStruct *os (0);
+
+   while (_objectTable.get_next (it, os)) { _maxResponseBudget += os->rc; }
+
+   _ui.responseBudgetSlider->setMaximum (int (_maxResponseBudget));
+   _ui.responseBudgetBox->setMaximum (int (_maxResponseBudget));
+   _ui.maxResponseBudgetLabel->setText (
+      QString ("$") + QString::number (int (_maxResponseBudget)));
+
+   on_responseBudgetBox_valueChanged (_ui.responseBudgetBox->value ());
 }
 
 
@@ -174,6 +219,32 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
    RuntimeContext *context = get_plugin_runtime_context ();
 
    _nodeType = config_to_object_type ("node-type.name", local, "na_node", context);
+
+   _linkType = config_to_object_type (
+      "link-attribute-type.name",
+       local,
+       "na_link_attribute",
+       context);
+
+   _preventionBudgetMessage = config_create_message (
+      "prevention-budget-message.name",
+      local,
+      "PreventionBudgetMessage",
+      context,
+      &_log);
+
+   _responseBudgetMessage = config_create_message (
+      "response-budget-message.name",
+      local,
+      "ResponseBudgetMessage",
+      context,
+      &_log);
+
+   _budgetHandle = config_to_named_handle (
+      "budget.name",
+      local,
+      "Budget",
+      context);
 
    activate_default_object_attribute (ObjectCreateMask | ObjectDestroyMask);
 
