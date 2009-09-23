@@ -10,6 +10,7 @@ local PreventionAllocationHandle = dmz.handle.new ("NA_Node_Prevention_Allocatio
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
 local WeightHandle = dmz.handle.new ("NA_Node_Weight")
 local WeightAndObjectiveHandle = dmz.handle.new ("NA_Node_Weight_And_Objective")
+local GammaHandle = dmz.handle.new ("NA_Node_Gamma")
 local RankHandle = dmz.handle.new ("NA_Node_Rank")
 local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
 local BetweennessHandle = dmz.handle.new ("NA_Node_Betweenness")
@@ -27,14 +28,17 @@ local ObjectiveThreatHandle = dmz.handle.new ("NA_Objective_Threat")
 local ObjectiveVulnerabilityHandle = dmz.handle.new ("NA_Objective_Vulnerability")
 local ObjectiveConsequenceHandle = dmz.handle.new ("NA_Objective_Consequence")
 
-local function calc_vulnerability (object, gamma)
+local function not_zero (value) return not dmz.math.is_zero (value) end
+
+local function calc_vulnerability (object)
    local result = 0
    local Allocation = dmz.object.scalar (object, PreventionAllocationHandle)
    local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
    local Cost = dmz.object.scalar (object, PreventionCostHandle)
-   if Vulnerability and (Vulnerability > 0) and Cost and (Cost > 0) then
-      result = Vulnerability * math.exp (-gamma * Allocation /
-         Cost)
+   local Gamma = dmz.object.scalar (object, GammaHandle)
+   if Gamma and not_zero (Gamma) and Vulnerability and (Vulnerability > 0) and
+         Cost and (Cost > 0) then
+      result = Vulnerability * math.exp (-Gamma * Allocation / Cost)
    end
    return result;
 end
@@ -56,7 +60,7 @@ local function calc_objective_risk (self, object)
    local Threat = dmz.object.scalar (object, ThreatHandle)
    local Consequence = dmz.object.scalar (object, ConsequenceHandle)
    if Threat and Consequence then
-      result = Threat * calc_vulnerability (object, self.gamma) * Consequence
+      result = Threat * calc_vulnerability (object) * Consequence
    end
    dmz.object.text (object, LabelHandle, "Risk = " .. format_result (result))
    return result
@@ -66,7 +70,7 @@ local function calc_objective_txv (self, object)
    local result = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
    if Threat then
-      result = Threat * calc_vulnerability (object, self.gamma)
+      result = Threat * calc_vulnerability (object)
    end
    dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
    return result
@@ -80,7 +84,7 @@ local function calc_objective_threat (self, object)
 end
 
 local function calc_objective_vulnerability (self, object)
-   local result = calc_vulnerability (object, self.gamma)
+   local result = calc_vulnerability (object)
    if not result then result = 0 end
    dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
    return result
@@ -275,17 +279,21 @@ local function weigh_object (self, object)
    dmz.object.scalar (object, WeightHandle, value)
 end
 
-local function log_defender_term (object, gamma)
-   local result = 0
-   if object.cost > 0 then
-      result = object.weight * object.threat * object.consequence * object.vul *
-         gamma / object.cost
-      if result > 0 then result = -object.cost * math.log (result) end
+local function log_defender_term (object)
+   local result = object.weight * object.threat * object.consequence * object.vul *
+         object.gamma
+   if not_zero (result) then
+      result = object.cost / result
+      if not_zero (object.gamma) then
+         result = (object.cost / object.gamma) * math.log (result)
+      else result = 0
+      end
+   else result = 0
    end
    return result
 end
 
-local function allocate_prevention_budget (handleList, budget, maxBudget, gamma)
+local function allocate_prevention_budget (handleList, budget, maxBudget)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
          dmz.object.scalar (handle, PreventionAllocationHandle, 0)
@@ -296,6 +304,8 @@ local function allocate_prevention_budget (handleList, budget, maxBudget, gamma)
          local object = { handle = handle }
          object.vul = dmz.object.scalar (handle, VulnerabilityHandle)
          if not object.vul or (object.vul <= 0) then object.vul = 1 end
+         object.gamma = -math.log (0.05 / object.vul)
+         dmz.object.scalar (handle, GammaHandle, object.gamma)
          object.cost = dmz.object.scalar (handle, PreventionCostHandle)
          if not object.cost then object.cost = 0 end
          object.weight = dmz.object.scalar (handle, WeightHandle)
@@ -307,16 +317,21 @@ local function allocate_prevention_budget (handleList, budget, maxBudget, gamma)
          object.allocation = 0
          objectList[#objectList + 1] = object
       end
-      local A = budget * gamma
+      local A = 0
       local B = 0
       for _, object in ipairs (objectList) do
-         object.logDefenderTerm = log_defender_term (object, gamma)
-         B = B + object.logDefenderTerm
+         object.logDefenderTerm = log_defender_term (object)
+         A = A + object.logDefenderTerm
+         if not_zero (object.gamma) then
+            B = B + object.cost / object.gamma
+         end
       end
       local totalAllocation = 0
-      local logLamda = (-A - B) / maxBudget
+      local logLamda = 0
+      if not_zero (B) then logLamda = (-budget - A) / B end
       for _, object in ipairs (objectList) do
-         local A = object.cost / gamma
+         local A = 0
+         if not_zero (object.gamma) then A = object.cost / object.gamma end
          local B = 0
          if object.cost > 0 then B = object.logDefenderTerm / object.cost end
          object.allocation = -A * (logLamda + B)
@@ -359,8 +374,7 @@ local function receive_rank (self)
    allocate_prevention_budget (
       self.objects,
       self.preventionBudget,
-      self.maxPreventionBudget,
-      self.gamma)
+      self.maxPreventionBudget)
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
@@ -497,7 +511,7 @@ function new (config, name)
       rankMessage =
          config:to_message ("message.rank.name", "NARankObjectsMessage"),
       hideMessage =
-         config:to_message ("message.rank.name", "NAHideObjectsMessage"),
+         config:to_message ("message.hide.name", "NAHideObjectsMessage"),
       preventionBudgetMessage =
          config:to_message ("message.prevention-budget.name", "PreventionBudgetMessage"),
       responseBudgetMessage =
@@ -511,7 +525,6 @@ function new (config, name)
       maxPreventionBudget = 0,
       responseBudget = 0,
       maxResponseBudget = 0,
-      gamma = -math.log (0.05),
    }
 
    self.log:info ("Creating plugin: " .. name)

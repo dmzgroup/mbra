@@ -7,13 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>222</height>
+    <height>235</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Budget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -101,7 +108,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="mrbLabel">
        <property name="text">
         <string>Max Response Budget:</string>
        </property>
@@ -115,7 +122,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="rbSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -132,7 +139,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="rbLabel">
        <property name="text">
         <string>Response Budget:</string>
        </property>
