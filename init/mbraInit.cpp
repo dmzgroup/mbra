@@ -134,6 +134,11 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
    }
    else {
 
+      // Clear the session since this session is from an older version of MBRA
+      Config oldSession ("session");
+      init.app.get_session_config (oldSession);
+      Config session (oldSession.get_name ());
+      init.app.set_session_config (session);
       QDialog dialog;
       Ui::mbraDialog ui;
       ui.setupUi (&dialog);
