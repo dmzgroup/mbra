@@ -418,7 +418,7 @@ local function receive_prevention_budget (self, message, data)
       self.preventionBudget = data:lookup_number ("Budget", 1)
       self.maxPreventionBudget = data:lookup_number ("Budget", 2)
 --cprint ("Got message:", self.preventionBudget, self.maxPreventionBudget)
-      receive_rank (self)
+      if self.visible then receive_rank (self) end
    end
 end
 
@@ -426,7 +426,7 @@ local function receive_response_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.responseBudget = data:lookup_number ("Budget", 1)
       self.maxResponseBudget = data:lookup_number ("Budget", 2)
-      receive_rank (self)
+      if self.visible then receive_rank (self) end
    end
 end
 
