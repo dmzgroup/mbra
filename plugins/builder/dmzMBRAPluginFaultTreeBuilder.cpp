@@ -51,12 +51,14 @@ dmz::MBRAPluginFaultTreeBuilder::MBRAPluginFaultTreeBuilder (
       _threatDeleteMessage (),
       _logicAndMessage (),
       _logicOrMessage (),
+      _logicXOrMessage (),
       _rootType (),
       _componentType (),
       _threatType (),
       _logicType (),
       _logicAndMask (),
       _logicOrMask (),
+      _logicXOrMask (),
       _linkTable () {
 
    _init (local);
@@ -126,6 +128,7 @@ dmz::MBRAPluginFaultTreeBuilder::receive_message (
          else if (Msg == _threatDeleteMessage) { _threat_delete (obj); }
          else if (Msg == _logicAndMessage) { _logic_and (obj); }
          else if (Msg == _logicOrMessage) { _logic_or (obj); }
+         else if (Msg == _logicXOrMessage) { _logic_xor (obj); }
          else if (Msg == _cutMessage) { _cut (obj); }
          else if (Msg == _copyMessage) { _copy (obj); }
          else if (Msg == _pasteMessage) { _paste (obj); }
@@ -446,6 +449,7 @@ dmz::MBRAPluginFaultTreeBuilder::_logic_and (const Handle Object) {
 
             state |= _logicAndMask;
             state &= ~_logicOrMask;
+            state &= ~_logicXOrMask;
 
             objMod->store_state (Object, _defaultAttrHandle, state);
 
@@ -472,6 +476,34 @@ dmz::MBRAPluginFaultTreeBuilder::_logic_or (const Handle Object) {
 
             state &= ~_logicAndMask;
             state |= _logicOrMask;
+            state &= ~_logicXOrMask;
+
+            objMod->store_state (Object, _defaultAttrHandle, state);
+
+            _undo.stop_record (UndoHandle);
+         }
+      }
+   }
+}
+
+
+void
+dmz::MBRAPluginFaultTreeBuilder::_logic_xor (const Handle Object) {
+
+   ObjectModule *objMod (get_object_module ());
+
+   if (objMod && Object) {
+
+      Mask state;
+      if (objMod->lookup_state (Object, _defaultAttrHandle, state)) {
+
+         if (!state.contains (_logicXOrMask)) {
+
+            const Handle UndoHandle (_undo.start_record ("Create XOR gate"));
+
+            state &= ~_logicAndMask;
+            state &= ~_logicOrMask;
+            state |= _logicXOrMask;
 
             objMod->store_state (Object, _defaultAttrHandle, state);
 
@@ -953,6 +985,12 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
       "FTLogicOrMessage",
       context);
 
+   _logicXOrMessage = config_create_message (
+      "message.logic.xor",
+      local,
+      "FTLogicXOrMessage",
+      context);
+
    _cutMessage = config_create_message ("message.cut", local, "FTCutMessage", context);
    _copyMessage = config_create_message ("message.copy", local, "FTCopyMessage", context);
 
@@ -975,6 +1013,7 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
 
    subscribe_to_message (_logicAndMessage);
    subscribe_to_message (_logicOrMessage);
+   subscribe_to_message (_logicXOrMessage);
 
    subscribe_to_message (_cutMessage);
    subscribe_to_message (_copyMessage);
@@ -1000,6 +1039,10 @@ dmz::MBRAPluginFaultTreeBuilder::_init (Config &local) {
    _defs.lookup_state (
       config_to_string ("state.logic.or", local, "FT_Logic_Or"),
       _logicOrMask);
+
+   _defs.lookup_state (
+      config_to_string ("state.logic.xor", local, "FT_Logic_XOr"),
+      _logicXOrMask);
 
    _defs.lookup_state (
       config_to_string ("state.flagged", local, "NA_Node_Flagged"),
