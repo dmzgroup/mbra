@@ -34,7 +34,8 @@ local function calc_vulnerability (object)
    local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
    local Cost = dmz.object.scalar (object, PreventionCostHandle)
    if Vulnerability and (Vulnerability > 0) and Cost and (Cost > 0) then
-      result = Vulnerability * math.exp (math.log (0.05 / Vulnerability) * Allocation / Cost)
+      result = Vulnerability * math.exp (math.log (0.05 / Vulnerability) * Allocation /
+         Cost)
    end
    return result;
 end
@@ -319,19 +320,17 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
          if object.allocation < 0 then object.allocation = 0 end
          totalAllocation = totalAllocation + object.allocation
       end
+      local scale = 1
       if totalAllocation > budget then
-         local scale =  budget / totalAllocation
-         totalAllocation = 0
-         for _, object in ipairs (objectList) do
-            object.allocation = object.allocation * scale
-            totalAllocation = totalAllocation + object.allocation
-            dmz.object.scalar (
-               object.handle,
-               PreventionAllocationHandle,
-               object.allocation)
-         end
---cprint (budget, totalAllocation)
+         scale =  budget / totalAllocation
       end
+      totalAllocation = 0
+      for _, object in ipairs (objectList) do
+         object.allocation = object.allocation * scale
+         totalAllocation = totalAllocation + object.allocation
+         dmz.object.scalar (object.handle, PreventionAllocationHandle, object.allocation)
+      end
+--cprint (budget, totalAllocation)
    end
 end
 
@@ -414,6 +413,7 @@ local function receive_prevention_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.preventionBudget = data:lookup_number ("Budget", 1)
       self.maxPreventionBudget = data:lookup_number ("Budget", 2)
+--cprint ("Got message: ", self.preventionBudget, self.maxPreventionBudget)
       receive_rank (self)
    end
 end
