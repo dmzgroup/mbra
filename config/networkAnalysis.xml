@@ -300,9 +300,29 @@
 -->
          <property
             type="scalar-label"
+            name="Risk Initial"
+            attribute="NA_Node_Risk_Initial"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
             name="Prevention Allocation"
             attribute="NA_Node_Prevention_Allocation"
             prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Reduced"
+            attribute="NA_Node_Risk_Reduced"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Vulnerability Reduced"
+            attribute="NA_Node_Vulnerability_Reduced"
+            scale="100"
+            decimals="0"
+            suffix="%"
          />
          <property
             type="text"
@@ -408,6 +428,32 @@
             name="Description"
             attribute="NA_Node_Description"
             tab="1"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Initial"
+            attribute="NA_Node_Risk_Initial"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Reduced"
+            attribute="NA_Node_Risk_Reduced"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Vulnerability Reduced"
+            attribute="NA_Node_Vulnerability_Reduced"
+            scale="100"
+            decimals="0"
+            suffix="%"
          />
          <property
             type="scalar-label"

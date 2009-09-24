@@ -5,9 +5,12 @@ local LabelHandle = dmz.handle.new ("NA_Node_Objective_Label")
 local LinkHandle = dmz.handle.new ("Node_Link")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
+local VulnerabilityReducedHandle = dmz.handle.new ("NA_Node_Vulnerability_Reduced")
 local PreventionCostHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
 local PreventionAllocationHandle = dmz.handle.new ("NA_Node_Prevention_Allocation")
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
+local RiskInitialHandle = dmz.handle.new ("NA_Node_Risk_Initial")
+local RiskReducedHandle = dmz.handle.new ("NA_Node_Risk_Reduced")
 local WeightHandle = dmz.handle.new ("NA_Node_Weight")
 local WeightAndObjectiveHandle = dmz.handle.new ("NA_Node_Weight_And_Objective")
 local GammaHandle = dmz.handle.new ("NA_Node_Gamma")
@@ -30,6 +33,20 @@ local ObjectiveConsequenceHandle = dmz.handle.new ("NA_Objective_Consequence")
 
 local function not_zero (value) return not dmz.math.is_zero (value) end
 
+local function calc_risk_initial (object)
+   local Threat = dmz.object.scalar (object, ThreatHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
+   local Consequence = dmz.object.scalar (object, ConsequenceHandle)
+   if Threat and Vulnerability and Consequence then
+      dmz.object.scalar (
+         object,
+         RiskInitialHandle,
+         Threat * Vulnerability * Consequence)
+   else
+      dmz.object.scalar (object, RiskInitialHandle, 0)
+   end
+end
+
 local function calc_vulnerability (object)
    local result = 0
    local Allocation = dmz.object.scalar (object, PreventionAllocationHandle)
@@ -40,7 +57,20 @@ local function calc_vulnerability (object)
          Cost and (Cost > 0) then
       result = Vulnerability * math.exp (-Gamma * Allocation / Cost)
    end
+   dmz.object.scalar (object, VulnerabilityReducedHandle, result)
    return result;
+end
+
+local function calc_risk_reduced (object)
+   local result = 0
+   local Threat = dmz.object.scalar (object, ThreatHandle)
+   local Vulnerability = calc_vulnerability (object, VulnerabilityHandle)
+   local Consequence = dmz.object.scalar (object, ConsequenceHandle)
+   if Threat and Vulnerability and Consequence then
+      result = Threat * Vulnerability * Consequence
+   end
+   dmz.object.scalar (object, RiskReducedHandle, result)
+   return result
 end
 
 local function calc_objective_none (self, object)
@@ -56,22 +86,16 @@ local function format_result (value)
 end
 
 local function calc_objective_risk (self, object)
-   local result = 0
-   local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Consequence = dmz.object.scalar (object, ConsequenceHandle)
-   if Threat and Consequence then
-      result = Threat * calc_vulnerability (object) * Consequence
-   end
-   dmz.object.text (object, LabelHandle, "Risk = " .. format_result (result))
+   local result = dmz.object.scalar (object, RiskReducedHandle)
+   dmz.object.text (object, LabelHandle, "Risk = " .. string.format ("%.2f", result))
    return result
 end
 
 local function calc_objective_txv (self, object)
    local result = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   if Threat then
-      result = Threat * calc_vulnerability (object)
-   end
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   if Threat and Vulnerability then result = Threat * Vulnerability end
    dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
    return result
 end
@@ -84,7 +108,7 @@ local function calc_objective_threat (self, object)
 end
 
 local function calc_objective_vulnerability (self, object)
-   local result = calc_vulnerability (object)
+   local result = dmz.object.scalar (object, VulnerabilityReducedHandle)
    if not result then result = 0 end
    dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
    return result
@@ -93,7 +117,10 @@ end
 local function calc_objective_consequence (self, object)
    local result = dmz.object.scalar (object, ConsequenceHandle)
    if not result then result = 0 end
-   dmz.object.text (object, LabelHandle, "Consequence = " .. format_result (result))
+   dmz.object.text (
+      object,
+      LabelHandle,
+      "Consequence = $" .. string.format ("%.2f", result))
    return result
 end
 
@@ -385,6 +412,7 @@ local function receive_rank (self)
          if dmz.object.text (handle, self.rankAttr) then
             dmz.object.remove_attribute (handle, RankHandle, dmz.object.TextMask)
          end
+         calc_risk_reduced (handle)
          local object = { handle = handle, }
          object.rank = rank_object (self, handle)
          list[#list + 1] = object
@@ -455,6 +483,7 @@ end
 
 local function update_object_scalar (self, handle, attr, value)
    if self.visible and self.objects[handle] then receive_rank (self) end
+   calc_risk_initial (handle)
 end
 
 local function update_simulator_flag (self, handle, attr, value)
