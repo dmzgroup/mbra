@@ -1,32 +1,95 @@
 local NodeType = dmz.object_type.new ("na_node")
 local NodeLinkType = dmz.object_type.new ("na_link_attribute")
 local SimType = dmz.object_type.new ("na_simulator")
+local LabelHandle = dmz.handle.new ("NA_Node_Objective_Label")
 local LinkHandle = dmz.handle.new ("Node_Link")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
 local PreventionCostHandle = dmz.handle.new ("NA_Node_Prevention_Cost")
+local PreventionAllocationHandle = dmz.handle.new ("NA_Node_Prevention_Allocation")
 local ConsequenceHandle = dmz.handle.new ("NA_Node_Consequence")
+local WeightHandle = dmz.handle.new ("NA_Node_Weight")
+local WeightAndObjectiveHandle = dmz.handle.new ("NA_Node_Weight_And_Objective")
 local RankHandle = dmz.handle.new ("NA_Node_Rank")
 local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
-local Betweennessandle = dmz.handle.new ("NA_Node_Betweenness")
+local BetweennessHandle = dmz.handle.new ("NA_Node_Betweenness")
+local HeightHandle = dmz.handle.new ("NA_Node_Height")
 local OverlayState = dmz.definitions.lookup_state ("NA_Node_Overlay")
 
 local WeightDegreesHandle = dmz.handle.new ("NA_Weight_Degrees")
 local WeightBetweennessHandle = dmz.handle.new ("NA_Weight_Betweenness")
+local WeightHeightHandle = dmz.handle.new ("NA_Weight_Height")
 
 local ObjectiveNoneHandle = dmz.handle.new ("NA_Objective_None")
 local ObjectiveRiskHandle = dmz.handle.new ("NA_Objective_Risk")
+local ObjectiveTxVHandle = dmz.handle.new ("NA_Objective_TxV")
+local ObjectiveThreatHandle = dmz.handle.new ("NA_Objective_Threat")
+local ObjectiveVulnerabilityHandle = dmz.handle.new ("NA_Objective_Vulnerability")
+local ObjectiveConsequenceHandle = dmz.handle.new ("NA_Objective_Consequence")
 
-local function calc_objective_none () return 1 end
+local function calc_vulnerability (object, gamma)
+   local result = 0
+   local Allocation = dmz.object.scalar (object, PreventionAllocationHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
+   local Cost = dmz.object.scalar (object, PreventionCostHandle)
+   if Vulnerability and (Vulnerability > 0) and Cost and (Cost > 0) then
+      result = Vulnerability * math.exp (-gamma * Allocation /
+         Cost)
+   end
+   return result;
+end
+
+local function calc_objective_none (self, object)
+   dmz.object.text (object, LabelHandle, "")
+   return 1
+end
+
+local function format_result (value)
+   value = value * 100
+   local ival = math.floor (value)
+   if (value - ival) >= 0.5 then ival = ival + 1 end
+   return tostring (ival) .. "%"
+end
 
 local function calc_objective_risk (self, object)
    local result = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
    local Consequence = dmz.object.scalar (object, ConsequenceHandle)
-   if Threat and Vulnerability and Consequence then
-      result = Threat * Vulnerability * Consequence
+   if Threat and Consequence then
+      result = Threat * calc_vulnerability (object, self.gamma) * Consequence
    end
+   dmz.object.text (object, LabelHandle, "Risk = " .. format_result (result))
+   return result
+end
+
+local function calc_objective_txv (self, object)
+   local result = 0
+   local Threat = dmz.object.scalar (object, ThreatHandle)
+   if Threat then
+      result = Threat * calc_vulnerability (object, self.gamma)
+   end
+   dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
+   return result
+end
+
+local function calc_objective_threat (self, object)
+   local result = dmz.object.scalar (object, ThreatHandle)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Threat = " .. format_result (result))
+   return result
+end
+
+local function calc_objective_vulnerability (self, object)
+   local result = calc_vulnerability (object, self.gamma)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
+   return result
+end
+
+local function calc_objective_consequence (self, object)
+   local result = dmz.object.scalar (object, ConsequenceHandle)
+   if not result then result = 0 end
+   dmz.object.text (object, LabelHandle, "Consequence = " .. format_result (result))
    return result
 end
 
@@ -44,6 +107,7 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.scalar (object, DegreeHandle)
    if value and (self.maxDegrees > 0) then result = value / self.maxDegrees end
+--cprint ("Degree", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
@@ -133,21 +197,153 @@ end,
 calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, BetweennessHandle)
---cprint (tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), object, dmz.object.type (object):get_name ())
    if value and (self.maxBetweenness > 0) then result = value / self.maxBetweenness end
+--cprint ("Between", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
 }
 
-local function rank_object (self, object)
-   local result = 0
-   if self.objective then
-      result = self.objective (self, object)
-      for _, weight in pairs (self.weightList) do
-         result = result * weight.calc (self, object)
+local function find_height (self, current, target, visited, depth)
+   depth = depth + 1
+   for _, object in ipairs (current) do visited[object] = true end
+   local found = false
+   local list = {}
+   for _, object in ipairs (current) do
+      local subs = dmz.object.sub_links (object, LinkHandle)
+      if subs then
+         for _, sub in ipairs (subs) do
+            if sub == target then found = true
+            elseif not visited[sub] then list[#list + 1] = sub
+            end
+         end
+      end
+      local supers = dmz.object.super_links (object, LinkHandle)
+      if supers then
+         for _, super in ipairs (supers) do
+            if super == target then found = true
+            elseif not visited[super] then list[#list + 1] = super
+            end
+         end
       end
    end
+   if not found and #list > 0 then
+      depth = find_height (self, list, target, visited, depth)
+   end
+   return depth
+end
+
+local weight_height = {
+
+setup = function (self)
+   self.maxHeight = 0
+   for object in pairs (self.objects) do
+      dmz.object.counter (object, HeightHandle, 0)
+   end
+   for root in pairs (self.objects) do
+      if (dmz.object.type (root):is_of_type (NodeType)) then
+         local height = 0
+         for target in pairs (self.objects) do
+            if root ~= target and dmz.object.type (target):is_of_type (NodeType) then
+               local list = {}
+               list[#list + 1] = root
+               local visited = {}
+               height = height + find_height(self, list, target, visited, 0)
+            end
+         end
+         if self.maxHeight < height then self.maxHeight = height end
+         dmz.object.counter (root, HeightHandle, height)
+      end
+   end
+end,
+
+calc = function (self, object)
+   local result = 0
+   local value = dmz.object.counter (object, HeightHandle)
+   if value and (self.maxHeight > 0) then result = value / self.maxHeight end
+--cprint ("Height", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
+   return result
+end,
+
+}
+
+local function weigh_object (self, object)
+   local value = 1
+   for _, weight in pairs (self.weightList) do
+      value = value * weight.calc (self, object)
+   end
+   dmz.object.scalar (object, WeightHandle, value)
+end
+
+local function log_defender_term (object, gamma)
+   local result = 0
+   if object.cost > 0 then
+      result = object.weight * object.threat * object.consequence * object.vul *
+         gamma / object.cost
+      if result > 0 then result = -object.cost * math.log (result) end
+   end
+   return result
+end
+
+local function allocate_prevention_budget (handleList, budget, maxBudget, gamma)
+   if dmz.math.is_zero (budget) then
+      for handle in pairs (handleList) do
+         dmz.object.scalar (handle, PreventionAllocationHandle, 0)
+      end
+   else
+      local objectList = {}
+      for handle in pairs (handleList) do
+         local object = { handle = handle }
+         object.vul = dmz.object.scalar (handle, VulnerabilityHandle)
+         if not object.vul or (object.vul <= 0) then object.vul = 1 end
+         object.cost = dmz.object.scalar (handle, PreventionCostHandle)
+         if not object.cost then object.cost = 0 end
+         object.weight = dmz.object.scalar (handle, WeightHandle)
+         if not object.weight then object.weight = 0 end
+         object.threat = dmz.object.scalar (handle, ThreatHandle)
+         if not object.threat then object.threat = 0 end
+         object.consequence = dmz.object.scalar (handle, ConsequenceHandle)
+         if not object.consequence then object.consequence = 0 end
+         object.allocation = 0
+         objectList[#objectList + 1] = object
+      end
+      local A = budget * gamma
+      local B = 0
+      for _, object in ipairs (objectList) do
+         object.logDefenderTerm = log_defender_term (object, gamma)
+         B = B + object.logDefenderTerm
+      end
+      local totalAllocation = 0
+      local logLamda = (-A - B) / maxBudget
+      for _, object in ipairs (objectList) do
+         local A = object.cost / gamma
+         local B = 0
+         if object.cost > 0 then B = object.logDefenderTerm / object.cost end
+         object.allocation = -A * (logLamda + B)
+         if object.allocation < 0 then object.allocation = 0 end
+         totalAllocation = totalAllocation + object.allocation
+      end
+      local scale = 1
+      if totalAllocation > budget then
+         scale =  budget / totalAllocation
+      end
+      totalAllocation = 0
+      for _, object in ipairs (objectList) do
+         object.allocation = object.allocation * scale
+         totalAllocation = totalAllocation + object.allocation
+         dmz.object.scalar (object.handle, PreventionAllocationHandle, object.allocation)
+      end
+--cprint (budget, totalAllocation)
+   end
+end
+
+local function rank_object (self, object)
+   local result = dmz.object.scalar (object, WeightHandle)
+   if not result then result = 1 end
+   if self.objective then
+      result = result * self.objective (self, object)
+   end
+   dmz.object.scalar (object, WeightAndObjectiveHandle, result)
    return result
 end
 
@@ -157,6 +353,14 @@ local function receive_rank (self)
    for _, weight in pairs (self.weightList) do
       weight.setup (self)
    end
+   for object in pairs (self.objects) do
+      weigh_object (self, object)
+   end
+   allocate_prevention_budget (
+      self.objects,
+      self.preventionBudget,
+      self.maxPreventionBudget,
+      self.gamma)
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
@@ -196,6 +400,7 @@ local function receive_hide (self)
    self.visible = false
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
+         dmz.object.text (handle, LabelHandle, "")
          local state = dmz.object.state (handle)
          if state then 
             state:unset (OverlayState)
@@ -205,6 +410,23 @@ local function receive_hide (self)
             dmz.object.remove_attribute (handle, RankHandle, dmz.object.TextMask)
          end
       end
+   end
+end
+
+local function receive_prevention_budget (self, message, data)
+   if dmz.data.is_a (data) then
+      self.preventionBudget = data:lookup_number ("Budget", 1)
+      self.maxPreventionBudget = data:lookup_number ("Budget", 2)
+--cprint ("Got message:", self.preventionBudget, self.maxPreventionBudget)
+      if self.visible then receive_rank (self) end
+   end
+end
+
+local function receive_response_budget (self, message, data)
+   if dmz.data.is_a (data) then
+      self.responseBudget = data:lookup_number ("Budget", 1)
+      self.maxResponseBudget = data:lookup_number ("Budget", 2)
+      if self.visible then receive_rank (self) end
    end
 end
 
@@ -227,10 +449,20 @@ local function update_simulator_flag (self, handle, attr, value)
          self.weightList[WeightDegreesHandle] = weight_degrees
       elseif attr == WeightBetweennessHandle then
          self.weightList[WeightBetweennessHandle] = weight_betweenness
+      elseif attr == WeightHeightHandle then
+         self.weightList[WeightHeightHandle] = weight_height
       elseif attr == ObjectiveNoneHandle then
          self.objective = calc_objective_none
-      elseif attr == ObjectiveRiskHandke then
+      elseif attr == ObjectiveRiskHandle then
          self.objective = calc_objective_risk
+      elseif attr == ObjectiveTxVHandle then
+         self.objective = calc_objective_txv
+      elseif attr == ObjectiveThreatHandle then
+         self.objective = calc_objective_threat
+      elseif attr == ObjectiveVulnerabilityHandle then
+         self.objective = calc_objective_vulnerability
+      elseif attr == ObjectiveConsequenceHandle then
+         self.objective = calc_objective_consequence
       end
    else self.weightList[attr] = nil
    end
@@ -266,17 +498,28 @@ function new (config, name)
          config:to_message ("message.rank.name", "NARankObjectsMessage"),
       hideMessage =
          config:to_message ("message.rank.name", "NAHideObjectsMessage"),
+      preventionBudgetMessage =
+         config:to_message ("message.prevention-budget.name", "PreventionBudgetMessage"),
+      responseBudgetMessage =
+         config:to_message ("message.response-budget.name", "ResponseBudgetMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       objects = {},
       objective = calc_objective_none,
       weightList = {},
+      preventionBudget = 0,
+      maxPreventionBudget = 0,
+      responseBudget = 0,
+      maxResponseBudget = 0,
+      gamma = -math.log (0.05),
    }
 
    self.log:info ("Creating plugin: " .. name)
 
    self.msgObs:register (self.rankMessage, receive_rank, self)
    self.msgObs:register (self.hideMessage, receive_hide, self)
+   self.msgObs:register (self.preventionBudgetMessage, receive_prevention_budget, self)
+   self.msgObs:register (self.responseBudgetMessage, receive_response_budget, self)
 
    local cb = { create_object = create_object, destroy_object = destroy_object }
    self.objObs:register (nil, cb, self)
@@ -291,8 +534,13 @@ function new (config, name)
    cb = { update_object_flag = update_simulator_flag, }
    self.objObs:register (WeightDegreesHandle, cb, self)
    self.objObs:register (WeightBetweennessHandle, cb, self)
+   self.objObs:register (WeightHeightHandle, cb, self)
    self.objObs:register (ObjectiveNoneHandle, cb, self)
    self.objObs:register (ObjectiveRiskHandle, cb, self)
+   self.objObs:register (ObjectiveTxVHandle, cb, self)
+   self.objObs:register (ObjectiveThreatHandle, cb, self)
+   self.objObs:register (ObjectiveVulnerabilityHandle, cb, self)
+   self.objObs:register (ObjectiveConsequenceHandle, cb, self)
 
    cb = {
       link_objects = link_objects,

@@ -74,16 +74,23 @@
       </group>
    </dock-windows>
 </window>
+<central-widget>
+   <remember-state value="false"/>
+</central-widget>
 <dmzArchivePluginObject>
    <archive-scope>
       <string value="archive"/>
       <string value="objects"/>
       <string value="dmzObjectPluginArchive"/>
    </archive-scope>
+   <archive mode="export">
+      <object-type-set>
+         <object-type name="na_simulator"/>
+      </object-type-set>
+   </archive>
    <archive>
       <object-type-set>
          <object-type name="na_tool_link_node"/>
-         <object-type name="na_simulator"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">

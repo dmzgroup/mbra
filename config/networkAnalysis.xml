@@ -45,11 +45,13 @@
          <additional-scope name="na"/>
       </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
+      <plugin name="dmzMBRAPluginNASimulator"/>
+      <plugin name="dmzMBRAPluginNABudget"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
-      <plugin name="dmzQtPluginTabWidget" unique="na-data-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
+      <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
    </plugin-list>
    <na>
@@ -69,13 +71,18 @@
       <channel name="NetworkAnalysisChannel" widget="na-tool-tab"/>
    </tool-palette>
    <data-palette>
-      <channel name="NetworkAnalysisChannel" widget="na-data-tab"/>
+      <channel name="NetworkAnalysisChannel" widget="NetworkAnalysisPropertyTable"/>
    </data-palette>
    <charts-palette>
       <channel name="NetworkAnalysisChannel" widget="na-charts-tab"/>
    </charts-palette>
+   <na-tool-simulator>
+      <widget name="dmzMBRAPluginCalculate"/>
+      <widget name="dmzMBRAPluginNABudget"/>
+      <widget name="dmzMBRAPluginNASimulator"/>
+   </na-tool-simulator>
    <na-tool-tab>
-      <widget name="dmzMBRAPluginCalculate" title="Simulate"/>
+      <widget name="na-tool-simulator" title="Simulator"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </na-tool-tab>
    <na-charts-tab>
@@ -84,12 +91,6 @@
       </tab>
       <widget name="na-degree-graph" title="Degree Graph"/>
    </na-charts-tab>
-   <na-data-tab>
-      <tab>
-         <minimum-size width="350" height="250"/>
-      </tab>
-      <widget name="NetworkAnalysisPropertyTable" title="Network Table Data"/>
-   </na-data-tab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
       <channel name="NetworkAnalysisChannel"/>
@@ -235,6 +236,11 @@
       </deleteLayer>\
    </NACanvasLayer>
    <na-node-properties>
+      <frame>
+         <widget>
+            <minimum-size width="350" height="250"/>
+         </widget>
+      </frame>
       <object-type-list>
          <object-type name="na_node"/>
          <object-type name="na_link_attribute"/>
@@ -242,6 +248,10 @@
       <title value="Node Properties"/>
       <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
@@ -280,7 +290,24 @@
             attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
-         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"
+         />
          <property
             type="scalar-label"
             name="Degrees"
@@ -301,6 +328,10 @@
       <title value="Link Properties"/>
       <fault-tree-button value="true"/>
       <edit-message name="EditObjectAttributesMessage"/>
+      <tab-list>
+         <tab name="Data"/>
+         <tab name="Notes"/>
+      </tab-list>
       <property-list>
          <property type="line" name="Name" attribute="NA_Node_Name"/>
          <property
@@ -339,12 +370,29 @@
             attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
+         <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
          <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
             <state label="reverse" name="NA_Flow_Reverse"/>
          </property>
-         <property type="text" name="Description" attribute="NA_Node_Description"/>
+         <property
+            type="text"
+            name="Description"
+            attribute="NA_Node_Description"
+            tab="1"
+         />
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
          <property
@@ -525,6 +573,17 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
+   <dmzMBRAPluginNASimulator>
+      <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
+      <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
+      <weight-by text="Height" attribute="NA_Weight_Height"/>
+      <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
+      <objective-function text="Risk" attribute="NA_Objective_Risk"/>
+      <objective-function text="Threat x Vulnerability" attribute="NA_Objective_TxV"/>
+      <objective-function text="Threat" attribute="NA_Objective_Threat"/>
+      <objective-function text="Vulnerability" attribute="NA_Objective_Vulnerability"/>
+      <objective-function text="Consequence" attribute="NA_Objective_Consequence"/>
+   </dmzMBRAPluginNASimulator>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>

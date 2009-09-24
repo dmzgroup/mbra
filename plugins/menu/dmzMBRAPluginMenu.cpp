@@ -103,7 +103,7 @@ dmz::MBRAPluginMenu::update_plugin_state (
 
             const String FileName = config_to_string ("name", file);
 
-            if (is_valid_path (FileName)) { _fileCache.add_path (FileName); }
+            if (is_valid_path (FileName)) { _fileCache << FileName.get_buffer (); }
          }
          
          _update_recent_actions ();
@@ -117,17 +117,14 @@ dmz::MBRAPluginMenu::update_plugin_state (
    }
    else if (State == PluginStateShutdown) {
 
-      if (_fileCache.get_count () > 0) {
+      if (_fileCache.count () > 0) {
 
          Config fileList (MBRAFileList);
-
-         PathContainerIterator it;
-         String file;
-
-         while (_fileCache.get_next (it, file)) {
-
+         
+         foreach (QString file, _fileCache) {
+         
             Config data ("file");
-            data.store_attribute ("name", file);
+            data.store_attribute ("name", qPrintable (file));
             fileList.add_config (data);
          }
 
@@ -650,16 +647,17 @@ dmz::MBRAPluginMenu::_update_recent_actions () {
          delete action;
       }
       
-      if (_fileCache.get_count () > 0) {
+      if (_fileCache.count () > 0) {
 
          String file;
-         PathContainerIterator it;
-         Boolean found (_fileCache.get_last (it, file));
          Int32 count (0);
+         QList<QString>::iterator it = _fileCache.end ();
 
-          while (found && (count++ < _maxRecentFiles)) {
-
-            QFileInfo fi (file.get_buffer ());
+         while ((it != _fileCache.begin ()) && (count++ < _maxRecentFiles)) {
+         
+            it--;
+            
+            QFileInfo fi (*it);
             
             QAction *action = new QAction (this);
             action->setText (fi.fileName ());
@@ -668,8 +666,6 @@ dmz::MBRAPluginMenu::_update_recent_actions () {
             
             _recentFilesMenu->addAction (action);
             _recentFilesActionGroup->addAction (action);
-            
-            found = _fileCache.get_prev (it, file);
          }
       }
    }
@@ -877,7 +873,11 @@ dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
          mainWindow->setWindowTitle (title);
 
          _exportName = FileName;
-         _fileCache.add_path (qPrintable (FileName));
+         
+         Int32 index = _fileCache.indexOf  (FileName);
+         if (index != -1) { _fileCache.removeAt (index); }
+         
+         _fileCache << FileName;
          
          _update_recent_actions ();
       }
@@ -921,6 +921,11 @@ dmz::MBRAPluginMenu::_init_action_list (Config &actionList, MenuStruct &ms) {
 
       QAction *action (new QAction (this));
       qaction_config_read ("", actionConfig, action);
+      
+#ifdef Q_WS_MAC
+      action->setIconVisibleInMenu (False);
+#endif
+      
       ms.actionList.append (action);
       
       if (action->objectName () == "undoAction") { _undoAction = action; }

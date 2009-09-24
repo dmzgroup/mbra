@@ -6,6 +6,7 @@
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
+#include <dmzTypesHashTableUInt32Template.h>
 
 class QWidget;
 class QFormLayout;
@@ -60,6 +61,8 @@ namespace dmz {
 
                PropertyWidget *next;
 
+               UInt32 tab;
+
                virtual ~PropertyWidget () {
 
                   while (next) {
@@ -83,7 +86,8 @@ namespace dmz {
                      const String &TheName) :
                      AttrHandle (TheAttrHandle),
                      Name (TheName),
-                     next (0) {;}
+                     next (0),
+                     tab (0) {;}
 
             private:
                PropertyWidget ();
@@ -121,6 +125,8 @@ namespace dmz {
          Log _log;
          Undo _undo;
          Definitions _defs;
+
+         HashTableUInt32Template<String> _tabNameTable;
 
          ObjectModule *_objMod;
          QtModuleMainWindow *_window;

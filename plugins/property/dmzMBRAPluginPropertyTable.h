@@ -12,7 +12,7 @@
 #include <dmzTypesHashTableUInt32Template.h>
 
 #include <QtGui/QItemDelegate>
-#include <QtGui/QWidget>
+#include <QtGui/QFrame>
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QStandardItemModel>
 #include <ui_PropertyTable.h>
@@ -26,7 +26,7 @@ namespace dmz {
    class QtModuleMap;
 
    class MBRAPluginPropertyTable :
-         public QWidget,
+         public QFrame,
          public Plugin,
          public ObjectObserverUtil,
          public QtWidget {
