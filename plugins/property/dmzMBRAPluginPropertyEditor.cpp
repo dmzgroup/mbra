@@ -432,7 +432,8 @@ ScalarWidget::create_widgets (
    else {
 
       QLabel *vlabel = new QLabel (
-         QString (_Prefix.get_buffer ()) + QString::number (value, 'f', _Decimals) +
+         QString (_Prefix.get_buffer ()) +
+            QString::number (value * _Scale, 'f', _Decimals) +
             QString (_Suffix.get_buffer ()),
          parent);
 
