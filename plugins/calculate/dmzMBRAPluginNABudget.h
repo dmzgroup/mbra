@@ -4,6 +4,7 @@
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzTypesHashTableHandleTemplate.h>
@@ -60,6 +61,10 @@ namespace dmz {
             const Float64 Value,
             const Float64 *PreviousValue);
 
+      protected slots:
+         void on_preventionBudgetBox_valueChanged (int value);
+         void on_responseBudgetBox_valueChanged (int value);
+
       protected:
          struct ObjectStruct {
 
@@ -69,7 +74,8 @@ namespace dmz {
             ObjectStruct () : pc (0.0), rc (0.0) {;}
          };
 
-         void _update_max_budget ();
+         void _update_max_prevention_budget ();
+         void _update_max_response_budget ();
 
          void _init (Config &local);
 
@@ -78,11 +84,18 @@ namespace dmz {
          Ui::BudgetForm _ui;
 
          ObjectType _nodeType;
+         ObjectType _linkType;
+
+         Message _preventionBudgetMessage;
+         Message _responseBudgetMessage;
+
+         Handle _budgetHandle;
 
          Handle _pcAttrHandle;
          Handle _rcAttrHandle;
 
-         Float64 _maxBudget;
+         Float64 _maxPreventionBudget;
+         Float64 _maxResponseBudget;
 
          HashTableHandleTemplate<ObjectStruct> _objectTable;
 

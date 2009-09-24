@@ -290,11 +290,57 @@
             attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
+<!--
+         <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+-->
+         <property
+            type="scalar-label"
+            name="Risk Initial"
+            attribute="NA_Node_Risk_Initial"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Reduced"
+            attribute="NA_Node_Risk_Reduced"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Vulnerability Reduced"
+            attribute="NA_Node_Vulnerability_Reduced"
+            scale="100"
+            decimals="0"
+            suffix="%"
+         />
          <property
             type="text"
             name="Description"
             attribute="NA_Node_Description"
             tab="1"
+         />
+         <property
+            type="scalar-label"
+            name="Weight"
+            attribute="NA_Node_Weight"
+            decimals="3"
+         />
+         <property
+            type="scalar-label"
+            name="Weight x Objective"
+            attribute="NA_Node_Weight_And_Objective"
+            decimals="3"
          />
          <property
             type="scalar-label"
@@ -358,6 +404,20 @@
             attribute="NA_Node_Prevention_Cost"
             prefix="$"
          />
+<!--
+         <property
+            type="scalar"
+            name="Response Cost"
+            attribute="NA_Node_Response_Cost"
+            prefix="$"
+         />
+-->
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
          <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
@@ -368,6 +428,44 @@
             name="Description"
             attribute="NA_Node_Description"
             tab="1"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Initial"
+            attribute="NA_Node_Risk_Initial"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Prevention Allocation"
+            attribute="NA_Node_Prevention_Allocation"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Risk Reduced"
+            attribute="NA_Node_Risk_Reduced"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Vulnerability Reduced"
+            attribute="NA_Node_Vulnerability_Reduced"
+            scale="100"
+            decimals="0"
+            suffix="%"
+         />
+         <property
+            type="scalar-label"
+            name="Weight"
+            attribute="NA_Node_Weight"
+            decimals="3"
+         />
+         <property
+            type="scalar-label"
+            name="Weight x Objective"
+            attribute="NA_Node_Weight_And_Objective"
+            decimals="3"
          />
          <property type="link-label" name="From" attribute="NA_Node_Name" super="true"/>
          <property type="link-label" name="To" attribute="NA_Node_Name" super="false"/>
