@@ -454,7 +454,6 @@
                    </textColor>
                    <alignment value="center"/>
                    <enableBackground value="false"/>
-                   <translate x="0" y="-4"/>
                 </text>
              </group>
           </items>
