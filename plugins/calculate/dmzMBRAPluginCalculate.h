@@ -14,7 +14,7 @@ class QDockWidget;
 
 namespace dmz {
 
-   class MBRAPluginCalculate : public QWidget, public Plugin, QtWidget {
+   class MBRAPluginCalculate : public QWidget, public Plugin, public QtWidget {
 
       Q_OBJECT
 

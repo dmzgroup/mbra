@@ -13,6 +13,7 @@
    <state name="NA_Flow_Reverse"/>
    <state name="FT_Logic_And"/>
    <state name="FT_Logic_Or"/>
+   <state name="FT_Logic_XOr"/>
    <state name="FT_Threat_Level_0"/>
    <state name="FT_Threat_Level_1"/>
    <state name="FT_Threat_Level_2"/>
@@ -423,7 +424,7 @@
                    <translate x="-20" y="-20"/>
                 </image>
                 <text>
-                   <text value="And"/>
+                   <text value="AND"/>
                    <textColor>
                       <string value="black"/>
                    </textColor>
@@ -436,7 +437,20 @@
                    <translate x="-20" y="-20"/>
                 </image>
                 <text>
-                   <text value="Or"/>
+                   <text value="OR"/>
+                   <textColor>
+                      <string value="black"/>
+                   </textColor>
+                   <alignment value="center"/>
+                   <enableBackground value="false"/>
+                </text>
+             </group>
+             <group name="xor">
+                <image file="FT_LogicXOr.svg">
+                   <translate x="-20" y="-20"/>
+                </image>
+                <text>
+                   <text value="XOR"/>
                    <textColor>
                       <string value="black"/>
                    </textColor>
@@ -448,6 +462,7 @@
           <switch>
              <state group="logic" name="FT_Logic_And"><item name="and"/></state>
              <state group="logic" name="FT_Logic_Or"><item name="or"/></state>
+             <state group="logic" name="FT_Logic_XOr"><item name="xor"/></state>
           </switch>
        </FTCanvasObjectBasic>
    </object-type>
