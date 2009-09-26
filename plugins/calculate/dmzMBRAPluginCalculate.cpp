@@ -14,9 +14,7 @@ dmz::MBRAPluginCalculate::MBRAPluginCalculate (const PluginInfo &Info, Config &l
       Plugin (Info),
       QtWidget (Info),
       _log (Info),
-      _calculateOnMessage (),
-      _calculateOffMessage (),
-      _target (0) {
+      _convert (Info) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -54,16 +52,8 @@ dmz::MBRAPluginCalculate::get_qt_widget () { return this; }
 void
 dmz::MBRAPluginCalculate::_slot_calculate (bool on) {
 
-   if (on) {
-
-      Data data;
-      _calculateOnMessage.send (_target, &data, 0);
-   }
-   else {
-
-      Data data;
-      _calculateOffMessage.send (_target, &data, 0);
-   }
+   Data data = _convert.to_data (on ? True : False);
+   _simulatorMessage.send (&data);
 }
 
 
@@ -72,25 +62,12 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
 
-   _calculateOnMessage = config_create_message (
-      "message.on",
+   _simulatorMessage = config_create_message (
+      "simulator-message.name",
       local,
-      "NARankObjectsMessage",
+      "NASimulatorMessage",
       get_plugin_runtime_context (),
       &_log);
-
-   _calculateOffMessage = config_create_message (
-      "message.off",
-      local,
-      "NAHideObjectsMessage",
-      get_plugin_runtime_context (),
-      &_log);
-
-   _target = config_to_named_handle (
-      "message.target",
-      local,
-      "dmzMBRAPluginNARanking",
-      get_plugin_runtime_context ());
 
    qwidget_config_read ("widget", local, this);
 

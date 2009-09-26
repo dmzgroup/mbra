@@ -2,6 +2,7 @@
 #define DMZ_MBRA_PLUGIN_CALCULATE_DOT_H
 
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDataConverters.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
@@ -41,9 +42,8 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
-         Message _calculateOnMessage;
-         Message _calculateOffMessage;
-         Handle _target;
+         DataConverterBoolean _convert;
+         Message _simulatorMessage;
          Ui::calculateForm _ui;
 
       private:

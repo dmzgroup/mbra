@@ -455,6 +455,15 @@ local function receive_hide (self)
    end
 end
 
+
+local function receive_simulator (self, message, data)
+   if dmz.data.is_a (data) then
+      if data:lookup_boolean ("Boolean", 1) then receive_rank (self)
+      else receive_hide (self)
+      end
+   end
+end
+
 local function receive_prevention_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.preventionBudget = data:lookup_number ("Budget", 1)
@@ -537,10 +546,8 @@ function new (config, name)
       visible = false,
       rankLimit = config:to_number ("rank.limit", 9),
       log = dmz.log.new ("lua." .. name),
-      rankMessage =
-         config:to_message ("message.rank.name", "NARankObjectsMessage"),
-      hideMessage =
-         config:to_message ("message.hide.name", "NAHideObjectsMessage"),
+      simulatorMessage =
+         config:to_message ("simulator-message.name", "NASimulatorMessage"),
       preventionBudgetMessage =
          config:to_message ("message.prevention-budget.name", "PreventionBudgetMessage"),
       responseBudgetMessage =
@@ -558,8 +565,7 @@ function new (config, name)
 
    self.log:info ("Creating plugin: " .. name)
 
-   self.msgObs:register (self.rankMessage, receive_rank, self)
-   self.msgObs:register (self.hideMessage, receive_hide, self)
+   self.msgObs:register (self.simulatorMessage, receive_simulator, self)
    self.msgObs:register (self.preventionBudgetMessage, receive_prevention_budget, self)
    self.msgObs:register (self.responseBudgetMessage, receive_response_budget, self)
 
