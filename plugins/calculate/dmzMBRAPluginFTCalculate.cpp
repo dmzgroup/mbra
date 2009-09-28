@@ -32,8 +32,8 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _nameAttrHandle (0),
       _hideAttrHandle (0),
       _activeAttrHandle (0),
+      _convert (Info),
       _root (0),
-      _target (0),
       _editTarget (0),
       _createTarget (0),
       _objectDataHandle (0),
@@ -278,14 +278,14 @@ dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
 
    if (on) {
 
-      Data data;
+      Data data = _convert.to_data (True);
       data.store_float64 (_budgetAttrHandle, 0, _ui.budgetSpinBox->value ());
-      _calculateOnMessage.send (_target, &data, 0);
+      _calculateMessage.send (&data);
    }
    else {
 
-      Data data;
-      _calculateOffMessage.send (_target, &data, 0);
+      Data data = _convert.to_data (False);
+      _calculateMessage.send (&data);
    }
 }
 
@@ -295,9 +295,9 @@ dmz::MBRAPluginFTCalculate::_slot_update_budget (int budget) {
 
    if (_ui.calculateButton->isChecked ()) {
 
-      Data data;
+      Data data = _convert.to_data (True);
       data.store_float64 (_budgetAttrHandle, 0, Float64 (budget));
-      _calculateOnMessage.send (_target, &data, 0);
+      _calculateMessage.send (&data);
    }
 }
 
@@ -409,17 +409,10 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       "FTBudget",
       get_plugin_runtime_context ());
 
-   _calculateOnMessage = config_create_message (
-      "message.on",
+   _calculateMessage = config_create_message (
+      "calculate-message.name",
       local,
-      "FTStartWorkMessage",
-      get_plugin_runtime_context (),
-      &_log);
-
-   _calculateOffMessage = config_create_message (
-      "message.off",
-      local,
-      "FTStopWorkMessage",
+      "FTSimulatorMessage",
       get_plugin_runtime_context (),
       &_log);
 
@@ -434,12 +427,6 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       local,
       "FTCreateFromFlaggedNodesMessage",
       context);
-
-   _target = config_to_named_handle (
-      "message.target",
-      local,
-      "dmzMBRAPluginFaultTree",
-      get_plugin_runtime_context ());
 
    _editTarget = config_to_named_handle (
       "threat-edit-target.name",

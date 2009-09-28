@@ -3,6 +3,7 @@
 
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDataConverters.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
@@ -109,12 +110,11 @@ namespace dmz {
          Handle _nameAttrHandle;
          Handle _hideAttrHandle;
          Handle _activeAttrHandle;
-         Message _calculateOnMessage;
-         Message _calculateOffMessage;
+         DataConverterBoolean _convert;
+         Message _calculateMessage;
          Message _componentEditMessage;
          Message _createFromFlaggedNodes;
          Handle _root;
-         Handle _target;
          Handle _editTarget;
          Handle _createTarget;
          Handle _objectDataHandle;

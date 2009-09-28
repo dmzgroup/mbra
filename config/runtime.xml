@@ -7,6 +7,7 @@
    <message name="PreventionBudgetMessage" monostate="true"/>
    <message name="ResponseBudgetMessage" monostate="true"/>
    <message name="NASimulatorMessage" monostate="true"/>
+   <message name="FTSimulatorMessage" monostate="true"/>
    <state name="NA_Node_Overlay"/>
    <state name="NA_Node_Highlight"/>
    <state name="NA_Node_Flagged"/>
