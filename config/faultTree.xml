@@ -290,6 +290,7 @@
       <menu>
          <item text="AND" message="FTLogicAndMessage"/>
          <item text="OR" message="FTLogicOrMessage"/>
+         <item text="XOR" message="FTLogicXOrMessage"/>
          <item text="Cut" message="FTCutMessage" separator="true"/>
          <item text="Copy" message="FTCopyMessage"/>
          <item text="Paste" message="FTPasteMessage"/>

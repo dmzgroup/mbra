@@ -26,6 +26,7 @@
    <plugin name="dmzQtPluginStackedWidget" unique="charts-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
+   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
 
 <!--
    <plugin name="dmzObjectPluginDump"/>
@@ -51,24 +52,19 @@
          <widget name="charts-palette" title="Charts Palette" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-      </group>
-      <group area="bottom">
          <widget name="data-palette" title="Data Table" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-      </group>
-      <group area="right">
          <widget name="tool-palette" title="Tool Palette" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-      </group>
-      <group area="right">
          <widget name="NACanvasLayer" title="Network Layers" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
-      </group>
-      <group area="bottom">
          <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
+            <allowed-areas none="true"/>
+         </widget>
+         <widget name="property-browser" title="Property Browser" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
       </group>
@@ -77,6 +73,9 @@
 <central-widget>
    <remember-state value="false"/>
 </central-widget>
+<property-browser>
+   <test value="something"/>
+</property-browser>
 <dmzArchivePluginObject>
    <archive-scope>
       <string value="archive"/>

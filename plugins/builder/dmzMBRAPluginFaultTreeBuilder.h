@@ -116,6 +116,7 @@ namespace dmz {
 
          void _logic_and (const Handle Object);
          void _logic_or (const Handle Object);
+         void _logic_xor (const Handle Object);
 
          void _create_logic (const Handle Parent);
          void _delete_logic (const Handle Parent);
@@ -166,6 +167,7 @@ namespace dmz {
          Message _threatDeleteMessage;
          Message _logicAndMessage;
          Message _logicOrMessage;
+         Message _logicXOrMessage;
          Message _cutMessage;
          Message _copyMessage;
          Message _pasteMessage;
@@ -177,6 +179,7 @@ namespace dmz {
          ObjectType _clipBoardType;
          Mask _logicAndMask;
          Mask _logicOrMask;
+         Mask _logicXOrMask;
          Mask _flaggedMask;
          HashTableHandleTemplate<Int32> _linkTable;
          HandleContainer _flaggedNodes;
