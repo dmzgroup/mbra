@@ -455,7 +455,6 @@ local function receive_hide (self)
    end
 end
 
-
 local function receive_simulator (self, message, data)
    if dmz.data.is_a (data) then
       if data:lookup_boolean ("Boolean", 1) then receive_rank (self)
