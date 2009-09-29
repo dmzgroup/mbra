@@ -18,7 +18,7 @@
    <instance name="dmzMBRAPluginNARanking"/>
    <instance name="dmzMBRAPluginNADegrees"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
-   <instance name="dmzMBRAPluginFaultTree"/>
+   <instance name="dmzMBRAPluginFTSimulator"/>
    <instance name="dmzMBRAPluginLayerActive"/>
    <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
    <instance name="dmzMBRAPluginNALabelFormatter"/>

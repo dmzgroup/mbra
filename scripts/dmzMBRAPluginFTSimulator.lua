@@ -39,6 +39,8 @@ Level[10] = dmz.definitions.lookup_state ("FT_Threat_Level_10")
 Level.All = Level[0] + Level[1] + Level[2] + Level[3] + Level[4] + Level[5] +
             Level[6] + Level[7] + Level[8] + Level[9] + Level[10]
 
+local function not_zero (value) return not dmz.math.is_zero (value) end
+
 local function round (value)
    local x, y= math.modf (value)
    if y >= 0.5 then x = x + 1 end
@@ -61,21 +63,23 @@ end
 
 local function update_vulnerability_reduced (object)
    if object then
-      local v = 0
+      local value = 0
       if not object.allocation then object.allocation = 0 end
       if not object.vulnerability then object.vulnerability = 0 end
-      if object.ec and object.ec > 0 then
-         v = (1 - (object.allocation / object.ec)) * object.vulnerability
+      if not object.gamma then object.gamma = 0 end
+      if object.cost and object.cost > 0 then
+         value = object.vulnerability *
+            math.exp (-object.gamma * object.allocation / object.cost)
       end
-      object.vreduced = v
-      dmz.object.scalar (object.handle, VulnerabilityReducedHandle, v)
+      object.vreduced = value
+      dmz.object.scalar (object.handle, VulnerabilityReducedHandle, value)
       local state = dmz.object.state (object.handle)
       if not state then state = dmz.mask.new () end
       state:unset (Level.All)
-      if object.vulnerability > 0.0 then
-         if v < 0 then v = 0 end
-         v = round ((v / object.vulnerability) * 10)
-         state = state + Level[v]
+      if object.vulnerability > 0 then
+         if value < 0 then value = 0 end
+         value = round ((value / object.vulnerability) * 10)
+         state = state + Level[value]
       end
       dmz.object.state (object.handle, nil, state)
    end
@@ -88,11 +92,6 @@ create_object = function (self, objHandle, objType)
       self.objects[objHandle] = { handle = objHandle, }
       self.reset = true
    end
---[[
-   elseif objType == ComponentRootType then
-      self.root = objHandle
-   end
---]]
 end,
 
 destroy_object = function (self, objHandle)
@@ -127,7 +126,7 @@ local EliminationCallback = {
 
 update_object_scalar = function (self, objHandle, attrHandle, value)
    if self.objects[objHandle] then
-      self.objects[objHandle].ec = value
+      self.objects[objHandle].cost = value
       update_vulnerability_reduced (self.objects[objHandle])
       self.reset = true
    end
@@ -178,18 +177,77 @@ update_object_scalar = function (self, objHandle, attrHandle, value)
 end,
 }
 
-local function allocate_budget (self)
+local function log_defender_term (object)
+   local result = object.threat * object.consequence * object.vulnerability *
+         object.gamma
+   if not_zero (result) then
+      result = object.cost / result
+      if not_zero (object.gamma) then
+         result = (object.cost / object.gamma) * math.log (result)
+      else result = 0
+      end
+   else result = 0
+   end
+   return result
 end
 
 local function start_work (self)
-   self.visible = true
+   local index = {}
+   for object in pairs (self.objects) do
+      dmz.object.scalar (object, AllocationHandle, 0)
+      index[#index + 1] = object
+   end
+   self.index = index
+   if not_zero (self.budget) then
+      local A = 0
+      local B = 0
+      for handle, object in pairs (self.objects) do
+         if not object.vulnerability or (object.vulnerability <= 0) then
+            object.vulnerability = 1
+         end
+         object.gamma = -math.log (0.05 / object.vulnerability)
+         if not object.cost then object.cost = 0 end
+         if not object.threat then object.threat = 0 end
+         if not object.consequence then object.consequence = 0 end
+         object.logDefenderTerm = log_defender_term (object)
+         A = A + object.logDefenderTerm
+         if not_zero (object.gamma) then
+            B = B + (object.cost / object.gamma)
+         end
+      end
+      local totalAllocation = 0
+      local logLamda = 0
+      if not_zero (B) then logLamda = (-self.budget - A) / B end
+      for _, object in pairs (self.objects) do
+         local A = 0
+         if not_zero (object.gamma) then A = object.cost / object.gamma end
+         local B = 0
+         if object.cost > 0 then B = object.logDefenderTerm / object.cost end
+         object.allocation = -A * (logLamda + B)
+         if object.allocation < 0 then object.allocation = 0 end
+         totalAllocation = totalAllocation + object.allocation
+      end
+      local scale = 1
+      if totalAllocation ~= self.budget then
+         scale =  self.budget / totalAllocation
+      end
+      totalAllocation = 0
+      for _, object in pairs (self.objects) do
+         object.allocation = object.allocation * scale
+         totalAllocation = totalAllocation + object.allocation
+         dmz.object.scalar (object.handle, AllocationHandle, object.allocation)
+      end
+   end
+   if self.timeSliceHandle then self.timeSlice:start (self.timeSliceHandle) end
+   self.reset = nil
 end
 
 local function work (self)
+   if self.reset then start_work (self) end
 end
 
 local function stop_work (self)
-   self.visible = false
+   self.reset = nil
    if self.timeSliceHandle then self.timeSlice:stop (self.timeSliceHandle) end
 end
 
@@ -205,7 +263,8 @@ local function receive_budget (self, msg, data)
    if dmz.data.is_a (data) then
       self.budget = data:lookup_number (BudgetHandle, 1)
       self.maxBudget = data:lookup_number (BudgetHandle, 2)
-      if self.visible then start_work (self) end
+cprint (tostring (self.budget), tostring (self.maxBudget))
+      self.reset = true
    end
 end
 
@@ -239,7 +298,7 @@ function new (config, name)
       simMessage =
          config:to_message ("simulator-message.name", "FTSimulatorMessage"),
       budgetMessage =
-         config:to_message ("budget-message.name", "FTSimulatorMessage"),
+         config:to_message ("budget-message.name", "FTBudgetMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       index = {},
