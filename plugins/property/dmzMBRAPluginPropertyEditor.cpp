@@ -810,8 +810,6 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
 
       if (prevWidget && _showFTButton) { QWidget::setTabOrder (prevWidget, ui.ftButton); }
 
-//      dialog.adjustSize ();
-
       if (dialog.exec () == QDialog::Accepted) {
 
          const Handle UndoHandle = _undo.start_record ("Edit Node");
