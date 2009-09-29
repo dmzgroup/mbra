@@ -112,6 +112,7 @@ namespace dmz {
          Handle _activeAttrHandle;
          DataConverterBoolean _convert;
          Message _calculateMessage;
+         Message _budgetMessage;
          Message _componentEditMessage;
          Message _createFromFlaggedNodes;
          Handle _root;
@@ -122,6 +123,7 @@ namespace dmz {
          ObjectType _rootType;
          Ui::calculateForm _ui;
          HashTableHandleTemplate<EcStruct> _ecTable;
+         Float64 _maxBudget;
 
       private:
          MBRAPluginFTCalculate ();
