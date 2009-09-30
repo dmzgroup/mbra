@@ -1,0 +1,9 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginPreferencesGeneral"
+lmk.set_type "plugin"
+lmk.add_files {"dmzMBRAPluginPreferencesGeneral.ui",}
+lmk.add_files ({"dmzMBRAPluginPreferencesGeneral.h",},{src="moc"})
+lmk.add_files {"dmzMBRAPluginPreferencesGeneral.cpp",}
+lmk.add_libs {"dmzQtUtil","dmzKernel",}
+lmk.add_preqs {"dmzQtFramework",}
+lmkQt.add_libs {"QtCore","QtGui",}

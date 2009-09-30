@@ -2,7 +2,13 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzQtPluginVersion"/>
+      <plugin name="dmzQtPluginPreferences" scope="preferenses"/>
+      <plugin name="dmzMBRAPluginPreferencesGeneral" scope="preferenses-general"/>
    </plugin-list>
+   <preferenses>
+      <widget name="dmzMBRAPluginPreferencesGeneral" title="General"/>
+      <widget name="dmzQtPluginMapProperties" title="Map"/>
+   </preferenses>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">
          <action text="New" statusTip="New File" shortcut="new">
