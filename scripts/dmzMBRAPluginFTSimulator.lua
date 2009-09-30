@@ -177,6 +177,120 @@ update_object_scalar = function (self, objHandle, attrHandle, value)
 end,
 }
 
+local function risk_and (objects)
+   local value = 0
+   if #objects > 0 then value = 1 end
+   for _, object in ipairs (objects) do
+      if not object.threat then object.threat = 0 end
+      if not object.vreduced then object.vreduced = 0 end
+      value = value * object.threat * object.vreduced
+   end
+   local result = 0
+   for _, object in ipairs (objects) do
+      if not object.consequence then object.consequence = 0 end
+      result = result + (value * object.consequence)
+   end
+   return result
+end
+
+local function risk_or (objects)
+   local value = 0
+   for _, object in ipairs (objects) do
+      if not object.threat then object.threat = 0 end
+      if not object.vreduced then object.vreduced = 0 end
+      value = value + (object.threat * object.vreduced)
+   end
+   local result = 0
+   for _, object in ipairs (objects) do
+      if not object.consequence then object.consequence = 0 end
+      result = result + (value * object.consequence)
+   end
+   return result
+end
+
+local function risk_xor (objects)
+   local result = 0
+   for idex, current in ipairs (objects) do
+      local value = 1
+      for jdex, object in ipairs (objects) do
+         if not object.threat then object.threat = 0 end
+         if not object.vreduced then object.vreduced = 0 end
+         if idex ~= jdex then value = value * (1 - (object.threat * object.vreduced))
+         else value = value * object.threat * object.vreduced
+         end
+      end
+      if not current.consequence then current.consequence = 0 end
+      result = result + (value * current.consequence)
+   end
+   return result
+end
+
+local function vulnerability_and (subv)
+   local result = 1
+   for _, value in ipairs (subv) do
+      result = result * value
+   end
+   return result
+end
+
+local function vulnerability_or (subv)
+   local result = 1
+   for _, value in ipairs (subv) do
+      result = result * (1 - value)
+   end
+   return 1 - result
+end
+
+local function vulnerability_xor (subv)
+   local result = 1
+   for idex, _ in ipairs (subv) do
+      local product = 1
+      for jdex, value in ipairs (subv) do
+         if jdex ~= idex then product = product * (1 - value)
+         else product = product * value
+         end
+      end
+      result = result * product
+   end
+   return result
+end
+
+local function traverse_fault_tree (self, node)
+   local nodeList = dmz.object.sub_links (node, FTLinkHandle)
+   if not nodeList then nodeList = {} end
+   local threatList = {}
+   local subv = {}
+   for _, object in ipairs (nodeList) do
+      local otype = dmz.object.type (object)
+      if otype:is_of_type (ThreatType) then
+         local ref = self.objects[object]
+         if ref then
+            if not ref.threat then ref.threat = 0 end
+            if not ref.vreduced then ref.vreduced = 0 end
+            subv[#subv + 1] = ref.threat * ref.vreduced
+            threatList[#threatList + 1] = ref
+         end
+      elseif otype:is_of_type (ComponentType) then
+         subv[#subv + 1] = traverse_fault_tree (self, object)
+      end
+   end
+   local op = get_logic_state (node)
+   local result = 0
+   if AndState == op then
+      self.risk = self.risk + risk_and (threatList)
+      result = vulnerability_and (subv)
+   elseif OrState == op then
+      self.risk = self.risk + risk_or (threatList)
+      result = vulnerability_or (subv)
+   elseif XOrState == op then
+      self.risk = self.risk + risk_xor (threatList)
+      result = vulnerability_xor (subv)
+   else
+      self.log:error ("Unknown logic operator:", op)
+   end
+   return result
+end
+
 local function log_defender_term (object)
    local result = object.threat * object.consequence * object.vulnerability *
       object.gamma
@@ -193,11 +307,19 @@ end
 
 local function start_work (self)
    local index = {}
-   for object in pairs (self.objects) do
+   for object, ref in pairs (self.objects) do
       dmz.object.scalar (object, AllocationHandle, 0)
-      index[#index + 1] = object
+      index[#index + 1] = ref
    end
    self.index = index
+   if self.root then
+      self.risk = 0
+      local vulnerability = traverse_fault_tree (self, self.root)
+      dmz.object.scalar (self.root, RiskSumHandle, self.risk)
+      dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
+      dmz.object.scalar (self.root, VulnerabilitySumHandle, vulnerability)
+      dmz.object.scalar (self.root, VulnerabilitySumReducedHandle, vulnerability)
+   end
    if not_zero (self.budget) then
       local A = 0
       local B = 0
@@ -237,6 +359,12 @@ local function start_work (self)
          totalAllocation = totalAllocation + object.allocation
          dmz.object.scalar (object.handle, AllocationHandle, object.allocation)
       end
+      if self.root then
+         self.risk = 0
+         local vulnerability = traverse_fault_tree (self, self.root)
+         dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
+         dmz.object.scalar (self.root, VulnerabilitySumReducedHandle, vulnerability)
+      end
    end
    if self.timeSliceHandle then self.timeSlice:start (self.timeSliceHandle) end
    self.reset = nil
@@ -244,6 +372,56 @@ end
 
 local function work (self)
    if self.reset then start_work (self) end
+   local size = #(self.index)
+   if size > 1 then
+      local source = math.random (size)
+      local target = source
+      local count = 0
+      while (count < 12) and (source == target) do
+         count = count + 1
+         target = math.random (size)
+      end
+      source = self.index[source]
+      target = self.index[target]
+--cprint (source.handle, target.handle)
+      if source and target and source.handle ~= target.handle then
+         local sourceAllocation = source.allocation
+         local targetAllocation = target.allocation
+         local maxAddition = target.cost - target.allocation
+         if maxAddition > source.allocation then maxAddition = source.allocation end
+         if maxAddition > 0.01 then
+            local addition = 0.01 + ((maxAddition - 0.01) * math.random ())
+            dmz.object.scalar (
+               source.handle,
+               AllocationHandle,
+               source.allocation - addition)
+            dmz.object.scalar (
+               target.handle,
+               AllocationHandle,
+               target.allocation + addition)
+            local riskOrig = dmz.object.scalar (self.root, RiskSumReducedHandle)
+            local vulnerabilityOrig = dmz.object.scalar (
+               self.root,
+               VulnerabilitySumReducedHandle)
+            self.risk = 0
+            local vulnerability = traverse_fault_tree (self, self.root)
+--cprint (vulnerability, vulnerabilityOrig)
+            if vulnerabilityOrig < vulnerability then
+               dmz.object.scalar (
+                  source.handle,
+                  AllocationHandle,
+                  sourceAllocation)
+               dmz.object.scalar (
+                  target.handle,
+                  AllocationHandle,
+                  targetAllocation)
+            else
+               dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
+               dmz.object.scalar (self.root, VulnerabilitySumReducedHandle, vulnerability)
+            end 
+         end
+      end
+   end
 end
 
 local function stop_work (self)
@@ -263,7 +441,7 @@ local function receive_budget (self, msg, data)
    if dmz.data.is_a (data) then
       self.budget = data:lookup_number (BudgetHandle, 1)
       self.maxBudget = data:lookup_number (BudgetHandle, 2)
-cprint (tostring (self.budget), tostring (self.maxBudget))
+--cprint (tostring (self.budget), tostring (self.maxBudget))
       self.reset = true
    end
 end
