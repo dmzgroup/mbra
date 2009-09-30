@@ -179,7 +179,7 @@ end,
 
 local function log_defender_term (object)
    local result = object.threat * object.consequence * object.vulnerability *
-         object.gamma
+      object.gamma
    if not_zero (result) then
       result = object.cost / result
       if not_zero (object.gamma) then
