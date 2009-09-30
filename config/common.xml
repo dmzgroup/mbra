@@ -26,9 +26,9 @@
    <plugin name="dmzQtPluginStackedWidget" unique="charts-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
-   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
 
 <!--
+   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzPluginUndoDump"/>

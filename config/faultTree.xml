@@ -95,7 +95,19 @@
          />
          <property
             type="scalar-label"
-            name="Reduced Vulnerability"
+            name="Risk Initial"
+            attribute="FT_Risk_Value"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Allocation"
+            attribute="FT_Threat_Allocation"
+            prefix="$"
+         />
+         <property
+            type="scalar-label"
+            name="Vulnerability Reduced"
             attribute="FT_Vulnerability_Reduced_Value"
             scale="100"
             decimals="0"
@@ -103,9 +115,9 @@
          />
          <property
             type="scalar-label"
-            name="Allocation"
-            attribute="FT_Threat_Allocation"
-            prefix="$"
+            name="Risk Reduced"
+            attribute="FT_Risk_Reduced_Value"
+            decimals="2"
          />
          <property
             type="text"

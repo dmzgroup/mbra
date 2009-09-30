@@ -3,6 +3,8 @@ local ConsequenceHandle = dmz.handle.new ("FT_Threat_Consequence")
 local ThreatHandle = dmz.handle.new ("FT_Threat_Value")
 local VulnerabilityHandle = dmz.handle.new ("FT_Vulnerability_Value")
 local VulnerabilityReducedHandle = dmz.handle.new ("FT_Vulnerability_Reduced_Value")
+local RiskHandle = dmz.handle.new ("FT_Risk_Value")
+local RiskReducedHandle = dmz.handle.new ("FT_Risk_Reduced_Value")
 local VulnerabilitySumHandle = dmz.handle.new ("FT_Vulnerability_Sum_Value")
 local VulnerabilitySumReducedHandle = dmz.handle.new (
    "FT_Vulnerability_Sum_Reduced_Value")
@@ -61,17 +63,36 @@ local function get_logic_state (node)
    return logic
 end
 
+local function new_object (handle)
+   return {
+
+      handle = handle,
+      cost = 0,
+      threat = 0,
+      vulnerability = 0,
+      consequence = 0,
+      allocation = 0,
+      gamma = 0,
+      vreduced = 0,
+   }
+end
+
 local function update_vulnerability_reduced (object)
    if object then
       local value = 0
-      if not object.allocation then object.allocation = 0 end
-      if not object.vulnerability then object.vulnerability = 0 end
-      if not object.gamma then object.gamma = 0 end
-      if object.cost and object.cost > 0 then
+      if object.cost > 0 then
          value = object.vulnerability *
             math.exp (-object.gamma * object.allocation / object.cost)
       end
       object.vreduced = value
+      dmz.object.scalar (
+         object.handle,
+         RiskHandle,
+         object.vulnerability * object.consequence * object.threat)
+      dmz.object.scalar (
+         object.handle,
+         RiskReducedHandle,
+         value * object.consequence * object.threat)
       dmz.object.scalar (object.handle, VulnerabilityReducedHandle, value)
       local state = dmz.object.state (object.handle)
       if not state then state = dmz.mask.new () end
@@ -89,7 +110,7 @@ local ObjectCallbacks = {
 
 create_object = function (self, objHandle, objType)
    if objType:is_of_type (ThreatType) then
-      self.objects[objHandle] = { handle = objHandle, }
+      self.objects[objHandle] = new_object (objHandle)
       self.reset = true
    end
 end,
@@ -181,13 +202,10 @@ local function risk_and (objects)
    local value = 0
    if #objects > 0 then value = 1 end
    for _, object in ipairs (objects) do
-      if not object.threat then object.threat = 0 end
-      if not object.vreduced then object.vreduced = 0 end
       value = value * object.threat * object.vreduced
    end
    local result = 0
    for _, object in ipairs (objects) do
-      if not object.consequence then object.consequence = 0 end
       result = result + (value * object.consequence)
    end
    return result
@@ -196,13 +214,10 @@ end
 local function risk_or (objects)
    local value = 0
    for _, object in ipairs (objects) do
-      if not object.threat then object.threat = 0 end
-      if not object.vreduced then object.vreduced = 0 end
       value = value + (object.threat * object.vreduced)
    end
    local result = 0
    for _, object in ipairs (objects) do
-      if not object.consequence then object.consequence = 0 end
       result = result + (value * object.consequence)
    end
    return result
@@ -213,13 +228,10 @@ local function risk_xor (objects)
    for idex, current in ipairs (objects) do
       local value = 1
       for jdex, object in ipairs (objects) do
-         if not object.threat then object.threat = 0 end
-         if not object.vreduced then object.vreduced = 0 end
          if idex ~= jdex then value = value * (1 - (object.threat * object.vreduced))
          else value = value * object.threat * object.vreduced
          end
       end
-      if not current.consequence then current.consequence = 0 end
       result = result + (value * current.consequence)
    end
    return result
@@ -265,8 +277,6 @@ local function traverse_fault_tree (self, node)
       if otype:is_of_type (ThreatType) then
          local ref = self.objects[object]
          if ref then
-            if not ref.threat then ref.threat = 0 end
-            if not ref.vreduced then ref.vreduced = 0 end
             subv[#subv + 1] = ref.threat * ref.vreduced
             threatList[#threatList + 1] = ref
          end
@@ -324,13 +334,10 @@ local function start_work (self)
       local A = 0
       local B = 0
       for handle, object in pairs (self.objects) do
-         if not object.vulnerability or (object.vulnerability <= 0) then
+         if object.vulnerability <= 0 then
             object.vulnerability = 1
          end
          object.gamma = -math.log (0.05 / object.vulnerability)
-         if not object.cost then object.cost = 0 end
-         if not object.threat then object.threat = 0 end
-         if not object.consequence then object.consequence = 0 end
          object.logDefenderTerm = log_defender_term (object)
          A = A + object.logDefenderTerm
          if not_zero (object.gamma) then
@@ -350,8 +357,8 @@ local function start_work (self)
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation ~= self.budget then
-         scale =  self.budget / totalAllocation
+      if totalAllocation > 0 then
+         scale = self.budget / totalAllocation
       end
       totalAllocation = 0
       for _, object in pairs (self.objects) do
@@ -440,8 +447,9 @@ end
 local function receive_budget (self, msg, data)
    if dmz.data.is_a (data) then
       self.budget = data:lookup_number (BudgetHandle, 1)
+      if not self.budget then self.budget = 0 end
       self.maxBudget = data:lookup_number (BudgetHandle, 2)
---cprint (tostring (self.budget), tostring (self.maxBudget))
+      if not self.maxBudget then self.maxBudget = 0 end
       self.reset = true
    end
 end
