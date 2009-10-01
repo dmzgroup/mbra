@@ -136,13 +136,13 @@ end
 local LinkCallbacks = {
 
 link_objects = function (self, link, attr, super, sub)
-   if self.object[super] or self.object[sub] then
+   if self.objects[super] or self.objects[sub] then
       self.reset = true
    end
 end,
 
 unlink_objects = function (self, link, attr, super, sub)
-   if self.object[super] or self.object[sub] then
+   if self.objects[super] or self.objects[sub] then
       self.reset = true
    end
 end,
@@ -215,13 +215,15 @@ end,
 
 local function build_index (self, node)
    local nodeList = dmz.object.sub_links (node, FTLinkHandle)
-   for _, object in ipairs (nodeList) do
-      local otype = dmz.object.type (object)
-      if otype:is_of_type (ThreatType) then
-         local ref = self.objects[object]
-         if ref then self.index[#(self.index) + 1] = ref end
-      elseif otype:is_of_type (ComponentType) then
-         build_index (self, object)
+   if nodeList then
+      for _, object in ipairs (nodeList) do
+         local otype = dmz.object.type (object)
+         if otype:is_of_type (ThreatType) then
+            local ref = self.objects[object]
+            if ref then self.index[#(self.index) + 1] = ref end
+         elseif otype:is_of_type (ComponentType) then
+            build_index (self, object)
+         end
       end
    end
 end
