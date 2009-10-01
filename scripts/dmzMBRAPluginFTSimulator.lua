@@ -360,15 +360,8 @@ local function start_work (self)
    if not_zero (self.budget) then
       local A = 0
       local B = 0
-<<<<<<< HEAD
       for _, object in ipairs (self.index) do
-         if not object.vulnerability or (object.vulnerability <= 0) then
-=======
-      for handle, object in pairs (self.objects) do
-         if object.vulnerability <= 0 then
->>>>>>> 8904de7ef51460c2e3427d0aa701aaaca28dba08
-            object.vulnerability = 1
-         end
+         if object.vulnerability <= 0 then object.vulnerability = 1 end
          object.gamma = -math.log (0.05 / object.vulnerability)
          object.logDefenderTerm = log_defender_term (object)
          A = A + object.logDefenderTerm
