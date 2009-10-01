@@ -96,6 +96,7 @@ app.add_data {
    "assets/Images/FT_ComponentBox.svg",
    "assets/Images/FT_LogicAnd.svg",
    "assets/Images/FT_LogicOr.svg",
+   "assets/Images/FT_LogicXOr.svg",
    "assets/Images/FT_ThreatBox.svg",
    "assets/Images/FT_ThreatFillGreen.svg",
    "assets/Images/FT_ThreatFillSolid.svg",
