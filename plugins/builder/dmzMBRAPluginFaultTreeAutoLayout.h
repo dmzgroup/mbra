@@ -1,6 +1,7 @@
 #ifndef DMZ_MBRA_PLUGIN_FAULT_TREE_AUTO_LAYOUT_DOT_H
 #define DMZ_MBRA_PLUGIN_FAULT_TREE_AUTO_LAYOUT_DOT_H
 
+#include <dmzApplicationState.h>
 #include <dmzObjectObserverUtil.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeObjectType.h>
@@ -83,6 +84,7 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
+         ApplicationStateWrapper _app;
          QtModuleCanvas *_canvasModule;
          String _canvasModuleName;
          Handle _defaultAttrHandle;
