@@ -112,6 +112,21 @@ update_object_state = function (self, objHandle, attrHandle, value, prevValue)
 end
 }
 
+local LinkCallbacks = {
+
+link_objects = function (self, link, attr, super, sub)
+   if self.object[super] or self.object[sub] then
+      self.reset = true
+   end
+end,
+
+unlink_objects = function (self, link, attr, super, sub)
+   if self.object[super] or self.object[sub] then
+      self.reset = true
+   end
+end,
+}
+
 local RootCallback = {
 
 update_object_flag = function (self, object, attrHandle, value)
@@ -176,6 +191,19 @@ update_object_scalar = function (self, objHandle, attrHandle, value)
    end
 end,
 }
+
+local function build_index (self, node)
+   local nodeList = dmz.object.sub_links (node, FTLinkHandle)
+   for _, object in ipairs (nodeList) do
+      local otype = dmz.object.type (object)
+      if otype:is_of_type (ThreatType) then
+         local ref = self.objects[object]
+         if ref then self.index[#(self.index) + 1] = ref end
+      elseif otype:is_of_type (ComponentType) then
+         build_index (self, object)
+      end
+   end
+end
 
 local function risk_and (objects)
    local value = 0
@@ -306,12 +334,11 @@ local function log_defender_term (object)
 end
 
 local function start_work (self)
-   local index = {}
-   for object, ref in pairs (self.objects) do
-      dmz.object.scalar (object, AllocationHandle, 0)
-      index[#index + 1] = ref
+   self.index = {}
+   build_index (self, self.root)
+   for _, object in ipairs (self.index) do
+      dmz.object.scalar (object.handle, AllocationHandle, 0)
    end
-   self.index = index
    if self.root then
       self.risk = 0
       local vulnerability = traverse_fault_tree (self, self.root)
@@ -323,7 +350,7 @@ local function start_work (self)
    if not_zero (self.budget) then
       local A = 0
       local B = 0
-      for handle, object in pairs (self.objects) do
+      for _, object in ipairs (self.index) do
          if not object.vulnerability or (object.vulnerability <= 0) then
             object.vulnerability = 1
          end
@@ -340,7 +367,7 @@ local function start_work (self)
       local totalAllocation = 0
       local logLamda = 0
       if not_zero (B) then logLamda = (-self.budget - A) / B end
-      for _, object in pairs (self.objects) do
+      for _, object in ipairs (self.index) do
          local A = 0
          if not_zero (object.gamma) then A = object.cost / object.gamma end
          local B = 0
@@ -354,7 +381,7 @@ local function start_work (self)
          scale =  self.budget / totalAllocation
       end
       totalAllocation = 0
-      for _, object in pairs (self.objects) do
+      for _, object in ipairs (self.index) do
          object.allocation = object.allocation * scale
          totalAllocation = totalAllocation + object.allocation
          dmz.object.scalar (object.handle, AllocationHandle, object.allocation)
@@ -450,6 +477,7 @@ local function start_plugin (self)
    self.timeSliceHandle = self.timeSlice:create (work, self, self.name)
    self.timeSlice:stop (self.timeSliceHandle)
    self.objObs:register (nil, ObjectCallbacks, self)
+   self.objObs:register (FTLinkHandle, LinkCallbacks, self)
    self.objObs:register (FTActiveFaultTree, RootCallback, self)
    self.objObs:register (EliminationHandle, EliminationCallback, self)
    self.objObs:register (ConsequenceHandle, ConsequenceCallback, self)
