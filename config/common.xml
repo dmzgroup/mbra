@@ -64,9 +64,11 @@
          <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
+<!--
          <widget name="property-browser" title="Property Browser" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
+-->
       </group>
    </dock-windows>
 </window>
