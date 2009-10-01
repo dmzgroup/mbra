@@ -15,7 +15,7 @@
       <plugin name="dmzQtExtLuaConsole"/>
    </extensions>
    <instance name="dmzMBRAPluginNAEdit"/>
-   <instance name="dmzMBRAPluginNARanking"/>
+   <instance name="dmzMBRAPluginNASimulator"/>
    <instance name="dmzMBRAPluginNADegrees"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
    <instance name="dmzMBRAPluginFTSimulator"/>

@@ -1,4 +1,4 @@
-#include "dmzMBRAPluginNASimulator.h"
+#include "dmzMBRAPluginNACalculate.h"
 #include <dmzObjectAttributeMasks.h>
 #include <dmzObjectModule.h>
 #include <dmzQtConfigRead.h>
@@ -11,7 +11,7 @@
 #include <QtGui/QtGui>
 
 
-dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (
+dmz::MBRAPluginNACalculate::MBRAPluginNACalculate (
       const PluginInfo &Info,
       Config &local) :
       QFrame (0),
@@ -32,14 +32,14 @@ dmz::MBRAPluginNASimulator::MBRAPluginNASimulator (
 }
 
 
-dmz::MBRAPluginNASimulator::~MBRAPluginNASimulator () {
+dmz::MBRAPluginNACalculate::~MBRAPluginNACalculate () {
 
 }
 
 
 // QtWidget Interface
 QWidget *
-dmz::MBRAPluginNASimulator::get_qt_widget () {
+dmz::MBRAPluginNACalculate::get_qt_widget () {
 
    return this;
 }
@@ -47,7 +47,7 @@ dmz::MBRAPluginNASimulator::get_qt_widget () {
 
 // Plugin Interface
 void
-dmz::MBRAPluginNASimulator::update_plugin_state (
+dmz::MBRAPluginNACalculate::update_plugin_state (
       const PluginStateEnum State,
       const UInt32 Level) {
 
@@ -74,7 +74,7 @@ dmz::MBRAPluginNASimulator::update_plugin_state (
 
 
 void
-dmz::MBRAPluginNASimulator::discover_plugin (
+dmz::MBRAPluginNACalculate::discover_plugin (
       const PluginDiscoverEnum Mode,
       const Plugin *PluginPtr) {
 
@@ -89,7 +89,7 @@ dmz::MBRAPluginNASimulator::discover_plugin (
 
 // Object Observer Interface
 void
-dmz::MBRAPluginNASimulator::update_object_flag (
+dmz::MBRAPluginNACalculate::update_object_flag (
       const UUID &Identity,
       const Handle ObjectHandle,
       const Handle AttributeHandle,
@@ -116,7 +116,7 @@ dmz::MBRAPluginNASimulator::update_object_flag (
 
 
 void
-dmz::MBRAPluginNASimulator::_slot_weight_by_clicked (int id) {
+dmz::MBRAPluginNACalculate::_slot_weight_by_clicked (int id) {
 
    ObjectModule *objMod = get_object_module ();
 
@@ -138,7 +138,7 @@ dmz::MBRAPluginNASimulator::_slot_weight_by_clicked (int id) {
 
 
 void
-dmz::MBRAPluginNASimulator::on_objectiveComboBox_currentIndexChanged (int id) {
+dmz::MBRAPluginNACalculate::on_objectiveComboBox_currentIndexChanged (int id) {
 
    ObjectModule *objMod = get_object_module ();
 
@@ -160,7 +160,7 @@ dmz::MBRAPluginNASimulator::on_objectiveComboBox_currentIndexChanged (int id) {
 
 
 void
-dmz::MBRAPluginNASimulator::_init (Config &local) {
+dmz::MBRAPluginNACalculate::_init (Config &local) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -239,12 +239,12 @@ dmz::MBRAPluginNASimulator::_init (Config &local) {
 extern "C" {
 
 DMZ_PLUGIN_FACTORY_LINK_SYMBOL dmz::Plugin *
-create_dmzMBRAPluginNASimulator (
+create_dmzMBRAPluginNACalculate (
       const dmz::PluginInfo &Info,
       dmz::Config &local,
       dmz::Config &global) {
 
-   return new dmz::MBRAPluginNASimulator (Info, local);
+   return new dmz::MBRAPluginNACalculate (Info, local);
 }
 
 };

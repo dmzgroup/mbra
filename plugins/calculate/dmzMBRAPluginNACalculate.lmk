@@ -1,9 +1,9 @@
 require "lmkQt"
-lmkQt.set_name "dmzMBRAPluginNASimulator"
+lmkQt.set_name "dmzMBRAPluginNACalculate"
 lmk.set_type "plugin"
-lmk.add_files {"NASimulatorForm.ui",}
-lmk.add_files ({"dmzMBRAPluginNASimulator.h",},{src="moc"})
-lmk.add_files {"dmzMBRAPluginNASimulator.cpp",}
+lmk.add_files {"NACalculateForm.ui",}
+lmk.add_files ({"dmzMBRAPluginNACalculate.h",},{src="moc"})
+lmk.add_files {"dmzMBRAPluginNACalculate.cpp",}
 lmk.add_libs {
    "dmzQtUtil",
    "dmzObjectUtil",
