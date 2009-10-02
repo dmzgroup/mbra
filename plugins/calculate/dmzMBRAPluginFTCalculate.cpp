@@ -32,12 +32,13 @@ dmz::MBRAPluginFTCalculate::MBRAPluginFTCalculate (
       _nameAttrHandle (0),
       _hideAttrHandle (0),
       _activeAttrHandle (0),
+      _convert (Info),
       _root (0),
-      _target (0),
       _editTarget (0),
       _createTarget (0),
       _objectDataHandle (0),
-      _createdDataHandle (0) {
+      _createdDataHandle (0),
+      _maxBudget (0.0) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -278,14 +279,13 @@ dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
 
    if (on) {
 
-      Data data;
-      data.store_float64 (_budgetAttrHandle, 0, _ui.budgetSpinBox->value ());
-      _calculateOnMessage.send (_target, &data, 0);
+      Data data = _convert.to_data (True);
+      _calculateMessage.send (&data);
    }
    else {
 
-      Data data;
-      _calculateOffMessage.send (_target, &data, 0);
+      Data data = _convert.to_data (False);
+      _calculateMessage.send (&data);
    }
 }
 
@@ -293,12 +293,10 @@ dmz::MBRAPluginFTCalculate::_slot_calculate (bool on) {
 void
 dmz::MBRAPluginFTCalculate::_slot_update_budget (int budget) {
 
-   if (_ui.calculateButton->isChecked ()) {
-
-      Data data;
-      data.store_float64 (_budgetAttrHandle, 0, Float64 (budget));
-      _calculateOnMessage.send (_target, &data, 0);
-   }
+   Data data;
+   data.store_float64 (_budgetAttrHandle, 0, Float64 (budget));
+   data.store_float64 (_budgetAttrHandle, 1, _maxBudget);
+   _budgetMessage.send (&data);
 }
 
 
@@ -374,20 +372,20 @@ dmz::MBRAPluginFTCalculate::on_rootBox_currentIndexChanged (int index) {
 void
 dmz::MBRAPluginFTCalculate::_update_budget () {
 
-   Float64 total (0.0);
+   _maxBudget = 0.0;
 
    HashTableHandleIterator it;
    EcStruct *ecs (0);
 
    while (_ecTable.get_next (it, ecs)) {
 
-      if (!ecs->hide) { total += ecs->value; }
+      if (!ecs->hide) { _maxBudget += ecs->value; }
    }
 
-   // _log.error << "Total: " << total << endl;
-   _ui.budgetSlider->setMaximum (int (total));
-   _ui.budgetSpinBox->setMaximum (int (total));
-   _ui.maxBudgetLabel->setText (QString ("$ ") + QString::number (int (total)));
+   _ui.budgetSlider->setMaximum (int (_maxBudget));
+   _ui.budgetSpinBox->setMaximum (int (_maxBudget));
+   _ui.maxBudgetLabel->setText (QString ("$ ") + QString::number (int (_maxBudget)));
+   _slot_update_budget (_ui.budgetSpinBox->value ());
 }
 
 
@@ -406,22 +404,23 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
    _budgetAttrHandle = config_to_named_handle (
       "attribute.budget.name",
       local,
-      "FTBudget",
+      "FT_Budget",
       get_plugin_runtime_context ());
 
-   _calculateOnMessage = config_create_message (
-      "message.on",
+   _calculateMessage = config_create_message (
+      "calculate-message.name",
       local,
-      "FTStartWorkMessage",
+      "FTSimulatorMessage",
       get_plugin_runtime_context (),
       &_log);
 
-   _calculateOffMessage = config_create_message (
-      "message.off",
+   _budgetMessage = config_create_message (
+      "budget-message.name",
       local,
-      "FTStopWorkMessage",
+      "FTBudgetMessage",
       get_plugin_runtime_context (),
       &_log);
+
 
    _componentEditMessage = config_create_message (
       "message.component.edit",
@@ -434,12 +433,6 @@ dmz::MBRAPluginFTCalculate::_init (Config &local) {
       local,
       "FTCreateFromFlaggedNodesMessage",
       context);
-
-   _target = config_to_named_handle (
-      "message.target",
-      local,
-      "dmzMBRAPluginFaultTree",
-      get_plugin_runtime_context ());
 
    _editTarget = config_to_named_handle (
       "threat-edit-target.name",

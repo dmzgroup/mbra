@@ -15,10 +15,10 @@
       <plugin name="dmzQtExtLuaConsole"/>
    </extensions>
    <instance name="dmzMBRAPluginNAEdit"/>
-   <instance name="dmzMBRAPluginNARanking"/>
+   <instance name="dmzMBRAPluginNASimulator"/>
    <instance name="dmzMBRAPluginNADegrees"/>
    <instance name="dmzMBRAPluginNALinkObject"/>
-   <instance name="dmzMBRAPluginFaultTree"/>
+   <instance name="dmzMBRAPluginFTSimulator"/>
    <instance name="dmzMBRAPluginLayerActive"/>
    <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
    <instance name="dmzMBRAPluginNALabelFormatter"/>

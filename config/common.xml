@@ -26,10 +26,10 @@
    <plugin name="dmzQtPluginStackedWidget" unique="charts-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
-   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
 
 <plugin name="dmzPluginMsgDump"/>
 <!--
+   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzPluginUndoDump"/>
@@ -65,9 +65,11 @@
          <widget name="dmzMBRAPluginLinkEditor" title="Network Fault Tree Editor" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
+<!--
          <widget name="property-browser" title="Property Browser" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
+-->
       </group>
    </dock-windows>
 </window>
