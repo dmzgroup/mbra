@@ -2,10 +2,15 @@
 #define DMZ_MBRA_PLUGIN_PREFERENCES_GENERAL_DOT_H
 
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
+#include <dmzTypesHandleContainer.h>
+#include <dmzTypesHashTableStringTemplate.h>
 #include <QtGui/QFrame>
-#include "ui_dmzMBRAPluginPreferencesGeneral.h"
+
+class QFormLayout;
 
 
 namespace dmz {
@@ -33,11 +38,32 @@ namespace dmz {
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
 
+      protected Q_SLOTS:
+         void _slot_scalar_value_changed (double);
+      
       protected:
+         struct MessageStruct {
+
+            QWidget *widget;
+            Message message;
+            HandleContainer targets;
+
+            MessageStruct () : widget (0), message (), targets () {;}
+         };
+         
+         void _get_targets (
+               const String &Name,
+               Config &config,
+               HandleContainer &targets);
+               
+         void _create_properties (Config &list);
          void _init (Config &local);
 
          Log _log;
-         Ui::MBRAPreferencesGeneralForm _ui;
+         Definitions _defs;
+         QFormLayout *_layout;
+         Handle _valueAttrHandle;
+         HashTableStringTemplate<MessageStruct> _messageTable;
 
       private:
          MBRAPluginPreferencesGeneral ();

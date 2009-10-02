@@ -28,6 +28,7 @@
    <plugin name="dmzMBRAPluginMenu"/>
    <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
 
+<plugin name="dmzPluginMsgDump"/>
 <!--
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>

@@ -2,13 +2,32 @@
 <dmz>
    <plugin-list>
       <plugin name="dmzQtPluginVersion"/>
-      <plugin name="dmzQtPluginPreferences" scope="preferenses"/>
-      <plugin name="dmzMBRAPluginPreferencesGeneral" scope="preferenses-general"/>
+      <plugin name="dmzQtPluginPreferences" scope="preferences"/>
+      <plugin name="dmzQtPluginPreferencesGeneral" scope="preferences-general"/>
+      <plugin name="dmzPluginSaveMessageMonostate" scope="save-preferences"/>
    </plugin-list>
-   <preferenses>
-      <widget name="dmzMBRAPluginPreferencesGeneral" title="General"/>
+   <preferences>
+      <widget name="dmzQtPluginPreferencesGeneral" title="General"/>
       <widget name="dmzQtPluginMapProperties" title="Map"/>
-   </preferenses>
+   </preferences>
+   <preferences-general>
+      <property
+         type="scalar"
+         name="Minimum vulnerability at maximum budget"
+         message="V_INFINITY"
+         default="0.5"
+         decimals="2"
+         min="0"
+         max="1"
+         step="0.1"
+      >
+         <target name="dmzMBRAPluginNARanking"/>
+         <target name="dmzMBRAPluginFaultTree"/>
+      </property>
+   </preferences-general>
+   <save-preferences>
+      <property message="V_INFINITY"/>
+   </save-preferences>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">
          <action text="New" statusTip="New File" shortcut="new">
