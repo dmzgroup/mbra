@@ -27,7 +27,6 @@
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
 
-<plugin name="dmzPluginMsgDump"/>
 <!--
    <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
    <plugin name="dmzObjectPluginDump"/>
