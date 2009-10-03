@@ -495,6 +495,7 @@ local function start_plugin (self)
 
    self.msgObs:register (self.simMessage, receive_work, self)
    self.msgObs:register (self.budgetMessage, receive_budget, self)
+   --self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
 end
 
 local function stop_plugin (self)
@@ -513,6 +514,8 @@ function new (config, name)
          config:to_message ("simulator-message.name", "FTSimulatorMessage"),
       budgetMessage =
          config:to_message ("budget-message.name", "FTBudgetMessage"),
+      vinfinityMessage =
+         config:to_message ("v-infinity-message.name", "V_INFINITY"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       index = {},
