@@ -229,26 +229,18 @@ local function build_index (self, node)
 end
 
 local function risk_and (objects)
-   local value = 0
-   if #objects > 0 then value = 1 end
+   local result = 1
    for _, object in ipairs (objects) do
-      value = value * object.threat * object.vreduced
+      result = result * (object.threat * object.vreduced * object.consequence)
    end
-   local result = 0
-   for _, object in ipairs (objects) do
-      result = result + (value * object.consequence)
-   end
+   if #objects <= 0 then result = 0 end
    return result
 end
 
 local function risk_or (objects)
-   local value = 0
-   for _, object in ipairs (objects) do
-      value = value + (object.threat * object.vreduced)
-   end
    local result = 0
    for _, object in ipairs (objects) do
-      result = result + (value * object.consequence)
+      result = result + (object.threat * object.vreduced * object.consequence)
    end
    return result
 end
@@ -284,7 +276,7 @@ local function vulnerability_or (subv)
 end
 
 local function vulnerability_xor (subv)
-   local result = 1
+   local result = 0
    for idex, _ in ipairs (subv) do
       local product = 1
       for jdex, value in ipairs (subv) do
@@ -292,7 +284,7 @@ local function vulnerability_xor (subv)
          else product = product * value
          end
       end
-      result = result * product
+      result = result + product
    end
    return result
 end
