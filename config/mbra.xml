@@ -13,8 +13,19 @@
    <preferences-general>
       <property
          type="scalar"
-         name="Minimum vulnerability at maximum budget"
-         message="V_INFINITY"
+         name="Network Minimum vulnerability at maximum budget"
+         message="NAVulnerabilityInfinityMessage"
+         default="5"
+         decimals="0"
+         scale="100"
+         min="0"
+         max="100"
+         step="1"
+         suffix="%"/>
+      <property
+         type="scalar"
+         name="Fault Tree Minimum vulnerability at maximum budget"
+         message="FTVulnerabilityInfinityMessage"
          default="5"
          decimals="0"
          scale="100"
@@ -24,7 +35,8 @@
          suffix="%"/>
    </preferences-general>
    <save-preferences>
-      <message name="V_INFINITY"/>
+      <message name="NAVulnerabilityInfinityMessage"/>
+      <message name="FTVulnerabilityInfinityMessage"/>
    </save-preferences>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">

@@ -228,16 +228,7 @@ local function build_index (self, node)
    end
 end
 
-local function risk_and (objects)
-   local result = 1
-   for _, object in ipairs (objects) do
-      result = result * (object.threat * object.vreduced * object.consequence)
-   end
-   if #objects <= 0 then result = 0 end
-   return result
-end
-
-local function risk_or (objects)
+local function risk_sub (objects)
    local result = 0
    for _, object in ipairs (objects) do
       result = result + (object.threat * object.vreduced * object.consequence)
@@ -309,10 +300,10 @@ local function traverse_fault_tree (self, node)
    local op = get_logic_state (node)
    local result = 0
    if AndState == op then
-      self.risk = self.risk + risk_and (threatList)
+      self.risk = self.risk + risk_sub (threatList)
       result = vulnerability_and (subv)
    elseif OrState == op then
-      self.risk = self.risk + risk_or (threatList)
+      self.risk = self.risk + risk_sub (threatList)
       result = vulnerability_or (subv)
    elseif XOrState == op then
       self.risk = self.risk + risk_xor (threatList)
@@ -337,6 +328,15 @@ local function log_defender_term (object)
    return result
 end
 
+local function log_defender (object)
+   local result = object.threat * object.consequence * object.vulnerability *
+      object.gamma
+   if not_zero (result) then result = math.log (object.cost / result)
+   else result = 0
+   end
+   return result
+end
+
 local function start_work (self)
    self.index = {}
    build_index (self, self.root)
@@ -356,9 +356,8 @@ local function start_work (self)
       local B = 0
       for _, object in ipairs (self.index) do
          if object.vulnerability <= 0 then object.vulnerability = 1 end
-         object.gamma = -math.log (0.05 / object.vulnerability)
-         object.logDefenderTerm = log_defender_term (object)
-         A = A + object.logDefenderTerm
+         object.gamma = -math.log (self.vinf / object.vulnerability)
+         A = A + log_defender_term (object)
          if not_zero (object.gamma) then
             B = B + (object.cost / object.gamma)
          end
@@ -369,8 +368,7 @@ local function start_work (self)
       for _, object in ipairs (self.index) do
          local A = 0
          if not_zero (object.gamma) then A = object.cost / object.gamma end
-         local B = 0
-         if object.cost > 0 then B = object.logDefenderTerm / object.cost end
+         local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
          totalAllocation = totalAllocation + object.allocation
@@ -409,7 +407,6 @@ local function work (self)
       end
       source = self.index[source]
       target = self.index[target]
---cprint (source.handle, target.handle)
       if source and target and source.handle ~= target.handle then
          local sourceAllocation = source.allocation
          local targetAllocation = target.allocation
@@ -431,8 +428,8 @@ local function work (self)
                VulnerabilitySumReducedHandle)
             self.risk = 0
             local vulnerability = traverse_fault_tree (self, self.root)
---cprint (vulnerability, vulnerabilityOrig)
-            if vulnerabilityOrig < vulnerability then
+            --if vulnerabilityOrig < vulnerability then
+            if riskOrig < self.risk then
                dmz.object.scalar (
                   source.handle,
                   AllocationHandle,
@@ -473,6 +470,14 @@ local function receive_budget (self, msg, data)
    end
 end
 
+local function receive_vinfinity (self, msg, data) 
+   if dmz.data.is_a (data) then
+      self.vinf = data:lookup_number ("value", 1)
+      if not self.vinf then self.vinf = 0.05 end
+      self.reset = true
+   end
+end
+
 local function start_plugin (self)
    self.timeSliceHandle = self.timeSlice:create (work, self, self.name)
    self.timeSlice:stop (self.timeSliceHandle)
@@ -487,7 +492,7 @@ local function start_plugin (self)
 
    self.msgObs:register (self.simMessage, receive_work, self)
    self.msgObs:register (self.budgetMessage, receive_budget, self)
-   --self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
+   self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
 end
 
 local function stop_plugin (self)
@@ -507,13 +512,14 @@ function new (config, name)
       budgetMessage =
          config:to_message ("budget-message.name", "FTBudgetMessage"),
       vinfinityMessage =
-         config:to_message ("v-infinity-message.name", "V_INFINITY"),
+         config:to_message ("v-infinity-message.name", "FTVulnerabilityInfinityMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       index = {},
       objects = {},
       budget = 0,
       maxBudget = 0,
+      vinf = 0.05,
    }
 
    self.log:info ("Creating plugin: " .. name)

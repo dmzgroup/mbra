@@ -320,6 +320,16 @@ local function log_defender_term (object)
    return result
 end
 
+local function log_defender (object)
+   local result = object.weight * object.threat * object.consequence * object.vul *
+         object.gamma
+   if not_zero (result) then
+      result = math.log (object.cost / result)
+   else result = 0
+   end
+   return result
+end
+
 local function allocate_prevention_budget (handleList, budget, maxBudget)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
@@ -331,7 +341,7 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
          local object = { handle = handle }
          object.vul = dmz.object.scalar (handle, VulnerabilityHandle)
          if not object.vul or (object.vul <= 0) then object.vul = 1 end
-         object.gamma = -math.log (0.05 / object.vul)
+         object.gamma = -math.log (self.vinf / object.vul)
          dmz.object.scalar (handle, GammaHandle, object.gamma)
          object.cost = dmz.object.scalar (handle, PreventionCostHandle)
          if not object.cost then object.cost = 0 end
@@ -347,10 +357,9 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
       local A = 0
       local B = 0
       for _, object in ipairs (objectList) do
-         object.logDefenderTerm = log_defender_term (object)
-         A = A + object.logDefenderTerm
+         A = A + log_defender_term (object)
          if not_zero (object.gamma) then
-            B = B + object.cost / object.gamma
+            B = B + (object.cost / object.gamma)
          end
       end
       local totalAllocation = 0
@@ -359,14 +368,13 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
       for _, object in ipairs (objectList) do
          local A = 0
          if not_zero (object.gamma) then A = object.cost / object.gamma end
-         local B = 0
-         if object.cost > 0 then B = object.logDefenderTerm / object.cost end
+         local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation > budget then
+      if totalAllocation > 0 then
          scale =  budget / totalAllocation
       end
       totalAllocation = 0
@@ -480,6 +488,14 @@ local function receive_response_budget (self, message, data)
    end
 end
 
+local function receive_vinfinity (self, msg, data)
+   if dmz.data.is_a (data) then
+      self.vinf = data:lookup_number ("value", 1)
+      if not self.vinf then self.vinf = 0.05 end
+      self.reset = true
+   end   
+end
+
 local function create_object (self, handle, objType, locality)
    if objType then
       if objType:is_of_type (NodeType) or objType:is_of_type (NodeLinkType) then
@@ -551,6 +567,8 @@ function new (config, name)
          config:to_message ("message.prevention-budget.name", "PreventionBudgetMessage"),
       responseBudgetMessage =
          config:to_message ("message.response-budget.name", "ResponseBudgetMessage"),
+      vinfinityMessage =
+         config:to_message ("v-infinity-message.name", "NAVulnerabilityInfinityMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       objects = {},
@@ -560,6 +578,7 @@ function new (config, name)
       maxPreventionBudget = 0,
       responseBudget = 0,
       maxResponseBudget = 0,
+      vinf = 0,
    }
 
    self.log:info ("Creating plugin: " .. name)
@@ -567,6 +586,7 @@ function new (config, name)
    self.msgObs:register (self.simulatorMessage, receive_simulator, self)
    self.msgObs:register (self.preventionBudgetMessage, receive_prevention_budget, self)
    self.msgObs:register (self.responseBudgetMessage, receive_response_budget, self)
+   self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
 
    local cb = { create_object = create_object, destroy_object = destroy_object }
    self.objObs:register (nil, cb, self)
