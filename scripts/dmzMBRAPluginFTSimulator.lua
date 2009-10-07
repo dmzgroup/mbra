@@ -236,6 +236,7 @@ local function risk_sub (objects)
    local result = 0
    for _, object in ipairs (objects) do
       result = result + (object.threat * object.vreduced * object.consequence)
+--cprint (dmz.object.text (object.handle, "FT_Name"), result, object.threat * object.vreduced)
    end
    return result
 end
@@ -249,8 +250,10 @@ local function risk_xor (objects)
          else value = value * object.vreduced
          end
       end
+--cprint (dmz.object.text (current.handle, "FT_Name"), value, value * current.consequence, current.vreduced)
       result = result + (value * current.consequence)
    end
+--cprint ("result:", result)
    return result
 end
 
@@ -281,7 +284,7 @@ local function vulnerability_xor (subv)
       local product = 1
       for jdex, value in ipairs (subv) do
          if jdex ~= idex then product = product * (1 - value.vt)
-         else product = product * value.vulnerability
+         else product = product * value.vreduced
          end
       end
       result = result + product
@@ -303,13 +306,13 @@ local function traverse_fault_tree (self, node)
             if ref then
                subv[#subv + 1] = {
                   vt = ref.threat * ref.vreduced,
-                  vulnerability = ref.vulnerability,
+                  vreduced = ref.vreduced,
                }
                threatList[#threatList + 1] = ref
             end
          elseif otype:is_of_type (ComponentType) then
             local value = traverse_fault_tree (self, object)
-            if value then subv[#subv + 1] = { vt = value, vulnerability = value,} end
+            if value then subv[#subv + 1] = { vt = value, vreduced = value,} end
          end
       end
       local op = get_logic_state (node)
@@ -358,6 +361,18 @@ local function start_work (self)
    build_index (self, self.root)
    for _, object in ipairs (self.index) do
       dmz.object.scalar (object.handle, AllocationHandle, 0)
+--[[
+local name = dmz.object.text (object.handle, "FT_Name")
+local value = 0
+object.gamma = -math.log (self.vinf / object.vulnerability)
+if name == "Bomb" then value = 129
+elseif name == "SCADA" then value = 121
+elseif name == "Power" then value = 0
+end
+object.allocation = value
+--cprint ("store", object.handle, value)
+dmz.object.scalar (object.handle, AllocationHandle, value)
+--]]
    end
    if self.root then
       self.risk = 0
@@ -429,7 +444,7 @@ local function work (self)
          local targetAllocation = target.allocation
          local maxAddition = target.cost - target.allocation
          if maxAddition > source.allocation then maxAddition = source.allocation end
-         if maxAddition > 0.01 then
+         if maxAddition >= 0.01 then
             local addition = 0.01 + ((maxAddition - 0.01) * math.random ())
             dmz.object.scalar (
                source.handle,
