@@ -588,23 +588,6 @@
             tileSize="256" 
             minZoom="0" 
             maxZoom="17"/>
-         <map-adapter 
-            name="Internal Dystopia" 
-            type="wms" 
-            server="172.20.90.188" 
-            path="/tilecache/tilecache.py/" 
-            service="WMS"
-            projection="EPSG:4326" 
-            layers="dystopia" 
-            imageFormat="image/png"/>
-         <map-adapter
-            name="Internal OSM" 
-            type="tile" 
-            server="172.20.90.188" 
-            path="/tilecache/tilecache.py/1.0.0/osm/%1/%2/%3.png"
-            tileSize="256" 
-            minZoom="0" 
-            maxZoom="17"/>
       </default-map-adapter-list>
       <show-map-action
          text="Enable Map"
