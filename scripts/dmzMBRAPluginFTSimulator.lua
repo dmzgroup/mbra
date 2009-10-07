@@ -246,7 +246,7 @@ local function risk_xor (objects)
       local value = 1
       for jdex, object in ipairs (objects) do
          if idex ~= jdex then value = value * (1 - (object.threat * object.vreduced))
-         else value = value * object.threat * object.vreduced
+         else value = value * object.vreduced
          end
       end
       result = result + (value * current.consequence)
@@ -257,18 +257,18 @@ end
 local function vulnerability_and (subv)
    local result = 1
    for _, value in ipairs (subv) do
-      result = result * value
+      result = result * value.vt
    end
    return result
 end
 
 local function vulnerability_or (subv)
    local result = 0
-   if #subv == 1 then result = subv[1]
+   if #subv == 1 then result = subv[1].vt
    elseif #subv > 1 then
       result = 1
       for _, value in ipairs (subv) do
-         result = result * (1 - value)
+         result = result * (1 - value.vt)
       end
       result = 1 - result
    end
@@ -280,8 +280,8 @@ local function vulnerability_xor (subv)
    for idex, _ in ipairs (subv) do
       local product = 1
       for jdex, value in ipairs (subv) do
-         if jdex ~= idex then product = product * (1 - value)
-         else product = product * value
+         if jdex ~= idex then product = product * (1 - value.vt)
+         else product = product * value.vulnerability
          end
       end
       result = result + product
@@ -301,12 +301,15 @@ local function traverse_fault_tree (self, node)
          if otype:is_of_type (ThreatType) then
             local ref = self.objects[object]
             if ref then
-               subv[#subv + 1] = ref.threat * ref.vreduced
+               subv[#subv + 1] = {
+                  vt = ref.threat * ref.vreduced,
+                  vulnerability = ref.vulnerability,
+               }
                threatList[#threatList + 1] = ref
             end
          elseif otype:is_of_type (ComponentType) then
             local value = traverse_fault_tree (self, object)
-            if value then subv[#subv + 1] = value end
+            if value then subv[#subv + 1] = { vt = value, vulnerability = value,} end
          end
       end
       local op = get_logic_state (node)
