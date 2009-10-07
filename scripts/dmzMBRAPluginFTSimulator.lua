@@ -112,12 +112,16 @@ create_object = function (self, objHandle, objType)
    if objType:is_of_type (ThreatType) then
       self.objects[objHandle] = new_object (objHandle)
       self.reset = true
+   elseif objType:is_of_type (ComponentType) then
+      self.reset = true
    end
 end,
 
 destroy_object = function (self, objHandle)
    if self.objects[objHandle] then
       self.objects[objHandle] = nil
+      self.reset = true
+   elseif dmz.object.type (objHandle):is_of_type (ComponentType) then
       self.reset = true
    end
    if objHandle == self.root then self.root = nil end
@@ -259,11 +263,16 @@ local function vulnerability_and (subv)
 end
 
 local function vulnerability_or (subv)
-   local result = 1
-   for _, value in ipairs (subv) do
-      result = result * (1 - value)
+   local result = 0
+   if #subv == 1 then result = subv[1]
+   elseif #subv > 1 then
+      result = 1
+      for _, value in ipairs (subv) do
+         result = result * (1 - value)
+      end
+      result = 1 - result
    end
-   return 1 - result
+   return result
 end
 
 local function vulnerability_xor (subv)
@@ -281,35 +290,39 @@ local function vulnerability_xor (subv)
 end
 
 local function traverse_fault_tree (self, node)
+   local result = nil
    local nodeList = dmz.object.sub_links (node, FTLinkHandle)
    if not nodeList then nodeList = {} end
-   local threatList = {}
-   local subv = {}
-   for _, object in ipairs (nodeList) do
-      local otype = dmz.object.type (object)
-      if otype:is_of_type (ThreatType) then
-         local ref = self.objects[object]
-         if ref then
-            subv[#subv + 1] = ref.threat * ref.vreduced
-            threatList[#threatList + 1] = ref
+   if #nodeList > 0 then
+      local threatList = {}
+      local subv = {}
+      for _, object in ipairs (nodeList) do
+         local otype = dmz.object.type (object)
+         if otype:is_of_type (ThreatType) then
+            local ref = self.objects[object]
+            if ref then
+               subv[#subv + 1] = ref.threat * ref.vreduced
+               threatList[#threatList + 1] = ref
+            end
+         elseif otype:is_of_type (ComponentType) then
+            local value = traverse_fault_tree (self, object)
+            if value then subv[#subv + 1] = value end
          end
-      elseif otype:is_of_type (ComponentType) then
-         subv[#subv + 1] = traverse_fault_tree (self, object)
       end
-   end
-   local op = get_logic_state (node)
-   local result = 0
-   if AndState == op then
-      self.risk = self.risk + risk_sub (threatList)
-      result = vulnerability_and (subv)
-   elseif OrState == op then
-      self.risk = self.risk + risk_sub (threatList)
-      result = vulnerability_or (subv)
-   elseif XOrState == op then
-      self.risk = self.risk + risk_xor (threatList)
-      result = vulnerability_xor (subv)
-   else
-      self.log:error ("Unknown logic operator:", op)
+      local op = get_logic_state (node)
+      result = 0
+      if AndState == op then
+         self.risk = self.risk + risk_sub (threatList)
+         result = vulnerability_and (subv)
+      elseif OrState == op then
+         self.risk = self.risk + risk_sub (threatList)
+         result = vulnerability_or (subv)
+      elseif XOrState == op then
+         self.risk = self.risk + risk_xor (threatList)
+         result = vulnerability_xor (subv)
+      else
+         self.log:error ("Unknown logic operator:", op)
+      end
    end
    return result
 end
@@ -346,6 +359,7 @@ local function start_work (self)
    if self.root then
       self.risk = 0
       local vulnerability = traverse_fault_tree (self, self.root)
+      if not vulnerability then vulnerability = 0 end
       dmz.object.scalar (self.root, RiskSumHandle, self.risk)
       dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
       dmz.object.scalar (self.root, VulnerabilitySumHandle, vulnerability)
@@ -473,7 +487,7 @@ end
 local function receive_vinfinity (self, msg, data) 
    if dmz.data.is_a (data) then
       self.vinf = data:lookup_number ("value", 1)
-      if not self.vinf then self.vinf = 0.05 end
+      if not self.vinf or (self.vinf <= 0) then self.vinf = 0.05 end
       self.reset = true
    end
 end
