@@ -403,11 +403,27 @@ dmz.object.scalar (object.handle, AllocationHandle, value)
          local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
+         if object.allocation > object.cost then object.allocation = object.cost end
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation > 0 then
-         scale = self.budget / totalAllocation
+      if totalAllocation < self.budget then
+         local size = #(self.index)
+         local count = 1
+         local remainder = self.budget - totalAllocation
+         while not_zero (remainder) and (count <= size) do
+            local object = self.index[count]
+            local max = object.cost - object.allocation
+            if max > remainder then
+               max = remainder
+               remainder = 0
+            else
+               remainder = remainder - max
+            end
+            object.allocation = object.allocation + max
+            count = count + 1
+         end
+      else scale = self.budget / totalAllocation
       end
       totalAllocation = 0
       for _, object in ipairs (self.index) do
