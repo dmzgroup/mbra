@@ -218,7 +218,8 @@ end,
 }
 
 local function build_index (self, node)
-   local nodeList = dmz.object.sub_links (node, FTLinkHandle)
+   local nodeList = nil
+   if node then nodeList = dmz.object.sub_links (node, FTLinkHandle) end
    if nodeList then
       for _, object in ipairs (nodeList) do
          local otype = dmz.object.type (object)
@@ -236,7 +237,6 @@ local function risk_sub (objects)
    local result = 0
    for _, object in ipairs (objects) do
       result = result + (object.threat * object.vreduced * object.consequence)
---cprint (dmz.object.text (object.handle, "FT_Name"), result, object.threat * object.vreduced)
    end
    return result
 end
@@ -250,10 +250,8 @@ local function risk_xor (objects)
          else value = value * object.vreduced
          end
       end
---cprint (dmz.object.text (current.handle, "FT_Name"), value, value * current.consequence, current.vreduced)
       result = result + (value * current.consequence)
    end
---cprint ("result:", result)
    return result
 end
 
@@ -361,18 +359,6 @@ local function start_work (self)
    build_index (self, self.root)
    for _, object in ipairs (self.index) do
       dmz.object.scalar (object.handle, AllocationHandle, 0)
---[[
-local name = dmz.object.text (object.handle, "FT_Name")
-local value = 0
-object.gamma = -math.log (self.vinf / object.vulnerability)
-if name == "Bomb" then value = 129
-elseif name == "SCADA" then value = 121
-elseif name == "Power" then value = 0
-end
-object.allocation = value
---cprint ("store", object.handle, value)
-dmz.object.scalar (object.handle, AllocationHandle, value)
---]]
    end
    if self.root then
       self.risk = 0
