@@ -860,7 +860,7 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 void
 dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
 
-   if (_mainWindowModule) {
+   if (_mainWindowModule && !FileName.isEmpty ()) {
 
       QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
       if (mainWindow) {

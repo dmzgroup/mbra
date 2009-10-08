@@ -112,12 +112,16 @@ create_object = function (self, objHandle, objType)
    if objType:is_of_type (ThreatType) then
       self.objects[objHandle] = new_object (objHandle)
       self.reset = true
+   elseif objType:is_of_type (ComponentType) then
+      self.reset = true
    end
 end,
 
 destroy_object = function (self, objHandle)
    if self.objects[objHandle] then
       self.objects[objHandle] = nil
+      self.reset = true
+   elseif dmz.object.type (objHandle):is_of_type (ComponentType) then
       self.reset = true
    end
    if objHandle == self.root then self.root = nil end
@@ -214,7 +218,8 @@ end,
 }
 
 local function build_index (self, node)
-   local nodeList = dmz.object.sub_links (node, FTLinkHandle)
+   local nodeList = nil
+   if node then nodeList = dmz.object.sub_links (node, FTLinkHandle) end
    if nodeList then
       for _, object in ipairs (nodeList) do
          local otype = dmz.object.type (object)
@@ -242,7 +247,7 @@ local function risk_xor (objects)
       local value = 1
       for jdex, object in ipairs (objects) do
          if idex ~= jdex then value = value * (1 - (object.threat * object.vreduced))
-         else value = value * object.threat * object.vreduced
+         else value = value * object.vreduced
          end
       end
       result = result + (value * current.consequence)
@@ -253,17 +258,22 @@ end
 local function vulnerability_and (subv)
    local result = 1
    for _, value in ipairs (subv) do
-      result = result * value
+      result = result * value.vt
    end
    return result
 end
 
 local function vulnerability_or (subv)
-   local result = 1
-   for _, value in ipairs (subv) do
-      result = result * (1 - value)
+   local result = 0
+   if #subv == 1 then result = subv[1].vt
+   elseif #subv > 1 then
+      result = 1
+      for _, value in ipairs (subv) do
+         result = result * (1 - value.vt)
+      end
+      result = 1 - result
    end
-   return 1 - result
+   return result
 end
 
 local function vulnerability_xor (subv)
@@ -271,8 +281,8 @@ local function vulnerability_xor (subv)
    for idex, _ in ipairs (subv) do
       local product = 1
       for jdex, value in ipairs (subv) do
-         if jdex ~= idex then product = product * (1 - value)
-         else product = product * value
+         if jdex ~= idex then product = product * (1 - value.vt)
+         else product = product * value.vreduced
          end
       end
       result = result + product
@@ -281,35 +291,42 @@ local function vulnerability_xor (subv)
 end
 
 local function traverse_fault_tree (self, node)
+   local result = nil
    local nodeList = dmz.object.sub_links (node, FTLinkHandle)
    if not nodeList then nodeList = {} end
-   local threatList = {}
-   local subv = {}
-   for _, object in ipairs (nodeList) do
-      local otype = dmz.object.type (object)
-      if otype:is_of_type (ThreatType) then
-         local ref = self.objects[object]
-         if ref then
-            subv[#subv + 1] = ref.threat * ref.vreduced
-            threatList[#threatList + 1] = ref
+   if #nodeList > 0 then
+      local threatList = {}
+      local subv = {}
+      for _, object in ipairs (nodeList) do
+         local otype = dmz.object.type (object)
+         if otype:is_of_type (ThreatType) then
+            local ref = self.objects[object]
+            if ref then
+               subv[#subv + 1] = {
+                  vt = ref.threat * ref.vreduced,
+                  vreduced = ref.vreduced,
+               }
+               threatList[#threatList + 1] = ref
+            end
+         elseif otype:is_of_type (ComponentType) then
+            local value = traverse_fault_tree (self, object)
+            if value then subv[#subv + 1] = { vt = value, vreduced = value,} end
          end
-      elseif otype:is_of_type (ComponentType) then
-         subv[#subv + 1] = traverse_fault_tree (self, object)
       end
-   end
-   local op = get_logic_state (node)
-   local result = 0
-   if AndState == op then
-      self.risk = self.risk + risk_sub (threatList)
-      result = vulnerability_and (subv)
-   elseif OrState == op then
-      self.risk = self.risk + risk_sub (threatList)
-      result = vulnerability_or (subv)
-   elseif XOrState == op then
-      self.risk = self.risk + risk_xor (threatList)
-      result = vulnerability_xor (subv)
-   else
-      self.log:error ("Unknown logic operator:", op)
+      local op = get_logic_state (node)
+      result = 0
+      if AndState == op then
+         self.risk = self.risk + risk_sub (threatList)
+         result = vulnerability_and (subv)
+      elseif OrState == op then
+         self.risk = self.risk + risk_sub (threatList)
+         result = vulnerability_or (subv)
+      elseif XOrState == op then
+         self.risk = self.risk + risk_xor (threatList)
+         result = vulnerability_xor (subv)
+      else
+         self.log:error ("Unknown logic operator:", op)
+      end
    end
    return result
 end
@@ -346,6 +363,7 @@ local function start_work (self)
    if self.root then
       self.risk = 0
       local vulnerability = traverse_fault_tree (self, self.root)
+      if not vulnerability then vulnerability = 0 end
       dmz.object.scalar (self.root, RiskSumHandle, self.risk)
       dmz.object.scalar (self.root, RiskSumReducedHandle, self.risk)
       dmz.object.scalar (self.root, VulnerabilitySumHandle, vulnerability)
@@ -371,11 +389,27 @@ local function start_work (self)
          local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
+         if object.allocation > object.cost then object.allocation = object.cost end
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation > 0 then
-         scale = self.budget / totalAllocation
+      if totalAllocation < self.budget then
+         local size = #(self.index)
+         local count = 1
+         local remainder = self.budget - totalAllocation
+         while not_zero (remainder) and (count <= size) do
+            local object = self.index[count]
+            local max = object.cost - object.allocation
+            if max > remainder then
+               max = remainder
+               remainder = 0
+            else
+               remainder = remainder - max
+            end
+            object.allocation = object.allocation + max
+            count = count + 1
+         end
+      else scale = self.budget / totalAllocation
       end
       totalAllocation = 0
       for _, object in ipairs (self.index) do
@@ -412,7 +446,7 @@ local function work (self)
          local targetAllocation = target.allocation
          local maxAddition = target.cost - target.allocation
          if maxAddition > source.allocation then maxAddition = source.allocation end
-         if maxAddition > 0.01 then
+         if maxAddition >= 0.01 then
             local addition = 0.01 + ((maxAddition - 0.01) * math.random ())
             dmz.object.scalar (
                source.handle,
@@ -473,7 +507,7 @@ end
 local function receive_vinfinity (self, msg, data) 
    if dmz.data.is_a (data) then
       self.vinf = data:lookup_number ("value", 1)
-      if not self.vinf then self.vinf = 0.05 end
+      if not self.vinf or (self.vinf <= 0) then self.vinf = 0.05 end
       self.reset = true
    end
 end
