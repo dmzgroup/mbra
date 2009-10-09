@@ -100,6 +100,9 @@ local function update_vulnerability_reduced (object)
       if object.vulnerability > 0 then
          if value < 0 then value = 0 end
          value = round ((value / object.vulnerability) * 10)
+         if value < 0 then value = 0
+         elseif value > 10 then value = 10
+         end
          state = state + Level[value]
       end
       dmz.object.state (object.handle, nil, state)
@@ -334,9 +337,9 @@ end
 local function log_defender_term (object)
    local result = object.threat * object.consequence * object.vulnerability *
       object.gamma
-   if not_zero (result) then
+   if result > 0 then
       result = object.cost / result
-      if not_zero (object.gamma) then
+      if object.gamma > 0 and result > 0 then
          result = (object.cost / object.gamma) * math.log (result)
       else result = 0
       end
@@ -348,7 +351,7 @@ end
 local function log_defender (object)
    local result = object.threat * object.consequence * object.vulnerability *
       object.gamma
-   if not_zero (result) then result = math.log (object.cost / result)
+   if result > 0 then result = math.log (object.cost / result)
    else result = 0
    end
    return result
@@ -375,6 +378,7 @@ local function start_work (self)
       for _, object in ipairs (self.index) do
          if object.vulnerability <= 0 then object.vulnerability = 1 end
          object.gamma = -math.log (self.vinf / object.vulnerability)
+         if object.gamma < 0 then object.gamma = 0 end
          A = A + log_defender_term (object)
          if not_zero (object.gamma) then
             B = B + (object.cost / object.gamma)
