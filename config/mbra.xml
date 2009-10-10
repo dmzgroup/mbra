@@ -109,6 +109,10 @@
       </module>
    </dmzMBRAPluginMenu>
    <updater>
-      <request url="http://shillcock.github.com/mbra/latest.html"/>
+      <force-update value="true"/>
+      <version url="http://dmzdev.github.com/latest/%1/%2.xml"/>
+      <version url="http://dmzdev.org/latest/%1/%2.xml"/>
+      <download url="http://cloud.github.com/downloads/dmzdev/latest/%1-%2.%3"/>
+      <download url="http://dmzdev.org/latest/downloads/%1-%2.%3"/>
    </updater>
 </dmz>
