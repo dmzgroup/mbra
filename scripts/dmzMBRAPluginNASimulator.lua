@@ -330,7 +330,7 @@ local function log_defender (object)
    return result
 end
 
-local function allocate_prevention_budget (handleList, budget, maxBudget)
+local function allocate_prevention_budget (handleList, budget, maxBudget, vinf)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
          dmz.object.scalar (handle, PreventionAllocationHandle, 0)
@@ -341,7 +341,8 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
          local object = { handle = handle }
          object.vul = dmz.object.scalar (handle, VulnerabilityHandle)
          if not object.vul or (object.vul <= 0) then object.vul = 1 end
-         object.gamma = -math.log (self.vinf / object.vul)
+         object.gamma = -math.log (vinf / object.vul)
+         if object.gamma < 0 then object.gamma = 0 end
          dmz.object.scalar (handle, GammaHandle, object.gamma)
          object.cost = dmz.object.scalar (handle, PreventionCostHandle)
          if not object.cost then object.cost = 0 end
@@ -371,11 +372,27 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
          local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
+         if object.allocation > object.cost then object.allocation = object.cost end
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation > 0 then
-         scale =  budget / totalAllocation
+      if totalAllocation < budget then
+         local size = #(objectList)
+         local count = 1
+         local remainder = budget - totalAllocation
+         while not_zero (remainder) and (count <= size) do
+            local object = objectList[count]
+            local max = object.cost - object.allocation
+            if max > remainder then
+               max = remainder
+               remainder = 0
+            else
+               remainder = remainder - max
+            end
+            object.allocation = object.allocation + max
+            count = count + 1
+         end
+      else scale = budget / totalAllocation
       end
       totalAllocation = 0
       for _, object in ipairs (objectList) do
@@ -409,7 +426,8 @@ local function receive_rank (self)
    allocate_prevention_budget (
       self.objects,
       self.preventionBudget,
-      self.maxPreventionBudget)
+      self.maxPreventionBudget,
+      self.vinf)
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
@@ -492,7 +510,7 @@ local function receive_vinfinity (self, msg, data)
    if dmz.data.is_a (data) then
       self.vinf = data:lookup_number ("value", 1)
       if not self.vinf then self.vinf = 0.05 end
-      self.reset = true
+      if self.visible then receive_rank (self) end
    end   
 end
 
@@ -578,7 +596,7 @@ function new (config, name)
       maxPreventionBudget = 0,
       responseBudget = 0,
       maxResponseBudget = 0,
-      vinf = 0,
+      vinf = 0.05,
    }
 
    self.log:info ("Creating plugin: " .. name)
