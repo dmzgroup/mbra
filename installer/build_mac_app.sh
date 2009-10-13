@@ -17,4 +17,6 @@ cp $DEPTH/depend/Qt/libqtiff.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugin
 cp $DEPTH/depend/Qt/libqsvg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 hdiutil create -srcfolder $DEPTH/MBRA.app $DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
 hdiutil internet-enable -yes -verbose $DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
+cp $DEPTH/tmp/macos-opt/mbraapp/version.xml $DEPTH/src/latest/mbra.xml
+cp $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt $DEPTH/src/latest/mbra.txt
 rm -rf $DEPTH/MBRA.app/
