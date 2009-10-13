@@ -9,12 +9,12 @@
 #include <dmzTypesHandleContainer.h>
 #include <QtGui/QFrame>
 #include <QtGui/QButtonGroup>
-#include "ui_NASimulatorForm.h"
+#include "ui_NACalculateForm.h"
 
 
 namespace dmz {
 
-   class MBRAPluginNASimulator :
+   class MBRAPluginNACalculate :
          public QFrame,
          public QtWidget,
          public Plugin,
@@ -23,8 +23,8 @@ namespace dmz {
       Q_OBJECT
       
       public:
-         MBRAPluginNASimulator (const PluginInfo &Info, Config &local);
-         ~MBRAPluginNASimulator ();
+         MBRAPluginNACalculate (const PluginInfo &Info, Config &local);
+         ~MBRAPluginNACalculate ();
 
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
@@ -54,7 +54,7 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
-         Ui::NASimulatorForm _ui;
+         Ui::NACalculateForm _ui;
          Handle _simulatorHandle;
          ObjectType _simulatorType;
          HandleContainer _weightByHandles;
@@ -63,9 +63,9 @@ namespace dmz {
          Boolean _ignoreUpdates;
 
       private:
-         MBRAPluginNASimulator ();
-         MBRAPluginNASimulator (const MBRAPluginNASimulator &);
-         MBRAPluginNASimulator &operator= (const MBRAPluginNASimulator &);
+         MBRAPluginNACalculate ();
+         MBRAPluginNACalculate (const MBRAPluginNACalculate &);
+         MBRAPluginNACalculate &operator= (const MBRAPluginNACalculate &);
    };
 };
 

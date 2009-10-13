@@ -45,7 +45,7 @@
          <additional-scope name="na"/>
       </plugin>
       <plugin name="dmzMBRAPluginCalculate"/>
-      <plugin name="dmzMBRAPluginNASimulator"/>
+      <plugin name="dmzMBRAPluginNACalculate"/>
       <plugin name="dmzMBRAPluginNABudget"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
@@ -79,7 +79,7 @@
    <na-tool-simulator>
       <widget name="dmzMBRAPluginCalculate"/>
       <widget name="dmzMBRAPluginNABudget"/>
-      <widget name="dmzMBRAPluginNASimulator"/>
+      <widget name="dmzMBRAPluginNACalculate"/>
    </na-tool-simulator>
    <na-tool-tab>
       <widget name="na-tool-simulator" title="Simulator"/>
@@ -588,23 +588,6 @@
             tileSize="256" 
             minZoom="0" 
             maxZoom="17"/>
-         <map-adapter 
-            name="Internal Dystopia" 
-            type="wms" 
-            server="172.20.90.188" 
-            path="/tilecache/tilecache.py/" 
-            service="WMS"
-            projection="EPSG:4326" 
-            layers="dystopia" 
-            imageFormat="image/png"/>
-         <map-adapter
-            name="Internal OSM" 
-            type="tile" 
-            server="172.20.90.188" 
-            path="/tilecache/tilecache.py/1.0.0/osm/%1/%2/%3.png"
-            tileSize="256" 
-            minZoom="0" 
-            maxZoom="17"/>
       </default-map-adapter-list>
       <show-map-action
          text="Enable Map"
@@ -647,7 +630,7 @@
          </action>
       </caclulateButton>
    </dmzMBRAPluginCalculate>
-   <dmzMBRAPluginNASimulator>
+   <dmzMBRAPluginNACalculate>
       <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
       <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
       <weight-by text="Height" attribute="NA_Weight_Height"/>
@@ -657,7 +640,7 @@
       <objective-function text="Threat" attribute="NA_Objective_Threat"/>
       <objective-function text="Vulnerability" attribute="NA_Objective_Vulnerability"/>
       <objective-function text="Consequence" attribute="NA_Objective_Consequence"/>
-   </dmzMBRAPluginNASimulator>
+   </dmzMBRAPluginNACalculate>
    <dmzQtPluginCanvasAutoLink>
       <link>
          <type name="na_node"/>

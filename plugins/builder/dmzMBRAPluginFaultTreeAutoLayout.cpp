@@ -18,6 +18,7 @@ dmz::MBRAPluginFaultTreeAutoLayout::MBRAPluginFaultTreeAutoLayout (
       TimeSlice (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
+      _app (Info),
       _canvasModule (0),
       _canvasModuleName (),
       _defaultAttrHandle (0),
@@ -102,8 +103,11 @@ dmz::MBRAPluginFaultTreeAutoLayout::update_time_slice (const Float64 TimeDelta) 
    }
    else if (_doZoomUpdate && _canvasModule) {
 
-      _canvasModule->center_on (_subHandle);
-      _subHandle = 0;
+      if (_subHandle) {
+
+         _canvasModule->center_on (_subHandle);
+         _subHandle = 0;
+      }
       
 //      _canvasModule->zoom_extents ();
 
@@ -125,7 +129,9 @@ dmz::MBRAPluginFaultTreeAutoLayout::link_objects (
    if (AttributeHandle == _linkAttrHandle) {
 
       _doTreeUpdate = True;
-      _subHandle = SubHandle;
+
+      if (_app.is_mode_normal ()) { _subHandle = SubHandle; }
+      else { _subHandle = 0; }
    }
 }
 

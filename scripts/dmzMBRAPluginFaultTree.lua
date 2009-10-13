@@ -401,7 +401,7 @@ local function create_test_risk_closure (self, noAdjust)
    return result
 end
 
-local function start_work (self, mtype, data)
+local function start_work (self, data)
    self.test_func = nil
    self.risk_func = nil
    self.risk = nil
@@ -452,7 +452,15 @@ end
 
 local function stop_work (self)
    -- self.log:error ("Stoping work")
-   self.timeSlice:stop (self.timeSliceHandle)
+   if self.timeSliceHandle then self.timeSlice:stop (self.timeSliceHandle) end
+end
+
+local function receive_work (self, msg, data)
+   if dmz.data.is_a (data) then
+      if data:lookup_boolean ("Boolean", 1) then start_work (self, data)
+      else stop_work (self)
+      end
+   end
 end
 
 local function start_plugin (self)
@@ -468,7 +476,7 @@ local function start_plugin (self)
 end
 
 local function stop_plugin (self)
-   self.timeSlice:destroy (self.timeSliceHandle)
+   if self.timeSliceHandle then self.timeSlice:destroy (self.timeSliceHandle) end
 end
 
 function new (config, name)
@@ -479,10 +487,8 @@ function new (config, name)
       timeSlice = dmz.time_slice.new (),
       start_plugin = start_plugin,
       stop_plugin = stop_plugin,
-      startWorkMessage =
-         config:to_message ("message.start.name", "FTStartWorkMessage"),
-      stopWorkMessage =
-         config:to_message ("message.stop.name", "FTStopWorkMessage"),
+      message =
+         config:to_message ("simulator-message.name", "FTSimulatorMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       index = {},
@@ -491,8 +497,7 @@ function new (config, name)
 
    self.log:info ("Creating plugin: " .. name)
 
-   self.msgObs:register (self.startWorkMessage, start_work, self)
-   self.msgObs:register (self.stopWorkMessage, stop_work, self)
+   self.msgObs:register (self.message, receive_work, self)
 
    return self
 end

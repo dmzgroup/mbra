@@ -320,7 +320,17 @@ local function log_defender_term (object)
    return result
 end
 
-local function allocate_prevention_budget (handleList, budget, maxBudget)
+local function log_defender (object)
+   local result = object.weight * object.threat * object.consequence * object.vul *
+         object.gamma
+   if not_zero (result) then
+      result = math.log (object.cost / result)
+   else result = 0
+   end
+   return result
+end
+
+local function allocate_prevention_budget (handleList, budget, maxBudget, vinf)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
          dmz.object.scalar (handle, PreventionAllocationHandle, 0)
@@ -331,7 +341,8 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
          local object = { handle = handle }
          object.vul = dmz.object.scalar (handle, VulnerabilityHandle)
          if not object.vul or (object.vul <= 0) then object.vul = 1 end
-         object.gamma = -math.log (0.05 / object.vul)
+         object.gamma = -math.log (vinf / object.vul)
+         if object.gamma < 0 then object.gamma = 0 end
          dmz.object.scalar (handle, GammaHandle, object.gamma)
          object.cost = dmz.object.scalar (handle, PreventionCostHandle)
          if not object.cost then object.cost = 0 end
@@ -347,10 +358,9 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
       local A = 0
       local B = 0
       for _, object in ipairs (objectList) do
-         object.logDefenderTerm = log_defender_term (object)
-         A = A + object.logDefenderTerm
+         A = A + log_defender_term (object)
          if not_zero (object.gamma) then
-            B = B + object.cost / object.gamma
+            B = B + (object.cost / object.gamma)
          end
       end
       local totalAllocation = 0
@@ -359,15 +369,30 @@ local function allocate_prevention_budget (handleList, budget, maxBudget)
       for _, object in ipairs (objectList) do
          local A = 0
          if not_zero (object.gamma) then A = object.cost / object.gamma end
-         local B = 0
-         if object.cost > 0 then B = object.logDefenderTerm / object.cost end
+         local B = log_defender (object)
          object.allocation = -A * (logLamda + B)
          if object.allocation < 0 then object.allocation = 0 end
+         if object.allocation > object.cost then object.allocation = object.cost end
          totalAllocation = totalAllocation + object.allocation
       end
       local scale = 1
-      if totalAllocation > budget then
-         scale =  budget / totalAllocation
+      if totalAllocation < budget then
+         local size = #(objectList)
+         local count = 1
+         local remainder = budget - totalAllocation
+         while not_zero (remainder) and (count <= size) do
+            local object = objectList[count]
+            local max = object.cost - object.allocation
+            if max > remainder then
+               max = remainder
+               remainder = 0
+            else
+               remainder = remainder - max
+            end
+            object.allocation = object.allocation + max
+            count = count + 1
+         end
+      else scale = budget / totalAllocation
       end
       totalAllocation = 0
       for _, object in ipairs (objectList) do
@@ -401,7 +426,8 @@ local function receive_rank (self)
    allocate_prevention_budget (
       self.objects,
       self.preventionBudget,
-      self.maxPreventionBudget)
+      self.maxPreventionBudget,
+      self.vinf)
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
@@ -455,6 +481,14 @@ local function receive_hide (self)
    end
 end
 
+local function receive_simulator (self, message, data)
+   if dmz.data.is_a (data) then
+      if data:lookup_boolean ("Boolean", 1) then receive_rank (self)
+      else receive_hide (self)
+      end
+   end
+end
+
 local function receive_prevention_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.preventionBudget = data:lookup_number ("Budget", 1)
@@ -470,6 +504,14 @@ local function receive_response_budget (self, message, data)
       self.maxResponseBudget = data:lookup_number ("Budget", 2)
       if self.visible then receive_rank (self) end
    end
+end
+
+local function receive_vinfinity (self, msg, data)
+   if dmz.data.is_a (data) then
+      self.vinf = data:lookup_number ("value", 1)
+      if not self.vinf then self.vinf = 0.05 end
+      if self.visible then receive_rank (self) end
+   end   
 end
 
 local function create_object (self, handle, objType, locality)
@@ -537,14 +579,14 @@ function new (config, name)
       visible = false,
       rankLimit = config:to_number ("rank.limit", 9),
       log = dmz.log.new ("lua." .. name),
-      rankMessage =
-         config:to_message ("message.rank.name", "NARankObjectsMessage"),
-      hideMessage =
-         config:to_message ("message.hide.name", "NAHideObjectsMessage"),
+      simulatorMessage =
+         config:to_message ("simulator-message.name", "NASimulatorMessage"),
       preventionBudgetMessage =
          config:to_message ("message.prevention-budget.name", "PreventionBudgetMessage"),
       responseBudgetMessage =
          config:to_message ("message.response-budget.name", "ResponseBudgetMessage"),
+      vinfinityMessage =
+         config:to_message ("v-infinity-message.name", "NAVulnerabilityInfinityMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       objects = {},
@@ -554,14 +596,15 @@ function new (config, name)
       maxPreventionBudget = 0,
       responseBudget = 0,
       maxResponseBudget = 0,
+      vinf = 0.05,
    }
 
    self.log:info ("Creating plugin: " .. name)
 
-   self.msgObs:register (self.rankMessage, receive_rank, self)
-   self.msgObs:register (self.hideMessage, receive_hide, self)
+   self.msgObs:register (self.simulatorMessage, receive_simulator, self)
    self.msgObs:register (self.preventionBudgetMessage, receive_prevention_budget, self)
    self.msgObs:register (self.responseBudgetMessage, receive_response_budget, self)
+   self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
 
    local cb = { create_object = create_object, destroy_object = destroy_object }
    self.objObs:register (nil, cb, self)

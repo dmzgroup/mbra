@@ -1,9 +1,12 @@
 local NodeType = dmz.object_type.new ("na_node")
+local NodeLinkType = dmz.object_type.new ("na_link_attribute")
 
 function receive (self, type, data)
    if dmz.data.is_a (data) then
       local handle = data:lookup_handle ("object", 1)
       if handle then 
+         local link = self.objects[handle]
+         if link then handle = link end
          local objType = dmz.object.type (handle)
          if
                objType and
@@ -22,17 +25,40 @@ function receive (self, type, data)
    end
 end
 
+local DefaultCallbacks = {
+
+destroy_object = function (self, object)
+   self.objects[object] = nil
+end,
+
+}
+
+local LinkCallbacks = {
+
+update_link_object = function (self, link, attr, super, sub, object, prev)
+   if object and dmz.object.type (object):is_of_type (NodeLinkType) then
+      self.objects[object] = link
+   end
+end,
+
+}
+
 function new (config, name)
 
    local self = {
       log = dmz.log.new ("lua." .. name),
       message = config:to_message ("message.name", "DestroyObjectMessage"),
       obs = dmz.message_observer.new (name),
+      objObs = dmz.object_observer.new (name),
+      objects = {},
    }
 
    self.log:info ("Creating plugin: " .. name)
    self.log:info ("Message type: " .. self.message:get_name ())
    self.obs:register (self.message, receive, self)
+
+   self.objObs:register (nil, DefaultCallbacks, self)
+   self.objObs:register ("Node_Link", LinkCallbacks, self)
 
    return self
 end

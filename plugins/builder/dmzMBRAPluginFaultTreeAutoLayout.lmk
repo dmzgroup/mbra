@@ -3,5 +3,5 @@ lmkQt.set_name "dmzMBRAPluginFaultTreeAutoLayout"
 lmk.set_type "plugin"
 lmk.add_files {"dmzMBRAPluginFaultTreeAutoLayout.cpp",}
 lmk.add_libs {"dmzObjectUtil","dmzKernel",}
-lmk.add_preqs {"dmzQtFramework","dmzObjectFramework",}
+lmk.add_preqs {"dmzQtFramework","dmzObjectFramework","dmzFoundation"}
 lmkQt.add_libs {"QtCore","QtGui",}

@@ -151,22 +151,19 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
       find_mbra_files (dialog, get_home_directory () + "/", depth, list);
    }
 
-   if (list.get_count () > 0) {
+   Config fileList (MBRAFileList);
 
-      Config fileList (MBRAFileList);
+   PathContainerIterator it;
+   String file;
 
-      PathContainerIterator it;
-      String file;
+   while (list.get_next (it, file)) {
 
-      while (list.get_next (it, file)) {
-
-         Config data ("file");
-         data.store_attribute ("name", file);
-         fileList.add_config (data);
-      }
-
-      set_session_config (init.app.get_context (), fileList);
+      Config data ("file");
+      data.store_attribute ("name", file);
+      fileList.add_config (data);
    }
+
+   set_session_config (init.app.get_context (), fileList);
 }
 
 };

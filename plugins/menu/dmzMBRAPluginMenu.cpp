@@ -103,8 +103,14 @@ dmz::MBRAPluginMenu::update_plugin_state (
 
             const String FileName = config_to_string ("name", file);
 
-            if (is_valid_path (FileName)) { _fileCache << FileName.get_buffer (); }
+            if (is_valid_path (FileName) &&
+                  (_fileCache.indexOf (FileName.get_buffer ()) < 0)) {
+
+               _fileCache << FileName.get_buffer ();
+            }
          }
+
+         if (!_startFile.isEmpty ()) { _set_current_file (_startFile); }
          
          _update_recent_actions ();
       }
@@ -188,8 +194,6 @@ dmz::MBRAPluginMenu::discover_plugin (
                   }
                }
             }
-
-            if (!_startFile.isEmpty ()) { _set_current_file (_startFile); }
          }
       }
    }
@@ -856,7 +860,7 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 void
 dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
 
-   if (_mainWindowModule) {
+   if (_mainWindowModule && !FileName.isEmpty ()) {
 
       QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
       if (mainWindow) {
@@ -875,7 +879,7 @@ dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
          _exportName = FileName;
          
          Int32 index = _fileCache.indexOf  (FileName);
-         if (index != -1) { _fileCache.removeAt (index); }
+         if (index >= 0) { _fileCache.removeAt (index); }
          
          _fileCache << FileName;
          
