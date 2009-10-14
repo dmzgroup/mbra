@@ -5,7 +5,9 @@
       <plugin name="dmzQtPluginPreferences" scope="preferences"/>
       <plugin name="dmzQtPluginPreferencesGeneral" scope="preferences-general"/>
       <plugin name="dmzPluginSaveMessageMonostate" scope="save-preferences"/>
+<!--
       <plugin name="dmzQtPluginAppUpdater" scope="updater"/>
+-->
    </plugin-list>
    <preferences>
       <widget name="dmzQtPluginPreferencesGeneral" title="General"/>

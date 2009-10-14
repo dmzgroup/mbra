@@ -64,7 +64,7 @@ end
 local function calc_risk_reduced (object)
    local result = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Vulnerability = calc_vulnerability (object, VulnerabilityHandle)
+   local Vulnerability = calc_vulnerability (object)
    local Consequence = dmz.object.scalar (object, ConsequenceHandle)
    if Threat and Vulnerability and Consequence then
       result = Threat * Vulnerability * Consequence
