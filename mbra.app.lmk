@@ -74,6 +74,7 @@ lmk.add_preqs {
    "dmzMBRAPluginFaultTreeAutoLayout",
    "dmzMBRAPluginFTCalculate",
    "dmzPluginSaveMessageMonostate",
+   "dmzQtPluginAppUpdater",
 -- dev plugins
    "dmzLuaPluginReset",
    "dmzPluginMsgDump",

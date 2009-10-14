@@ -5,7 +5,7 @@
       <plugin name="dmzQtPluginPreferences" scope="preferences"/>
       <plugin name="dmzQtPluginPreferencesGeneral" scope="preferences-general"/>
       <plugin name="dmzPluginSaveMessageMonostate" scope="save-preferences"/>
-      <!-- <plugin name="dmzQtPluginAppUpdater" scope="updater"/> -->
+      <plugin name="dmzQtPluginAppUpdater" scope="updater"/>
    </plugin-list>
    <preferences>
       <widget name="dmzQtPluginPreferencesGeneral" title="General"/>
@@ -109,9 +109,9 @@
       </module>
    </dmzMBRAPluginMenu>
    <updater>
-      <force-update value="true"/>
-      <release channel="stable"/>
-      <version url="http://dmzdev.github.com/latest/%1/%2/%3.xml"/>
-      <download url="http://cloud.github.com/downloads/dmzdev/latest/%1-%2.%3"/>
+      <!-- <force-update value="true"/> -->
+      <!-- <release channel="stable"/> -->
+      <!-- <version url="http://dmzdev.github.com/latest/%1/%2/%3.xml"/> -->
+      <!-- <download url="http://cloud.github.com/downloads/dmzdev/latest/%1-%2.%3"/> -->
    </updater>
 </dmz>
