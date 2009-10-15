@@ -15,6 +15,12 @@ cp $DEPTH/depend/Qt/libqgif.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins
 cp $DEPTH/depend/Qt/libqjpeg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqtiff.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqsvg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
-hdiutil create -srcfolder $DEPTH/MBRA.app $DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
-hdiutil internet-enable -yes -verbose $DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
+TARGET=$DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
+hdiutil create -srcfolder $DEPTH/MBRA.app $TARGET
+hdiutil internet-enable -yes -verbose $TARGET
 rm -rf $DEPTH/MBRA.app/
+INSTALLER_PATH=$DEPTH/installers
+if [ ! -d $INSTALLER_PATH ] ; then
+   mkdir $INSTALLER_PATH
+fi
+mv $TARGET $INSTALLER_PATH
