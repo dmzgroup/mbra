@@ -64,7 +64,7 @@ end
 local function calc_risk_reduced (object)
    local result = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Vulnerability = calc_vulnerability (object, VulnerabilityHandle)
+   local Vulnerability = calc_vulnerability (object)
    local Consequence = dmz.object.scalar (object, ConsequenceHandle)
    if Threat and Vulnerability and Consequence then
       result = Threat * Vulnerability * Consequence
@@ -492,7 +492,9 @@ end
 local function receive_prevention_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.preventionBudget = data:lookup_number ("Budget", 1)
+      if not self.preventionBudget then self.preventionBudget = 0 end
       self.maxPreventionBudget = data:lookup_number ("Budget", 2)
+      if not self.maxPreventionBudget then self.maxPreventionBudget = 0 end
 --cprint ("Got message:", self.preventionBudget, self.maxPreventionBudget)
       if self.visible then receive_rank (self) end
    end
