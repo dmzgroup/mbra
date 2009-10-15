@@ -303,6 +303,7 @@
             name="Risk Initial"
             attribute="NA_Node_Risk_Initial"
             decimals="2"
+            prefix="$"
          />
          <property
             type="scalar-label"
@@ -315,6 +316,7 @@
             name="Risk Reduced"
             attribute="NA_Node_Risk_Reduced"
             decimals="2"
+            prefix="$"
          />
          <property
             type="scalar-label"
@@ -418,11 +420,13 @@
             attribute="NA_Node_Prevention_Allocation"
             prefix="$"
          />
+<!--
          <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
             <state label="reverse" name="NA_Flow_Reverse"/>
          </property>
+-->
          <property
             type="text"
             name="Description"
@@ -434,6 +438,7 @@
             name="Risk Initial"
             attribute="NA_Node_Risk_Initial"
             decimals="2"
+            prefix="$"
          />
          <property
             type="scalar-label"
@@ -446,6 +451,7 @@
             name="Risk Reduced"
             attribute="NA_Node_Risk_Reduced"
             decimals="2"
+            prefix="$"
          />
          <property
             type="scalar-label"
