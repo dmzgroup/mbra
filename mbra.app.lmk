@@ -10,80 +10,9 @@ lmk.add_vars {
 }
 lmk.add_files ({"version.xml",}, {src="version"})
 lmk.add_files {"MBRA.app"}
-lmk.add_preqs {
-   "scripts",
-   "mbra",
-   "mbraInit",
-   "dmzQtModuleMainWindowBasic",
-   "dmzArchiveModuleBasic",
-   "dmzArchivePluginAutoLoad",
-   "dmzArchivePluginAutoSave",
-   "dmzArchivePluginObject",
-   "dmzArchivePluginInputChannelState",
-   "dmzArchivePluginUndo",
-   "dmzObjectModuleBasic",
-   "dmzObjectPluginFlagGroup",
-   "dmzObjectPluginUndo",
-   "dmzObjectPluginCleanup",
-   "dmzRenderModulePickBasic",
-   "dmzInputModuleBasic",
-   "dmzInputPluginKeyEventToMessage",
-   "dmzLuaModuleBasic",
-   "dmzQtExtLuaConsole",
-   "dmzLuaExtInput",
-   "dmzLuaExtObject",
-   "dmzLuaExtPick",
-   "dmzLuaExtRuntime",
-   "dmzQtPluginAppUpdater",
-   "dmzQtPluginPreferences",
-   "dmzQtPluginPreferencesGeneral",
-   "dmzQtPluginLuaProfiler",
-   "dmzQtPluginVersion",
-   "dmzQtPluginWidget",
-   "dmzQtPluginStackedWidget",
-   "dmzInputPluginMouseEventToMessage",
-   "dmzQtModuleMapBasic",
-   "dmzQtPluginRenderPickMap",
-   "dmzQtPluginCanvasMap",
-   "dmzQtModuleCanvasBasic",
-   "dmzQtPluginCanvasZoomPanMap",
-   "dmzQtPluginCanvasObject",
-   "dmzQtPluginCanvasObjectBasic",
-   "dmzQtPluginCanvasLink",
-   "dmzQtPluginCanvasLayer",
-   "dmzQtPluginRenderPickCanvas",
-   "dmzQtPluginMapArchive",
-   "dmzQtPluginButtonToChannel",
-   "dmzMBRAPluginArchiveSupport",
-   "dmzMBRAPluginPropertyEditor",
-   "dmzMBRAPluginPropertyTable",
-   "dmzMBRAPluginCalculate",
-   "dmzMBRAPluginNABudget",
-   "dmzMBRAPluginNACalculate",
-   "dmzMBRAPluginFTViewState",
-   "dmzMBRAPluginLinkEditor",
-   "dmzMBRAPluginMenu",
-   "dmzQtPluginCanvasAutoLink",
-   "dmzQtPluginGraph",
-   "dmzQtPluginTabWidget",
-   "dmzQtPluginMapObjectPosition",
-   "dmzQtPluginCanvasZoomPan",
-   "dmzQtPluginCanvasArchive",
-   "dmzQtPluginMapProperties",
-   "dmzQtPluginMenuToMessage",
-   "dmzMBRAPluginFaultTreeBuilder",
-   "dmzMBRAPluginFaultTreeAutoLayout",
-   "dmzMBRAPluginFTCalculate",
-   "dmzPluginSaveMessageMonostate",
-   "dmzQtPluginAppUpdater",
--- dev plugins
-   "dmzLuaPluginReset",
-   "dmzPluginMsgDump",
-   "dmzPluginUndoDump",
-   "dmzObjectPluginDump",
-   "dmzQtPluginLuaProfiler",
-   "dmzInputPluginKeyEventToMessage",
-}
+lmk.add_preqs {"scripts", "mbra", "mbraInit", }
+
+app.build_preqs {"config",}
 
 app.set_app ("mbra")
 
@@ -91,10 +20,7 @@ app.set_plist ("Info.plist")
 
 app.add_icons {"AppIcon.icns", "DocIcon.icns"}
 
-app.add_config {
-   "config/",
-   "$(localTmpDir)/version.xml",
-}
+app.add_config {"config/", "$(localTmpDir)/version.xml",}
 
 app.add_data {
    "assets/mbra.rcc",
@@ -112,9 +38,7 @@ app.add_data {
    "assets/Images/NA_ResultsOverlayLinks180.svg",
 }
 
-app.add_scripts {
-   "scripts/",
-}
+app.add_scripts { "scripts/", }
 
 lmk.add_vars ({
    installPaths = {

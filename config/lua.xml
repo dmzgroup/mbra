@@ -8,12 +8,12 @@
 <dmzLuaModuleBasic>
    <path value="./scripts/?.lua"/>
    <path value="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>
-   <extensions>
+   <plugin-list>
       <plugin name="dmzLuaExtInput"/>
       <plugin name="dmzLuaExtObject"/>
       <plugin name="dmzLuaExtPick"/>
       <plugin name="dmzQtExtLuaConsole"/>
-   </extensions>
+   </plugin-list>
    <instance name="dmzMBRAPluginNAEdit"/>
    <instance name="dmzMBRAPluginNASimulator"/>
    <instance name="dmzMBRAPluginNADegrees"/>
