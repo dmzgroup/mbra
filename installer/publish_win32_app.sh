@@ -1,5 +1,21 @@
 #!/bin/sh
 DEPTH=../../..
-cp $DEPTH/bin/win32-opt/MBRA.app/config/version.xml $DEPTH/swupdate/dmz/latest/stable/win32/MBRA.xml
-cp $DEPTH/MBRA-`cat $DEPTH/tmp/win32-opt/mbraapp/buildnumber.txt`.exe $DEPTH/swupdate/dmz/downloads
-$DEPTH/swupdate/google_appengine/appcfg.py update $DEPTH/swupdate/dmz
+
+CHANNEL=$1
+
+if [ "$CHANNEL" = "" ] ; then
+   CHANNEL=devel
+fi
+
+VERSION_XML=$DEPTH/bin/win32-opt/MBRA.app/config/version.xml
+INSTALLER=$DEPTH/installers/MBRA-`cat $DEPTH/tmp/win32-opt/mbraapp/buildnumber.txt`.exe
+
+echo "publishing $INSTALLER..."
+
+echo "scp $VERSION_XML dmzdev.org:/home/update/public/latest/$CHANNEL/win32/MBRA.xml"
+scp $VERSION_XML dmzdev.org:/home/update/public/latest/$CHANNEL/win32/MBRA.xml
+
+echo "scp $INSTALLER dmzdev.org:/home/update/public/downloads"
+scp $INSTALLER dmzdev.org:/home/update/public/downloads
+
+echo "done!"

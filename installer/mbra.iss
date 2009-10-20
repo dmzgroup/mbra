@@ -2,7 +2,7 @@
 #define AppName "MBRA"
 #define AppVerName "MBRA 2.0"
 #define Publisher "CHDS"
-#define AppURL "http://svndmz.nps.edu"
+#define AppURL "http://dmzdev.org"
 #define AppExeName "mbra.exe"
 #define DependDir "..\..\..\depend"
 #define VsDir "c:\Program Files\Microsoft Visual Studio 8"
