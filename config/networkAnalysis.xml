@@ -82,7 +82,7 @@
       <widget name="dmzMBRAPluginNACalculate"/>
    </na-tool-simulator>
    <na-tool-tab>
-      <widget name="na-tool-simulator" title="Simulator"/>
+      <widget name="na-tool-simulator" title="Calculate"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
    </na-tool-tab>
    <na-charts-tab>

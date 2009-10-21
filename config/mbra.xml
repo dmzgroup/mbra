@@ -110,6 +110,7 @@
    </dmzMBRAPluginMenu>
    <updater>
       <!-- <force-update value="true"/> -->
+      <!-- <download-to-temp value="false"/> -->
       <!-- <release channel="devel"/> -->
       <version url="http://update.dmzdev.org/latest/%1/%2/%3.xml"/>
       <download url="http://update.dmzdev.org/downloads/%1-%2.%3"/>
