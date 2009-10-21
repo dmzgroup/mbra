@@ -852,6 +852,7 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
    _proxyModel.setSourceModel (&_model);
    _proxyModel.setDynamicSortFilter (True);
+   _proxyModel.setFilterCaseSensitivity (Qt::CaseInsensitive);
 
    _ui.tableView->setModel (&_proxyModel);
    _ui.tableView->setItemDelegate (new LocalDelegate (this, _colTable));
