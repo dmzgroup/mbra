@@ -112,7 +112,9 @@
       <!-- <force-update value="true"/> -->
       <!-- <download-to-temp value="false"/> -->
       <!-- <release channel="devel"/> -->
-      <version url="http://update.dmzdev.org/latest/%1/%2/%3.xml"/>
-      <download url="http://update.dmzdev.org/downloads/%1-%2.%3"/>
+      <version
+         host="http://update.dmzdev.org"
+         path="/latest/{system_name}-{release_channel}/{app_name}.xml"/>
+      <download path="/downloads/{app_name}-{build_number}"/>
    </updater>
 </dmz>
