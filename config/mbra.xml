@@ -120,7 +120,7 @@
    <updater>
       <!-- <force-update value="true"/> -->
       <!-- <download-to-temp value="false"/> -->
-      <release channel="devel"/>
+      <!-- <release channel="devel"/> -->
       <update
          host="http://update.dmzdev.org"
          path="/latest/{system_name}-{release_channel}/{app_name}"/>

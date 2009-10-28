@@ -23,4 +23,7 @@ scp ./changelog.html dmzdev.org:/home/update/public/downloads/$UPDATE.html
 echo "scp $INSTALLER dmzdev.org:/home/update/public/downloads"
 scp $INSTALLER dmzdev.org:/home/update/public/downloads
 
+echo "ssh dmzdev.org sudo chown www-data.admin -R /home/update/public"
+ssh dmzdev.org sudo chown www-data.admin -R /home/update/public
+
 echo "done!"
