@@ -3,13 +3,15 @@
    <plugin-list>
       <plugin name="dmzQtPluginVersion"/>
       <plugin name="dmzQtPluginPreferences" scope="preferences"/>
-      <plugin name="dmzQtPluginPreferencesGeneral" scope="preferences-general"/>
+      <plugin name="dmzQtPluginPreferencesGeneral" unique="preferences-general"/>
+      <plugin name="dmzQtPluginPreferencesAppUpdater" unique="preferences-updates"/>
       <plugin name="dmzPluginSaveMessageMonostate" scope="save-preferences"/>
       <plugin name="dmzQtPluginAppUpdater" scope="updater"/>
    </plugin-list>
    <preferences>
-      <widget name="dmzQtPluginPreferencesGeneral" title="General"/>
+      <widget name="preferences-general" title="General"/>
       <widget name="dmzQtPluginMapProperties" title="Map"/>
+      <widget name="preferences-updates" title="Updates"/>
    </preferences>
    <preferences-general>
       <property
@@ -35,9 +37,16 @@
          step="1"
          suffix="%"/>
    </preferences-general>
+   <preferences-updates>
+      <update value="true"/>
+      <release-channel name="stable"/>
+      <release-channel name="devel"/>
+   </preferences-updates>
    <save-preferences>
       <message name="NAVulnerabilityInfinityMessage"/>
       <message name="FTVulnerabilityInfinityMessage"/>
+      <message name="AppUpdaterUpdateMessage"/>
+      <message name="AppUpdaterChannelMessage"/>
    </save-preferences>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">
@@ -84,7 +93,7 @@
             </icon>
          </action>
          <action separator="true"/>
-         <action 
+         <action
             text="Toggle Labels"
             statusTip="Toggle Labels"
             shortcut="Ctrl+L"
@@ -111,10 +120,10 @@
    <updater>
       <!-- <force-update value="true"/> -->
       <!-- <download-to-temp value="false"/> -->
-      <!-- <release channel="devel"/> -->
-      <version
+      <release channel="devel"/>
+      <update
          host="http://update.dmzdev.org"
-         path="/latest/{system_name}-{release_channel}/{app_name}.xml"/>
+         path="/latest/{system_name}-{release_channel}/{app_name}"/>
       <download path="/downloads/{app_name}-{build_number}"/>
    </updater>
 </dmz>
