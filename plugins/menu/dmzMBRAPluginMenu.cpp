@@ -639,7 +639,7 @@ dmz::MBRAPluginMenu::on_onlineHelpAction_triggered () {
 void
 dmz::MBRAPluginMenu::_update_recent_actions () {
 
-   if (_recentFilesActionGroup) {
+   if (_recentFilesActionGroup && _recentFilesMenu) {
       
       QList<QAction *>actionList = _recentFilesActionGroup->actions ();
       
