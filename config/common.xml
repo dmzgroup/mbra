@@ -28,7 +28,7 @@
    <plugin name="dmzMBRAPluginMenu"/>
 
 <!--
-   <plugin name="dmzQtPluginPropertyBrowser" unique="property-browser"/>
+   <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzPluginUndoDump"/>
@@ -65,7 +65,7 @@
             <allowed-areas none="true"/>
          </widget>
 <!--
-         <widget name="property-browser" title="Property Browser" visible="false" floating="true">
+         <widget name="object-inspector" title="Object Inspector" visible="false" floating="true">
             <allowed-areas none="true"/>
          </widget>
 -->
