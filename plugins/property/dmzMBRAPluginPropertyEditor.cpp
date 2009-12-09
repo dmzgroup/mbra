@@ -882,16 +882,25 @@ dmz::MBRAPluginPropertyEditor::_create_widgets (Config &list) {
          const double Step = config_to_float64 ("step", widget, 1000);
          const String Suffix = config_to_string ("suffix", widget);
 
+         // move the prefix out of the ScalarWidget and append it
+         // to the name label to get around a weird qt bug -ss
+         String nameWithPrefix (Name);
+         if (Prefix) { 
+         
+            nameWithPrefix.replace_sub (":", " ");
+            nameWithPrefix << "(" << Prefix << "):";
+         }
+         
          pe = new ScalarWidget (
             AttrHandle,
-            Name,
+            nameWithPrefix, //Name, see comment above
             Type == "scalar" ? True : False,
             DefaultValue,
             Scale,
             Decimals,
             Max,
             Min,
-            Prefix,
+            "", //Prefix, see comment above
             Step,
             Suffix);
       }
