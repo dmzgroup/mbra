@@ -54,7 +54,7 @@ local function calc_vulnerability (object)
    local Cost = dmz.object.scalar (object, PreventionCostHandle)
    local Gamma = dmz.object.scalar (object, GammaHandle)
    if Gamma and not_zero (Gamma) and Vulnerability and (Vulnerability > 0) and
-         Cost and (Cost > 0) then
+         Cost and (Cost > 0) and not_zero (Cost) then
       result = Vulnerability * math.exp (-Gamma * Allocation / Cost)
    end
    dmz.object.scalar (object, VulnerabilityReducedHandle, result)
@@ -138,7 +138,6 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.scalar (object, DegreeHandle)
    if value and (self.maxDegrees > 0) then result = value / self.maxDegrees end
---cprint ("Degree", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
@@ -229,7 +228,6 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, BetweennessHandle)
    if value and (self.maxBetweenness > 0) then result = value / self.maxBetweenness end
---cprint ("Between", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
@@ -292,7 +290,6 @@ calc = function (self, object)
    local result = 0
    local value = dmz.object.counter (object, HeightHandle)
    if value and (self.maxHeight > 0) then result = value / self.maxHeight end
---cprint ("Height", tostring (dmz.object.text (object, "NA_Node_Name")), tostring (value), result, object, dmz.object.type (object):get_name ())
    return result
 end,
 
@@ -311,7 +308,7 @@ local function log_defender_term (object)
          object.gamma
    if not_zero (result) then
       result = object.cost / result
-      if not_zero (object.gamma) then
+      if not_zero (object.gamma) and not_zero (result) then
          result = (object.cost / object.gamma) * math.log (result)
       else result = 0
       end
@@ -323,7 +320,7 @@ end
 local function log_defender (object)
    local result = object.weight * object.threat * object.consequence * object.vul *
          object.gamma
-   if not_zero (result) then
+   if not_zero (result) and not_zero (object.cost) then
       result = math.log (object.cost / result)
    else result = 0
    end
@@ -400,7 +397,6 @@ local function allocate_prevention_budget (handleList, budget, maxBudget, vinf)
          totalAllocation = totalAllocation + object.allocation
          dmz.object.scalar (object.handle, PreventionAllocationHandle, object.allocation)
       end
---cprint (budget, totalAllocation)
    end
 end
 
@@ -444,7 +440,6 @@ local function receive_rank (self)
          list[#list + 1] = object
       end
    end
---cprint ("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
    table.sort (list, function (obj1, obj2) return obj1.rank > obj2.rank end)
    local count = 1
    local lastRank = nil
@@ -483,7 +478,7 @@ end
 
 local function receive_simulator (self, message, data)
    if dmz.data.is_a (data) then
-      if data:lookup_boolean ("Boolean", 1) then receive_rank (self)
+      if data:lookup_boolean ("Boolean", 1) then self.doRank = true
       else receive_hide (self)
       end
    end
@@ -495,8 +490,7 @@ local function receive_prevention_budget (self, message, data)
       if not self.preventionBudget then self.preventionBudget = 0 end
       self.maxPreventionBudget = data:lookup_number ("Budget", 2)
       if not self.maxPreventionBudget then self.maxPreventionBudget = 0 end
---cprint ("Got message:", self.preventionBudget, self.maxPreventionBudget)
-      if self.visible then receive_rank (self) end
+      if self.visible then self.doRank = true end
    end
 end
 
@@ -504,7 +498,7 @@ local function receive_response_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.responseBudget = data:lookup_number ("Budget", 1)
       self.maxResponseBudget = data:lookup_number ("Budget", 2)
-      if self.visible then receive_rank (self) end
+      if self.visible then self.doRank = true end
    end
 end
 
@@ -512,7 +506,7 @@ local function receive_vinfinity (self, msg, data)
    if dmz.data.is_a (data) then
       self.vinf = data:lookup_number ("value", 1)
       if not self.vinf then self.vinf = 0.05 end
-      if self.visible then receive_rank (self) end
+      if self.visible then self.doRank = true end
    end   
 end
 
@@ -520,13 +514,13 @@ local function create_object (self, handle, objType, locality)
    if objType then
       if objType:is_of_type (NodeType) or objType:is_of_type (NodeLinkType) then
          self.objects[handle] = true
-         if self.visible and self.objects[handle] then receive_rank (self) end
+         if self.visible and self.objects[handle] then self.doRank = true end
       end
    end
 end
 
 local function update_object_scalar (self, handle, attr, value)
-   if self.visible and self.objects[handle] then receive_rank (self) end
+   if self.visible and self.objects[handle] then self.doRank = true end
    calc_risk_initial (handle)
 end
 
@@ -553,26 +547,33 @@ local function update_simulator_flag (self, handle, attr, value)
       end
    else self.weightList[attr] = nil
    end
-   if self.visible then receive_rank (self) end
+   if self.visible then self.doRank = true end
 end
 
 local function destroy_object (self, handle)
    local updateRank = false
    if self.visible and self.objects[handle] then updateRank = true end
    self.objects[handle] = nil
-   if updateRank then receive_rank (self) end
+   if updateRank then self.doRank = true end
 end
 
 local function link_objects (self, link, attr, super, sub)
-   if self.visible and self.objects[super] then receive_rank (self) end
+   if self.visible and self.objects[super] then self.doRank = true end
 end
 
 local function unlink_objects (self, link, attr, super, sub)
-   if self.visible and self.objects[super] then receive_rank (self) end
+   if self.visible and self.objects[super] then self.doRank = true end
 end
 
 local function update_link_object (self, link, attr, super, sub, object)
-   if self.visible and object and self.objects[object] then receive_rank (self) end
+   if self.visible and object and self.objects[object] then self.doRank = true end
+end
+
+local function work_func (self)
+   if self.doRank then
+      receive_rank (self)
+      self.doRank = nil;
+   end
 end
 
 function new (config, name)
@@ -591,6 +592,7 @@ function new (config, name)
          config:to_message ("v-infinity-message.name", "NAVulnerabilityInfinityMessage"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
+      timeSlice = dmz.time_slice.new (),
       objects = {},
       objective = calc_objective_none,
       weightList = {},
@@ -636,6 +638,8 @@ function new (config, name)
    }
 
    self.objObs:register (LinkHandle, cb, self)
+
+   self.tsHandle = self.timeSlice:create (work_func, self, self.name)
 
    return self
 end
