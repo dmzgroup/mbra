@@ -331,6 +331,7 @@ local function allocate_prevention_budget (handleList, budget, maxBudget, vinf)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
          dmz.object.scalar (handle, PreventionAllocationHandle, 0)
+         dmz.object.scalar (handle, GammaHandle, 0)
       end
    else
       local objectList = {}
