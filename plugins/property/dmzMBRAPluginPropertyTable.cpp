@@ -32,7 +32,8 @@ class LineWidget : public pwidget {
          const String &Name,
          const Int32 Column,
          const Boolean Editable,
-         const int MaxLength);
+         const int MaxLength,
+         const QVariant::Type TheType);
 
       virtual ~LineWidget () {;}
 
@@ -43,10 +44,11 @@ class LineWidget : public pwidget {
          const QVariant &Data,
          ObjectModule &module);
 
-      virtual QVariant update_variant (const QVariant &data) { return data; }
+      virtual QVariant update_variant (const QVariant &data);
 
    protected:
       const int _MaxLength;
+      const QVariant::Type _Type;
 };
 
 class ScalarWidget : public pwidget {
@@ -113,9 +115,20 @@ LineWidget::LineWidget (
       const String &Name,
       const Int32 Column,
       const Boolean Editable,
-      const int MaxLength) :
+      const int MaxLength,
+      const QVariant::Type TheType) :
       pwidget (Attribute, Name, Column, Editable),
-      _MaxLength (MaxLength) {;}
+      _MaxLength (MaxLength),
+      _Type (TheType) {;}
+
+
+QVariant
+LineWidget::update_variant (const QVariant &data) {
+
+   QVariant result (data);
+   result.convert (_Type);
+   return result;
+}
 
 
 QWidget *
@@ -774,12 +787,26 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
 
          const int MaxLength = config_to_int32 ("max-length", property);
 
+         QVariant::Type qtype = QVariant::String;
+
+         const String QTypeName = config_to_string ("value-type", property, "string");
+
+         if (QTypeName == "string") { qtype = QVariant::String; }
+         else if (QTypeName == "integer") { qtype = QVariant::Int; }
+         else if (QTypeName == "scalar") { qtype = QVariant::Double; }
+         else {
+
+            _log.error << "Unknown value-type: " << QTypeName
+               << " for property: " << name << ". Defaulting to type: string." << endl;
+         }
+
          pe = new LineWidget (
             Attribute,
             name,
             Column,
             (Type == "line-label" ? False : Editable),
-            MaxLength);
+            MaxLength,
+            qtype);
 
          if (Prefix) { name << " (" << Prefix << ")"; }
          else if (Suffix) { name << " (" << Suffix << ")"; }
