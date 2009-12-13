@@ -23,6 +23,7 @@ namespace {
 typedef dmz::MBRAPluginPropertyTable::PropertyWidget pwidget;
 
 const UInt32 HandleRole (Qt::UserRole + 1);
+const UInt32 SortRole (Qt::UserRole + 2);
 
 class LineWidget : public pwidget {
 
@@ -542,6 +543,7 @@ dmz::MBRAPluginPropertyTable::update_object_scalar (
          QVariant data (Value);
          data = pw->update_variant (data);
          item->setData (data, Qt::DisplayRole);
+         item->setData (Value, SortRole);
       }
 
       _ignoreChange = False;
@@ -574,6 +576,7 @@ dmz::MBRAPluginPropertyTable::update_object_text (
          QVariant data (Value.get_buffer ());
          data = pw->update_variant (data);
          item->setData (data, Qt::DisplayRole);
+         item->setData (data, SortRole);
       }
 
       _ignoreChange = False;
@@ -883,6 +886,9 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
    _ui.tableView->setModel (&_proxyModel);
    _ui.tableView->setItemDelegate (new LocalDelegate (this, _colTable));
+
+   _model.setSortRole (SortRole);
+   _proxyModel.setSortRole (SortRole);
 
    Config list;
 
