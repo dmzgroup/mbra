@@ -362,6 +362,7 @@ local function start_work (self)
    build_index (self, self.root)
    for _, object in ipairs (self.index) do
       dmz.object.scalar (object.handle, AllocationHandle, 0)
+      object.gamma = 0
    end
    if self.root then
       self.risk = 0

@@ -831,7 +831,7 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
          Config config = _archiveModule->create_archive (_archive);
 
          write_xml_header (out);
-         format_config_to_xml (config, out);
+         format_config_to_xml (config, out, XMLPrettyPrint);
 
          QString msg (QString ("File saved as: ") + FileName);
          _log.info << qPrintable (msg) << endl;

@@ -51,10 +51,12 @@ local function calc_vulnerability (object)
    local result = 0
    local Allocation = dmz.object.scalar (object, PreventionAllocationHandle)
    local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
+   if Vulnerability then result = Vulnerability end
    local Cost = dmz.object.scalar (object, PreventionCostHandle)
    local Gamma = dmz.object.scalar (object, GammaHandle)
    if Gamma and not_zero (Gamma) and Vulnerability and (Vulnerability > 0) and
-         Cost and (Cost > 0) and not_zero (Cost) then
+         Cost and (Cost > 0) and not_zero (Cost) and
+         Allocation and not_zero (Allocation) then
       result = Vulnerability * math.exp (-Gamma * Allocation / Cost)
    end
    dmz.object.scalar (object, VulnerabilityReducedHandle, result)
@@ -331,6 +333,7 @@ local function allocate_prevention_budget (handleList, budget, maxBudget, vinf)
    if dmz.math.is_zero (budget) then
       for handle in pairs (handleList) do
          dmz.object.scalar (handle, PreventionAllocationHandle, 0)
+         dmz.object.scalar (handle, GammaHandle, 0)
       end
    else
       local objectList = {}

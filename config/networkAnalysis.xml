@@ -350,7 +350,12 @@
             attribute="NA_Node_Degrees"
             decimals="0"
          />
-         <property type="line-label" name="Rank" attribute="NA_Node_Rank"/>
+         <property
+            type="line-label"
+            value-type="integer"
+            name="Rank"
+            attribute="NA_Node_Rank"
+         />
          <property
             type="link-label"
             name="Fault Tree"
