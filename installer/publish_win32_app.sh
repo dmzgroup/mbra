@@ -25,4 +25,7 @@ scp $INSTALLER dmzdev.org:/home/update/public/downloads
 echo "ssh dmzdev.org sudo chown www-data.admin -R /home/update/public"
 ssh dmzdev.org sudo chown www-data.admin -R /home/update/public
 
+echo "ssh dmzdev.org sudo chmod -R g+w /home/update/public"
+ssh dmzdev.org sudo chmod -R g+w /home/update/public
+
 echo "done!"
