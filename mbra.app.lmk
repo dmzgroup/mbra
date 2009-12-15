@@ -20,7 +20,8 @@ app.set_plist ("Info.plist")
 
 app.add_icons {"AppIcon.icns", "DocIcon.icns"}
 
-app.add_config {"config/", "$(localTmpDir)/version.xml",}
+app.add_config {"config/",}
+app.copy_config {"$(localTmpDir)/version.xml",}
 
 app.add_data {
    "assets/mbra.rcc",
