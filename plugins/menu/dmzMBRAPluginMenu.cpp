@@ -1,4 +1,5 @@
 #include <dmzArchiveModule.h>
+#include <dmzConfigFileIO.h>
 #include <dmzInputEventMasks.h>
 #include <dmzInputModule.h>
 #include <dmzInputConsts.h>
@@ -14,8 +15,6 @@
 #include <dmzRuntimePluginInfo.h>
 #include <dmzRuntimeSession.h>
 #include <dmzSystemFile.h>
-#include <dmzSystemStreamFile.h>
-#include <dmzXMLUtil.h>
 #include <QtGui/QtGui>
 #include <qmapcontrol.h>
 
@@ -786,7 +785,12 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
 
       Config global ("global");
 
-      if (xml_to_config (qPrintable (FileName), global, &_log)) {
+      if (read_config_file (
+            qPrintable (FileName),
+            "mbra.xml",
+            global,
+            XMLFileType,
+            &_log)) {
 
          QString msg (QString ("Loading file: ") + FileName);
 
@@ -822,35 +826,25 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 
       qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
 
-      FILE *file = open_file (qPrintable (FileName), "wb");
+      Config config = _archiveModule->create_archive (_archive);
 
-      if (file) {
+      write_config_file (qPrintable (FileName), "mbra.xml", config, XMLFileType, &_log);
 
-         StreamFile out (file);
+      QString msg (QString ("File saved as: ") + FileName);
+      _log.info << qPrintable (msg) << endl;
 
-         Config config = _archiveModule->create_archive (_archive);
-
-         write_xml_header (out);
-         format_config_to_xml (config, out, XMLPrettyPrint);
-
-         QString msg (QString ("File saved as: ") + FileName);
-         _log.info << qPrintable (msg) << endl;
-
-         _set_current_file (FileName);
+      _set_current_file (FileName);
          
-         if (_mainWindowModule) {
+      if (_mainWindowModule) {
 
-            QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
-            if (mainWindow) {
+         QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
+         if (mainWindow) {
 
-               mainWindow->statusBar ()->showMessage (msg, 5000);
-            }
+            mainWindow->statusBar ()->showMessage (msg, 5000);
          }
-
-         close_file (file);
-
-         _appState.set_default_directory (qPrintable (_exportName));
       }
+
+      _appState.set_default_directory (qPrintable (_exportName));
 
       qApp->restoreOverrideCursor ();
    }
