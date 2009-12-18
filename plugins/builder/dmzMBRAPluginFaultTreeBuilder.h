@@ -137,7 +137,7 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
-         ApplicationStateWrapper _appState;
+         ApplicationState _appState;
          Definitions _defs;
          Undo _undo;
          QtModuleMainWindow *_mainWindowModule;

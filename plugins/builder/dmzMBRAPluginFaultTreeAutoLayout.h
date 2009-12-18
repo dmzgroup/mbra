@@ -84,7 +84,7 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
-         ApplicationStateWrapper _app;
+         ApplicationState _app;
          QtModuleCanvas *_canvasModule;
          String _canvasModuleName;
          Handle _defaultAttrHandle;
