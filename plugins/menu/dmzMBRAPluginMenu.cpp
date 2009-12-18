@@ -1,5 +1,5 @@
 #include <dmzArchiveModule.h>
-#include <dmzConfigFileIO.h>
+#include <dmzFoundationConfigFileIO.h>
 #include <dmzInputEventMasks.h>
 #include <dmzInputModule.h>
 #include <dmzInputConsts.h>

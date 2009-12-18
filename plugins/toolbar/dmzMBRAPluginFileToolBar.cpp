@@ -1,5 +1,5 @@
 #include <dmzArchiveModule.h>
-#include <dmzConfigFileIO.h>
+#include <dmzFoundationConfigFileIO.h>
 #include "dmzMBRAPluginFileToolBar.h"
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
