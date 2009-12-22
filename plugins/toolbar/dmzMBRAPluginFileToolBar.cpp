@@ -1,5 +1,6 @@
 #include <dmzArchiveModule.h>
 #include <dmzFoundationConfigFileIO.h>
+#include <dmzFoundationConsts.h>
 #include "dmzMBRAPluginFileToolBar.h"
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
@@ -293,6 +294,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
                qPrintable (fileName),
                "mbra.xml",
                config,
+               ConfigPrettyPrint,
                XMLFileType, 
                &_log)) {
 

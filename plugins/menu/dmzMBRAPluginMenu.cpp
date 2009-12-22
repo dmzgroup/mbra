@@ -1,5 +1,6 @@
 #include <dmzArchiveModule.h>
 #include <dmzFoundationConfigFileIO.h>
+#include <dmzFoundationConsts.h>
 #include <dmzInputEventMasks.h>
 #include <dmzInputModule.h>
 #include <dmzInputConsts.h>
@@ -787,7 +788,6 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
 
       if (read_config_file (
             qPrintable (FileName),
-            "mbra.xml",
             global,
             XMLFileType,
             &_log)) {
@@ -828,7 +828,13 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 
       Config config = _archiveModule->create_archive (_archive);
 
-      write_config_file (qPrintable (FileName), "mbra.xml", config, XMLFileType, &_log);
+      write_config_file (
+         qPrintable (FileName),
+         "mbra.xml",
+         config,
+         0, // ConfigPrettyPrint,
+         XMLFileType,
+         &_log);
 
       QString msg (QString ("File saved as: ") + FileName);
       _log.info << qPrintable (msg) << endl;
