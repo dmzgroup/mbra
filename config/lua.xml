@@ -6,8 +6,8 @@
    <plugin name="dmzLuaExtRuntime"/>
 </plugin-list>
 <dmzLuaModuleBasic>
-   <path value="./scripts/?.lua"/>
-   <path value="../dmz/frameworks/lua/3rdparty/lua/jit/?.lua"/>
+   <path value="./scripts/"/>
+   <path value="../dmz/frameworks/lua/3rdparty/lua/jit/"/>
    <plugin-list>
       <plugin name="dmzLuaExtInput"/>
       <plugin name="dmzLuaExtObject"/>
