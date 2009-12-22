@@ -1,7 +1,8 @@
 #include "mbraInit.h"
 #include <dmzApplication.h>
 #include <dmzAppShellExt.h>
-#include <dmzCommandLine.h>
+#include <dmzFoundationCommandLine.h>
+#include <dmzFoundationXMLUtil.h>
 #include <dmzQtConfigRead.h>
 #include <dmzQtConfigWrite.h>
 #include <dmzRuntimeConfig.h>
@@ -11,7 +12,6 @@
 #include <dmzRuntimeVersion.h>
 #include <dmzSystemFile.h>
 #include <dmzTypesHashTableStringTemplate.h>
-#include <dmzXMLUtil.h>
 #include <ui_mbraDialog.h>
 
 #include <QtCore/QUrl>

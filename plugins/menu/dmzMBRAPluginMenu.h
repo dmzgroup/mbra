@@ -127,7 +127,7 @@ namespace dmz {
          Log _log;
          QString _startFile;
          Boolean _appStateDirty;
-         ApplicationStateWrapper _appState;
+         ApplicationState _appState;
          ArchiveModule *_archiveModule;
          String _archiveModuleName;
          QtModuleMainWindow *_mainWindowModule;

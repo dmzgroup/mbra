@@ -1,4 +1,6 @@
 #include <dmzArchiveModule.h>
+#include <dmzFoundationConfigFileIO.h>
+#include <dmzFoundationConsts.h>
 #include "dmzMBRAPluginFileToolBar.h"
 #include <dmzQtModuleMainWindow.h>
 #include <dmzQtUtil.h>
@@ -9,7 +11,6 @@
 #include <dmzRuntimePluginInfo.h>
 #include <dmzSystemFile.h>
 #include <dmzSystemStreamFile.h>
-#include <dmzXMLUtil.h>
 #include <QtGui/QtGui>
 
 
@@ -282,20 +283,20 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
       }
 
       if (!fileName.isEmpty ()) {
+
          qApp->setOverrideCursor (QCursor (Qt::BusyCursor));
 
-         FILE *file = open_file (qPrintable (fileName), "wb");
+         _appStateDirty = False;
 
-         if (file) {
+         Config config = _archiveModule->create_archive (_archive);
 
-            _appStateDirty = False;
-
-            StreamFile out (file);
-
-            Config config = _archiveModule->create_archive (_archive);
-
-            write_xml_header (out);
-            format_config_to_xml (config, out, XMLPrettyPrint);
+         if (write_config_file (
+               qPrintable (fileName),
+               "mbra.xml",
+               config,
+               ConfigPrettyPrint,
+               FileTypeXML, 
+               &_log)) {
 
             QString msg (QString ("File exported as: ") + fileName);
 
@@ -312,8 +313,6 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
                   mainWindow->statusBar ()->showMessage (msg, 5000);
                }
             }
-
-            close_file (file);
 
             _appState.set_default_directory (qPrintable (fileName));
          }
@@ -427,7 +426,14 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
 
       Config global ("global");
 
-      if (xml_to_config (qPrintable (FileName), global, &_log)) {
+//      if (xml_to_config (qPrintable (FileName), global, &_log)) {
+      
+      if (read_config_file (
+            qPrintable (FileName),
+            "mbra.xml",
+            global,
+            FileTypeXML,
+            &_log)) {
 
          QString msg (QString ("Loading file: ") + FileName);
 

@@ -3,6 +3,13 @@ lmkQt.set_name "dmzMBRAPluginMenu"
 lmk.set_type "plugin"
 lmk.add_files ({"dmzMBRAPluginMenu.h",},{src="moc"})
 lmk.add_files {"dmzMBRAPluginMenu.cpp",}
-lmk.add_libs {"dmzQtUtil","QMapControl","dmzInputEvents","dmzInputUtil","dmzXML","dmzKernel",}
-lmk.add_preqs {"dmzFoundation","dmzArchiveFramework","dmzInputFramework","dmzQtFramework",}
+lmk.add_libs {
+   "dmzQtUtil",
+   "QMapControl",
+   "dmzInputEvents",
+   "dmzInputUtil",
+   "dmzFoundation",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzArchiveFramework","dmzInputFramework","dmzQtFramework",}
 lmkQt.add_libs {"QtCore","QtGui",}
