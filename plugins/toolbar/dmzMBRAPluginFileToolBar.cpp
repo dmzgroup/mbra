@@ -295,7 +295,7 @@ dmz::MBRAPluginFileToolBar::_slot_file_export () {
                "mbra.xml",
                config,
                ConfigPrettyPrint,
-               XMLFileType, 
+               FileTypeXML, 
                &_log)) {
 
             QString msg (QString ("File exported as: ") + fileName);
@@ -432,7 +432,7 @@ dmz::MBRAPluginFileToolBar::_load_file (const QString &FileName) {
             qPrintable (FileName),
             "mbra.xml",
             global,
-            XMLFileType,
+            FileTypeXML,
             &_log)) {
 
          QString msg (QString ("Loading file: ") + FileName);

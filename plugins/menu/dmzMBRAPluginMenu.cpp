@@ -789,7 +789,7 @@ dmz::MBRAPluginMenu::_load_file (const QString &FileName) {
       if (read_config_file (
             qPrintable (FileName),
             global,
-            XMLFileType,
+            FileTypeXML,
             &_log)) {
 
          QString msg (QString ("Loading file: ") + FileName);
@@ -833,7 +833,7 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
          "mbra.xml",
          config,
          0, // ConfigPrettyPrint,
-         XMLFileType,
+         FileTypeXML,
          &_log);
 
       QString msg (QString ("File saved as: ") + FileName);
