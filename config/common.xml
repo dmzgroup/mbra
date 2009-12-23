@@ -96,6 +96,12 @@
       <attribute name="NA_Node_Rank">
          <mask name="text"/>
       </attribute>
+      <attribute name="NA_Node_Objective_Label">
+         <mask name="text"/>
+      </attribute>
+      <attribute name="NA_Node_Label">
+         <mask name="text"/>
+      </attribute>
       <attribute name="FT_Threat_Allocation">
          <mask name="scalar"/>
       </attribute>
