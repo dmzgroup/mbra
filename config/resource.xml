@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dmz>
+<runtime>
+<resource-map>
+   <search>
+      <path value="./assets/Images"/>
+      <path value="./assets/"/>
+   </search>
+   <resource name="node" file="NA_Node.svg"/>
+   <resource name="node-highlight" file="NA_Node_Highlight.svg"/>
+   <resource name="node-flag" file="NA_Node_Flag.png"/>
+   <resource name="node-overlay" file="NA_ResultsOverlay180.svg"/>
+   <resource name="link-overlay" file="NA_ResultsOverlayLinks180.svg"/>
+   <resource name="ft-component" file="FT_ComponentBox.svg"/>
+   <resource name="ft-threat" file="FT_ThreatBox.svg"/>
+   <resource name="ft-threat-green" file="FT_ThreatFillGreen.svg"/>
+   <resource name="ft-threat-red" file="FT_ThreatFillSolid.svg"/>
+   <resource name="ft-logic-and" file="FT_LogicAnd.svg"/>
+   <resource name="ft-logic-or" file="FT_LogicOr.svg"/>
+   <resource name="ft-logic-xor" file="FT_LogicXOr.svg"/>
+</resource-map>
+</runtime>
+</dmz>

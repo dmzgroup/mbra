@@ -45,12 +45,12 @@
       <NACanvasObjectBasic>
          <items>
             <group name ="flag">
-               <image name="node-flag" file="NA_Node_Flag.png">
+               <image name="node-flag" resource="node-flag">
                   <translate x="-4" y="-38"/>
                </image>
             </group>
             <group name="overlay">
-               <image file="NA_ResultsOverlayLinks180.svg">
+               <image resource="link-overlay">
                   <translate x="-38" y="0"/>
 <!--
                   <translate x="0" y="-38"/>
@@ -87,7 +87,7 @@
       <NACanvasObjectBasic>
          <items>
             <group name="overlay">
-               <image file="NA_ResultsOverlay180.svg">
+               <image resource="node-overlay">
                   <translate x="-37.5" y="-19.0"/>
                </image>
                <text name="number">
@@ -100,15 +100,15 @@
                </text>
             </group>
             <group name ="flag">
-               <image name="node-flag" file="NA_Node_Flag.png">
+               <image name="node-flag" resource="node-flag">
                   <translate x="-1" y="-34"/>
                </image>
             </group>
             <group name="base node">
-               <image name="node" file="NA_Node.svg">
+               <image name="node" resource="node">
                   <translate x="-10" y="-10"/>
                </image>
-               <image name="node-highlight" file="NA_Node_Highlight.svg">
+               <image name="node-highlight" resource="node-highlight">
                   <translate x="-10" y="-10"/>
                </image>
                <text name="name">
@@ -173,7 +173,7 @@
       <FTCanvasObjectBasic>
          <items>
             <group name="component">
-               <image file="FT_ComponentBox.svg">
+               <image resource="ft-component">
                   <translate x="-70" y="-16"/>
                </image>
                <text name="name">
@@ -202,67 +202,67 @@
        <FTCanvasObjectBasic>
           <items>
              <group name="threat">
-                <image file="FT_ThreatBox.svg">
+                <image resource="ft-threat">
                    <translate x="-70" y="-16"/>
                 </image>
-                <image name="e1" file="FT_ThreatFillGreen.svg">
+                <image name="e1" resource="ft-threat-green">
                    <translate x="-64" y="0"/>
                 </image>
-                <image name="e2" file="FT_ThreatFillGreen.svg">
+                <image name="e2" resource="ft-threat-green">
                    <translate x="-51" y="0"/>
                 </image>
-                <image name="e3" file="FT_ThreatFillGreen.svg">
+                <image name="e3" resource="ft-threat-green">
                    <translate x="-38" y="0"/>
                 </image>
-                <image name="e4" file="FT_ThreatFillGreen.svg">
+                <image name="e4" resource="ft-threat-green">
                    <translate x="-25" y="0"/>
                 </image>
-                <image name="e5" file="FT_ThreatFillGreen.svg">
+                <image name="e5" resource="ft-threat-green">
                    <translate x="-12" y="0"/>
                 </image>
-                <image name="e6" file="FT_ThreatFillGreen.svg">
+                <image name="e6" resource="ft-threat-green">
                    <translate x="1" y="0"/>
                 </image>
-                <image name="e7" file="FT_ThreatFillGreen.svg">
+                <image name="e7" resource="ft-threat-green">
                    <translate x="14" y="0"/>
                 </image>
-                <image name="e8" file="FT_ThreatFillGreen.svg">
+                <image name="e8" resource="ft-threat-green">
                    <translate x="27" y="0"/>
                 </image>
-                <image name="e9" file="FT_ThreatFillGreen.svg">
+                <image name="e9" resource="ft-threat-green">
                    <translate x="40" y="0"/>
                 </image>
-                <image name="e10" file="FT_ThreatFillGreen.svg">
+                <image name="e10" resource="ft-threat-green">
                    <translate x="53" y="0"/>
                 </image>
-                <image name="s1" file="FT_ThreatFillSolid.svg">
+                <image name="s1" resource="ft-threat-red">
                    <translate x="-64" y="0"/>
                 </image>
-                <image name="s2" file="FT_ThreatFillSolid.svg">
+                <image name="s2" resource="ft-threat-red">
                    <translate x="-51" y="0"/>
                 </image>
-                <image name="s3" file="FT_ThreatFillSolid.svg">
+                <image name="s3" resource="ft-threat-red">
                    <translate x="-38" y="0"/>
                 </image>
-                <image name="s4" file="FT_ThreatFillSolid.svg">
+                <image name="s4" resource="ft-threat-red">
                    <translate x="-25" y="0"/>
                 </image>
-                <image name="s5" file="FT_ThreatFillSolid.svg">
+                <image name="s5" resource="ft-threat-red">
                    <translate x="-12" y="0"/>
                 </image>
-                <image name="s6" file="FT_ThreatFillSolid.svg">
+                <image name="s6" resource="ft-threat-red">
                    <translate x="1" y="0"/>
                 </image>
-                <image name="s7" file="FT_ThreatFillSolid.svg">
+                <image name="s7" resource="ft-threat-red">
                    <translate x="14" y="0"/>
                 </image>
-                <image name="s8" file="FT_ThreatFillSolid.svg">
+                <image name="s8" resource="ft-threat-red">
                    <translate x="27" y="0"/>
                 </image>
-                <image name="s9" file="FT_ThreatFillSolid.svg">
+                <image name="s9" resource="ft-threat-red">
                    <translate x="40" y="0"/>
                 </image>
-                <image name="s10" file="FT_ThreatFillSolid.svg">
+                <image name="s10" resource="ft-threat-red">
                    <translate x="53" y="0"/>
                 </image>
                 <text name="name">
@@ -423,7 +423,7 @@
        <FTCanvasObjectBasic>
           <items>
              <group name="and">
-                <image file="FT_LogicAnd.svg">
+                <image resource="ft-logic-and">
                    <translate x="-20" y="-20"/>
                 </image>
                 <text>
@@ -436,7 +436,7 @@
                 </text>
              </group>
              <group name="or">
-                <image file="FT_LogicOr.svg">
+                <image resource="ft-logic-or">
                    <translate x="-20" y="-20"/>
                 </image>
                 <text>
@@ -449,7 +449,7 @@
                 </text>
              </group>
              <group name="xor">
-                <image file="FT_LogicXOr.svg">
+                <image resource="ft-logic-xor">
                    <translate x="-20" y="-20"/>
                 </image>
                 <text>

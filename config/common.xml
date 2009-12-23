@@ -2,7 +2,6 @@
 <dmz>
 <dmzFileCacheLocal>
    <path value="assets"/>
-   <path value="scripts"/>
    <!-- devel paths -->
    <path value="assets/Images"/>
    <!-- end devel paths -->
