@@ -3,6 +3,7 @@
 
 #include <dmzApplicationState.h>
 #include <dmzInputObserverUtil.h>
+#include <dmzRuntimeDataConverters.h>
 #include <dmzRuntimeExit.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
@@ -140,10 +141,12 @@ namespace dmz {
          String _naMapModuleName;
          Handle _archive;
          Undo _undo;
+         DataConverterBoolean _boolConvert;
          QStringList _fileCache;
          Message _cleanUpObjMsg;
          Message _openFileMsg;
          Message _toggleLabelsMsg;
+         Message _fileMsg;
          Handle _toggleLabelsTarget;
          Handle _toggleLabelsAttr;
          Handle _fileHandle;
@@ -160,6 +163,7 @@ namespace dmz {
          Int32 _naActive;
          Int32 _ftActive;
          Int32 _maxRecentFiles;
+         Boolean _uncompressFile;
          
          struct MenuStruct {
 

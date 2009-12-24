@@ -96,6 +96,39 @@
       <attribute name="NA_Node_Rank">
          <mask name="text"/>
       </attribute>
+      <attribute name="Alt_Position_Attribute">
+         <mask name="position"/>
+      </attribute>
+      <attribute name="NA_Node_Vulnerability_Reduced">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Prevention_Allocation">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Risk_Initial">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Risk_Reduced">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Weight">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Weight_And_Objective">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Gamma">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Degrees">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Betweenness">
+         <mask name="counter"/>
+      </attribute>
+      <attribute name="NA_Node_Height">
+         <mask name="counter"/>
+      </attribute>
       <attribute name="NA_Node_Objective_Label">
          <mask name="text"/>
       </attribute>
@@ -103,6 +136,27 @@
          <mask name="text"/>
       </attribute>
       <attribute name="FT_Threat_Allocation">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Vulnerability_Reduced_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Risk_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Risk_Reduced_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Vulnerability_Sum_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Vulnerability_Sum_Reduced_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Risk_Sum_Value">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="FT_Risk_Sum_Reduced_Value">
          <mask name="scalar"/>
       </attribute>
       <state name="NA_Node_Overlay"/>
