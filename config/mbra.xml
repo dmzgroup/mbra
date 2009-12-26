@@ -36,6 +36,11 @@
          max="100"
          step="1"
          suffix="%"/>
+      <property
+         type="boolean"
+         name="Save files uncompressed (MBRA 2.0 Compatible)"
+         message="MBRAUncompressedFilesMessage"
+      />
    </preferences-general>
    <preferences-updates>
       <update value="true"/>
@@ -47,6 +52,7 @@
       <message name="FTVulnerabilityInfinityMessage"/>
       <message name="AppUpdaterUpdateMessage"/>
       <message name="AppUpdaterChannelMessage"/>
+      <message name="MBRAUncompressedFilesMessage"/>
    </save-preferences>
    <dmzMBRAPluginMenu>
       <menu name="&amp;File">

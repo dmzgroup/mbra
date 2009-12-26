@@ -51,6 +51,7 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _naMapModuleName (),
       _archive (0),
       _undo (Info),
+      _boolConvert (Info),
       _fileHandle (0),
       _suffix ("mbra"),
       _defaultExportName ("NetworkAnalysisExport"),
@@ -69,7 +70,8 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _naChannel (0),
       _naActive (0),
       _ftActive (0),
-      _maxRecentFiles (10) {
+      _maxRecentFiles (10),
+      _uncompressFile (False) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -261,6 +263,7 @@ dmz::MBRAPluginMenu::receive_message (
          }
       }
    }
+   else if (Type == _fileMsg) { _uncompressFile = _boolConvert.to_boolean (InData); }
 }
 
 
@@ -828,13 +831,26 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 
       Config config = _archiveModule->create_archive (_archive);
 
-      write_config_file (
-         qPrintable (FileName),
-         "mbra.xml",
-         config,
-         0, // ConfigPrettyPrint,
-         FileTypeXML,
-         &_log);
+      if (_uncompressFile) {
+
+         write_config_file (
+            "", // No archive
+            qPrintable (FileName),
+            config,
+            ConfigPrettyPrint, // Make it readable
+            FileTypeXML,
+            &_log);
+      }
+      else {
+
+         write_config_file (
+            qPrintable (FileName),
+            "mbra.xml",
+            config,
+            0, // ConfigPrettyPrint,
+            FileTypeXML,
+            &_log);
+      }
 
       QString msg (QString ("File saved as: ") + FileName);
       _log.info << qPrintable (msg) << endl;
@@ -1011,6 +1027,15 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
       get_plugin_runtime_context (),
       &_log);
 
+   _fileMsg = config_create_message (
+      "message.uncompressed-files.name",
+      local,
+      "MBRAUncompressedFilesMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
+   subscribe_to_message (_fileMsg);
+
    _toggleLabelsTarget = config_to_named_handle (
       "message.toggle-labels.target",
       local,
@@ -1049,6 +1074,10 @@ dmz::MBRAPluginMenu::_init (Config &local, Config &global) {
    if (local.lookup_all_config ("menu", menuList)) { _init_menu_list (menuList); }
    
    QMetaObject::connectSlotsByName (this);
+
+   _boolConvert.set_handle (
+      config_to_string ("boolean-converter.name", local, "value"),
+      get_plugin_runtime_context ());
 }
 
 
