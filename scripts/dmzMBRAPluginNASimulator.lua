@@ -574,7 +574,9 @@ end
 
 local function work_func (self)
    if self.doRank then
+local start = os.clock ()
       receive_rank (self)
+      --self.log:info ("Time to run: " .. tostring (os.clock () - start))
       self.doRank = nil;
    end
 end
