@@ -15,6 +15,9 @@ cp $DEPTH/depend/Qt/libqgif.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins
 cp $DEPTH/depend/Qt/libqjpeg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqtiff.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqsvg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
+if [ -d $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib ] ; then
+cp -R $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib $DEPTH/MBRA.app/Contents/Resources
+fi
 TARGET=$DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
 hdiutil create -srcfolder $DEPTH/MBRA.app $TARGET
 hdiutil internet-enable -yes -verbose $TARGET
