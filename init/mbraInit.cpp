@@ -59,7 +59,7 @@ local_restore_session (AppShellInitStruct &init, mbraInit &cInit) {
 
 
 static const Boolean
-find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContainer &list) {
+find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, StringContainer &list) {
 
    Boolean result (True);
 
@@ -68,11 +68,11 @@ find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContaine
    // Only go 8 directories deep
    if (depth <= 8) {
 
-      PathContainer fileList;
+      StringContainer fileList;
 
       if (get_file_list (Path, fileList)) {
 
-         dmz::PathContainerIterator it;
+         dmz::StringContainerIterator it;
          String file;
 
          while (fileList.get_next (it, file)) {
@@ -81,11 +81,11 @@ find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContaine
 
             split_path_file_ext (file, tmp, fileRoot, fileExt);
 
-            if (fileExt == ".mbra") { list.add_path (Path + file); }
+            if (fileExt == ".mbra") { list.append (Path + file); }
          }
       }
 
-      PathContainer pathList;
+      StringContainer pathList;
 
       QApplication::sendPostedEvents (0, -1);
       QApplication::processEvents ();
@@ -93,7 +93,7 @@ find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContaine
 
       if (get_directory_list (Path, pathList)) {
 
-         dmz::PathContainerIterator it;
+         dmz::StringContainerIterator it;
          String dirName;
 
          while (result && pathList.get_next (it, dirName)) {
@@ -116,7 +116,7 @@ find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, PathContaine
 
 
 static const void
-local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
+local_init_file_list (AppShellInitStruct &init, StringContainer &list) {
 
    Config session = get_session_config (MBRAFileList, init.app.get_context ());
 
@@ -129,7 +129,7 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
 
          const String FileName = config_to_string ("name", file);
 
-         if (is_valid_path (FileName)) { list.add_path (FileName); }
+         if (is_valid_path (FileName)) { list.append (FileName); }
       }
    }
    else {
@@ -153,7 +153,7 @@ local_init_file_list (AppShellInitStruct &init, PathContainer &list) {
 
    Config fileList (MBRAFileList);
 
-   PathContainerIterator it;
+   StringContainerIterator it;
    String file;
 
    while (list.get_next (it, file)) {
@@ -184,10 +184,10 @@ dmz::mbraInit::mbraInit (AppShellInitStruct &theInit) :
    ui.fileTable->verticalHeader()->setHighlightSections(true);
 #endif
 
-   PathContainer list;
+   StringContainer list;
    local_init_file_list (init, list);
 
-   PathContainerIterator it;
+   StringContainerIterator it;
    String file;
    int row = 0;
 
