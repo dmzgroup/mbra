@@ -183,7 +183,7 @@ dmz::MBRAPluginArchiveSupport::post_process_archive (
          if (_map) {
 
             _map->center_on (0.0, 0.0);
-            _map->set_zoom (10.0);
+            _map->set_zoom (10);
 
             Data out;
             out.store_boolean (_toggleHandle, 0, False);
