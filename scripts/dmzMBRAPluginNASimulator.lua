@@ -3,6 +3,7 @@ local NodeLinkType = dmz.object_type.new ("na_link_attribute")
 local SimType = dmz.object_type.new ("na_simulator")
 local LabelHandle = dmz.handle.new ("NA_Node_Objective_Label")
 local LinkHandle = dmz.handle.new ("Node_Link")
+local LinkFlowHandle = dmz.handle.new ("NA_Link_Flow")
 local ThreatHandle = dmz.handle.new ("NA_Node_Threat")
 local VulnerabilityHandle = dmz.handle.new ("NA_Node_Vulnerability")
 local VulnerabilityReducedHandle = dmz.handle.new ("NA_Node_Vulnerability_Reduced")
@@ -19,6 +20,9 @@ local DegreeHandle = dmz.handle.new ("NA_Node_Degrees")
 local BetweennessHandle = dmz.handle.new ("NA_Node_Betweenness")
 local HeightHandle = dmz.handle.new ("NA_Node_Height")
 local OverlayState = dmz.definitions.lookup_state ("NA_Node_Overlay")
+local ForwardState = dmz.definitions.lookup_state ("NA_Flow_Forward")
+local ReverseState = dmz.definitions.lookup_state ("NA_Flow_Reverse")
+local FlowStateMask = ForwardState + ReverseState
 
 local WeightDegreesHandle = dmz.handle.new ("NA_Weight_Degrees")
 local WeightBetweennessHandle = dmz.handle.new ("NA_Weight_Betweenness")
@@ -145,6 +149,20 @@ end,
 
 }
 
+local EmptyMask = dmz.mask.new ()
+
+local function link_reachable (link, flowState)
+   local result = true
+   local obj = dmz.object.link_attribute_object (link)
+   if obj then
+      local state = dmz.object.state (obj, LinkFlowHandle)
+      if state and (state:bit_and (FlowStateMask) ~= EmptyMask) then
+         if not state:contains (flowState) then result = false end
+      end
+   end
+   return result
+end
+
 local function add_to_node_betweenness_counter (self, object)
    local value = dmz.object.add_to_counter (object, BetweennessHandle)
    if value > self.maxBetweenness then self.maxBetweenness = value end
@@ -167,13 +185,15 @@ local function find_betweenness (self, current, target, visited)
       if subs then
          for _, sub in ipairs (subs) do
             local link = dmz.object.lookup_link_handle (LinkHandle, item.object, sub)
-            if sub == target then
-               found = true
-               item.found = true
-               add_to_node_betweenness_counter (self, target)
-               add_to_link_betweenness_counter (self, link)
-            elseif not visited[sub] then
-               list[#list + 1] = { object = sub, link = link, parent = item, }
+            if link_reachable (link, ForwardState) then
+               if sub == target then
+                  found = true
+                  item.found = true
+                  add_to_node_betweenness_counter (self, target)
+                  add_to_link_betweenness_counter (self, link)
+               elseif not visited[sub] then
+                  list[#list + 1] = { object = sub, link = link, parent = item, }
+               end
             end
          end
       end
@@ -181,19 +201,32 @@ local function find_betweenness (self, current, target, visited)
       if supers then
          for _, super in ipairs (supers) do
             local link = dmz.object.lookup_link_handle (LinkHandle, super, item.object)
-            if super == target then
-               found = true
-               item.found = true
-               add_to_node_betweenness_counter (self, target)
-               add_to_link_betweenness_counter (self, link)
-            elseif not visited[super] then
-               list[#list + 1] = { object = super, link = link, parent = item, }
+            if link_reachable (link, ReverseState) then
+               if super == target then
+                  found = true
+                  item.found = true
+                  add_to_node_betweenness_counter (self, target)
+                  add_to_link_betweenness_counter (self, link)
+               elseif not visited[super] then
+                  list[#list + 1] = { object = super, link = link, parent = item, }
+               end
             end
          end
       end
    end
    if not found and #list > 0 then
       find_betweenness (self, list, target, visited)
+      local place = #list
+      while place > 0 do
+         local item = list[place]
+         if item.found then
+            add_to_node_betweenness_counter (self, item.object)
+            add_to_link_betweenness_counter (self, item.link)
+            item.parent.found = true
+         end
+         place = place - 1
+      end
+--[[
       for _, item in ipairs (list) do
          if item.found then
             add_to_node_betweenness_counter (self, item.object)
@@ -201,6 +234,7 @@ local function find_betweenness (self, current, target, visited)
             item.parent.found = true
          end
       end
+--]]
    end
 end
 
