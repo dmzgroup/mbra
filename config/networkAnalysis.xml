@@ -645,6 +645,7 @@
       <!-- <weight-by text="Height" attribute="NA_Weight_Height"/> -->
       <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
       <objective-function text="Risk" attribute="NA_Objective_Risk"/>
+      <objective-function text="Contagiousness" attribute="NA_Objective_Contagiousness"/>
       <objective-function text="Threat x Vulnerability" attribute="NA_Objective_TxV"/>
       <objective-function text="Threat" attribute="NA_Objective_Threat"/>
       <objective-function text="Vulnerability" attribute="NA_Objective_Vulnerability"/>

@@ -30,6 +30,7 @@ local WeightHeightHandle = dmz.handle.new ("NA_Weight_Height")
 
 local ObjectiveNoneHandle = dmz.handle.new ("NA_Objective_None")
 local ObjectiveRiskHandle = dmz.handle.new ("NA_Objective_Risk")
+local ObjectiveContagiousHandle = dmz.handle.new ("NA_Objective_Contagiousness")
 local ObjectiveTxVHandle = dmz.handle.new ("NA_Objective_TxV")
 local ObjectiveThreatHandle = dmz.handle.new ("NA_Objective_Threat")
 local ObjectiveVulnerabilityHandle = dmz.handle.new ("NA_Objective_Vulnerability")
@@ -94,6 +95,18 @@ end
 local function calc_objective_risk (self, object)
    local result = dmz.object.scalar (object, RiskReducedHandle)
    dmz.object.text (object, LabelHandle, "Risk = " .. string.format ("%.2f", result))
+   return result
+end
+
+local function calc_objective_contagiousness (self, object)
+   local result = 0
+   local Threat = dmz.object.scalar (object, ThreatHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   local Degrees = dmz.object.scalar (object, DegreeHandle)
+   if Threat and Vulnerability and Degrees then
+      result = Threat * Vulnerability * Degrees
+   end
+   dmz.object.text (object, LabelHandle, "Contagiousness = " .. string.format ("%.2f", result))
    return result
 end
 
@@ -573,6 +586,8 @@ local function update_simulator_flag (self, handle, attr, value)
          self.objective = calc_objective_none
       elseif attr == ObjectiveRiskHandle then
          self.objective = calc_objective_risk
+      elseif attr == ObjectiveContagiousHandle then
+         self.objective = calc_objective_contagiousness
       elseif attr == ObjectiveTxVHandle then
          self.objective = calc_objective_txv
       elseif attr == ObjectiveThreatHandle then
@@ -608,9 +623,9 @@ end
 
 local function work_func (self)
    if self.doRank then
-local start = os.clock ()
+--local start = os.clock ()
       receive_rank (self)
-      --self.log:info ("Time to run: " .. tostring (os.clock () - start))
+--self.log:info ("Time to run: " .. tostring (os.clock () - start))
       self.doRank = nil;
    end
 end
@@ -665,6 +680,7 @@ function new (config, name)
    self.objObs:register (WeightHeightHandle, cb, self)
    self.objObs:register (ObjectiveNoneHandle, cb, self)
    self.objObs:register (ObjectiveRiskHandle, cb, self)
+   self.objObs:register (ObjectiveContagiousHandle, cb, self)
    self.objObs:register (ObjectiveTxVHandle, cb, self)
    self.objObs:register (ObjectiveThreatHandle, cb, self)
    self.objObs:register (ObjectiveVulnerabilityHandle, cb, self)
