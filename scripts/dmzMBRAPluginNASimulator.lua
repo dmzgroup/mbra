@@ -526,9 +526,52 @@ local function receive_hide (self)
    end
 end
 
+local function update_objective_graph (self)
+   if self.updateGraph then 
+      local max = 0
+      local list = {}
+      for ix = 0, self.barCount do
+         local budget = self.maxPreventionBudget * (ix / self.barCount)
+         for _, weight in pairs (self.weightList) do
+            weight.setup (self)
+         end
+         for object in pairs (self.objects) do
+            weigh_object (self, object)
+         end
+         allocate_prevention_budget (
+            self.objects,
+            budget,
+            self.maxPreventionBudget,
+            self.vinf)
+         local result = 0
+         if self.objective then
+            for object in pairs (self.objects) do
+               calc_risk_reduced (object)
+               result = result + self.objective (self, object)
+            end
+         end
+         if result > max then max = result end
+         list[ix] = result
+      end
+      if max > 0 then
+         for ix = 0, self.barCount do
+            list[ix] = math.ceil (list[ix] / max * 100)
+         end
+      else 
+         for ix = 0, self.barCount do
+            list[ix] = 0
+         end
+      end
+      for ix = 0, self.barCount do
+--self.log:error (ix, list[ix])
+         dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Value", list[ix])
+      end
+   end
+end
+
 local function receive_simulator (self, message, data)
    if dmz.data.is_a (data) then
-      if data:lookup_boolean ("Boolean", 1) then self.doRank = true
+      if data:lookup_boolean ("Boolean", 1) then self:do_rank ()
       else receive_hide (self)
       end
    end
@@ -540,7 +583,7 @@ local function receive_prevention_budget (self, message, data)
       if not self.preventionBudget then self.preventionBudget = 0 end
       self.maxPreventionBudget = data:lookup_number ("Budget", 2)
       if not self.maxPreventionBudget then self.maxPreventionBudget = 0 end
-      if self.visible then self.doRank = true end
+      if self.visible then self:do_rank () end
    end
 end
 
@@ -548,7 +591,7 @@ local function receive_response_budget (self, message, data)
    if dmz.data.is_a (data) then
       self.responseBudget = data:lookup_number ("Budget", 1)
       self.maxResponseBudget = data:lookup_number ("Budget", 2)
-      if self.visible then self.doRank = true end
+      if self.visible then self:do_rank () end
    end
 end
 
@@ -556,7 +599,7 @@ local function receive_vinfinity (self, msg, data)
    if dmz.data.is_a (data) then
       self.vinf = data:lookup_number ("value", 1)
       if not self.vinf then self.vinf = 0.05 end
-      if self.visible then self.doRank = true end
+      if self.visible then self:do_rank () end
    end   
 end
 
@@ -564,13 +607,13 @@ local function create_object (self, handle, objType, locality)
    if objType then
       if objType:is_of_type (NodeType) or objType:is_of_type (NodeLinkType) then
          self.objects[handle] = true
-         if self.visible and self.objects[handle] then self.doRank = true end
+         if self.visible and self.objects[handle] then self:do_rank () end
       end
    end
 end
 
 local function update_object_scalar (self, handle, attr, value)
-   if self.visible and self.objects[handle] then self.doRank = true end
+   if self.visible and self.objects[handle] then self:do_rank () end
    calc_risk_initial (handle)
 end
 
@@ -597,36 +640,40 @@ local function update_simulator_flag (self, handle, attr, value)
       elseif attr == ObjectiveConsequenceHandle then
          self.objective = calc_objective_consequence
       end
-   else self.weightList[attr] = nil
+      update_objective_graph (self)
+   elseif self.weightList[attr] then
+      self.weightList[attr] = nil
+      update_objective_graph (self)
    end
-   if self.visible then self.doRank = true end
+   if self.visible then self:do_rank () end
 end
 
 local function destroy_object (self, handle)
    local updateRank = false
    if self.visible and self.objects[handle] then updateRank = true end
    self.objects[handle] = nil
-   if updateRank then self.doRank = true end
+   if updateRank then self:do_rank () end
 end
 
 local function link_objects (self, link, attr, super, sub)
-   if self.visible and self.objects[super] then self.doRank = true end
+   if self.visible and self.objects[super] then self:do_rank () end
 end
 
 local function unlink_objects (self, link, attr, super, sub)
-   if self.visible and self.objects[super] then self.doRank = true end
+   if self.visible and self.objects[super] then self:do_rank () end
 end
 
 local function update_link_object (self, link, attr, super, sub, object)
-   if self.visible and object and self.objects[object] then self.doRank = true end
+   if self.visible and object and self.objects[object] then self:do_rank () end
 end
 
 local function work_func (self)
-   if self.doRank then
+   if self.doRankCount > 1 then self.doRankCount = self.doRankCount - 1
+   elseif self.doRankCount == 1 then
 --local start = os.clock ()
       receive_rank (self)
 --self.log:info ("Time to run: " .. tostring (os.clock () - start))
-      self.doRank = nil;
+      self.doRankCount = 0;
    end
 end
 
@@ -644,9 +691,15 @@ function new (config, name)
          config:to_message ("message.response-budget.name", "ResponseBudgetMessage"),
       vinfinityMessage =
          config:to_message ("v-infinity-message.name", "NAVulnerabilityInfinityMessage"),
+      updateObjectivGraphMessage =
+         config:to_message (
+            "update-objective-graph-message.name",
+            "NA_Objective_Graph_Visible_Message"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       timeSlice = dmz.time_slice.new (),
+      doRankCount = 0,
+      do_rank = function (self) self.doRankCount = 2 end,
       objects = {},
       objective = calc_objective_none,
       weightList = {},
@@ -655,7 +708,16 @@ function new (config, name)
       responseBudget = 0,
       maxResponseBudget = 0,
       vinf = 0.05,
+      barCount = 10,
+      bars = {},
    }
+
+   for ix = 0, self.barCount do
+      self.bars[ix] = dmz.object.create ("na_objective_bar")
+      dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Number", ix)
+      dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Value", 0)
+      dmz.object.activate (self.bars[ix])
+   end
 
    self.log:info ("Creating plugin: " .. name)
 
@@ -663,6 +725,15 @@ function new (config, name)
    self.msgObs:register (self.preventionBudgetMessage, receive_prevention_budget, self)
    self.msgObs:register (self.responseBudgetMessage, receive_response_budget, self)
    self.msgObs:register (self.vinfinityMessage, receive_vinfinity, self)
+   self.msgObs:register (
+      self.updateObjectivGraphMessage,
+      function (self, msg, data)
+         if dmz.data.is_a (data) then
+            self.updateGraph = data:lookup_boolean ("Boolean", 1)
+            update_objective_graph (self)
+         end
+      end,
+      self)
 
    local cb = { create_object = create_object, destroy_object = destroy_object }
    self.objObs:register (nil, cb, self)

@@ -28,8 +28,8 @@
 
    <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
 <!--
-   <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginMsgDump"/>
+   <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginUndoDump"/>
 -->
 </plugin-list>
@@ -91,6 +91,7 @@
    <archive>
       <object-type-set>
          <object-type name="na_tool_link_node"/>
+         <object-type name="na_objective_bar"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">

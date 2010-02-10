@@ -49,6 +49,7 @@
       <plugin name="dmzMBRAPluginNABudget"/>
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
+      <plugin name="dmzQtPluginGraph" unique="na-objective-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
       <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
@@ -90,6 +91,7 @@
          <minimum-size width="250" height="250"/>
       </tab>
       <widget name="na-degree-graph" title="Degree Graph"/>
+      <widget name="na-objective-graph" title="Objective Graph"/>
    </na-charts-tab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
@@ -673,6 +675,25 @@
       </fill>
    </bar>
 </na-degree-graph>
+<na-objective-graph>
+   <start value="0"/>
+   <ascending value="true"/>
+   <percents show="true"/>
+   <set>
+      <object-type name="na_objective_bar"/>
+   </set>
+   <attribute type="counter" name="NA_Objective_Bar_Number"/>
+   <counter-handle name="NA_Objective_Bar_Value"/>
+   <visible-message name="NA_Objective_Graph_Visible_Message"/>
+   <bar>
+      <stroke>
+         <color blue="1"/>
+      </stroke>
+      <fill>
+         <color red="0.5" green="0.5" blue="1"/>
+      </fill>
+   </bar>
+</na-objective-graph>
 <dmzQtPluginMapObjectPosition>
    <order x="0" y="2" z="1"/>
    <set>
