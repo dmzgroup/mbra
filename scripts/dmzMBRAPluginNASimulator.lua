@@ -94,7 +94,9 @@ end
 
 local function calc_objective_risk (self, object)
    local result = dmz.object.scalar (object, RiskReducedHandle)
-   dmz.object.text (object, LabelHandle, "Risk = " .. string.format ("%.2f", result))
+   if self.visible then
+      dmz.object.text (object, LabelHandle, "Risk = " .. string.format ("%.2f", result))
+   end
    return result
 end
 
@@ -106,7 +108,12 @@ local function calc_objective_contagiousness (self, object)
    if Threat and Vulnerability and Degrees then
       result = Threat * Vulnerability * Degrees
    end
-   dmz.object.text (object, LabelHandle, "Contagiousness = " .. string.format ("%.2f", result))
+   if self.visible then
+      dmz.object.text (
+         object,
+         LabelHandle,
+         "Contagiousness = " .. string.format ("%.2f", result))
+   end
    return result
 end
 
@@ -115,31 +122,39 @@ local function calc_objective_txv (self, object)
    local Threat = dmz.object.scalar (object, ThreatHandle)
    local Vulnerability = dmz.object.scalar (object, VulnerabilityReducedHandle)
    if Threat and Vulnerability then result = Threat * Vulnerability end
-   dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
+   if self.visible then
+      dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
+   end
    return result
 end
 
 local function calc_objective_threat (self, object)
    local result = dmz.object.scalar (object, ThreatHandle)
    if not result then result = 0 end
-   dmz.object.text (object, LabelHandle, "Threat = " .. format_result (result))
+   if self.visible then
+      dmz.object.text (object, LabelHandle, "Threat = " .. format_result (result))
+   end
    return result
 end
 
 local function calc_objective_vulnerability (self, object)
    local result = dmz.object.scalar (object, VulnerabilityReducedHandle)
    if not result then result = 0 end
-   dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
+   if self.visible then
+      dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
+   end
    return result
 end
 
 local function calc_objective_consequence (self, object)
    local result = dmz.object.scalar (object, ConsequenceHandle)
    if not result then result = 0 end
-   dmz.object.text (
-      object,
-      LabelHandle,
-      "Consequence = $" .. string.format ("%.2f", result))
+   if self.visible then
+      dmz.object.text (
+         object,
+         LabelHandle,
+         "Consequence = $" .. string.format ("%.2f", result))
+   end
    return result
 end
 
@@ -171,6 +186,53 @@ local function link_reachable (link, flowState)
       local state = dmz.object.state (obj, LinkFlowHandle)
       if state and (state:bit_and (FlowStateMask) ~= EmptyMask) then
          if not state:contains (flowState) then result = false end
+      end
+   end
+   return result
+end
+
+local function all_links_flow (superList, subList, flowState)
+   local result = true
+   if superList and subList then
+      for _, super in ipairs (superList) do
+         if not result then break end
+         for _, sub in ipairs (subList) do
+            local link = dmz.object.lookup_link_handle (LinkHandle, super, sub)
+            local obj = nil
+            if link then
+               obj = dmz.object.link_attribute_object (link)
+            else
+               cprint ("No link found")
+            end
+            if obj then
+               local state = dmz.object.state (obj, LinkFlowHandle)
+               if state then
+                  if state:bit_and (FlowStateMask) ~= flowState then
+                     result = false
+                     break
+                  end
+               else
+                  result = false
+                  break
+               end
+            else
+               result = false
+               break
+            end
+         end
+      end
+   end
+   return result
+end
+
+local function is_sink (object)
+   local result = false
+   local sub = dmz.object.sub_links (object, LinkHandle)
+   local super = dmz.object.super_links (object, LinkHandle)
+   if sub or super then
+      if all_links_flow ({object}, sub, ReverseState) and
+            all_links_flow (super, {object}, ForwardState) then
+         result = true
       end
    end
    return result
@@ -239,15 +301,6 @@ local function find_betweenness (self, current, target, visited)
          end
          place = place - 1
       end
---[[
-      for _, item in ipairs (list) do
-         if item.found then
-            add_to_node_betweenness_counter (self, item.object)
-            add_to_link_betweenness_counter (self, item.link)
-            item.parent.found = true
-         end
-      end
---]]
    end
 end
 
@@ -282,33 +335,50 @@ end,
 
 }
 
-local function find_height (self, current, target, visited, depth)
-   depth = depth + 1
-   for _, object in ipairs (current) do visited[object] = true end
-   local found = false
-   local list = {}
-   for _, object in ipairs (current) do
-      local subs = dmz.object.sub_links (object, LinkHandle)
-      if subs then
-         for _, sub in ipairs (subs) do
-            if sub == target then found = true
-            elseif not visited[sub] then list[#list + 1] = sub
+local function update_height (obj, level)
+   if dmz.object.is_link (obj) then
+      obj = dmz.object.link_attribute_object (obj)
+   end
+   if obj then
+      local value = dmz.object.counter (obj, HeightHandle)
+      if not value then value = 0 end
+      if level > value then dmz.object.counter (obj, HeightHandle, level) end
+   end
+end
+
+local function find_height (self, current, visited, level)
+   if not visited[current] then
+      visited[current] = true
+      update_height (current, level)
+      local subList = dmz.object.sub_links (current, LinkHandle)
+      if subList then
+         for _, sub in ipairs (subList) do
+            local link = dmz.object.lookup_link_handle (LinkHandle, current, sub)
+            if link then
+               if link_reachable (link, ReverseState) then
+                  update_height (link, level + 1)
+                  find_height (self, sub, visited, level + 2)
+               end
+            else
+self.log:error ("No link found!")
             end
          end
       end
-      local supers = dmz.object.super_links (object, LinkHandle)
-      if supers then
-         for _, super in ipairs (supers) do
-            if super == target then found = true
-            elseif not visited[super] then list[#list + 1] = super
+      local superList = dmz.object.super_links (current, LinkHandle)
+      if superList then
+         for _, super in ipairs (superList) do
+            local link = dmz.object.lookup_link_handle (LinkHandle, super, current)
+            if link then
+               if link_reachable (link, ForwardState) then
+                  update_height (link, level + 1)
+                  find_height (self, super, visited, level + 2)
+               end
+            else
+self.log:error ("No link found!")
             end
          end
       end
    end
-   if not found and #list > 0 then
-      depth = find_height (self, list, target, visited, depth)
-   end
-   return depth
 end
 
 local weight_height = {
@@ -319,19 +389,14 @@ setup = function (self)
       dmz.object.counter (object, HeightHandle, 0)
    end
    for root in pairs (self.objects) do
-      if (dmz.object.type (root):is_of_type (NodeType)) then
-         local height = 0
-         for target in pairs (self.objects) do
-            if root ~= target and dmz.object.type (target):is_of_type (NodeType) then
-               local list = {}
-               list[#list + 1] = root
-               local visited = {}
-               height = height + find_height(self, list, target, visited, 0)
-            end
-         end
-         if self.maxHeight < height then self.maxHeight = height end
-         dmz.object.counter (root, HeightHandle, height)
+      if is_sink (root) then
+         --self.log:error ("Is sink:", root)
+         find_height (self, root, {}, 1)
       end
+   end
+   for object in pairs (self.objects) do
+      local height = dmz.object.counter (object, HeightHandle)
+      if height and (height > self.maxHeight) then self.maxHeight = height end
    end
 end,
 
@@ -529,9 +594,11 @@ end
 local function update_objective_graph (self)
    if self.updateGraph then 
       local max = 0
+      local budgets = {}
       local list = {}
       for ix = 0, self.barCount do
          local budget = self.maxPreventionBudget * (ix / self.barCount)
+         budgets[ix] = budget
          for _, weight in pairs (self.weightList) do
             weight.setup (self)
          end
@@ -565,6 +632,10 @@ local function update_objective_graph (self)
       for ix = 0, self.barCount do
 --self.log:error (ix, list[ix])
          dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Value", list[ix])
+         dmz.object.text (
+            self.bars[ix],
+            "NA_Objective_Bar_Label",
+            "$" .. string.format ("%d", math.floor (budgets[ix])))
       end
    end
 end
@@ -608,6 +679,7 @@ local function create_object (self, handle, objType, locality)
       if objType:is_of_type (NodeType) or objType:is_of_type (NodeLinkType) then
          self.objects[handle] = true
          if self.visible and self.objects[handle] then self:do_rank () end
+         self:do_graph ()
       end
    end
 end
@@ -615,6 +687,7 @@ end
 local function update_object_scalar (self, handle, attr, value)
    if self.visible and self.objects[handle] then self:do_rank () end
    calc_risk_initial (handle)
+   self:do_graph ()
 end
 
 local function update_simulator_flag (self, handle, attr, value)
@@ -640,10 +713,10 @@ local function update_simulator_flag (self, handle, attr, value)
       elseif attr == ObjectiveConsequenceHandle then
          self.objective = calc_objective_consequence
       end
-      update_objective_graph (self)
+      self:do_graph ()
    elseif self.weightList[attr] then
       self.weightList[attr] = nil
-      update_objective_graph (self)
+      self:do_graph ()
    end
    if self.visible then self:do_rank () end
 end
@@ -653,21 +726,30 @@ local function destroy_object (self, handle)
    if self.visible and self.objects[handle] then updateRank = true end
    self.objects[handle] = nil
    if updateRank then self:do_rank () end
+   self:do_graph ()
 end
 
 local function link_objects (self, link, attr, super, sub)
    if self.visible and self.objects[super] then self:do_rank () end
+   self:do_graph ()
 end
 
 local function unlink_objects (self, link, attr, super, sub)
    if self.visible and self.objects[super] then self:do_rank () end
+   self:do_graph ()
 end
 
 local function update_link_object (self, link, attr, super, sub, object)
    if self.visible and object and self.objects[object] then self:do_rank () end
+   self:do_graph ()
 end
 
 local function work_func (self)
+   if self.doGraphCount > 1 then self.doGraphCount = self.doGraphCount - 1
+   elseif self.doGraphCount == 1 then
+      update_objective_graph (self)
+      self.doGraphCount = 0
+   end
    if self.doRankCount > 1 then self.doRankCount = self.doRankCount - 1
    elseif self.doRankCount == 1 then
 --local start = os.clock ()
@@ -700,6 +782,8 @@ function new (config, name)
       timeSlice = dmz.time_slice.new (),
       doRankCount = 0,
       do_rank = function (self) self.doRankCount = 2 end,
+      doGraphCount = 0,
+      do_graph = function (self) self.doGraphCount = 2 end,
       objects = {},
       objective = calc_objective_none,
       weightList = {},
@@ -717,6 +801,7 @@ function new (config, name)
       dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Number", ix)
       dmz.object.counter (self.bars[ix], "NA_Objective_Bar_Value", 0)
       dmz.object.activate (self.bars[ix])
+      dmz.object.set_temporary (self.bars[ix])
    end
 
    self.log:info ("Creating plugin: " .. name)

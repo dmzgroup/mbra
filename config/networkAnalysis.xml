@@ -644,7 +644,7 @@
    <dmzMBRAPluginNACalculate>
       <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
       <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
-      <!-- <weight-by text="Height" attribute="NA_Weight_Height"/> -->
+      <weight-by text="Height" attribute="NA_Weight_Height"/>
       <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
       <objective-function text="Risk" attribute="NA_Objective_Risk"/>
       <objective-function text="Contagiousness" attribute="NA_Objective_Contagiousness"/>
@@ -679,18 +679,20 @@
    <start value="0"/>
    <ascending value="true"/>
    <percents show="true"/>
+   <rotate-label value="true"/>
    <set>
       <object-type name="na_objective_bar"/>
    </set>
    <attribute type="counter" name="NA_Objective_Bar_Number"/>
    <counter-handle name="NA_Objective_Bar_Value"/>
+   <label-handle name="NA_Objective_Bar_Label"/>
    <visible-message name="NA_Objective_Graph_Visible_Message"/>
    <bar>
       <stroke>
-         <color blue="1"/>
+         <color green="0.5"/>
       </stroke>
       <fill>
-         <color red="0.5" green="0.5" blue="1"/>
+         <color red="0.3" green="0.8" blue="0.3"/>
       </fill>
    </bar>
 </na-objective-graph>
