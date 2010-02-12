@@ -82,7 +82,7 @@ end
 
 local function calc_objective_none (self, object)
    dmz.object.text (object, LabelHandle, "")
-   return 1
+   return 1, 1
 end
 
 local function format_result (value)
@@ -94,19 +94,25 @@ end
 
 local function calc_objective_risk (self, object)
    local result = dmz.object.scalar (object, RiskReducedHandle)
+   local orig = dmz.object.scalar (object, RiskInitialHandle)
    if self.visible then
       dmz.object.text (object, LabelHandle, "Risk = " .. string.format ("%.2f", result))
    end
-   return result
+   return result, orig
 end
 
 local function calc_objective_contagiousness (self, object)
    local result = 0
+   local orig = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Vulnerability = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   local VulnerabilityReduced = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
    local Degrees = dmz.object.scalar (object, DegreeHandle)
+   if Threat and VulnerabilityReduced and Degrees then
+      result = Threat * VulnerabilityReduced * Degrees
+   end
    if Threat and Vulnerability and Degrees then
-      result = Threat * Vulnerability * Degrees
+      orig = Threat * Vulnerability * Degrees
    end
    if self.visible then
       dmz.object.text (
@@ -114,18 +120,21 @@ local function calc_objective_contagiousness (self, object)
          LabelHandle,
          "Contagiousness = " .. string.format ("%.2f", result))
    end
-   return result
+   return result, orig
 end
 
 local function calc_objective_txv (self, object)
    local result = 0
+   local orig = 0
    local Threat = dmz.object.scalar (object, ThreatHandle)
-   local Vulnerability = dmz.object.scalar (object, VulnerabilityReducedHandle)
-   if Threat and Vulnerability then result = Threat * Vulnerability end
+   local VulnerabilityReduced = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   local Vulnerability = dmz.object.scalar (object, VulnerabilityHandle)
+   if Threat and VulnerabilityReduced then result = Threat * VulnerabilityReduced end
+   if Threat and Vulnerability then orig = Threat * Vulnerability end
    if self.visible then
       dmz.object.text (object, LabelHandle, "T x V = " .. format_result (result))
    end
-   return result
+   return result, orig
 end
 
 local function calc_objective_threat (self, object)
@@ -134,16 +143,17 @@ local function calc_objective_threat (self, object)
    if self.visible then
       dmz.object.text (object, LabelHandle, "Threat = " .. format_result (result))
    end
-   return result
+   return result, result
 end
 
 local function calc_objective_vulnerability (self, object)
    local result = dmz.object.scalar (object, VulnerabilityReducedHandle)
+   local orig = dmz.object.scalar (object, VulnerabilityHandle)
    if not result then result = 0 end
    if self.visible then
       dmz.object.text (object, LabelHandle, "Vulnerability = " .. format_result (result))
    end
-   return result
+   return result, orig
 end
 
 local function calc_objective_consequence (self, object)
@@ -155,7 +165,7 @@ local function calc_objective_consequence (self, object)
          LabelHandle,
          "Consequence = $" .. string.format ("%.2f", result))
    end
-   return result
+   return result, result
 end
 
 local weight_degrees = {
@@ -355,7 +365,7 @@ local function find_height (self, current, visited, level)
          for _, sub in ipairs (subList) do
             local link = dmz.object.lookup_link_handle (LinkHandle, current, sub)
             if link then
-               if link_reachable (link, ReverseState) then
+               if not visited[sub] and link_reachable (link, ReverseState) then
                   update_height (link, level + 1)
                   find_height (self, sub, visited, level + 2)
                end
@@ -369,7 +379,7 @@ self.log:error ("No link found!")
          for _, super in ipairs (superList) do
             local link = dmz.object.lookup_link_handle (LinkHandle, super, current)
             if link then
-               if link_reachable (link, ForwardState) then
+               if not visited[super] and link_reachable (link, ForwardState) then
                   update_height (link, level + 1)
                   find_height (self, super, visited, level + 2)
                end
@@ -388,15 +398,24 @@ setup = function (self)
    for object in pairs (self.objects) do
       dmz.object.counter (object, HeightHandle, 0)
    end
+   local sinkFound = false
    for root in pairs (self.objects) do
       if is_sink (root) then
+         sinkFound = true
          --self.log:error ("Is sink:", root)
          find_height (self, root, {}, 1)
       end
    end
-   for object in pairs (self.objects) do
-      local height = dmz.object.counter (object, HeightHandle)
-      if height and (height > self.maxHeight) then self.maxHeight = height end
+   if sinkFound then
+      for object in pairs (self.objects) do
+         local height = dmz.object.counter (object, HeightHandle)
+         if height and (height > self.maxHeight) then self.maxHeight = height end
+      end
+   else
+      self.maxHeight = 1
+      for object in pairs (self.objects) do
+         dmz.object.counter (object, HeightHandle, 1)
+      end
    end
 end,
 
@@ -519,7 +538,10 @@ local function rank_object (self, object)
    local result = dmz.object.scalar (object, WeightHandle)
    if not result then result = 1 end
    if self.objective then
-      result = result * self.objective (self, object)
+      local reduced, orig = self.objective (self, object)
+      self.reducedSum = self.reducedSum + reduced
+      self.origSum = self.origSum + orig
+      result = result * reduced
    end
    dmz.object.scalar (object, WeightAndObjectiveHandle, result)
    return result
@@ -539,6 +561,8 @@ local function receive_rank (self)
       self.preventionBudget,
       self.maxPreventionBudget,
       self.vinf)
+   self.reducedSum = 0
+   self.origSum = 0
    for handle in pairs (self.objects) do
       if dmz.handle.is_a (handle) and dmz.object.is_object (handle) then
          local state = dmz.object.state (handle)
@@ -555,6 +579,11 @@ local function receive_rank (self)
          list[#list + 1] = object
       end
    end
+   --self.log:error (self.reducedSum, self.origSum)
+   local data = dmz.data.new ()
+   data:store_number ("Float64", 1, self.reducedSum)
+   data:store_number ("Float64", 2, self.origSum)
+   self.updateSumsMessage:send (nil, data)
    table.sort (list, function (obj1, obj2) return obj1.rank > obj2.rank end)
    local count = 1
    local lastRank = nil
@@ -744,6 +773,11 @@ local function update_link_object (self, link, attr, super, sub, object)
    self:do_graph ()
 end
 
+local function update_object_state (self, object) 
+   if self.visible and object and self.objects[object] then self:do_rank () end
+   self:do_graph ()
+end
+
 local function work_func (self)
    if self.doGraphCount > 1 then self.doGraphCount = self.doGraphCount - 1
    elseif self.doGraphCount == 1 then
@@ -777,6 +811,8 @@ function new (config, name)
          config:to_message (
             "update-objective-graph-message.name",
             "NA_Objective_Graph_Visible_Message"),
+      updateSumsMessage =
+         config:to_message ("message.sums.name", "NA_Objective_Sums_Message"),
       msgObs = dmz.message_observer.new (name),
       objObs = dmz.object_observer.new (),
       timeSlice = dmz.time_slice.new (),
@@ -829,6 +865,10 @@ function new (config, name)
    self.objObs:register (PreventionCostHandle, cb, self)
    self.objObs:register (ConsequenceHandle, cb, self)
    self.objObs:register (DegreeHandle, cb, self)
+
+   cb = { update_object_state = update_object_state, }
+
+   self.objObs:register (LinkFlowHandle, cb, self)
 
    cb = { update_object_flag = update_simulator_flag, }
    self.objObs:register (WeightDegreesHandle, cb, self)

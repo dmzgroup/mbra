@@ -3,7 +3,9 @@
 
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzTypesHandleContainer.h>
@@ -18,6 +20,7 @@ namespace dmz {
          public QFrame,
          public QtWidget,
          public Plugin,
+         public MessageObserver,
          public ObjectObserverUtil {
 
       Q_OBJECT
@@ -38,6 +41,14 @@ namespace dmz {
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
 
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
+
          // Object Observer Interface
          virtual void update_object_flag (
             const UUID &Identity,
@@ -54,6 +65,8 @@ namespace dmz {
          void _init (Config &local);
 
          Log _log;
+         DataConverterFloat64 _convert;
+         Message _updateObjectiveMsg;
          Ui::NACalculateForm _ui;
          Handle _simulatorHandle;
          ObjectType _simulatorType;

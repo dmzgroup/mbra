@@ -17,8 +17,10 @@ dmz::MBRAPluginNACalculate::MBRAPluginNACalculate (
       QFrame (0),
       QtWidget (Info),
       Plugin (Info),
+      MessageObserver (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
+      _convert (Info),
       _simulatorHandle (0),
       _simulatorType (),
       _weightByHandles (),
@@ -39,10 +41,7 @@ dmz::MBRAPluginNACalculate::~MBRAPluginNACalculate () {
 
 // QtWidget Interface
 QWidget *
-dmz::MBRAPluginNACalculate::get_qt_widget () {
-
-   return this;
-}
+dmz::MBRAPluginNACalculate::get_qt_widget () { return this; }
 
 
 // Plugin Interface
@@ -84,6 +83,23 @@ dmz::MBRAPluginNACalculate::discover_plugin (
    else if (Mode == PluginDiscoverRemove) {
 
    }
+}
+
+
+// Message Observer Interface
+void
+dmz::MBRAPluginNACalculate::receive_message (
+      const Message &Type,
+      const Handle MessageSendHandle,
+      const Handle TargetObserverHandle,
+      const Data *InData,
+      Data *outData) {
+
+   const Float64 Reduced = _convert.to_float64 (InData, 0);
+   const Float64 Orig = _convert.to_float64 (InData, 1);
+
+   _ui.reducedLabel->setText (QString::number (Reduced, 'f', 2));
+   _ui.origLabel->setText (QString::number (Orig, 'f', 2));
 }
 
 
@@ -162,6 +178,8 @@ dmz::MBRAPluginNACalculate::on_objectiveComboBox_currentIndexChanged (int id) {
 void
 dmz::MBRAPluginNACalculate::_init (Config &local) {
 
+   RuntimeContext *context = get_plugin_runtime_context ();
+
    setObjectName (get_plugin_name ().get_buffer ());
 
    qframe_config_read ("frame", local, this);
@@ -232,7 +250,19 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
    }
    
    _simulatorType = config_to_object_type (
-      "type.simulator", local, "na_simulator", get_plugin_runtime_context ());
+      "type.simulator",
+      local,
+      "na_simulator",
+      context);
+
+   _updateObjectiveMsg = config_create_message (
+      "message.objective-sums.name",
+      local,
+      "NA_Objective_Sums_Message",
+      context,
+      &_log);
+
+   subscribe_to_message (_updateObjectiveMsg);
 }
 
 

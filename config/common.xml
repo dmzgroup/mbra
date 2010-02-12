@@ -26,8 +26,8 @@
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
 
-   <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
 <!--
+   <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginUndoDump"/>
