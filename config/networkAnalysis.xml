@@ -210,6 +210,9 @@
       <attribute>
          <position name="Alt_Position_Attribute"/>
       </attribute>
+      <flow-attribute name="NA_Link_Flow"/>
+      <forward-flow-state name="NA_Flow_Forward"/>
+      <reverse-flow-state name="NA_Flow_Reverse"/>
       <state-color-list>
          <state-color name="NA_Node_Highlight">
             <rgb x="1" y="1" z="0"/>
