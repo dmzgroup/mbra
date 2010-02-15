@@ -361,20 +361,33 @@ local function update_height (obj, level, visited)
 end
 
 local function find_height (self, sink)
-   local que = {
-      push = function (self, node) self[#self + 1] = node end,
-      pop = function (self) 
-         local result = self[#self]
-         if #self > 0 then self[#self] = nil end
+   local queue = {
+      first = 0,
+      last = -1,
+      add = function (self, node)
+         self.last = self.last + 1
+         self[self.last] = node
+      end,
+      remove = function (self) 
+         local result = nil
+         if self.first <= self.last then
+            result = self[self.first]
+            self[self.first] = nil
+            self.first = self.first + 1
+            if self.first > self.last then
+               self.first = 0
+               self.last = -1
+            end
+         end
          return result
       end,
-      not_empty = function (self) return #self > 0 end,
+      not_empty = function (self) return self.first <= self.last end,
    }
    local visited = {}
-   que:push (sink)
+   queue:add (sink)
    update_height (sink, 1, visited)
-   while que:not_empty () do
-      local node = que:pop ()
+   while queue:not_empty () do
+      local node = queue:remove ()
       local height = dmz.object.counter (node, HeightHandle)
       if not height then
          self.log:error ("No height found for:", node)
@@ -387,7 +400,7 @@ local function find_height (self, sink)
             if link then
                if link_reachable (link, ReverseState) then
                   update_height (link, height + 1, visited)
-                  if update_height (sub, height + 2, visited) then que:push (sub) end
+                  if update_height (sub, height + 2, visited) then queue:add (sub) end
                end
             end
          end
@@ -399,7 +412,7 @@ local function find_height (self, sink)
             if link then
                if link_reachable (link, ForwardState) then
                   update_height (link, height + 1, visited)
-                  if update_height (super, height + 2, visited) then que:push (super) end
+                  if update_height (super, height + 2, visited) then queue:add (super) end
                end
             end
          end
