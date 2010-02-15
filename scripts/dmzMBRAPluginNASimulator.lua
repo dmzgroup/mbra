@@ -345,46 +345,62 @@ end,
 
 }
 
-local function update_height (obj, level)
+local function update_height (obj, level, visited)
+   local result = false
    if dmz.object.is_link (obj) then
       obj = dmz.object.link_attribute_object (obj)
    end
-   if obj then
+   if obj and not visited[obj] then
+      result = true
+      visited[obj] = true
       local value = dmz.object.counter (obj, HeightHandle)
       if not value then value = 0 end
       if level > value then dmz.object.counter (obj, HeightHandle, level) end
    end
+   return result
 end
 
-local function find_height (self, current, visited, level)
-   if not visited[current] then
-      visited[current] = true
-      update_height (current, level)
-      local subList = dmz.object.sub_links (current, LinkHandle)
+local function find_height (self, sink)
+   local que = {
+      push = function (self, node) self[#self + 1] = node end,
+      pop = function (self) 
+         local result = self[#self]
+         if #self > 0 then self[#self] = nil end
+         return result
+      end,
+      not_empty = function (self) return #self > 0 end,
+   }
+   local visited = {}
+   que:push (sink)
+   update_height (sink, 1, visited)
+   while que:not_empty () do
+      local node = que:pop ()
+      local height = dmz.object.counter (node, HeightHandle)
+      if not height then
+         self.log:error ("No height found for:", node)
+         height = 0
+      end
+      local subList = dmz.object.sub_links (node, LinkHandle)
       if subList then
          for _, sub in ipairs (subList) do
-            local link = dmz.object.lookup_link_handle (LinkHandle, current, sub)
+            local link = dmz.object.lookup_link_handle (LinkHandle, node, sub)
             if link then
-               if not visited[sub] and link_reachable (link, ReverseState) then
-                  update_height (link, level + 1)
-                  find_height (self, sub, visited, level + 2)
+               if link_reachable (link, ReverseState) then
+                  update_height (link, height + 1, visited)
+                  if update_height (sub, height + 2, visited) then que:push (sub) end
                end
-            else
-self.log:error ("No link found!")
             end
          end
       end
-      local superList = dmz.object.super_links (current, LinkHandle)
+      local superList = dmz.object.super_links (node, LinkHandle)
       if superList then
          for _, super in ipairs (superList) do
-            local link = dmz.object.lookup_link_handle (LinkHandle, super, current)
+            local link = dmz.object.lookup_link_handle (LinkHandle, super, node)
             if link then
-               if not visited[super] and link_reachable (link, ForwardState) then
-                  update_height (link, level + 1)
-                  find_height (self, super, visited, level + 2)
+               if link_reachable (link, ForwardState) then
+                  update_height (link, height + 1, visited)
+                  if update_height (super, height + 2, visited) then que:push (super) end
                end
-            else
-self.log:error ("No link found!")
             end
          end
       end
@@ -403,7 +419,7 @@ setup = function (self)
       if is_sink (root) then
          sinkFound = true
          --self.log:error ("Is sink:", root)
-         find_height (self, root, {}, 1)
+         find_height (self, root)
       end
    end
    if sinkFound then
