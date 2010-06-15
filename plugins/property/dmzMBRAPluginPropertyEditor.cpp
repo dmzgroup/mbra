@@ -719,9 +719,9 @@ dmz::MBRAPluginPropertyEditor::receive_message (
 void
 dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created) {
 
-   if (_objMod && _window) {
+   if (_objMod) {
 
-      QDialog dialog (_window->get_qt_main_window ());
+      QDialog dialog (_window ? _window->get_qt_main_window () : 0);
 
       Ui::PropertyEditor ui;
       ui.setupUi (&dialog);
