@@ -26,7 +26,7 @@
       <plugin name="dmzQtPluginMapProperties">
 	      <additional-scope name="na"/>
       </plugin>
-      <plugin name="dmzQtPluginButtonToChannel"/>
+      <plugin name="dmzQtPluginButtonToChannel" scope="na-edit-tool"/>
       <plugin
          name="dmzMBRAPluginPropertyEditor"
          unique="NetworkAnalysisNodeProperties"
@@ -54,6 +54,8 @@
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
       <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
+      <plugin name="dmzInputPluginChannelSwitch" scope="na-edit-tool"/>
+      <plugin name="dmzInputPluginChannelRules"  scope="na-edit-tool"/>
    </plugin-list>
    <na>
       <module>
@@ -492,14 +494,17 @@
          />
       </property-list>
    </na-link-properties>
-   <dmzQtPluginButtonToChannel>
-      <dockWidget title="Actions"/>
-      <!-- <widget>
+
+   <na-edit-tool>
+      <!-- <layout horizontal="True"/> -->
+      <layout vertical="True" />
+      <!--  <dockWidget title="Actions"/>
+     <widget>
          <stylesheet file="stylesheets:ActionButton.qss"/>
       </widget> -->
       <!-- <defaultChannel name="NA_Default_Channel"/> -->
-      <buttons>
-         <toolButton channel="NA_Default_Channel" autoRaise="True">
+      <channel name="NA_Default_Channel" default="True">
+         <toolButton autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
@@ -509,7 +514,9 @@
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Create_Object_Channel" autoRaise="True">
+      </channel>
+      <channel name="NA_Create_Object_Channel">
+         <toolButton autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
@@ -519,7 +526,9 @@
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Link_Objects_Channel" autoRaise="True">
+      </channel>
+      <channel name="NA_Link_Objects_Channel">
+         <toolButton autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
@@ -529,7 +538,9 @@
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Destroy_Object_Channel" autoRaise="True">
+      </channel>
+      <channel name="NA_Destroy_Object_Channel">
+         <toolButton autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
@@ -539,7 +550,9 @@
                </icon>
             </action>
          </toolButton>
-         <toolButton channel="NA_Flag_Object_Channel" autoRaise="True">
+      </channel>
+      <channel name="NA_Flag_Object_Channel">
+         <toolButton autoRaise="True">
             <button>
                <iconSize width="32" height="32"/>
             </button>
@@ -549,8 +562,9 @@
                </icon>
             </action>
          </toolButton>
-      </buttons>
-   </dmzQtPluginButtonToChannel>
+      </channel>
+   </na-edit-tool>
+
    <dmzQtPluginMapProperties>
       <default-map-adapter-list>
          <current index="1"/>
