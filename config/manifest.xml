@@ -13,7 +13,7 @@
    <config file="config/resource.xml"/>
    <config file="config/common.xml"/>
    <config file="config/input.xml"/>
-   <config file="config/lua.xml"/>
+   <config file="config/js.xml"/>
    <config file="config/tools.xml"/>
    <config file="config/networkAnalysis.xml"/>
    <config file="config/faultTree.xml"/>

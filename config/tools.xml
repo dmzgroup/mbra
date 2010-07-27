@@ -11,14 +11,13 @@
    <plugin name="dmzInputPluginMouseEventToMessage" unique="DefaultEvent"/>
    <plugin name="dmzInputPluginMouseEventToMessage" unique="FTDefaultEvent"/>
 </plugin-list>
-<dmzLuaModuleBasic>
-   <instance name="dmzMBRAPluginCreateObject"/>
+<javascript>
    <instance name="dmzMBRAPluginDestroyObject"/>
    <instance name="dmzMBRAPluginLinkObjects"/>
-<!--   <instance name="dmzMBRAPluginUnlinkObjects"/> -->
-   <instance name="dmzMBRAPluginMoveObject"/>
    <instance name="dmzMBRAPluginFlagObject"/>
-</dmzLuaModuleBasic>
+   <instance name="dmzMBRAPluginCreateObject"/> 
+   <instance name="dmzMBRAPluginMoveObject"/>
+</javascript>
 <MouseMoveEvent>
    <input>
       <source name="NACanvas"/>

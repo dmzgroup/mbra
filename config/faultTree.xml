@@ -120,6 +120,11 @@
             decimals="2"
          />
          <property
+            type="line-label"
+            name="Path"
+            attribute="FT_Node_Path_Name"
+         />
+         <property
             type="text"
             name="Description"
             attribute="NA_Node_Description"
