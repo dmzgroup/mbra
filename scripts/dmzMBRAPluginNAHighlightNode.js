@@ -1,12 +1,12 @@
 var dmz =
-   { defs: require("dmz/runtime/definitions")
-   , data: require("dmz/runtime/data")
-   , object: require("dmz/components/object")
-   , message: require("dmz/runtime/messaging")
-   , mask: require("dmz/types/mask")
-   }
-   , HighlightState = dmz.defs.lookupState ("NA_Node_Highlight")
-   , Message = dmz.message.create (self.config.string("message.name", "MouseMoveEvent"))
+      { defs: require("dmz/runtime/definitions")
+      , data: require("dmz/runtime/data")
+      , object: require("dmz/components/object")
+      , message: require("dmz/runtime/messaging")
+      , mask: require("dmz/types/mask")
+      }
+   , HighlightState = dmz.defs.lookupState("NA_Node_Highlight")
+   , Message = dmz.message.create(self.config.string("message.name", "MouseMoveEvent"))
    , Handle = 0
    ;
 
@@ -18,43 +18,53 @@ var dmz =
 // To evaluate a mask, use the state.bool() method.
 // state.set () replaces all other states.
 
-Message.subscribe (self, function (data) {
-   if (dmz.data.isTypeOf (data)) {
-      var handle = data.handle("object", 0);
+Message.subscribe(self, function (data) {
+   var handle
+     , state
+     , prev
+     ;
+   if (dmz.data.isTypeOf(data)) {
+      handle = data.handle("object", 0);
 
-      if (handle && dmz.object.isLink (handle)) {
-         handle = dmz.object.linkAttributeObject (handle);
+      if (handle && dmz.object.isLink(handle)) {
+         handle = dmz.object.linkAttributeObject(handle);
       }
 
-      if (handle && dmz.object.isObject (handle)) {
-         var state = dmz.object.state (handle);
-         if (!state) { state = dmz.mask.create (); }
-         state = state.or (HighlightState);
-         dmz.object.state (handle, null, state);
+      if (handle && dmz.object.isObject(handle)) {
+         state = dmz.object.state(handle);
+         if (!state) {
+            state = dmz.mask.create();
+         }
+         state = state.or(HighlightState);
+         dmz.object.state(handle, null, state);
       }
 
       if (handle !== Handle) {
          if (Handle) {
-            var prev = Handle;
+            prev = Handle;
             Handle = handle;
-            if (dmz.object.isObject (prev)) {
-               var state = dmz.object.state (prev);
+            if (dmz.object.isObject(prev)) {
+               state = dmz.object.state(prev);
                if (state.bool()) {
-                  state = state.unset (HighlightState);
-                  dmz.object.state (prev, null, state);
+                  state = state.unset(HighlightState);
+                  dmz.object.state(prev, null, state);
                }
             }
-         } else { Handle = handle; }
+         } else {
+            Handle = handle;
+         }
       }
    }
 });
 
-dmz.object.state.observe (self, function(object, attribute, value) {
-   if (value.contains (HighlightState) && Handle !== object) {
-      var state = dmz.object.state (object);
+dmz.object.state.observe(self, function (object, attribute, value) {
+   var state
+     ;
+   if (value.contains(HighlightState) && Handle !== object) {
+      state = dmz.object.state(object);
       if (state.bool()) {
-         state = state.unset (HighlightState);
-         dmz.object.state (object, null, state);
+         state = state.unset(HighlightState);
+         dmz.object.state(object, null, state);
       }
    }
 });

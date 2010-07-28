@@ -1,31 +1,36 @@
 var dmz =
-   { object: require("dmz/components/object")
-   , objectType: require("dmz/runtime/objectType")
-   , data: require("dmz/runtime/data")
-   , defs: require("dmz/runtime/definitions")
-   , message: require("dmz/runtime/messaging")
-   , undo: require("dmz/runtime/undo")
-   }
+      { object: require("dmz/components/object")
+      , objectType: require("dmz/runtime/objectType")
+      , data: require("dmz/runtime/data")
+      , defs: require("dmz/runtime/definitions")
+      , message: require("dmz/runtime/messaging")
+      , undo: require("dmz/runtime/undo")
+      }
    , NodeType = dmz.objectType.lookup ("na_node")
    , NodeLinkType = dmz.defs.createNamedHandle("Node_Link")
    , message = dmz.message.create (
-         self.config.string("message.name", "DestroyObjectMessage"))
+      self.config.string("message.name", "DestroyObjectMessage"))
    , objects = []
    ;
 
 message.subscribe (self, function (data) {
+   var handle
+     , link
+     , objType
+     , undoHandle
+     ;
    if (dmz.data.isTypeOf (data)) {
-      var handle = data.handle ("object", 0);
+      handle = data.handle ("object", 0);
       if (handle) {
-         var link = objects[handle];
+         link = objects[handle];
          if (link) { handle = link; }
-         var objType = dmz.object.type (handle);
+         objType = dmz.object.type (handle);
          if (objType && objType.isOfType (NodeType) && dmz.object.isObject (handle)) {
-            var undoHandle = dmz.undo.startRecord ("Delete Node");
+            undoHandle = dmz.undo.startRecord ("Delete Node");
             dmz.object.destroy (handle);
             dmz.undo.stopRecord (undoHandle);
          } else if (dmz.object.isLink (handle)) {
-            var undoHandle = dmz.undo.startRecord ("Unlink Nodes");
+            undoHandle = dmz.undo.startRecord ("Unlink Nodes");
             dmz.object.unlink (handle);
             dmz.undo.stopRecord (undoHandle);
          }

@@ -1,15 +1,15 @@
 var dmz =
-   { object: require("dmz/components/object")
-   , objectType: require("dmz/runtime/objectType")
-   , data: require("dmz/runtime/data")
-   , defs: require("dmz/runtime/definitions")
-   , message: require("dmz/runtime/messaging")
-   , undo: require("dmz/runtime/undo")
-   }
+      { object: require("dmz/components/object")
+      , objectType: require("dmz/runtime/objectType")
+      , data: require("dmz/runtime/data")
+      , defs: require("dmz/runtime/definitions")
+      , message: require("dmz/runtime/messaging")
+      , undo: require("dmz/runtime/undo")
+      }
    , message = dmz.message.create(
-         self.config.string("message.name","CreateObjectMessage"))
+      self.config.string("message.name","CreateObjectMessage"))
    , editMessage = dmz.message.create(
-         self.config.string("edit.name","EditObjectAttributesMessage"))
+      self.config.string("edit.name","EditObjectAttributesMessage"))
    ;
 
 // Create a new node, place it, then send a message to open the Edit NA node window
@@ -21,20 +21,25 @@ var dmz =
 
 message.subscribe(self, function receive (data) {
 
+   var pos
+     , undoHandle
+     , handle
+     , outData
+     , nanpHandle
+     ;
    if (dmz.data.isTypeOf (data)) {
 
-      var pos = data.vector ("position", 0);
-
-      var undoHandle = dmz.undo.startRecord ("Create Node");
-      var handle = dmz.object.create("na_node");
+      pos = data.vector ("position", 0);
+      undoHandle = dmz.undo.startRecord ("Create Node");
+      handle = dmz.object.create("na_node");
 
       if (!handle) { self.log.error ("Object Not Created!"); }
       else {
          dmz.object.position (handle, null, pos);
-         var outData = dmz.data.create ();
+         outData = dmz.data.create ();
          outData.handle ("object", 0, handle);
          outData.handle ("created", 0, handle);
-         var nanpHandle = dmz.defs.createNamedHandle("NetworkAnalysisNodeProperties");
+         nanpHandle = dmz.defs.createNamedHandle("NetworkAnalysisNodeProperties");
          editMessage.send (nanpHandle, outData);
       }
 

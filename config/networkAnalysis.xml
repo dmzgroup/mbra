@@ -496,13 +496,7 @@
    </na-link-properties>
 
    <na-edit-tool>
-      <!-- <layout horizontal="True"/> -->
       <layout vertical="False" />
-      <!--  <dockWidget title="Actions"/>
-     <widget>
-         <stylesheet file="stylesheets:ActionButton.qss"/>
-      </widget> -->
-      <!-- <defaultChannel name="NA_Default_Channel"/> -->
       <channel name="NA_Default_Channel" default="True">
          <toolButton autoRaise="True">
             <button>

@@ -1,7 +1,7 @@
 var dmz =
-   { object: require("dmz/components/object")
-   , defs: require("dmz/runtime/definitions")
-   }
+      { object: require("dmz/components/object")
+      , defs: require("dmz/runtime/definitions")
+      }
    , LinkHandle = dmz.defs.createNamedHandle("Node_Link")
    , objectList = []
    ;
@@ -20,50 +20,67 @@ var dmz =
 // The C++ bindings won't throw an error if a bad string is used.
 
 var update_object_position = function (objectHandle) {
-   var list = objectList[objectHandle];
+   var list = objectList[objectHandle]
+     , attrPos
+     , superPos
+     , subPos
+     , link
+     ;
    if (list) {
-      var keys = Object.keys (list);
-      keys.forEach(function (index) {
-         var link = list[index];
-         var superPos = dmz.object.position (link.superLink);
-         var subPos = dmz.object.position (link.sub);
+      Object.keys(list).forEach(function (index) {
+         link = list[index];
+         superPos = dmz.object.position(link.superLink);
+         subPos = dmz.object.position(link.sub);
          if (superPos && subPos) {
-            var attrPos = superPos.add ((subPos.subtract(superPos)).multiply (.5));
-            dmz.object.position (link.attr, null, attrPos);
+            attrPos = superPos.add((subPos.subtract(superPos)).multiply(0.5));
+            dmz.object.position(link.attr, null, attrPos);
          }
       });
    }
-}
+};
 
 dmz.object.position.observe(self, update_object_position);
 
 dmz.object.destroy.observe(self, function (handle) {
-   var list = objectList[handle];
+   var list = objectList[handle]
+     , link
+     ;
    if (list) {
-      var keys = Object.keys (list);
-      keys.forEach(function (index) {
-         var link = list[index];
-         if (objectList[link.superLink]) { delete objectList[link.superLink][link]; }
-         if (objectList[link.sub]) { delete objectList[link.sub][link]; }
+      Object.keys(list).forEach(function (index) {
+         link = list[index];
+         if (objectList[link.superLink]) {
+            delete objectList[link.superLink][link];
+         }
+         if (objectList[link.sub]) {
+            delete objectList[link.sub][link];
+         }
       });
    }
 });
 
 dmz.object.linkAttributeObject.observe(self, LinkHandle,
 function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
+   var link
+     ;
    if (AttrObj) {
-      var link = { superLink: Super, sub: Sub, attr: AttrObj };
-      if (!objectList[Super]) { objectList[Super] = []; }
+      link = { superLink: Super, sub: Sub, attr: AttrObj };
+      if (!objectList[Super]) {
+         objectList[Super] = [];
+      }
       objectList[Super][linkHandle] = link;
-      if (!objectList[Sub]) { objectList[Sub] = []; }
+      if (!objectList[Sub]) {
+         objectList[Sub] = [];
+      }
       objectList[Sub][linkHandle] = link;
 
-      update_object_position (Super);
-   } else if (objectList[Super] && objectList[Super][linkHandle] &&
+      update_object_position(Super);
+   }
+   else if (objectList[Super] && objectList[Super][linkHandle] &&
                  objectList[Super][linkHandle].attr == PrevObj) {
       delete objectList[Super][linkHandle];
       delete objectList[Sub][linkHandle];
-  }
-  if (PrevObj && dmz.object.isObject (PrevObj)) { dmz.object.destroy (PrevObj); }
-
+   }
+   if (PrevObj && dmz.object.isObject(PrevObj)) {
+      dmz.object.destroy(PrevObj);
+   }
 });
