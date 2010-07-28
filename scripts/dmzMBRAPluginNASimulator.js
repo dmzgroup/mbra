@@ -91,7 +91,7 @@ var dmz =
    ;
 
 (function () {
-   for (var ix = 0; ix < barCount; ix += 1) {
+   for (var ix = 0; ix <= barCount; ix += 1) {
       bars[ix] = dmz.object.create ("na_objective_bar");
       dmz.object.counter (bars[ix], "NA_Objective_Bar_Number", ix);
       dmz.object.counter (bars[ix], "NA_Objective_Bar_Value", 0);
@@ -265,19 +265,14 @@ var all_links_flow = function (superList, subList, flowState) {
    var result = true;
    var subBool = true;
    if (superList && subList) {
-      Object.keys (superList).forEach (function (key) { self.log.warn("superList["+key+"]: "+superList[key]); });
-      Object.keys (subList).forEach (function (key) { self.log.warn("subList["+key+"]: "+subList[key]); });
       var keys = Object.keys (superList);
       keys.forEach(function (superkey) {
          if (!result) { return; }
          var subkeys = Object.keys (subList);
          keys.forEach(function (subkey) {
-            //if (!subBool) { return; }
             if (!subList[subkey]) { return; }
-            self.log.warn (subkey + ": " + subList[subkey]);
             var link = dmz.object.linkHandle (LinkHandle, superList[superkey],
                                                     subList[subkey]);
-            self.log.warn (link + " " + superList[superkey] + " " + subList[subkey]);
             var obj = null;
             if (link) { obj = dmz.object.linkAttributeObject (link); }
             else { self.log.error ("No link found"); }
@@ -293,7 +288,6 @@ var all_links_flow = function (superList, subList, flowState) {
          });
       });
    }
-   self.log.warn ("result: " + result);
    return result;
 };
 
@@ -303,9 +297,7 @@ var is_sink = function (object) {
    var result = false;
    var sub = dmz.object.subLinks (object, LinkHandle);
    var superLink = dmz.object.superLinks (object, LinkHandle);
-   self.log.warn ("SL1: " + (superLink ? superLink.length : superLink) + " sL1: " + (sub ? sub.length : sub));
    if (sub || superLink) {
-      self.log.warn (sinkObjList[0]);
       if (all_links_flow (sinkObjList, sub, ReverseState) &&
           all_links_flow (superLink, sinkObjList, ForwardState)) {
          result = true;
@@ -589,29 +581,30 @@ var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) 
       });
       var A = 0;
       var B = 0;
-      var keys = Object.keys (objects);
+      var keys = Object.keys (objectList);
       keys.forEach(function (key){
-         A = A + log_defender_term (objects[key]);
-         if (not_zero (objects[key].gamma)) {
-            B = B + (objects[key].cost / objects[key].gamma);
+         A = A + log_defender_term (objectList[key]);
+         if (not_zero (objectList[key].gamma)) {
+            B = B + (objectList[key].cost / objectList[key].gamma);
          }
       });
       var totalAllocation = 0;
       var logLamda = 0;
       if (not_zero (B)) { logLamda = (-budget - A) / B; }
-      var keys = Object.keys (objects);
+      var keys = Object.keys (objectList);
       keys.forEach(function (key) {
+         var object = objectList[key];
          var A = 0;
-         if (not_zero (objects[key].gamma)) {
-            A = objects[key].cost / objects[key].gamma;
+         if (not_zero (objectList[key].gamma)) {
+            A = object.cost / object.gamma;
          }
-         var B = log_defender (objects[key]);
-         objects[key].allocation = -A * (logLamda + B);
-         if (objects[key].allocation < 0) { objects[key].allocation = 0; }
-         if (objects[key].allocation > objects[key].cost) {
-            objects[key].allocation = objects[key].cost;
+         var B = log_defender (object);
+         object.allocation = -A * (logLamda + B);
+         if (object.allocation < 0) { object.allocation = 0; }
+         if (object.allocation > object.cost) {
+            object.allocation = object.cost;
          }
-         totalAllocation += objects[key].allocation;
+         totalAllocation += object.allocation;
       });
       var scale = 1;
       if (totalAllocation < budget) {
@@ -630,9 +623,9 @@ var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) 
          }
       } else { scale = budget / totalAllocation; }
       totalAllocation = 0;
-      var keys = Object.keys (objects);
+      var keys = Object.keys (objectList);
       keys.forEach(function (key) {
-         var object = objects[key];
+         var object = objectList[key];
          object.allocation = object.allocation * scale;
          totalAllocation = totalAllocation + object.allocation;
          dmz.object.scalar (object.handle, PreventionAllocationHandle,
@@ -736,13 +729,13 @@ var update_objective_graph = function () {
       var max = 0;
       var budgets = [];
       var list = [];
-      for (var ix = 0; ix < barCount; ix += 1) {
-         var budget = maxPreventionBudget * (ix / barCount)
+      for (var ix = 0; ix <= barCount; ix += 1) {
+         var budget = maxPreventionBudget * (ix / barCount);
          budgets[ix] = budget;
-         var keys = Object.keys (weightList);
-         keys.forEach(function (key){ weightList[key].setup (); });
-         var keys = Object.keys (objects);
-         keys.forEach(function (object){ weigh_object (objects[object]); });
+         Object.keys (weightList).forEach(function (key) { weightList[key].setup (); });
+         Object.keys (objects).forEach(function (object) {
+            weigh_object (objects[object]);
+         });
          allocate_prevention_budget (objects, budget, maxPreventionBudget, vinf);
          var result = 0;
          if (objective) {
@@ -757,15 +750,15 @@ var update_objective_graph = function () {
          list[ix] = result;
       }
       if (max > 0) {
-         for (var ix = 0; ix < barCount; ix += 1) {
+         for (var ix = 0; ix <= barCount; ix += 1) {
             list[ix] = Math.ceil (list[ix] / max * 100);
          }
       } else {
-         for (var ix = 0; ix < barCount; ix += 1) {
+         for (var ix = 0; ix <= barCount; ix += 1) {
             list[ix] = 0;
          }
       }
-      for (var ix = 0; ix < barCount; ix += 1) {
+      for (var ix = 0; ix <= barCount; ix += 1) {
          dmz.object.counter (bars[ix], ObjectiveBarValueHandle, list[ix])
          dmz.object.text (bars[ix], ObjectiveBarLabel, "$" + Math.floor (budgets[ix]));
       }
@@ -775,10 +768,7 @@ var update_objective_graph = function () {
 // function receive_simulator
 simulatorMessage.subscribe (self, function (data) {
    if (dmz.data.isTypeOf (data)) {
-      updateGraph = data.boolean ("Boolean", 0);
-      if (data.boolean ("Boolean", 0)) {
-         do_rank ();
-      }
+      if (data.boolean ("Boolean", 0)) { do_rank (); }
       else { receive_hide (); }
    }
 });
