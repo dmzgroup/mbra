@@ -497,7 +497,7 @@
 
    <na-edit-tool>
       <!-- <layout horizontal="True"/> -->
-      <layout vertical="True" />
+      <layout vertical="False" />
       <!--  <dockWidget title="Actions"/>
      <widget>
          <stylesheet file="stylesheets:ActionButton.qss"/>

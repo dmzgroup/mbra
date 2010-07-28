@@ -254,7 +254,7 @@ var link_reachable = function (link, flowState) {
    var obj = dmz.object.linkAttributeObject (link);
    if (obj) {
       var state = dmz.object.state (obj, LinkFlowHandle);
-      if (state && (state.and (FlowStateMask) != EmptyMask)) {
+      if (state && (!state.and (FlowStateMask).equal (EmptyMask))) {
          if (!state.contains (flowState)) { result = false; }
       }
    }
@@ -263,39 +263,51 @@ var link_reachable = function (link, flowState) {
 
 var all_links_flow = function (superList, subList, flowState) {
    var result = true;
+   var subBool = true;
    if (superList && subList) {
+      Object.keys (superList).forEach (function (key) { self.log.warn("superList["+key+"]: "+superList[key]); });
+      Object.keys (subList).forEach (function (key) { self.log.warn("subList["+key+"]: "+subList[key]); });
       var keys = Object.keys (superList);
       keys.forEach(function (superkey) {
-         if (!result) { break; }
+         if (!result) { return; }
          var subkeys = Object.keys (subList);
          keys.forEach(function (subkey) {
+            //if (!subBool) { return; }
+            if (!subList[subkey]) { return; }
+            self.log.warn (subkey + ": " + subList[subkey]);
             var link = dmz.object.linkHandle (LinkHandle, superList[superkey],
                                                     subList[subkey]);
+            self.log.warn (link + " " + superList[superkey] + " " + subList[subkey]);
             var obj = null;
             if (link) { obj = dmz.object.linkAttributeObject (link); }
             else { self.log.error ("No link found"); }
             if (obj) {
                var state = dmz.object.state (obj, LinkFlowHandle);
-               if (state) {
-                  if (state.and (FlowStateMask) != flowState) {
+               if (state.bool ()) {
+                  if (!state.and (FlowStateMask).equal(flowState)) {
                      result = false;
-                     return;
+                     subBool = false;
                   }
-               } else { result = false; break; }
-            } else { result = false; break; }
+               } else { result = false; subBool = false; }
+            } else { result = false; subBool = false; }
          });
       });
    }
+   self.log.warn ("result: " + result);
    return result;
 };
 
 var is_sink = function (object) {
+   var sinkObjList = [];
+   sinkObjList[0] = object;
    var result = false;
    var sub = dmz.object.subLinks (object, LinkHandle);
    var superLink = dmz.object.superLinks (object, LinkHandle);
+   self.log.warn ("SL1: " + (superLink ? superLink.length : superLink) + " sL1: " + (sub ? sub.length : sub));
    if (sub || superLink) {
-      if (all_links_flow ([object], sub, ReverseState) &&
-          all_links_flow (superLink, [object], ForwardState)) {
+      self.log.warn (sinkObjList[0]);
+      if (all_links_flow (sinkObjList, sub, ReverseState) &&
+          all_links_flow (superLink, sinkObjList, ForwardState)) {
          result = true;
       }
    }
@@ -488,7 +500,7 @@ var weight_height = {
       keys.forEach(function (key){
          if (is_sink (objects[key])) {
             sinkFound = true;
-            find_height (root);
+            find_height (objects[key]);
          }
       });
       if (sinkFound) {
@@ -517,11 +529,11 @@ var weight_height = {
 
 var weigh_object = function (object) {
    var value = 1;
-   self.log.warn (dmz.object.text(object, dmz.defs.createNamedHandle("NA_Node_Name")));
+   //self.log.warn (dmz.object.text(object, dmz.defs.createNamedHandle("NA_Node_Name")));
    var keys = Object.keys (weightList);
    keys.forEach(function (key) {
       value *= weightList[key].calc (object);
-      self.log.warn ("\tvalue: " + value + " " + weightList[key].calc(object));
+      //self.log.warn ("\tvalue: " + value + " " + weightList[key].calc(object));
    });
    dmz.object.scalar (object, WeightHandle, value);
 }
@@ -675,7 +687,7 @@ var receive_rank = function () {
    var data = dmz.data.create ();
    data.number ("Float64", 0, reducedSum);
    data.number ("Float64", 1, origSum);
-   self.log.error ("mB: " + maxBetweenness);
+   //self.log.error ("mB: " + maxBetweenness);
    updateSumsMessage.send (data);
    list.sort (function (obj1, obj2) { return obj2.rank - obj1.rank; });
    var keys = Object.keys (list);
