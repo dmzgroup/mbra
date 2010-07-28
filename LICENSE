@@ -1,4 +1,14 @@
-Copyright (c) 2007-2008 Randall E. Barker and the DMZ maintainers.
+This license applies to all parts of MBRA that are not externally maintained libraries.
+
+External libraries used by MBRA but not include with the source are:
+
+  - Qt, This code is released under a LGLP/Commercial License.
+    see: http://qt.nokia.com
+
+These libraries have their own licenses; we recommend you read them,
+as their terms may differ from the terms below.
+
+Copyright (c) 2007-2010 Randall E. Barker and the DMZ group.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
