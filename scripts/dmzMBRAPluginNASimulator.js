@@ -34,19 +34,28 @@ var dmz =
    , DegreeHandle = dmz.defs.createNamedHandle("NA_Node_Degrees")
    , BetweennessHandle = dmz.defs.createNamedHandle("NA_Node_Betweenness")
    , HeightHandle = dmz.defs.createNamedHandle("NA_Node_Height")
+   , ContagiousHandle = dmz.defs.createNamedHandle("NA_Node_Contagiousness")
    , OverlayState = dmz.defs.lookupState("NA_Node_Overlay")
    , ForwardState = dmz.defs.lookupState("NA_Flow_Forward")
    , ReverseState = dmz.defs.lookupState("NA_Flow_Reverse")
    , FlowStateMask = ForwardState.or(ReverseState)
 
+   , MoneyUnitHandle = dmz.defs.createNamedHandle("NA_Monetary_Units")
+   , MoneyUnitTrillionsState = dmz.defs.lookupState("NA_Money_Unit_Trillions")
+   , MoneyUnitBillionsState = dmz.defs.lookupState("NA_Money_Unit_Billions")
+   , MoneyUnitMillionsState = dmz.defs.lookupState("NA_Money_Unit_Millions")
+   , MoneyUnitThousandsState = dmz.defs.lookupState("NA_Money_Unit_Thousands")
+   , MoneyUnitExactValueState = dmz.defs.lookupState("NA_Money_Unit_Exact_Value")
+
    , WeightDegreesHandle = dmz.defs.createNamedHandle("NA_Weight_Degrees")
    , WeightBetweennessHandle = dmz.defs.createNamedHandle("NA_Weight_Betweenness")
    , WeightHeightHandle = dmz.defs.createNamedHandle("NA_Weight_Height")
+   , WeightContagiousHandle = dmz.defs.createNamedHandle("NA_Weight_Contagiousness")
 
    , ObjectiveNoneHandle = dmz.defs.createNamedHandle("NA_Objective_None")
    , ObjectiveRiskHandle = dmz.defs.createNamedHandle("NA_Objective_Risk")
-   , ObjectiveContagiousHandle = dmz.defs.createNamedHandle(
-         "NA_Objective_Contagiousness")
+//   , ObjectiveContagiousHandle = dmz.defs.createNamedHandle(
+//         "NA_Objective_Contagiousness")
    , ObjectiveTxVHandle = dmz.defs.createNamedHandle("NA_Objective_TxV")
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
@@ -88,6 +97,7 @@ var dmz =
    , maxDegrees = 0
    , maxHeight = 0
    , maxBetweenness = 0
+   , maxContagious = 0
    , vinf = 0.05
    , barCount = 10
    , bars = []
@@ -627,6 +637,37 @@ var weight_height = {
    }
 };
 
+var weight_contagious = {
+
+   setup: function () {
+      maxContagious = 0;
+      Object.keys(objects).forEach(function (key) {
+         var degree = dmz.object.scalar(objects[key], DegreeHandle)
+           , threat = dmz.object.scalar(objects[key], ThreatHandle)
+           , vuln = dmz.object.scalar(objects[key], VulnerabilityHandle)
+           , value = degree * threat * vuln;
+         if (degree > 0 && threat > 0 && vuln > 0) {
+            if (value && (value > maxContagious)) {
+               maxContagious = value;
+            }
+            dmz.object.scalar(objects[key], ContagiousHandle, value);
+         }
+         else {
+            dmz.object.scalar(objects[key], ContagiousHandle, 0);
+         }
+      });
+   },
+
+   calc: function (object) {
+      var result = 0
+        , value = dmz.object.scalar(objects[object], ContagiousHandle)
+      if (value > 0 && (maxContagious > 0)) {
+         result = value / maxContagious;
+      }
+      return result;
+   }
+};
+
 var weigh_object = function (object) {
    var value = 1;
    Object.keys(weightList).forEach(function (key) {
@@ -996,9 +1037,23 @@ updateObjectiveGraphMessage.subscribe(self, function (data) {
 });
 
 dmz.object.create.observe(self, function (handle, objType, varity) {
+   var consequenceOld
+     , preventionCostOld
+     , unitState
+     , stateMultiplier = 1
+     ;
    if (objType) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
          objects[handle] = handle;
+//         consequenceOld = dmz.object.scalar(handle, ConsequenceHandle);
+//         preventionCostOld = dmz.object.scalar(handle, PreventionCostHandle);
+//         unitState = dmz.object.state(handle, MoneyUnitHandle);
+//         if (unitState) {
+//            stateMultiplier = get_money_unit_from_state(unitState);
+//         }
+//         dmz.object.scalar(handle, ConsequenceHandle, consequenceOld * stateMultiplier);
+//         dmz.object.scalar(handle, PreventionCostHandle,
+//                           preventionCostOld * stateMultiplier);
          if (visible && objects[handle]) {
             do_rank();
          }
@@ -1009,6 +1064,7 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
 
 var update_object_scalar = function (handle) {
    if (visible && objects[handle]) {
+
       do_rank();
    }
    calc_risk_initial(handle);
@@ -1033,15 +1089,18 @@ var update_simulator_flag = function (handle, attr, value) {
       else if (attr == WeightHeightHandle) {
          weightList[WeightHeightHandle] = weight_height;
       }
+      else if (attr == WeightContagiousHandle) {
+         weightList[WeightContagiousHandle] = weight_contagious;
+      }
       else if (attr == ObjectiveNoneHandle) {
          objective = calc_objective_none;
       }
       else if (attr == ObjectiveRiskHandle) {
          objective = calc_objective_risk;
       }
-      else if (attr == ObjectiveContagiousHandle) {
-         objective = calc_objective_contagiousness;
-      }
+//      else if (attr == ObjectiveContagiousHandle) {
+//         objective = calc_objective_contagiousness;
+//      }
       else if (attr == ObjectiveTxVHandle) {
          objective = calc_objective_txv;
       }
@@ -1068,9 +1127,10 @@ var update_simulator_flag = function (handle, attr, value) {
 dmz.object.flag.observe(self, WeightDegreesHandle, update_simulator_flag);
 dmz.object.flag.observe(self, WeightBetweennessHandle, update_simulator_flag);
 dmz.object.flag.observe(self, WeightHeightHandle, update_simulator_flag);
+dmz.object.flag.observe(self, WeightContagiousHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveNoneHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveRiskHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveContagiousHandle, update_simulator_flag);
+//dmz.object.flag.observe(self, ObjectiveContagiousHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveTxVHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveThreatHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, update_simulator_flag);
@@ -1116,4 +1176,46 @@ dmz.object.state.observe(self, LinkFlowHandle, function (object) {
       do_rank();
    }
    do_graph();
+});
+
+var get_money_unit_from_state = function (state) {
+   var result = 1;
+   if (state.and(MoneyUnitTrillionsState).bool()) {
+      result = 1000000000000;
+   }
+   else if (state.and(MoneyUnitBillionsState).bool()) {
+      result = 1000000000;
+   }
+   else if (state.and(MoneyUnitMillionsState).bool()) {
+      result = 1000000;
+   }
+   else if (state.and(MoneyUnitThousandsState).bool()) {
+      result = 1000;
+   }
+   return result;
+}
+
+dmz.object.state.observe(self, MoneyUnitHandle,
+function (object, attr, newState, prevState) {
+//   var prevMultiplier = 1
+//     , newMultiplier = 1
+//     , currentConsequence
+//     , currentPreventionCost
+//     ;
+//   if (object && objects[object]) {
+//      if (prevState != null) {
+//         prevMultiplier = get_money_unit_from_state(prevState);
+//      }
+//      if (newState) {
+//         newMultiplier = get_money_unit_from_state(newState);
+//      }
+//      currentConsequence = dmz.object.scalar(object, ConsequenceHandle);
+//      currentPreventionCost = dmz.object.scalar(object, PreventionCostHandle);
+
+//      dmz.object.scalar(object, ConsequenceHandle,
+//                        currentConsequence * prevMultiplier / newMultiplier);
+//      dmz.object.scalar(object, PreventionCostHandle,
+//                        currentPreventionCost * prevMultiplier / newMultiplier);
+
+//   }
 });

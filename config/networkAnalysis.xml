@@ -370,6 +370,18 @@
             text-attribute="FT_Name"
             super="false"
          />
+         <property type="state" name="Monetary Units" attribute="NA_Monetary_Units">
+            <state label="Trillions" name="NA_Money_Unit_Trillions"/>
+            <state label="Billions"  name="NA_Money_Unit_Billions" />
+            <state label="Millions"  name="NA_Money_Unit_Millions" default="true"/>
+            <state label="Thousands" name="NA_Money_Unit_Thousands"/>
+            <state label="Exact Value" name="NA_Money_Unit_Exact_Value"/>
+         </property>
+         <property 
+            type="scalar-label" 
+            name="Contagiousness" 
+            attribute="NA_Node_Contagiousness"
+         />
       </property-list>
    </na-node-properties>
    <na-link-properties>
@@ -491,6 +503,18 @@
             attribute="NA_Fault_Tree_Link"
             text-attribute="FT_Name"
             super="false"
+         />
+         <property type="state" name="Monetary Units" attribute="NA_Monetary_Units">
+            <state label="Trillions" name="NA_Money_Unit_Trillions"/>
+            <state label="Billions"  name="NA_Money_Unit_Billions" />
+            <state label="Millions"  name="NA_Money_Unit_Millions" default="true"/>
+            <state label="Thousands" name="NA_Money_Unit_Thousands"/>
+            <state label="Exact Value" name="NA_Money_Unit_Exact_Value"/>
+         </property>
+         <property 
+            type="scalar-label" 
+            name="Contagiousness" 
+            attribute="NA_Node_Contagiousness"
          />
       </property-list>
    </na-link-properties>
@@ -656,9 +680,10 @@
       <weight-by text="Degrees" attribute="NA_Weight_Degrees"/>
       <weight-by text="Betweenness" attribute="NA_Weight_Betweenness"/>
       <weight-by text="Height" attribute="NA_Weight_Height"/>
+      <weight-by text="Contagiousness" attribute="NA_Weight_Contagiousness"/>
       <objective-function text="None" attribute="NA_Objective_None" checked="true"/>
       <objective-function text="Risk" attribute="NA_Objective_Risk"/>
-      <objective-function text="Contagiousness" attribute="NA_Objective_Contagiousness"/>
+      <!-- <objective-function text="Contagiousness" attribute="NA_Objective_Contagiousness"/> -->
       <objective-function text="Threat x Vulnerability" attribute="NA_Objective_TxV"/>
       <objective-function text="Threat" attribute="NA_Objective_Threat"/>
       <objective-function text="Vulnerability" attribute="NA_Objective_Vulnerability"/>

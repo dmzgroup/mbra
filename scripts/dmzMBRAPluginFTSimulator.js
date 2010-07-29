@@ -26,6 +26,14 @@ var dmz =
    , FTLogicLinkHandle = dmz.defs.createNamedHandle("FT_Logic_Link")
    , FTActiveFaultTree = dmz.defs.createNamedHandle("FT_Active_Fault_Tree")
    , BudgetHandle = dmz.defs.createNamedHandle("FT_Budget")
+
+   , MoneyUnitHandle = dmz.defs.createNamedHandle("FT_Monetary_Units")
+   , MoneyUnitTrillionsState = dmz.defs.lookupState("FT_Money_Unit_Trillions")
+   , MoneyUnitBillionsState = dmz.defs.lookupState("FT_Money_Unit_Billions")
+   , MoneyUnitMillionsState = dmz.defs.lookupState("FT_Money_Unit_Millions")
+   , MoneyUnitThousandsState = dmz.defs.lookupState("FT_Money_Unit_Thousands")
+   , MoneyUnitExactValueState = dmz.defs.lookupState("FT_Money_Unit_Exact_Value")
+
    , AndState = 1
    , OrState = 2
    , XOrState = 3
@@ -74,6 +82,23 @@ Level[9] = dmz.defs.lookupState("FT_Threat_Level_9");
 Level[10] = dmz.defs.lookupState("FT_Threat_Level_10");
 var AllLevel = Level[0].or(Level[1].or(Level[2].or(Level[3].or(Level[4].or(Level[5] +
             Level[6].or(Level[7].or(Level[8].or(Level[9].or(Level[10])))))))));
+
+var get_money_unit_from_state = function (state) {
+   var result = 1;
+   if (state.and(MoneyUnitTrillionsState).bool()) {
+      result = 1000000000000;
+   }
+   else if (state.and(MoneyUnitBillionsState).bool()) {
+      result = 1000000000;
+   }
+   else if (state.and(MoneyUnitMillionsState).bool()) {
+      result = 1000000;
+   }
+   else if (state.and(MoneyUnitThousandsState).bool()) {
+      result = 1000;
+   }
+   return result;
+}
 
 function start_work() {
    var vulnerability
@@ -336,8 +361,22 @@ function update_vulnerability_reduced(object) {
 }
 
 dmz.object.create.observe(self, function (objHandle, objType) {
+   var consequenceOld
+     , eliminationOld
+     , unitState
+     , stateMultiplier = 1
+     ;
    if (objType.isOfType(ThreatType)) {
       objects[objHandle] = new_object(objHandle);
+//      consequenceOld = dmz.object.scalar(objHandle, ConsequenceHandle);
+//      eliminationOld = dmz.object.scalar(objHandle, EliminationHandle);
+//      unitState = dmz.object.state(objHandle, MoneyUnitHandle);
+//      if (unitState) {
+//         stateMultiplier = get_money_unit_from_state(unitState);
+//      }
+//      dmz.object.scalar(objHandle, ConsequenceHandle, consequenceOld * stateMultiplier);
+//      dmz.object.scalar(objHandle, EliminationHandle,
+//                        eliminationOld * stateMultiplier);
 		reset = true;
    } else if (objType.isOfType(ComponentType)) {
       reset = true;
@@ -345,15 +384,18 @@ dmz.object.create.observe(self, function (objHandle, objType) {
 });
 
 dmz.object.destroy.observe(self, function (objHandle) {
-   if (objects[objHandle]) {
-      delete objects[objHandle];
-      reset = true;
-   }
-   else if (dmz.object.type(objHandle).isOfType(ComponentType)) {
-      reset = true;
-   }
-   if (objHandle == root) {
-      root = null;
+   if (objHandle != null) {
+      if (objects[objHandle]) {
+         delete objects[objHandle];
+         reset = true;
+      }
+      else if (dmz.object.type(objHandle) &&
+               dmz.object.type(objHandle).isOfType(ComponentType)) {
+         reset = true;
+      }
+      if (objHandle == root) {
+         root = null;
+      }
    }
 });
 
@@ -645,3 +687,28 @@ vinfinityMessage.subscribe(self, function (data) {
 function stop_plugin() {
    dmz.time.cancleTimer(self, work); haveSetTimer = false;
 }
+
+dmz.object.state.observe(self, MoneyUnitHandle,
+function (object, attr, newState, prevState) {
+//   var prevMultiplier = 1
+//     , newMultiplier = 1
+//     , currentConsequence
+//     , currentEliminationCost
+//     ;
+//   if (object && objects[object]) {
+//      if (prevState != null) {
+//         prevMultiplier = get_money_unit_from_state(prevState);
+//      }
+//      if (newState) {
+//         newMultiplier = get_money_unit_from_state(newState);
+//      }
+//      currentConsequence = dmz.object.scalar(object, ConsequenceHandle);
+//      currentEliminationCost = dmz.object.scalar(object, EliminationHandle);
+
+//      dmz.object.scalar(object, ConsequenceHandle,
+//                        currentConsequence * prevMultiplier / newMultiplier);
+//      dmz.object.scalar(object, EliminationHandle,
+//                        currentEliminationCost * prevMultiplier / newMultiplier);
+
+//   }
+});

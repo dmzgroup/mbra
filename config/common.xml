@@ -131,6 +131,9 @@
       <attribute name="NA_Node_Height">
          <mask name="counter"/>
       </attribute>
+      <attribute name="NA_Node_Contagiousness">
+         <mask name="scalar"/>
+      </attribute>
       <attribute name="NA_Node_Objective_Label">
          <mask name="text"/>
       </attribute>
