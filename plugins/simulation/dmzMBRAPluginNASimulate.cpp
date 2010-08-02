@@ -14,7 +14,8 @@ dmz::MBRAPluginNASimulate::MBRAPluginNASimulate (const PluginInfo &Info, Config 
       Plugin (Info),
       QtWidget (Info),
       _log (Info),
-      _convert (Info) {
+      _convertBool (Info),
+      _convertString (Info) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -70,22 +71,41 @@ dmz::MBRAPluginNASimulate::get_qt_widget () { return this; }
 void
 dmz::MBRAPluginNASimulate::_slot_calculate (bool on) {
 
-   Data data = _convert.to_data (on ? True : False);
-   _simulatorMessage.send (&data);
+   Data data = _convertBool.to_data (on ? True : False);
+   _simulateMessage.send (&data);
 }
 
+void
+dmz::MBRAPluginNASimulate::_slot_direction (int index) {
+
+   String val;
+
+   if (index == 0) { val = "Bidirectional"; }
+   if (index == 1) { val = "Upstream"; }
+   if (index == 2) { val = "Downstream"; }
+   Data data = _convertString.to_data (val);
+   _simulateDirectionMessage.send (&data);
+
+}
 
 void
 dmz::MBRAPluginNASimulate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
 
-   _simulatorMessage = config_create_message (
+   _simulateMessage = config_create_message (
       "simulator-message.name",
       local,
       "NASimulateMessage",
       get_plugin_runtime_context (),
       &_log);
+
+   _simulateDirectionMessage = config_create_message (
+         "simulate-direction-message.name",
+         local,
+         "NASimulateDirectionMessage",
+         get_plugin_runtime_context (),
+         &_log);
 
    qwidget_config_read ("widget", local, this);
 
@@ -100,7 +120,18 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
       connect (
          action, SIGNAL (toggled (bool)),
          this, SLOT (_slot_calculate (bool)));
+
    }
+
+   QStringList failDirections;
+   failDirections << "Bidirectional" << "Upstream" << "Downstream";
+
+   _ui.failDirectionBox->insertItems (0, failDirections);
+
+   connect (
+         _ui.failDirectionBox, SIGNAL (currentIndexChanged (int)),
+         this, SLOT (_slot_direction (int)));
+
 
 }
 

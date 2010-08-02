@@ -6,6 +6,7 @@
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
+#include <QtGui/QComboBox>
 #include <QtGui/QWidget>
 #include "ui_dmzMBRAPluginNASimulateForm.h"
 
@@ -15,7 +16,10 @@ class QDockWidget;
 
 namespace dmz {
 
-   class MBRAPluginNASimulate : public QFrame, public Plugin, public QtWidget {
+   class MBRAPluginNASimulate :
+         public QFrame,
+         public Plugin,
+         public QtWidget {
 
       Q_OBJECT
 
@@ -37,13 +41,16 @@ namespace dmz {
 
       protected slots:
          void _slot_calculate (bool On);
+         void _slot_direction (int index);
 
       protected:
          void _init (Config &local);
 
          Log _log;
-         DataConverterBoolean _convert;
-         Message _simulatorMessage;
+         DataConverterBoolean _convertBool;
+         DataConverterString _convertString;
+         Message _simulateMessage;
+         Message _simulateDirectionMessage;
          Ui::simulateForm _ui;
 
       private:
