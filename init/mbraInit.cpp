@@ -81,7 +81,7 @@ find_mbra_files (QDialog & dialog, const String &Path, Int32 depth, StringContai
 
             split_path_file_ext (file, tmp, fileRoot, fileExt);
 
-            if (fileExt == ".mbra") { list.append (Path + file); }
+            if (fileExt == ".mbra") { list.add (Path + file); }
          }
       }
 
@@ -129,7 +129,7 @@ local_init_file_list (AppShellInitStruct &init, StringContainer &list) {
 
          const String FileName = config_to_string ("name", file);
 
-         if (is_valid_path (FileName)) { list.append (FileName); }
+         if (is_valid_path (FileName)) { list.add (FileName); }
       }
    }
    else {
