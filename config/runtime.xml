@@ -12,11 +12,6 @@
    <message name="FTBudgetMessage" monostate="true"/>
    <message name="NA_Objective_Graph_Visible_Message" monostate="true"/>
    <message name="NA_Cascade_Graph_Visible_Message" monostate="true"/>
-   <state name="NA_Money_Unit_Trillions"/>
-   <state name="NA_Money_Unit_Billions"/>
-   <state name="NA_Money_Unit_Millions"/>
-   <state name="NA_Money_Unit_Thousands"/>
-   <state name="NA_Money_Unit_Exact_Value"/>
    <state name="NA_Node_Overlay"/>
    <state name="NA_Node_Highlight"/>
    <state name="NA_Node_Flagged"/>
@@ -24,11 +19,6 @@
    <state name="NA_Flow_Reverse"/>
    <state name="NA_Cascade_Fail_Upstream"/>
    <state name="NA_Cascade_Fail_Downstream"/>
-   <state name="FT_Money_Unit_Trillions"/>
-   <state name="FT_Money_Unit_Billions"/>
-   <state name="FT_Money_Unit_Millions"/>
-   <state name="FT_Money_Unit_Thousands"/>
-   <state name="FT_Money_Unit_Exact_Value"/>
    <state name="FT_Logic_And"/>
    <state name="FT_Logic_Or"/>
    <state name="FT_Logic_XOr"/>

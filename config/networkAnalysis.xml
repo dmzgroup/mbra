@@ -378,13 +378,6 @@
             text-attribute="FT_Name"
             super="false"
          />
-         <property type="state" name="Monetary Units" attribute="NA_Monetary_Units">
-            <state label="Trillions" name="NA_Money_Unit_Trillions"/>
-            <state label="Billions"  name="NA_Money_Unit_Billions" />
-            <state label="Millions"  name="NA_Money_Unit_Millions" default="true"/>
-            <state label="Thousands" name="NA_Money_Unit_Thousands"/>
-            <state label="Exact Value" name="NA_Money_Unit_Exact_Value"/>
-         </property>
          <property 
             type="scalar-label" 
             name="Contagiousness" 
@@ -512,13 +505,6 @@
             text-attribute="FT_Name"
             super="false"
          />
-         <property type="state" name="Monetary Units" attribute="NA_Monetary_Units">
-            <state label="Trillions" name="NA_Money_Unit_Trillions"/>
-            <state label="Billions"  name="NA_Money_Unit_Billions" />
-            <state label="Millions"  name="NA_Money_Unit_Millions" default="true"/>
-            <state label="Thousands" name="NA_Money_Unit_Thousands"/>
-            <state label="Exact Value" name="NA_Money_Unit_Exact_Value"/>
-         </property>
          <property 
             type="scalar-label" 
             name="Contagiousness" 

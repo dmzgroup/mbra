@@ -130,13 +130,6 @@
             attribute="NA_Node_Description"
             tab="1"
          />
-         <property type="state" name="Monetary Units" attribute="FT_Monetary_Units">
-            <state label="Trillions" name="FT_Money_Unit_Trillions"/>
-            <state label="Billions"  name="FT_Money_Unit_Billions" />
-            <state label="Millions"  name="FT_Money_Unit_Millions" default="true"/>
-            <state label="Thousands" name="FT_Money_Unit_Thousands"/>
-            <state label="Exact Value" name="FT_Money_Unit_Exact_Value"/>
-         </property>
       </property-list>
    </ft-threat-properties>
    <central-widget>

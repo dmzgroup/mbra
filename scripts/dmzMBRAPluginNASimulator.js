@@ -51,7 +51,7 @@ var dmz =
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
          "NA_Objective_Vulnerability")
-   , ObjectiveConsequenceHandle = dmz.defs.createNamedHandle("NA_Objective_Consequence")
+   //, ObjectiveConsequenceHandle = dmz.defs.createNamedHandle("NA_Objective_Consequence")
    , simulatorMessage = dmz.message.create(
       self.config.string("simulator-message.name", "NASimulatorMessage"))
    , preventionBudgetMessage = dmz.message.create(
