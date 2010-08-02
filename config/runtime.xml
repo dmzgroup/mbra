@@ -7,9 +7,11 @@
    <message name="PreventionBudgetMessage" monostate="true"/>
    <message name="ResponseBudgetMessage" monostate="true"/>
    <message name="NASimulatorMessage" monostate="true"/>
+   <message name="NASimulateMessage" monostate="true"/>
    <message name="FTSimulatorMessage" monostate="true"/>
    <message name="FTBudgetMessage" monostate="true"/>
    <message name="NA_Objective_Graph_Visible_Message" monostate="true"/>
+   <message name="NA_Cascade_Graph_Visible_Message" monostate="true"/>
    <state name="NA_Money_Unit_Trillions"/>
    <state name="NA_Money_Unit_Billions"/>
    <state name="NA_Money_Unit_Millions"/>
@@ -20,6 +22,8 @@
    <state name="NA_Node_Flagged"/>
    <state name="NA_Flow_Forward"/>
    <state name="NA_Flow_Reverse"/>
+   <state name="NA_Cascade_Fail_Upstream"/>
+   <state name="NA_Cascade_Fail_Downstream"/>
    <state name="FT_Money_Unit_Trillions"/>
    <state name="FT_Money_Unit_Billions"/>
    <state name="FT_Money_Unit_Millions"/>
@@ -49,6 +53,7 @@
    </object-type>
    <object-type name="na_simulator"/>
    <object-type name="na_objective_bar"/>
+   <object-type name="na_cascade_bar"/>
    <object-type name="na_tool_link_node">
       <NACanvasObject/>
    </object-type>

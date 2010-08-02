@@ -40,13 +40,6 @@ var dmz =
    , ReverseState = dmz.defs.lookupState("NA_Flow_Reverse")
    , FlowStateMask = ForwardState.or(ReverseState)
 
-   , MoneyUnitHandle = dmz.defs.createNamedHandle("NA_Monetary_Units")
-   , MoneyUnitTrillionsState = dmz.defs.lookupState("NA_Money_Unit_Trillions")
-   , MoneyUnitBillionsState = dmz.defs.lookupState("NA_Money_Unit_Billions")
-   , MoneyUnitMillionsState = dmz.defs.lookupState("NA_Money_Unit_Millions")
-   , MoneyUnitThousandsState = dmz.defs.lookupState("NA_Money_Unit_Thousands")
-   , MoneyUnitExactValueState = dmz.defs.lookupState("NA_Money_Unit_Exact_Value")
-
    , WeightDegreesHandle = dmz.defs.createNamedHandle("NA_Weight_Degrees")
    , WeightBetweennessHandle = dmz.defs.createNamedHandle("NA_Weight_Betweenness")
    , WeightHeightHandle = dmz.defs.createNamedHandle("NA_Weight_Height")
@@ -54,8 +47,6 @@ var dmz =
 
    , ObjectiveNoneHandle = dmz.defs.createNamedHandle("NA_Objective_None")
    , ObjectiveRiskHandle = dmz.defs.createNamedHandle("NA_Objective_Risk")
-//   , ObjectiveContagiousHandle = dmz.defs.createNamedHandle(
-//         "NA_Objective_Contagiousness")
    , ObjectiveTxVHandle = dmz.defs.createNamedHandle("NA_Objective_TxV")
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
@@ -106,6 +97,7 @@ var dmz =
    , origSum = 0
    , updateGraph = false
    , rankLimit = self.config.number("rank.limit", 9)
+
    , update_objective_graph
    , weigh_object
    , allocate_prevention_budget
@@ -1037,23 +1029,9 @@ updateObjectiveGraphMessage.subscribe(self, function (data) {
 });
 
 dmz.object.create.observe(self, function (handle, objType, varity) {
-   var consequenceOld
-     , preventionCostOld
-     , unitState
-     , stateMultiplier = 1
-     ;
    if (objType) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
          objects[handle] = handle;
-//         consequenceOld = dmz.object.scalar(handle, ConsequenceHandle);
-//         preventionCostOld = dmz.object.scalar(handle, PreventionCostHandle);
-//         unitState = dmz.object.state(handle, MoneyUnitHandle);
-//         if (unitState) {
-//            stateMultiplier = get_money_unit_from_state(unitState);
-//         }
-//         dmz.object.scalar(handle, ConsequenceHandle, consequenceOld * stateMultiplier);
-//         dmz.object.scalar(handle, PreventionCostHandle,
-//                           preventionCostOld * stateMultiplier);
          if (visible && objects[handle]) {
             do_rank();
          }
@@ -1098,9 +1076,6 @@ var update_simulator_flag = function (handle, attr, value) {
       else if (attr == ObjectiveRiskHandle) {
          objective = calc_objective_risk;
       }
-//      else if (attr == ObjectiveContagiousHandle) {
-//         objective = calc_objective_contagiousness;
-//      }
       else if (attr == ObjectiveTxVHandle) {
          objective = calc_objective_txv;
       }
@@ -1130,7 +1105,6 @@ dmz.object.flag.observe(self, WeightHeightHandle, update_simulator_flag);
 dmz.object.flag.observe(self, WeightContagiousHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveNoneHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveRiskHandle, update_simulator_flag);
-//dmz.object.flag.observe(self, ObjectiveContagiousHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveTxVHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveThreatHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, update_simulator_flag);
@@ -1176,46 +1150,4 @@ dmz.object.state.observe(self, LinkFlowHandle, function (object) {
       do_rank();
    }
    do_graph();
-});
-
-var get_money_unit_from_state = function (state) {
-   var result = 1;
-   if (state.and(MoneyUnitTrillionsState).bool()) {
-      result = 1000000000000;
-   }
-   else if (state.and(MoneyUnitBillionsState).bool()) {
-      result = 1000000000;
-   }
-   else if (state.and(MoneyUnitMillionsState).bool()) {
-      result = 1000000;
-   }
-   else if (state.and(MoneyUnitThousandsState).bool()) {
-      result = 1000;
-   }
-   return result;
-}
-
-dmz.object.state.observe(self, MoneyUnitHandle,
-function (object, attr, newState, prevState) {
-//   var prevMultiplier = 1
-//     , newMultiplier = 1
-//     , currentConsequence
-//     , currentPreventionCost
-//     ;
-//   if (object && objects[object]) {
-//      if (prevState != null) {
-//         prevMultiplier = get_money_unit_from_state(prevState);
-//      }
-//      if (newState) {
-//         newMultiplier = get_money_unit_from_state(newState);
-//      }
-//      currentConsequence = dmz.object.scalar(object, ConsequenceHandle);
-//      currentPreventionCost = dmz.object.scalar(object, PreventionCostHandle);
-
-//      dmz.object.scalar(object, ConsequenceHandle,
-//                        currentConsequence * prevMultiplier / newMultiplier);
-//      dmz.object.scalar(object, PreventionCostHandle,
-//                        currentPreventionCost * prevMultiplier / newMultiplier);
-
-//   }
 });

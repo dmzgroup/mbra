@@ -23,6 +23,7 @@
    <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
    <instance name="dmzMBRAPluginFTSimulator"/>
    <instance name="dmzMBRAPluginFTPath"/>
+   <instance name="dmzMBRAPluginNACascadeFailure"/>
    
    <!--
 
