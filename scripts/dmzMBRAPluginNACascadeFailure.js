@@ -151,6 +151,7 @@ var cascade_init = function () {
       firstRun = false;
    }
 
+   cascadeTrialCount = 0;
    cascadeEP = [];
    cascadePDF = [];
    for (count = 0; count <= 100; count += 1) {
