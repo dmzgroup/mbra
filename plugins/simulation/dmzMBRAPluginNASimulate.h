@@ -49,9 +49,10 @@ namespace dmz {
             Data *outData);
 
       protected slots:
+         void _slot_delay (int delay);
          void _slot_calculate (bool On);
          void _slot_direction (int index);
-         void _slot_delay (int delay);
+         void _slot_links_allow_change (int state);
 
 
       protected:
@@ -65,6 +66,7 @@ namespace dmz {
          Message _simulateDirectionMessage;
          Message _updateIterationsMessage;
          Message _updateDelayMessage;
+         Message _simulateAllowLinksMessage;
          Ui::simulateForm _ui;
 
       private:

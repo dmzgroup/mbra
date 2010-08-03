@@ -44,6 +44,9 @@ var dmz =
    , simulateIterCountMessage = dmz.message.create(
       self.config.string("simulate-itercount-message.name",
                          "NASimulateIterCountMessage"))
+   , simulateLinksMessage = dmz.message.create(
+      self.config.string("simulate-allow--links-message.name",
+                         "NASimulateLinksMessage"))
 
    , objectList = []
    , linkObjectList = []
@@ -55,6 +58,7 @@ var dmz =
    , barCount = 100
    , failureType = CascadeFailBothState
    , updateGraphDelay = 500
+   , allowLinks = true
 
    , cascade_failure_simulation
 
@@ -118,19 +122,6 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    dataReset = true;
 });
 
-var object_subList = function (objHandle) {
-   var list = objectList[objHandle]
-     , result = []
-     ;
-   if (list) {
-      Object.keys(list).forEach(function (index) {
-         //self.log.warn("Adding to list: " + list[index].sub);
-         result.push(list[index]);
-      });
-   }
-   return result;
-};
-
 var object_linkList = function (objHandle) {
    var list = objectList[objHandle]
      , result = []
@@ -185,14 +176,16 @@ var cascade_init = function () {
       count += 1;
    });
 
-   Object.keys(linkObjectList).forEach(function (key) {
-      threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
-      vuln = dmz.object.scalar(linkObjectList[key].attr, VulnerabilityHandle);
-      pdf[count] = threat * vuln;
-      sumTV += pdf[count];
-      objectArray[count] = linkObjectList[key];
-      count += 1;
-   });
+   if (allowLinks) {
+      Object.keys(linkObjectList).forEach(function (key) {
+         threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
+         vuln = dmz.object.scalar(linkObjectList[key].attr, VulnerabilityHandle);
+         pdf[count] = threat * vuln;
+         sumTV += pdf[count];
+         objectArray[count] = linkObjectList[key];
+         count += 1;
+      });
+   }
 
    cdf[0] = pdf[0] / sumTV;
    for (key = 1; key < pdf.length; key += 1) {
@@ -309,7 +302,9 @@ cascade_failure_simulation = function() {
            if (!visited[link.attr]) {
               visited[link.attr] = true;
               if (check_object_cascade_fail(link.attr)) {
-                 failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
+                 if (allowLinks) {
+                    failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
+                 }
 //                 self.log.warn("link: " + link.attr + " state: " + dmz.object.state(link.attr,LinkFlowHandle));
                  linkState = dmz.object.state(link.attr, LinkFlowHandle);
 
@@ -361,7 +356,9 @@ cascade_failure_simulation = function() {
      }
 
      Object.keys(visited).forEach(function (key) {
-        totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle);
+        if (allowLinks || objectList[parseInt(key)]) {
+           totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle);
+        }
 //        self.log.warn("total = " + totalConsequences + " key: " + key);
      });
 
@@ -389,7 +386,7 @@ cascade_failure_simulation = function() {
                                 cascadeEP[counter + 1];
      }
 
-     if (cascadeTrialCount < updateGraphDelay ||
+     if (/*cascadeTrialCount < updateGraphDelay ||*/
          (cascadeTrialCount % updateGraphDelay == 0)) {
         update_cascade_graph();
      }
@@ -426,6 +423,15 @@ simulateDelayMessage.subscribe(self, function (data) {
    updateGraphDelay = dmz.data.unwrapNumber(data);
 });
 
+simulateLinksMessage.subscribe(self, function (data) {
+   if(dmz.data.isTypeOf(data)) {
+      allowLinks = dmz.data.unwrapBoolean(data);
+      dataReset = true;
+   }
+//   dmz.time.cancleTimer(self, cascade_failure_simulation);
+//   dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
+});
+
 simulateDirectionMessage.subscribe(self, function (data) {
    var stateString;
    if (dmz.data.isTypeOf(data)) {
@@ -434,7 +440,7 @@ simulateDirectionMessage.subscribe(self, function (data) {
       else if (stateString == "Downstream") { failureType = CascadeFailDownstreamState; }
       else { failureType = CascadeFailBothState; }
       dataReset = true;
-      dmz.time.cancleTimer(self, cascade_failure_simulation);
-      dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
+//      dmz.time.cancleTimer(self, cascade_failure_simulation);
+//      dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
    }
 });

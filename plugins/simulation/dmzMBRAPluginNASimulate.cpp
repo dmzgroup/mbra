@@ -112,6 +112,21 @@ dmz::MBRAPluginNASimulate::_slot_direction (int index) {
 }
 
 void
+dmz::MBRAPluginNASimulate::_slot_links_allow_change (int state) {
+
+   Data data;
+   if (state == Qt::Unchecked) {
+      data = _convertBool.to_data (False);
+   }
+   else if (state == Qt::Checked) {
+      data = _convertBool.to_data (True);
+   }
+
+   _simulateAllowLinksMessage.send (&data);
+
+}
+
+void
 dmz::MBRAPluginNASimulate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
@@ -141,6 +156,13 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
          "simulate-itercount-message.name",
          local,
          "NASimulateIterCountMessage",
+         get_plugin_runtime_context (),
+         &_log);
+
+   _simulateAllowLinksMessage = config_create_message (
+         "simulate-allow-links-message.name",
+         local,
+         "NASimulateLinksMessage",
          get_plugin_runtime_context (),
          &_log);
 
@@ -174,6 +196,10 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
    connect (
          _ui.failDirectionBox, SIGNAL (currentIndexChanged (int)),
          this, SLOT (_slot_direction (int)));
+
+   connect (
+         _ui.allowLinkFail, SIGNAL (stateChanged (int)),
+         this, SLOT (_slot_links_allow_change (int)));
 
 }
 
