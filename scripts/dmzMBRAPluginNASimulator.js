@@ -51,7 +51,6 @@ var dmz =
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
          "NA_Objective_Vulnerability")
-   //, ObjectiveConsequenceHandle = dmz.defs.createNamedHandle("NA_Objective_Consequence")
    , simulatorMessage = dmz.message.create(
       self.config.string("simulator-message.name", "NASimulatorMessage"))
    , preventionBudgetMessage = dmz.message.create(
@@ -1085,9 +1084,6 @@ var update_simulator_flag = function (handle, attr, value) {
       else if (attr == ObjectiveVulnerabilityHandle) {
          objective = calc_objective_vulnerability;
       }
-      else if (attr == ObjectiveConsequenceHandle) {
-         objective = calc_objective_consequence;
-      }
       do_graph();
    }
    else if (weightList[attr]) {
@@ -1108,7 +1104,6 @@ dmz.object.flag.observe(self, ObjectiveRiskHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveTxVHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveThreatHandle, update_simulator_flag);
 dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveConsequenceHandle, update_simulator_flag);
 
 
 dmz.object.destroy.observe(self, function (handle) {
