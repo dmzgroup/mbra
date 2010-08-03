@@ -19,6 +19,7 @@ namespace dmz {
    class MBRAPluginNASimulate :
          public QFrame,
          public Plugin,
+         public MessageObserver,
          public QtWidget {
 
       Q_OBJECT
@@ -39,9 +40,19 @@ namespace dmz {
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
+
       protected slots:
          void _slot_calculate (bool On);
          void _slot_direction (int index);
+         void _slot_delay (int delay);
+
 
       protected:
          void _init (Config &local);
@@ -49,8 +60,11 @@ namespace dmz {
          Log _log;
          DataConverterBoolean _convertBool;
          DataConverterString _convertString;
+         DataConverterFloat64 _convertFloat;
          Message _simulateMessage;
          Message _simulateDirectionMessage;
+         Message _updateIterationsMessage;
+         Message _updateDelayMessage;
          Ui::simulateForm _ui;
 
       private:

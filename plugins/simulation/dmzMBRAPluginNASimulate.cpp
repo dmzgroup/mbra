@@ -12,10 +12,12 @@
 dmz::MBRAPluginNASimulate::MBRAPluginNASimulate (const PluginInfo &Info, Config &local) :
       QFrame (0),
       Plugin (Info),
+      MessageObserver (Info),
       QtWidget (Info),
       _log (Info),
       _convertBool (Info),
-      _convertString (Info) {
+      _convertString (Info),
+      _convertFloat (Info) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -68,6 +70,27 @@ QWidget *
 dmz::MBRAPluginNASimulate::get_qt_widget () { return this; }
 
 
+// Message Observer Interface
+void
+dmz::MBRAPluginNASimulate::receive_message (
+   const Message &Type,
+   const Handle MessageSendHandle,
+   const Handle TargetObserverHandle,
+   const Data *InData,
+   Data *outData) {
+
+   Float64 val = _convertFloat.to_float64 (InData, 0);
+   _ui.iterationTotal->display(val);
+}
+
+void
+dmz::MBRAPluginNASimulate::_slot_delay (int delay) {
+
+   Data data = _convertFloat.to_data (delay);
+
+   _updateDelayMessage.send (&data);
+}
+
 void
 dmz::MBRAPluginNASimulate::_slot_calculate (bool on) {
 
@@ -107,6 +130,26 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
          get_plugin_runtime_context (),
          &_log);
 
+   _updateDelayMessage = config_create_message (
+         "simulate-delay-message.name",
+         local,
+         "NASimulateDelayMessage",
+         get_plugin_runtime_context (),
+         &_log);
+
+   _updateIterationsMessage = config_create_message (
+         "simulate-itercount-message.name",
+         local,
+         "NASimulateIterCountMessage",
+         get_plugin_runtime_context (),
+         &_log);
+
+   subscribe_to_message (_updateIterationsMessage);
+
+   connect (
+         _ui.updateDelayBox, SIGNAL (valueChanged (int)),
+         this, SLOT (_slot_delay (int)));
+
    qwidget_config_read ("widget", local, this);
 
    qtoolbutton_config_read ("caclulateButton", local, _ui.simulateButton);
@@ -131,7 +174,6 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
    connect (
          _ui.failDirectionBox, SIGNAL (currentIndexChanged (int)),
          this, SLOT (_slot_direction (int)));
-
 
 }
 

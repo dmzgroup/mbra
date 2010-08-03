@@ -60,7 +60,7 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _toggleLabelsMsg (0),
       _toggleLabelsTarget (0),
       _toggleLabelsAttr (0),
-      _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
+      _onlineHelpUrl ("http://mbra-help.dmzdev.org"),
       _undoAction (0),
       _redoAction (0),
       _recentFilesMenu (0),
