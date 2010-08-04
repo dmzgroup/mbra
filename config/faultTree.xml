@@ -83,15 +83,13 @@
          />
          <property
             type="scalar"
-            name="Elimination Cost"
+            name="Elimination Cost $$(UnitsMessage)"
             attribute="FT_Threat_Elimination_Cost"
-            prefix="$"
          />
          <property
             type="scalar"
-            name="Consequence"
+            name="Consequence $$(UnitsMessage)"
             attribute="FT_Threat_Consequence"
-            prefix="$"
          />
          <property
             type="scalar-label"
@@ -101,9 +99,8 @@
          />
          <property
             type="scalar-label"
-            name="Allocation"
+            name="Allocation $$(UnitsMessage)"
             attribute="FT_Threat_Allocation"
-            prefix="$"
          />
          <property
             type="scalar-label"

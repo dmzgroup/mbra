@@ -4,12 +4,16 @@
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
 #include <dmzRuntimeDefinitions.h>
+#include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeLog.h>
+#include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
 #include <dmzTypesHashTableHandleTemplate.h>
 #include <dmzTypesHashTableUInt32Template.h>
+#include <dmzTypesStringContainer.h>
+#include <dmzTypesStringSub.h>
 
 #include <QtGui/QItemDelegate>
 #include <QtGui/QFrame>
@@ -29,6 +33,7 @@ namespace dmz {
          public QFrame,
          public Plugin,
          public ObjectObserverUtil,
+         public MessageObserver,
          public QtWidget {
 
       Q_OBJECT
@@ -162,6 +167,14 @@ namespace dmz {
             const String &Value,
             const String *PreviousValue);
 
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
+
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
@@ -180,6 +193,8 @@ namespace dmz {
          Log _log;
          Definitions _defs;
          Undo _undo;
+         DataConverterString _convert;
+         StringSub _sub;
 
          QtModuleCanvas *_canvas;
          String _canvasName;
@@ -205,6 +220,11 @@ namespace dmz {
 
          HashTableHandleTemplate<PropertyWidget> _attrTable;
          HashTableUInt32Template<PropertyWidget> _colTable;
+
+         Message _unitsMessage;
+         StringContainer _labelList;
+         QStringList _qLabelList;
+         void _update_horizontal_headers ();
 
       private:
          MBRAPluginPropertyTable ();

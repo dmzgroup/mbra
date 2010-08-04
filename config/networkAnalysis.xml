@@ -295,15 +295,13 @@
          />
          <property
             type="scalar"
-            name="Consequence"
+            name="Consequence $$(UnitsMessage)"
             attribute="NA_Node_Consequence"
-            prefix="$"
          />
          <property
             type="scalar"
-            name="Prevention Cost"
+            name="Prevention Cost $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Cost"
-            prefix="$"
          />
 <!--
          <property
@@ -315,23 +313,20 @@
 -->
          <property
             type="scalar-label"
-            name="Risk Initial"
+            name="Risk Initial $$(UnitsMessage)"
             attribute="NA_Node_Risk_Initial"
             decimals="2"
-            prefix="$"
          />
          <property
             type="scalar-label"
-            name="Prevention Allocation"
+            name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
-            prefix="$"
          />
          <property
             type="scalar-label"
-            name="Risk Reduced"
+            name="Risk Reduced $$(UnitsMessage)"
             attribute="NA_Node_Risk_Reduced"
             decimals="2"
-            prefix="$"
          />
          <property
             type="scalar-label"
@@ -421,15 +416,13 @@
          />
          <property
             type="scalar"
-            name="Consequence"
+            name="Consequence $$(UnitsMessage)"
             attribute="NA_Node_Consequence"
-            prefix="$"
          />
          <property
             type="scalar"
-            name="Prevention Cost"
+            name="Prevention Cost $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Cost"
-            prefix="$"
          />
 <!--
          <property
@@ -441,9 +434,8 @@
 -->
          <property
             type="scalar-label"
-            name="Prevention Allocation"
+            name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
-            prefix="$"
          />
          <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
@@ -458,23 +450,20 @@
          />
          <property
             type="scalar-label"
-            name="Risk Initial"
+            name="Risk Initial $$(UnitsMessage)"
             attribute="NA_Node_Risk_Initial"
             decimals="2"
-            prefix="$"
          />
          <property
             type="scalar-label"
-            name="Prevention Allocation"
+            name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
-            prefix="$"
          />
          <property
             type="scalar-label"
-            name="Risk Reduced"
+            name="Risk Reduced $$(UnitsMessage)"
             attribute="NA_Node_Risk_Reduced"
             decimals="2"
-            prefix="$"
          />
          <property
             type="scalar-label"
