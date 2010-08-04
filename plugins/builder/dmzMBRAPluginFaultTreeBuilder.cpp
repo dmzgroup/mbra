@@ -178,7 +178,7 @@ dmz::MBRAPluginFaultTreeBuilder::remove_object_attribute (
 
    if (AttrMask.contains (ObjectStateMask)) {
 
-      _flaggedNodes.remove_handle (ObjectHandle);
+      _flaggedNodes.remove (ObjectHandle);
    }
 }
 
@@ -269,8 +269,8 @@ dmz::MBRAPluginFaultTreeBuilder::update_object_state (
    const Boolean WasFlagged =
       PreviousValue ? PreviousValue->contains (_flaggedMask) : False;
 
-   if (IsFlagged && !WasFlagged) { _flaggedNodes.add_handle (ObjectHandle); }
-   else if (!IsFlagged && WasFlagged) { _flaggedNodes.remove_handle (ObjectHandle); }
+   if (IsFlagged && !WasFlagged) { _flaggedNodes.add (ObjectHandle); }
+   else if (!IsFlagged && WasFlagged) { _flaggedNodes.remove (ObjectHandle); }
 }
 
 

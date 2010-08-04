@@ -220,7 +220,7 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
             vbox->addWidget (checkBox);
             _weightByGroup.addButton (checkBox, (qlonglong)AttrHandle);
             
-            _weightByHandles.add_handle (AttrHandle);
+            _weightByHandles.add (AttrHandle);
          }
       }
    }

@@ -13,19 +13,19 @@ INSTALLER=$DEPTH/installers/$UPDATE.exe
 
 echo "publishing $INSTALLER..."
 
-echo "scp $VERSION_XML dmzdev.org:/home/update/public/latest/win32-$CHANNEL/MBRA.xml"
-scp $VERSION_XML dmzdev.org:/home/update/public/latest/win32-$CHANNEL/MBRA.xml
+echo "scp $VERSION_XML dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL/MBRA.xml"
+scp $VERSION_XML dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL/MBRA.xml
 
-echo "scp ./changelog.html dmzdev.org:/home/update/public/downloads/$UPDATE.html"
-scp ./changelog.html dmzdev.org:/home/update/public/downloads/$UPDATE.html
+echo "scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$UPDATE.html"
+scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$UPDATE.html
 
-echo "scp $INSTALLER dmzdev.org:/home/update/public/downloads"
-scp $INSTALLER dmzdev.org:/home/update/public/downloads
+echo "scp $INSTALLER dmzdev.org:/home/update.dmzdev.org/public/downloads"
+scp $INSTALLER dmzdev.org:/home/update.dmzdev.org/public/downloads
 
-echo "ssh dmzdev.org sudo chown www-data.admin -R /home/update/public"
-ssh dmzdev.org sudo chown www-data.admin -R /home/update/public
+echo "ssh dmzdev.org sudo chown www-data.admin -R /home/update.dmzdev.org/public"
+ssh dmzdev.org sudo chown www-data.admin -R /home/update.dmzdev.org/public
 
-echo "ssh dmzdev.org sudo chmod -R g+w /home/update/public"
-ssh dmzdev.org sudo chmod -R g+w /home/update/public
+echo "ssh dmzdev.org sudo chmod -R g+w /home/update.dmzdev.org/public"
+ssh dmzdev.org sudo chmod -R g+w /home/update.dmzdev.org/public
 
 echo "done!"

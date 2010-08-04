@@ -86,7 +86,7 @@ dmz::MBRAPluginArchiveSupport::create_object (
 
    if (_storeObjects && _typeSet.contains_type (Type)) {
 
-      _objects.add_handle (ObjectHandle);
+      _objects.add (ObjectHandle);
    }
 }
 
@@ -108,7 +108,7 @@ dmz::MBRAPluginArchiveSupport::update_object_scalar (
          objMod->store_scalar (ObjectHandle, _pcAttrHandle, Value);
          objMod->remove_attribute (ObjectHandle, _ecAttrHandle, ObjectScalarMask);
 
-         _ecObjects.add_handle (ObjectHandle);
+         _ecObjects.add (ObjectHandle);
       }
    }
 }
