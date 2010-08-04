@@ -10,7 +10,7 @@ lmk.add_vars {
 }
 lmk.add_files ({"version.xml",}, {src="version"})
 lmk.add_files {"MBRA.app"}
-lmk.add_preqs {"scripts", "mbra", "mbraInit", }
+lmk.add_preqs {"mbra", "mbraInit", }
 
 app.build_preqs {"config",}
 
