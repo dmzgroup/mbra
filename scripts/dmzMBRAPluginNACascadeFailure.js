@@ -253,8 +253,10 @@ cascade_failure_simulation = function() {
            if (ForwardFlowState.and(linkState).bool()) {
 
               if (check_object_cascade_fail(initFailure.sub)) {
+
                  list.push(initFailure.sub);
               }
+
               visited[initFailure.sub] = true;
            }
            else if (ReverseFlowState.and(linkState).bool()) {
@@ -301,7 +303,7 @@ cascade_failure_simulation = function() {
            link = linkList[linkobj];
            if (!visited[link.attr]) {
               visited[link.attr] = true;
-              if (check_object_cascade_fail(link.attr)) {
+              if (!allowLinks || check_object_cascade_fail(link.attr)) {
                  if (allowLinks) {
                     failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
                  }
@@ -316,16 +318,20 @@ cascade_failure_simulation = function() {
                         link.superLink == current && !visited[link.sub]) {
 
                        if (check_object_cascade_fail(link.sub)) {
+//                                           self.log.warn("fail");
                           list.push(link.sub);
                        }
+//                       else {self.log.error("succeed");}
                        visited[link.sub] = true;
                     }
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.sub == current && !visited[link.superLink]) {
 
                        if (check_object_cascade_fail(link.superLink)) {
+//                                           self.log.warn("fail");
                           list.push(link.superLink);
                        }
+//                       else {self.log.error("succeed");}
                        visited[link.superLink] = true;
                     }
                  }
@@ -335,16 +341,20 @@ cascade_failure_simulation = function() {
                         link.sub == current && !visited[link.superLink]) {
 
                        if (check_object_cascade_fail(link.superLink)) {
+//                                           self.log.warn("fail");
                           list.push(link.superLink);
                        }
+//                       else {self.log.error("succeed");}
                        visited[link.superLink] = true;
                     }
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.superLink == current && !visited[link.sub]) {
 
                        if (check_object_cascade_fail(link.sub)) {
+//                                           self.log.warn("fail");
                           list.push(link.sub);
                        }
+//                       else {self.log.error("succeed");}
                        visited[link.sub] = true;
                     }
                  }
@@ -410,7 +420,14 @@ simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
          dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
-         //cascade_failure_simulation();
+//         self.log.warn("1");
+//         cascade_failure_simulation();
+//         self.log.warn("2");
+//         cascade_failure_simulation();
+//         self.log.warn("3");
+//         cascade_failure_simulation();
+//         self.log.warn("4");
+//         cascade_failure_simulation();
       }
       else if (!firstRun){
          dmz.time.cancleTimer(self, cascade_failure_simulation);

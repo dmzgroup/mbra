@@ -61,7 +61,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string># Iterations Between Graph Update</string>
+          <string># Iterations Between Updates</string>
          </property>
         </widget>
        </item>
