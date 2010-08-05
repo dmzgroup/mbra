@@ -741,7 +741,7 @@
    <visible-message name="NA_Cascade_Graph_Visible_Message"/>
    <power-law show="true">
       <stroke>
-         <color blue="15"/>
+         <color blue="1"/>
       </stroke>
    </power-law>
    <bar>

@@ -146,6 +146,7 @@ var cascade_init = function () {
      ;
 
    if (firstRun) {
+
       for (ix = 0; ix <  barCount; ix += 1) {
          bars[ix] = dmz.object.create("na_cascade_bar");
          dmz.object.counter(bars[ix],CascadeBarNumberHandle,ix+1);
