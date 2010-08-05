@@ -942,23 +942,17 @@ update_objective_graph = function () {
             Object.keys(objects).forEach(function (key) {
                calc_risk_reduced(objects[key]);
                array = objective(objects[key]);
-               self.log.warn ("a: " + array + " : " + array[0] + " " + array[1]);
                result += array[0];
-               self.log.warn ("result: " + result);
             });
          }
-         self.log.warn ("final result: " + result);
          if (result > max) {
             max = result;
          }
          list[ix] = result;
-         self.log.warn ("list["+ix+"] = "+list[ix]);
       }
       if (max > 0) {
-         self.log.warn("max: " + max);
          for (ix = 0; ix <= barCount; ix += 1) {
             list[ix] = Math.ceil(list[ix] / max * 100);
-            self.log.warn("norm["+ix+"]" + list[ix]);
          }
       }
       else {
