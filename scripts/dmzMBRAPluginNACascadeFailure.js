@@ -149,7 +149,7 @@ var cascade_init = function () {
       for (ix = 0; ix <  barCount; ix += 1) {
          bars[ix] = dmz.object.create("na_cascade_bar");
          dmz.object.counter(bars[ix],CascadeBarNumberHandle,ix+1);
-         dmz.object.counter(bars[ix],CascadeBarValueHandle,1);
+         dmz.object.counter(bars[ix],CascadeBarValueHandle,0);
          dmz.object.activate(bars[ix]);
       }
       firstRun = false;
@@ -381,19 +381,17 @@ cascade_failure_simulation = function() {
         failedConsequences = 0;
      }
 
-
+//     self.log.warn("failed: " + failedConsequences);
      cascadePDF[failedConsequences] += 1;
 //     Object.keys(cascadePDF).forEach(function (arg) {self.log.warn("pdf["+arg+"] = " + cascadePDF[arg]);});
 
      cascadeTrialCount += 1;
-//     for (counter = 0; counter < cascadePDF.length; counter += 1) {
-//        normalizedCascadePDF[counter] = cascadePDF[counter] / cascadeTrialCount;
-//     }
 
      cascadeEP[100] = cascadePDF[100] / cascadeTrialCount;
-     for (counter = 99; counter >= 0; counter -= 1) {
-           cascadeEP[counter] = (cascadePDF[counter] / cascadeTrialCount) +
-                                cascadeEP[counter + 1];
+
+     for (counter = 99; counter >= 1; counter -= 1) {
+        cascadeEP[counter] = (cascadePDF[counter] / cascadeTrialCount) +
+                             cascadeEP[counter + 1];
      }
 
      if (/*cascadeTrialCount < updateGraphDelay ||*/
@@ -409,8 +407,10 @@ var update_cascade_graph = function () {
   simulateIterCountMessage.send(dmz.data.wrapNumber(cascadeTrialCount));
 //  self.log.warn ("cascadeTrialCount: " + cascadeTrialCount + " : " + (dmz.time.getSystemTime() - startTime));
   for (ix = 0; ix < barCount; ix += 1) {
-     dmz.object.counter(bars[ix],CascadeBarValueHandle,cascadeEP[ix]*100);
-//     self.log.warn((ix) + ": " + (cascadeEP[ix]*100));
+     dmz.object.counter(bars[ix], CascadeBarValueHandle, cascadeEP[ix+1]*100);
+//     dmz.object.counter(bars[ix],CascadeBarNumberHandle,ix);
+//     dmz.object.counter(bars[ix], CascadeBarValueHandle, cascadePDF[ix] / cascadeTrialCount * 100);
+//     self.log.warn((ix+1) + ": " + (cascadeEP[ix+1]*100));
 //     dmz.object.activate(bars[ix]);
   }
 };
@@ -420,14 +420,6 @@ simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
          dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
-//         self.log.warn("1");
-//         cascade_failure_simulation();
-//         self.log.warn("2");
-//         cascade_failure_simulation();
-//         self.log.warn("3");
-//         cascade_failure_simulation();
-//         self.log.warn("4");
-//         cascade_failure_simulation();
       }
       else if (!firstRun){
          dmz.time.cancleTimer(self, cascade_failure_simulation);

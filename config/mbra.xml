@@ -42,11 +42,12 @@
          name="Save files uncompressed (MBRA 2.0 Compatible)"
          message="MBRAUncompressedFilesMessage"
       />
+      <!--
       <property type="state" name="Monetary Units Display" message="UnitsMessage">
             <state label="(millions)"/>
             <state label="(dollars)"/>
       </property>
-       
+       -->
          
    </preferences-general>
    <preferences-updates>
