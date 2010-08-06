@@ -49,12 +49,13 @@ dmz.object.destroy.observe(self, function (handle) {
       Object.keys(list).forEach(function (index) {
          link = list[index];
          if (objectList[link.superLink]) {
-            delete objectList[link.superLink][link];
+            delete objectList[link.superLink][link.linkHandle];
          }
          if (objectList[link.sub]) {
-            delete objectList[link.sub][link];
+            delete objectList[link.sub][link.linkHandle];
          }
       });
+      delete objectList[handle];
    }
 });
 
@@ -63,7 +64,7 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    var link
      ;
    if (AttrObj) {
-      link = { superLink: Super, sub: Sub, attr: AttrObj };
+      link = { superLink: Super, sub: Sub, attr: AttrObj, linkHandle: linkHandle };
       if (!objectList[Super]) {
          objectList[Super] = [];
       }

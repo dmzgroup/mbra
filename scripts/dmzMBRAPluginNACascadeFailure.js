@@ -47,12 +47,12 @@ var dmz =
    , simulateLinksMessage = dmz.message.create(
       self.config.string("simulate-allow--links-message.name",
                          "NASimulateLinksMessage"))
+   , cleanupMessage = dmz.message.create("CleanupObjectsMessage")
 
-   , objectList = []
-   , linkObjectList = []
+   , objectList = {}
+   , linkObjectList = {}
 
    , dataReset = true
-   , continueCascade = false
    , firstRun = true
    , bars = []
    , barCount = 100
@@ -74,23 +74,37 @@ dmz.object.create.observe(self, function(handle, objType) {
    }
 });
 
+var data_updated = function(objHandle) {
+   if (objHandle && (objectList[objHandle] || linkObjectList[objHandle])) {
+      dataReset = true;
+   }
+};
+
+dmz.object.scalar.observe(self, ConsequenceHandle, data_updated);
+dmz.object.scalar.observe(self, ThreatHandle, data_updated);
+dmz.object.scalar.observe(self, VulnerabilityHandle, data_updated);
+dmz.object.state.observe(self, LinkFlowHandle, data_updated);
+
 dmz.object.destroy.observe(self, function (handle) {
    var list = objectList[handle]
      , link
      ;
    if (list) {
-      Object.keys(list).forEach(function (index) {
-         link = list[index];
-         if (objectList[link.superLink]) {
-            delete objectList[link.superLink][link];
-         }
-         if (objectList[link.sub]) {
-            delete objectList[link.sub][link];
-         }
-         if (linkObjectList[link.attr]) {
-            delete linkObjectList[link.attr];
-         }
-      });
+      delete objectList[handle];
+//      Object.keys(list).forEach(function (index) {
+//         link = list[index];
+//         if (objectList[link.superLink]) {
+//            delete objectList[link.superLink][link.handle];
+//         }
+//         if (objectList[link.sub]) {
+//            delete objectList[link.sub][link.handle];
+//         }
+//         if (linkObjectList[link.attr]) {
+//            delete linkObjectList[link.attr];
+//         }
+//      });
+//      dataReset = true;
+//   }
       dataReset = true;
    }
 });
@@ -100,21 +114,23 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    var link
      ;
    if (AttrObj) {
-      link = { superLink: Super, sub: Sub, attr: AttrObj };
+      link = { superLink: Super, sub: Sub, attr: AttrObj, handle: linkHandle };
       if (!objectList[Super]) {
-         objectList[Super] = [];
+         objectList[Super] = {};
       }
       objectList[Super][linkHandle] = link;
       if (!objectList[Sub]) {
-         objectList[Sub] = [];
+         objectList[Sub] = {};
       }
       objectList[Sub][linkHandle] = link;
       linkObjectList[AttrObj] = link;
    }
    else if (objectList[Super] && objectList[Super][linkHandle] &&
                  objectList[Super][linkHandle].attr == PrevObj) {
+      delete linkObjectList[PrevObj];
       delete objectList[Super][linkHandle];
       delete objectList[Sub][linkHandle];
+
    }
    if (PrevObj && dmz.object.isObject(PrevObj)) {
       dmz.object.destroy(PrevObj);
@@ -145,6 +161,7 @@ var cascade_init = function () {
      , ix
      ;
 
+   simulateIterCountMessage.send(dmz.data.wrapNumber(0));
    if (firstRun) {
 
       for (ix = 0; ix <  barCount; ix += 1) {
@@ -169,9 +186,14 @@ var cascade_init = function () {
    count = 0;
    Object.keys(objectList).forEach(function (key) {
       handle = parseInt(key);
+//      if (!dmz.object.isObject(handle)) {
+//         self.log.warn ("Node Handle is not an object: " + handle);
+//      }
+
       threat = dmz.object.scalar(handle, ThreatHandle);
       vuln = dmz.object.scalar(handle, VulnerabilityHandle);
       pdf[count] = threat * vuln;
+//      self.log.warn ("pdf["+count+"] = " + pdf[count]);
       sumTV += pdf[count];
       objectArray[count] = handle;
       count += 1;
@@ -179,6 +201,9 @@ var cascade_init = function () {
 
    if (allowLinks) {
       Object.keys(linkObjectList).forEach(function (key) {
+//         if (!dmz.object.isObject(parseInt(key))) {
+////            self.log.warn ("Link Handle is not an object: " + parseInt(key));
+//         }
          threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
          vuln = dmz.object.scalar(linkObjectList[key].attr, VulnerabilityHandle);
          pdf[count] = threat * vuln;
@@ -190,6 +215,7 @@ var cascade_init = function () {
 
    cdf[0] = pdf[0] / sumTV;
    for (key = 1; key < pdf.length; key += 1) {
+//      self.log.warn ("cdf["+key+"] = " + cdf[key-1] + " " + pdf[key] + " / " + sumTV);
       cdf[key] = cdf[key - 1] + (pdf[key] / sumTV);
    }
 
@@ -201,6 +227,9 @@ var cascade_cdf = function () {
      , random = Math.random()
      , result = null
      ;
+
+//     self.log.warn ("cdf: " + cdf.length + " objectArray: " + objectArray.length);
+//     Object.keys(cdf).forEach (function(index) {self.log.warn("cdf["+index+"]: " + cdf[index]);});
 
    if (cdf.length == 1) {
       result = objectArray[0];
@@ -242,7 +271,7 @@ cascade_failure_simulation = function() {
      }
 
      initFailure = cascade_cdf();
-
+//     self.log.warn ("initFail: " + initFailure);
 
      if (initFailure && !objectList[initFailure]) {
 //        self.log.error("Is a link");
@@ -421,6 +450,7 @@ simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
          dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
+         //cascade_failure_simulation();
       }
       else if (!firstRun){
          dmz.time.cancleTimer(self, cascade_failure_simulation);
