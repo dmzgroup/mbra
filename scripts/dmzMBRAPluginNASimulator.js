@@ -50,24 +50,25 @@ var dmz =
    , ObjectiveTxVHandle = dmz.defs.createNamedHandle("NA_Objective_TxV")
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
-         "NA_Objective_Vulnerability")
+                                       "NA_Objective_Vulnerability")
    , simulatorMessage = dmz.message.create(
       self.config.string("simulator-message.name", "NASimulatorMessage"))
    , preventionBudgetMessage = dmz.message.create(
-      self.config.string("message.prevention-budget.name",
-                             "PreventionBudgetMessage"))
+                               self.config.string(
+                                  "message.prevention-budget.name",
+                                  "PreventionBudgetMessage"))
    , responseBudgetMessage = dmz.message.create(
       self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
    , vinfinityMessage = dmz.message.create(
       self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
    , updateObjectiveGraphMessage = dmz.message.create(
-                                      self.config.string(
-                                         "update-objective-graph-message.name",
-                                         "NA_Objective_Graph_Visible_Message"))
+                                   self.config.string(
+                                      "update-objective-graph-message.name",
+                                      "NA_Objective_Graph_Visible_Message"))
    , updateSumsMessage = dmz.message.create(
-                            self.config.string(
-                               "message.sums.name",
-                               "NA_Objective_Sums_Message"))
+                         self.config.string(
+                            "message.sums.name",
+                            "NA_Objective_Sums_Message"))
    , doRankCount = 0
    , doRank = function () {
         doRankCount = 2;
@@ -107,7 +108,7 @@ var dmz =
    , calcRiskReduced
    , receiveRank
    , workFunc
-   , timeSlice = dmz.time.setRepeatingTimer(self, workFunc)
+   , timeSlice
    , notZero = dmz.util.isNotZero
    , calcRiskInitial
    , calcVulnerability
@@ -167,6 +168,8 @@ workFunc = function () {
       doRankCount = 0;
    }
 };
+
+timeSlice = dmz.time.setRepeatingTimer(self, workFunc);
 
 calcRiskInitial = function (object) {
    var Threat = dmz.object.scalar(object, ThreatHandle)

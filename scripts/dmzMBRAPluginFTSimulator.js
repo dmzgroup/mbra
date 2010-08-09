@@ -42,8 +42,9 @@ var dmz =
    , budgetMessage = dmz.message.create(
       self.config.string("budget-message.name", "FTBudgetMessage"))
    , vinfinityMessage = dmz.message.create(
-         self.config.string("v-infinity-message.name",
-                            "FTVulnerabilityInfinityMessage"))
+                           self.config.string(
+                              "v-infinity-message.name",
+                              "FTVulnerabilityInfinityMessage"))
    , index = []
    , objects = {}
    , budget = 0
@@ -60,24 +61,45 @@ var dmz =
    , notZero = dmz.util.isNotZero
    , logDefenderTerm
    , logDefender
+   , stopWork
+   , round = Math.round
+   , getLogicState
+   , newObject
+   , updateVulnerabilityReduced
+   , buildIndex
+   , riskSub
+   , riskXor
+   , vulnerabilityAnd
+   , vulnerabilityOr
+   , vulnerabilityXor
+   , traverseFaultTree
+   , logDefenderTerm
+   , logDefender
+   , stopPlugin
+
+   , Level = []
+   , AllLevel
+
+   , startWork
    ;
 
-var Level = [];
-Level[0] = dmz.defs.lookupState("FT_Threat_Level_0");
-Level[1] = dmz.defs.lookupState("FT_Threat_Level_1");
-Level[2] = dmz.defs.lookupState("FT_Threat_Level_2");
-Level[3] = dmz.defs.lookupState("FT_Threat_Level_3");
-Level[4] = dmz.defs.lookupState("FT_Threat_Level_4");
-Level[5] = dmz.defs.lookupState("FT_Threat_Level_5");
-Level[6] = dmz.defs.lookupState("FT_Threat_Level_6");
-Level[7] = dmz.defs.lookupState("FT_Threat_Level_7");
-Level[8] = dmz.defs.lookupState("FT_Threat_Level_8");
-Level[9] = dmz.defs.lookupState("FT_Threat_Level_9");
-Level[10] = dmz.defs.lookupState("FT_Threat_Level_10");
-var AllLevel = Level[0].or(Level[1]).or(Level[2]).or(Level[3]).or(Level[4])
-   .or(Level[5]).or(Level[6]).or(Level[7]).or(Level[8]).or(Level[9]).or(Level[10]);
+(function() {
+   Level[0] = dmz.defs.lookupState("FT_Threat_Level_0");
+   Level[1] = dmz.defs.lookupState("FT_Threat_Level_1");
+   Level[2] = dmz.defs.lookupState("FT_Threat_Level_2");
+   Level[3] = dmz.defs.lookupState("FT_Threat_Level_3");
+   Level[4] = dmz.defs.lookupState("FT_Threat_Level_4");
+   Level[5] = dmz.defs.lookupState("FT_Threat_Level_5");
+   Level[6] = dmz.defs.lookupState("FT_Threat_Level_6");
+   Level[7] = dmz.defs.lookupState("FT_Threat_Level_7");
+   Level[8] = dmz.defs.lookupState("FT_Threat_Level_8");
+   Level[9] = dmz.defs.lookupState("FT_Threat_Level_9");
+   Level[10] = dmz.defs.lookupState("FT_Threat_Level_10");
+   AllLevel = Level[0].or(Level[1]).or(Level[2]).or(Level[3]).or(Level[4])
+      .or(Level[5]).or(Level[6]).or(Level[7]).or(Level[8]).or(Level[9]).or(Level[10]);
+}());
 
-var startWork = function() {
+startWork = function() {
    var vulnerability
      , A
      , B
@@ -254,15 +276,13 @@ var startWork = function() {
    reset = null;
 }
 
-var stopWork = function() {
+stopWork = function() {
    reset = null;
    dmz.time.cancleTimer(self, work);
    haveSetTimer = false;
 }
 
-var round = Math.round;
-
-var getLogicState = function(node) {
+getLogicState = function(node) {
    var logicTable = dmz.object.subLinks(node, FTLogicLinkHandle)
      , logic = OrState
      , logicState
@@ -281,7 +301,7 @@ var getLogicState = function(node) {
    return logic;
 }
 
-var newObject = function(handle) {
+newObject = function(handle) {
 
    return {
       handle: handle,
@@ -295,7 +315,7 @@ var newObject = function(handle) {
    };
 }
 
-var updateVulnerabilityReduced = function(object) {
+updateVulnerabilityReduced = function(object) {
    var value
      , state
      ;
@@ -438,7 +458,7 @@ function (objHandle, attrHandle, value) {
 	}
 });
 
-var buildIndex = function(node) {
+buildIndex = function(node) {
    var nodeList = null
      , otype
      , ref
@@ -462,7 +482,7 @@ var buildIndex = function(node) {
    }
 }
 
-var riskSub = function(objects) {
+riskSub = function(objects) {
    var result = 0;
    objects.forEach(function (key) {
       result += (key.threat * key.vreduced * key.consequence);
@@ -470,7 +490,7 @@ var riskSub = function(objects) {
    return result;
 }
 
-var riskXor = function(objects) {
+riskXor = function(objects) {
    var result = 0
      , value
      , current
@@ -491,7 +511,7 @@ var riskXor = function(objects) {
    return result;
 }
 
-var vulnerabilityAnd = function(subv) {
+vulnerabilityAnd = function(subv) {
    var result = 1;
    subv.forEach(function (key) {
       result *= key.vt;
@@ -499,7 +519,7 @@ var vulnerabilityAnd = function(subv) {
    return result;
 }
 
-var vulnerabilityOr = function(subv) {
+vulnerabilityOr = function(subv) {
    var result = 0;
    if (subv.length == 1) {
       result = subv[0].vt;
@@ -514,7 +534,7 @@ var vulnerabilityOr = function(subv) {
    return result;
 }
 
-var vulnerabilityXor = function(subv) {
+vulnerabilityXor = function(subv) {
    var result = 0
      , product
      ;
@@ -533,7 +553,7 @@ var vulnerabilityXor = function(subv) {
    return result;
 }
 
-var traverseFaultTree = function (node) {
+traverseFaultTree = function (node) {
    var result = null
      , nodeList = dmz.object.subLinks(node, FTLinkHandle)
      , threatList
@@ -586,7 +606,7 @@ var traverseFaultTree = function (node) {
    return result;
 };
 
-var logDefenderTerm = function(object) {
+logDefenderTerm = function(object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
@@ -604,7 +624,7 @@ var logDefenderTerm = function(object) {
    return result;
 }
 
-var logDefender = function(object) {
+logDefender = function(object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
@@ -651,7 +671,7 @@ vinfinityMessage.subscribe(self, function (data) {
    }
 });
 
-var stopPlugin = function() {
+stopPlugin = function() {
    dmz.time.cancleTimer(self, work);
    haveSetTimer = false;
 }

@@ -37,16 +37,19 @@ var dmz =
    , simulateMessage = dmz.message.create(
       self.config.string("simulate-message.name", "NASimulateMessage"))
    , simulateDirectionMessage = dmz.message.create(
-      self.config.string("simulate-direction-message.name",
-         "NASimulateDirectionMessage"))
+                                self.config.string(
+                                   "simulate-direction-message.name",
+                                   "NASimulateDirectionMessage"))
    , simulateDelayMessage = dmz.message.create(
       self.config.string("simulate-delay-message.name", "NASimulateDelayMessage"))
    , simulateIterCountMessage = dmz.message.create(
-      self.config.string("simulate-itercount-message.name",
-         "NASimulateIterCountMessage"))
+                                self.config.string(
+                                   "simulate-itercount-message.name",
+                                   "NASimulateIterCountMessage"))
    , simulateLinksMessage = dmz.message.create(
-      self.config.string("simulate-allow--links-message.name",
-         "NASimulateLinksMessage"))
+                            self.config.string(
+                               "simulate-allow--links-message.name",
+                               "NASimulateLinksMessage"))
    , cleanupMessage = dmz.message.create("CleanupObjectsMessage")
 
    , objectList = {}
@@ -61,6 +64,12 @@ var dmz =
    , allowLinks = true
 
    , cascadeFailureSimulation
+   , dataUpdated
+   , objectLinkList
+   , cascadeInit
+   , cascadeCDF
+   , checkObjectCascadeFail
+   , updateCascadeGraph
 
 
    , startTime = dmz.time.getSystemTime();
@@ -74,7 +83,7 @@ dmz.object.create.observe(self, function(handle, objType) {
    }
 });
 
-var dataUpdated = function(objHandle) {
+dataUpdated = function(objHandle) {
    if (objHandle && (objectList[objHandle] || linkObjectList[objHandle])) {
       dataReset = true;
    }
@@ -124,7 +133,7 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    dataReset = true;
 });
 
-var object_linkList = function (objHandle) {
+objectLinkList = function (objHandle) {
    var list = objectList[objHandle]
      , result = []
      ;
@@ -136,7 +145,7 @@ var object_linkList = function (objHandle) {
    return result;
 };
 
-var cascadeInit = function () {
+cascadeInit = function () {
    var sumTV = 0
      , pdf = []
      , threat
@@ -199,7 +208,7 @@ var cascadeInit = function () {
    dataReset = false;
 };
 
-var cascadeCDF = function () {
+cascadeCDF = function () {
    var key
      , random = Math.random()
      , result = null
@@ -217,7 +226,7 @@ var cascadeCDF = function () {
    return result;
 };
 
-var check_object_cascade_fail = function (objectHandle) {
+checkObjectCascadeFail = function (objectHandle) {
    return Math.random() <= (dmz.object.scalar(objectHandle, VulnerabilityHandle) *
                            dmz.object.scalar(objectHandle, ThreatHandle));
 };
@@ -254,7 +263,7 @@ cascadeFailureSimulation = function() {
 
            if (ForwardFlowState.and(linkState).bool()) {
 
-              if (check_object_cascade_fail(initFailure.sub)) {
+              if (checkObjectCascadeFail(initFailure.sub)) {
 
                  list.push(initFailure.sub);
               }
@@ -263,7 +272,7 @@ cascadeFailureSimulation = function() {
            }
            else if (ReverseFlowState.and(linkState).bool()) {
 
-              if (check_object_cascade_fail(initFailure.superLink)) {
+              if (checkObjectCascadeFail(initFailure.superLink)) {
                  list.push(initFailure.superLink);
               }
               visited[initFailure.superLink] = true;
@@ -273,14 +282,14 @@ cascadeFailureSimulation = function() {
 
            if (ForwardFlowState.and(linkState).bool()) {
 
-              if (check_object_cascade_fail(initFailure.superLink)) {
+              if (checkObjectCascadeFail(initFailure.superLink)) {
                  list.push(initFailure.superLink);
               }
               visited[initFailure.superLink] = true;
            }
            else if (ReverseFlowState.and(linkState).bool()) {
 
-              if (check_object_cascade_fail(initFailure.sub)) {
+              if (checkObjectCascadeFail(initFailure.sub)) {
                  list.push(initFailure.sub);
               }
               visited[initFailure.sub] = true;
@@ -295,13 +304,13 @@ cascadeFailureSimulation = function() {
 
      while (list.length > 0) {
         current = list.shift();
-        linkList = object_linkList(current);
+        linkList = objectLinkList(current);
 
         Object.keys(linkList).forEach(function (linkobj) {
            link = linkList[linkobj];
            if (!visited[link.attr]) {
               visited[link.attr] = true;
-              if (!allowLinks || check_object_cascade_fail(link.attr)) {
+              if (!allowLinks || checkObjectCascadeFail(link.attr)) {
                  if (allowLinks) {
                     failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
                  }
@@ -312,7 +321,7 @@ cascadeFailureSimulation = function() {
                     if (ForwardFlowState.and(linkState).bool() &&
                         link.superLink == current && !visited[link.sub]) {
 
-                       if (check_object_cascade_fail(link.sub)) {
+                       if (checkObjectCascadeFail(link.sub)) {
                           list.push(link.sub);
                        }
                        visited[link.sub] = true;
@@ -320,7 +329,7 @@ cascadeFailureSimulation = function() {
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.sub == current && !visited[link.superLink]) {
 
-                       if (check_object_cascade_fail(link.superLink)) {
+                       if (checkObjectCascadeFail(link.superLink)) {
                           list.push(link.superLink);
                        }
                        visited[link.superLink] = true;
@@ -331,7 +340,7 @@ cascadeFailureSimulation = function() {
                     if (ForwardFlowState.and(linkState).bool() &&
                         link.sub == current && !visited[link.superLink]) {
 
-                       if (check_object_cascade_fail(link.superLink)) {
+                       if (checkObjectCascadeFail(link.superLink)) {
                           list.push(link.superLink);
                        }
                        visited[link.superLink] = true;
@@ -339,7 +348,7 @@ cascadeFailureSimulation = function() {
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.superLink == current && !visited[link.sub]) {
 
-                       if (check_object_cascade_fail(link.sub)) {
+                       if (checkObjectCascadeFail(link.sub)) {
                           list.push(link.sub);
                        }
                        visited[link.sub] = true;
@@ -379,7 +388,7 @@ cascadeFailureSimulation = function() {
      }
 };
 
-var updateCascadeGraph = function () {
+updateCascadeGraph = function () {
   var ix
     ;
 

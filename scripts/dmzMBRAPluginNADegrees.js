@@ -8,9 +8,10 @@ var dmz =
    , LinkHandle = dmz.defs.createNamedHandle("Node_Link")
    , DegreeHandle = dmz.defs.createNamedHandle("NA_Node_Degrees")
    , list = {}
+   , updateDegrees
    ;
 
-var updateDegrees = function (handle) {
+updateDegrees = function (handle) {
    var count = 0
      , sub = dmz.object.subLinks(handle, LinkHandle)
      , superLinks

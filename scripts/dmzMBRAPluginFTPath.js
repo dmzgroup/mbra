@@ -10,9 +10,11 @@ var dmz =
    , pairs = pairs
    , work
    , list = {}
+   , updatePath
+   , findRoot
    ;
 
-var update_path = function (path, handle) {
+updatePath = function (path, handle) {
    var name = dmz.object.text(handle, FTNameHandle)
      , subList
      ;
@@ -28,16 +30,16 @@ var update_path = function (path, handle) {
    subList = dmz.object.subLinks(handle, FTLinkHandle);
    if (subList) {
       Object.keys(list).forEach(function (key) {
-         update_path(path, subList[key]);
+         updatePath(path, subList[key]);
       });
    }
 };
 
-var find_root = function (handle) {
+findRoot = function (handle) {
    var result = handle
      , superList = dmz.object.superLinks(handle, FTLinkHandle);
    if (superList) {
-      result = find_root(superList[0]);
+      result = findRoot(superList[0]);
    }
    return result;
 };
@@ -49,11 +51,11 @@ work = dmz.time.setRepeatingTimer(self, function () {
    if (list) {
       roots = {};
       Object.keys(list).forEach(function (key) {
-         root = find_root(list[key]);
+         root = findRoot(list[key]);
          roots[root] = root;
       });
       Object.keys(roots).forEach(function (key) {
-         update_path("", roots[key]);
+         updatePath("", roots[key]);
       });
       list = null;
    }
