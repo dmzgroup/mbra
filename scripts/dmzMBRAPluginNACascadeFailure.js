@@ -91,20 +91,6 @@ dmz.object.destroy.observe(self, function (handle) {
      ;
    if (list) {
       delete objectList[handle];
-//      Object.keys(list).forEach(function (index) {
-//         link = list[index];
-//         if (objectList[link.superLink]) {
-//            delete objectList[link.superLink][link.handle];
-//         }
-//         if (objectList[link.sub]) {
-//            delete objectList[link.sub][link.handle];
-//         }
-//         if (linkObjectList[link.attr]) {
-//            delete linkObjectList[link.attr];
-//         }
-//      });
-//      dataReset = true;
-//   }
       dataReset = true;
    }
 });
@@ -186,14 +172,9 @@ var cascade_init = function () {
    count = 0;
    Object.keys(objectList).forEach(function (key) {
       handle = parseInt(key);
-//      if (!dmz.object.isObject(handle)) {
-//         self.log.warn ("Node Handle is not an object: " + handle);
-//      }
-
       threat = dmz.object.scalar(handle, ThreatHandle);
       vuln = dmz.object.scalar(handle, VulnerabilityHandle);
       pdf[count] = threat * vuln;
-//      self.log.warn ("pdf["+count+"] = " + pdf[count]);
       sumTV += pdf[count];
       objectArray[count] = handle;
       count += 1;
@@ -201,9 +182,6 @@ var cascade_init = function () {
 
    if (allowLinks) {
       Object.keys(linkObjectList).forEach(function (key) {
-//         if (!dmz.object.isObject(parseInt(key))) {
-////            self.log.warn ("Link Handle is not an object: " + parseInt(key));
-//         }
          threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
          vuln = dmz.object.scalar(linkObjectList[key].attr, VulnerabilityHandle);
          pdf[count] = threat * vuln;
@@ -215,7 +193,6 @@ var cascade_init = function () {
 
    cdf[0] = pdf[0] / sumTV;
    for (key = 1; key < pdf.length; key += 1) {
-//      self.log.warn ("cdf["+key+"] = " + cdf[key-1] + " " + pdf[key] + " / " + sumTV);
       cdf[key] = cdf[key - 1] + (pdf[key] / sumTV);
    }
 
@@ -227,9 +204,6 @@ var cascade_cdf = function () {
      , random = Math.random()
      , result = null
      ;
-
-//     self.log.warn ("cdf: " + cdf.length + " objectArray: " + objectArray.length);
-//     Object.keys(cdf).forEach (function(index) {self.log.warn("cdf["+index+"]: " + cdf[index]);});
 
    if (cdf.length == 1) {
       result = objectArray[0];
@@ -271,10 +245,8 @@ cascade_failure_simulation = function() {
      }
 
      initFailure = cascade_cdf();
-//     self.log.warn ("initFail: " + initFailure);
 
      if (initFailure && !objectList[initFailure]) {
-//        self.log.error("Is a link");
         failedConsequences += dmz.object.scalar(initFailure.attr, ConsequenceHandle);
         linkState = dmz.object.state(initFailure.attr, LinkFlowHandle);
 
@@ -318,12 +290,9 @@ cascade_failure_simulation = function() {
      }
 
      else if (initFailure) {
-//        self.log.error("Is a node");
         list.push(initFailure);
         visited[initFailure] = true;
      }
-
-//     self.log.warn ("list.length = " + list.length);
 
      while (list.length > 0) {
         current = list.shift();
@@ -337,31 +306,24 @@ cascade_failure_simulation = function() {
                  if (allowLinks) {
                     failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
                  }
-//                 self.log.warn("link: " + link.attr + " state: " + dmz.object.state(link.attr,LinkFlowHandle));
                  linkState = dmz.object.state(link.attr, LinkFlowHandle);
 
-//                 self.log.warn ("linkState: " + ForwardFlowState.and(linkState).bool() +
-//                                " " + ReverseFlowState.and(linkState).bool());
                  if (failureType.and(CascadeFailDownstreamState).bool()) {
 
                     if (ForwardFlowState.and(linkState).bool() &&
                         link.superLink == current && !visited[link.sub]) {
 
                        if (check_object_cascade_fail(link.sub)) {
-//                                           self.log.warn("fail");
                           list.push(link.sub);
                        }
-//                       else {self.log.error("succeed");}
                        visited[link.sub] = true;
                     }
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.sub == current && !visited[link.superLink]) {
 
                        if (check_object_cascade_fail(link.superLink)) {
-//                                           self.log.warn("fail");
                           list.push(link.superLink);
                        }
-//                       else {self.log.error("succeed");}
                        visited[link.superLink] = true;
                     }
                  }
@@ -371,20 +333,16 @@ cascade_failure_simulation = function() {
                         link.sub == current && !visited[link.superLink]) {
 
                        if (check_object_cascade_fail(link.superLink)) {
-//                                           self.log.warn("fail");
                           list.push(link.superLink);
                        }
-//                       else {self.log.error("succeed");}
                        visited[link.superLink] = true;
                     }
                     else if (ReverseFlowState.and(linkState).bool() &&
                              link.superLink == current && !visited[link.sub]) {
 
                        if (check_object_cascade_fail(link.sub)) {
-//                                           self.log.warn("fail");
                           list.push(link.sub);
                        }
-//                       else {self.log.error("succeed");}
                        visited[link.sub] = true;
                     }
                  }
@@ -399,10 +357,7 @@ cascade_failure_simulation = function() {
         if (allowLinks || objectList[parseInt(key)]) {
            totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle);
         }
-//        self.log.warn("total = " + totalConsequences + " key: " + key);
      });
-
-//     self.log.warn("failed: " + failedConsequences + " total: " + totalConsequences);
 
      if (totalConsequences > 0) {
         failedConsequences = Math.round(failedConsequences / totalConsequences * 100);
@@ -411,21 +366,16 @@ cascade_failure_simulation = function() {
         failedConsequences = 0;
      }
 
-//     self.log.warn("failed: " + failedConsequences);
      cascadePDF[failedConsequences] += 1;
-//     Object.keys(cascadePDF).forEach(function (arg) {self.log.warn("pdf["+arg+"] = " + cascadePDF[arg]);});
-
      cascadeTrialCount += 1;
 
      cascadeEP[100] = cascadePDF[100] / cascadeTrialCount;
-
      for (counter = 99; counter >= 1; counter -= 1) {
         cascadeEP[counter] = (cascadePDF[counter] / cascadeTrialCount) +
                              cascadeEP[counter + 1];
      }
 
-     if (/*cascadeTrialCount < updateGraphDelay ||*/
-         (cascadeTrialCount % updateGraphDelay == 0)) {
+     if (cascadeTrialCount % updateGraphDelay == 0) {
         update_cascade_graph();
      }
 };
@@ -435,13 +385,10 @@ var update_cascade_graph = function () {
     ;
 
   simulateIterCountMessage.send(dmz.data.wrapNumber(cascadeTrialCount));
-//  self.log.warn ("cascadeTrialCount: " + cascadeTrialCount + " : " + (dmz.time.getSystemTime() - startTime));
   for (ix = 0; ix < barCount; ix += 1) {
      dmz.object.counter(bars[ix], CascadeBarValueHandle, cascadeEP[ix+1]*100);
-//     dmz.object.counter(bars[ix],CascadeBarNumberHandle,ix);
 //     dmz.object.counter(bars[ix], CascadeBarValueHandle, cascadePDF[ix] / cascadeTrialCount * 100);
-//     self.log.warn((ix+1) + ": " + (cascadeEP[ix+1]*100));
-//     dmz.object.activate(bars[ix]);
+//     self.log.warn((ix+1) + ": " + (cascadeEP[ix+1]*100))
   }
 };
 
@@ -468,8 +415,6 @@ simulateLinksMessage.subscribe(self, function (data) {
       allowLinks = dmz.data.unwrapBoolean(data);
       dataReset = true;
    }
-//   dmz.time.cancleTimer(self, cascade_failure_simulation);
-//   dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
 });
 
 simulateDirectionMessage.subscribe(self, function (data) {
@@ -480,7 +425,5 @@ simulateDirectionMessage.subscribe(self, function (data) {
       else if (stateString == "Downstream") { failureType = CascadeFailDownstreamState; }
       else { failureType = CascadeFailBothState; }
       dataReset = true;
-//      dmz.time.cancleTimer(self, cascade_failure_simulation);
-//      dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
    }
 });
