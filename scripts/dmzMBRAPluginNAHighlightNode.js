@@ -60,7 +60,7 @@ Message.subscribe(self, function (data) {
 dmz.object.state.observe(self, function (object, attribute, value) {
    var state
      ;
-   if (value.contains(HighlightState) && Handle !== object) {
+   if (value.contains(HighlightState) && (Handle !== object)) {
       state = dmz.object.state(object);
       if (state.bool()) {
          state = state.unset(HighlightState);

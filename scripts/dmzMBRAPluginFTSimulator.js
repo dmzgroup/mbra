@@ -41,10 +41,11 @@ var dmz =
       self.config.string("simulator-message.name", "FTSimulatorMessage"))
    , budgetMessage = dmz.message.create(
       self.config.string("budget-message.name", "FTBudgetMessage"))
-   , vinfinityMessage = dmz.message.create(self.config.string(
-      "v-infinity-message.name", "FTVulnerabilityInfinityMessage"))
+   , vinfinityMessage = dmz.message.create(
+         self.config.string("v-infinity-message.name",
+                            "FTVulnerabilityInfinityMessage"))
    , index = []
-   , objects = []
+   , objects = {}
    , budget = 0
    , maxBudget = 0
    , vinf = 0.05
@@ -54,11 +55,11 @@ var dmz =
    , work = null
    , haveSetTimer = false
    , traverseDepth = 0
-   , build_index
-   , traverse_fault_tree
-   , not_zero
-   , log_defender_term
-   , log_defender
+   , buildIndex
+   , traverseFaultTree
+   , notZero = dmz.util.isNotZero
+   , logDefenderTerm
+   , logDefender
    ;
 
 var Level = [];
@@ -73,10 +74,10 @@ Level[7] = dmz.defs.lookupState("FT_Threat_Level_7");
 Level[8] = dmz.defs.lookupState("FT_Threat_Level_8");
 Level[9] = dmz.defs.lookupState("FT_Threat_Level_9");
 Level[10] = dmz.defs.lookupState("FT_Threat_Level_10");
-var AllLevel = Level[0].or(Level[1].or(Level[2].or(Level[3].or(Level[4].or(Level[5] +
-            Level[6].or(Level[7].or(Level[8].or(Level[9].or(Level[10])))))))));
+var AllLevel = Level[0].or(Level[1]).or(Level[2]).or(Level[3]).or(Level[4])
+   .or(Level[5]).or(Level[6]).or(Level[7]).or(Level[8]).or(Level[9]).or(Level[10]);
 
-function start_work() {
+var startWork = function() {
    var vulnerability
      , A
      , B
@@ -92,14 +93,14 @@ function start_work() {
      , count
      ;
    index = [];
-   build_index(root);
-   Object.keys(index).forEach(function (key) {
-      dmz.object.scalar(index[key].handle, AllocationHandle, 0);
-      index[key].gamma = 0;
+   buildIndex(root);
+   index.forEach(function (key) {
+      dmz.object.scalar(key.handle, AllocationHandle, 0);
+      key.gamma = 0;
    });
    if (root) {
       risk = 0;
-      vulnerability = traverse_fault_tree(root);
+      vulnerability = traverseFaultTree(root);
       if (!vulnerability) {
          vulnerability = 0;
       }
@@ -108,46 +109,46 @@ function start_work() {
       dmz.object.scalar(root, VulnerabilitySumHandle, vulnerability);
       dmz.object.scalar(root, VulnerabilitySumReducedHandle, vulnerability);
    }
-   if (not_zero(budget)) {
+   if (notZero(budget)) {
       A = 0;
       B = 0;
-      Object.keys(index).forEach(function (key) {
-         if (index[key].vulnerability <= 0) {
-            index[key].vulnerability = 1;
+      index.forEach(function (key) {
+         if (key.vulnerability <= 0) {
+            key.vulnerability = 1;
          }
-         index[key].gamma = -Math.log(vinf / index[key].vulnerability);
-         if (index[key].gamma < 0) {
-            index[key].gamma = 0;
+         key.gamma = -Math.log(vinf / key.vulnerability);
+         if (key.gamma < 0) {
+            key.gamma = 0;
          }
-         A = A + log_defender_term(index[key]);
-         if (not_zero(index[key].gamma)) {
-            B = B + (index[key].cost / index[key].gamma);
+         A = A + logDefenderTerm(key);
+         if (notZero(key.gamma)) {
+            B = B + (key.cost / key.gamma);
          }
       });
       totalAllocation = 0;
       logLamda = 0;
-      if (not_zero(B)) {
+      if (notZero(B)) {
          logLamda = (-budget - A) / B;
       }
-      Object.keys(index).forEach(function (key) {
+      index.forEach(function (key) {
          C = 0;
-         if (not_zero(index[key].gamma)) {
-            C = index[key].cost / index[key].gamma;
+         if (notZero(key.gamma)) {
+            C = key.cost / key.gamma;
          }
-         D = log_defender(index[key]);
-         index[key].allocation = -C * (logLamda + D);
-         if (index[key].allocation < 0) {
-            index[key].allocation = 0;
+         D = logDefender(key);
+         key.allocation = -C * (logLamda + D);
+         if (key.allocation < 0) {
+            key.allocation = 0;
          }
-         if (index[key].allocation > index[key].cost) {
-            index[key].allocation = index[key].cost;
+         if (key.allocation > key.cost) {
+            key.allocation = key.cost;
          }
-         totalAllocation += index[key].allocation;
+         totalAllocation += key.allocation;
       });
       scale = 1;
       if (totalAllocation < budget) {
          remainder = budget - totalAllocation;
-         for (count = 0; count < index.length && not_zero(remainder); count += 1) {
+         for (count = 0; (count < index.length) && notZero(remainder); count += 1) {
             object = index[count];
             max = object.cost - object.allocation;
             if (max > remainder) {
@@ -164,15 +165,15 @@ function start_work() {
          scale = budget / totalAllocation;
       }
       totalAllocation = 0;
-      Object.keys(index).forEach(function (key) {
-         index[key].allocation *= scale;
-         totalAllocation += index[key].allocation;
-         dmz.object.scalar(index[key].handle, AllocationHandle, index[key].allocation);
+      index.forEach(function (key) {
+         key.allocation *= scale;
+         totalAllocation += key.allocation;
+         dmz.object.scalar(key.handle, AllocationHandle, key.allocation);
       });
       if (root) {
          risk = 0;
          traverseDepth = 0;
-         vulnerability = traverse_fault_tree(root);
+         vulnerability = traverseFaultTree(root);
          dmz.object.scalar(root, RiskSumReducedHandle, risk);
          dmz.object.scalar(root, VulnerabilitySumReducedHandle, vulnerability);
       }
@@ -191,7 +192,7 @@ function start_work() {
            , vulnerability
            ;
          if (reset) {
-            start_work();
+            startWork();
          }
          size = index.length;
          if (size > 1) {
@@ -214,29 +215,36 @@ function start_work() {
                if (maxAddition >= 0.01) {
                   addition = 0.01 + ((maxAddition - 0.01) * Math.random());
                   dmz.object.scalar(
-                        source.handle,
-                        AllocationHandle,
-                        source.allocation - addition);
+                     source.handle,
+                     AllocationHandle,
+                     source.allocation - addition);
                   dmz.object.scalar(
-                        target.handle,
-                        AllocationHandle,
-                        target.allocation + addition);
+                     target.handle,
+                     AllocationHandle,
+                     target.allocation + addition);
                   riskOrig = dmz.object.scalar(root, RiskSumReducedHandle);
-                  vulnerabilityOrig = dmz.object.scalar(root,
-                                                       VulnerabilitySumReducedHandle);
+                  vulnerabilityOrig = dmz.object.scalar(
+                     root,
+                     VulnerabilitySumReducedHandle);
                   risk = 0;
                   traverseDepth = 0;
-                  vulnerability = traverse_fault_tree(root);
+                  vulnerability = traverseFaultTree(root);
                   if (riskOrig < risk) {
-                     dmz.object.scalar(source.handle, AllocationHandle,
-                                        sourceAllocation);
-                     dmz.object.scalar(target.handle, AllocationHandle,
-                                        targetAllocation);
+                     dmz.object.scalar(
+                        source.handle,
+                        AllocationHandle,
+                        sourceAllocation);
+                     dmz.object.scalar(
+                        target.handle,
+                        AllocationHandle,
+                        targetAllocation);
                   }
                   else {
                      dmz.object.scalar(root, RiskSumReducedHandle, risk);
                      dmz.object.scalar(
-                        root, VulnerabilitySumReducedHandle, vulnerability);
+                        root,
+                        VulnerabilitySumReducedHandle,
+                        vulnerability);
                   }
                }
             }
@@ -246,22 +254,15 @@ function start_work() {
    reset = null;
 }
 
-function stop_work() {
+var stopWork = function() {
    reset = null;
    dmz.time.cancleTimer(self, work);
    haveSetTimer = false;
 }
 
+var round = Math.round;
 
-var not_zero = function (value) {
-   return dmz.util.isNotZero(value);
-};
-
-function round(value) {
-   return Math.round(value);
-}
-
-function get_logic_state(node) {
+var getLogicState = function(node) {
    var logicTable = dmz.object.subLinks(node, FTLogicLinkHandle)
      , logic = OrState
      , logicState
@@ -280,7 +281,7 @@ function get_logic_state(node) {
    return logic;
 }
 
-function new_object(handle) {
+var newObject = function(handle) {
 
    return {
       handle: handle,
@@ -294,7 +295,7 @@ function new_object(handle) {
    };
 }
 
-function update_vulnerability_reduced(object) {
+var updateVulnerabilityReduced = function(object) {
    var value
      , state
      ;
@@ -343,7 +344,7 @@ dmz.object.create.observe(self, function (objHandle, objType) {
      , stateMultiplier = 1
      ;
    if (objType.isOfType(ThreatType)) {
-      objects[objHandle] = new_object(objHandle);
+      objects[objHandle] = newObject(objHandle);
 		reset = true;
    } else if (objType.isOfType(ComponentType)) {
       reset = true;
@@ -357,7 +358,7 @@ dmz.object.destroy.observe(self, function (objHandle) {
          reset = true;
       }
       else if (dmz.object.type(objHandle) &&
-               dmz.object.type(objHandle).isOfType(ComponentType)) {
+            dmz.object.type(objHandle).isOfType(ComponentType)) {
          reset = true;
       }
       if (objHandle == root) {
@@ -397,7 +398,7 @@ dmz.object.scalar.observe(self, EliminationHandle,
 function (objHandle, attrHandle, value) {
    if (objects[objHandle]) {
 		objects[objHandle].cost = value;
-      update_vulnerability_reduced(objects[objHandle]);
+      updateVulnerabilityReduced(objects[objHandle]);
 		reset = true;
 	}
 });
@@ -406,7 +407,7 @@ dmz.object.scalar.observe(self, ConsequenceHandle,
 function (objHandle, attrHandle, value) {
    if (objects[objHandle]) {
 		objects[objHandle].consequence = value;
-      update_vulnerability_reduced(objects[objHandle]);
+      updateVulnerabilityReduced(objects[objHandle]);
 		reset = true;
 	}
 });
@@ -414,7 +415,7 @@ function (objHandle, attrHandle, value) {
 dmz.object.scalar.observe(self, ThreatHandle, function (objHandle, attrHandle, value) {
    if (objects[objHandle]) {
 		objects[objHandle].threat = value;
-      update_vulnerability_reduced(objects[objHandle]);
+      updateVulnerabilityReduced(objects[objHandle]);
 		reset = true;
 	}
 });
@@ -423,7 +424,7 @@ dmz.object.scalar.observe(self, VulnerabilityHandle,
 function (objHandle, attrHandle, value) {
    if (objects[objHandle]) {
 		objects[objHandle].vulnerability = value;
-      update_vulnerability_reduced(objects[objHandle]);
+      updateVulnerabilityReduced(objects[objHandle]);
 		reset = true;
 	}
 });
@@ -433,11 +434,11 @@ function (objHandle, attrHandle, value) {
 	var object = objects[objHandle];
    if (object) {
 		object.allocation = value;
-      update_vulnerability_reduced(objects[objHandle]);
+      updateVulnerabilityReduced(objects[objHandle]);
 	}
 });
 
-function build_index(node) {
+var buildIndex = function(node) {
    var nodeList = null
      , otype
      , ref
@@ -446,44 +447,43 @@ function build_index(node) {
       nodeList = dmz.object.subLinks(node, FTLinkHandle);
    }
    if (nodeList) {
-      Object.keys(nodeList).forEach(function (key) {
-         otype = dmz.object.type(nodeList[key]);
+      nodeList.forEach(function (key) {
+         otype = dmz.object.type(key);
          if (otype.isOfType(ThreatType)) {
-            ref = objects[nodeList[key]];
+            ref = objects[key];
             if (ref) {
                index.push(ref);
             }
          }
          else if (otype.isOfType(ComponentType)) {
-            build_index(nodeList[key]);
+            buildIndex(key);
          }
       });
    }
 }
 
-function risk_sub(objects) {
+var riskSub = function(objects) {
    var result = 0;
-   Object.keys(objects).forEach(function (key) {
-      result += (objects[key].threat * objects[key].vreduced *
-                 objects[key].consequence);
+   objects.forEach(function (key) {
+      result += (key.threat * key.vreduced * key.consequence);
    });
    return result;
 }
 
-function risk_xor(objects) {
+var riskXor = function(objects) {
    var result = 0
      , value
      , current
      ;
-   Object.keys(objects).forEach(function (ikey) {
+   objects.forEach(function (ikey) {
       value = 1;
-      current = objects[ikey];
-      Object.keys(objects).forEach(function (jkey) {
+      current = ikey;
+      objects.forEach(function (jkey) {
          if (ikey != jkey) {
-            value *= (1 - (objects[jkey].threat * objects[jkey].vreduced));
+            value *= (1 - (jkey.threat * jkey.vreduced));
          }
          else {
-            value *= objects[jkey].vreduced;
+            value *= jkey.vreduced;
          }
       });
       result = result + (value * current.consequence);
@@ -491,41 +491,41 @@ function risk_xor(objects) {
    return result;
 }
 
-function vulnerability_and(subv) {
+var vulnerabilityAnd = function(subv) {
    var result = 1;
-   Object.keys(subv).forEach(function (key) {
-      result *= subv[key].vt;
+   subv.forEach(function (key) {
+      result *= key.vt;
    });
    return result;
 }
 
-function vulnerability_or(subv) {
+var vulnerabilityOr = function(subv) {
    var result = 0;
    if (subv.length == 1) {
       result = subv[0].vt;
    }
    else if (subv.length > 1) {
       result = 1;
-      Object.keys(subv).forEach(function (key) {
-         result *= (1 - subv[key].vt);
+      subv.forEach(function (key) {
+         result *= (1 - key.vt);
       });
       result = 1 - result;
    }
    return result;
 }
 
-function vulnerability_xor(subv) {
+var vulnerabilityXor = function(subv) {
    var result = 0
      , product
      ;
-   Object.keys(subv).forEach(function (ikey) {
+   subv.forEach(function (ikey) {
       product = 1;
-      Object.keys(subv).forEach(function (jkey) {
+      subv.forEach(function (jkey) {
          if (jkey != ikey) {
-            product *= (1 - subv[jkey].vt);
+            product *= (1 - jkey.vt);
          }
          else {
-            product *= subv[jkey].vreduced;
+            product *= jkey.vreduced;
          }
       });
       result += product;
@@ -533,7 +533,7 @@ function vulnerability_xor(subv) {
    return result;
 }
 
-var traverse_fault_tree = function (node) {
+var traverseFaultTree = function (node) {
    var result = null
      , nodeList = dmz.object.subLinks(node, FTLinkHandle)
      , threatList
@@ -549,36 +549,36 @@ var traverse_fault_tree = function (node) {
    if (nodeList.length > 0) {
       threatList = [];
       subv = [];
-      Object.keys(nodeList).forEach(function (key) {
-         otype = dmz.object.type(nodeList[key]);
+      nodeList.forEach(function (key) {
+         otype = dmz.object.type(key);
          if (otype.isOfType(ThreatType)) {
-            ref = objects[nodeList[key]];
+            ref = objects[key];
             if (ref) {
                subv.push({ vt: ref.threat * ref.vreduced, vreduced: ref.vreduced });
                threatList.push(ref);
             }
          }
          else if (otype.isOfType(ComponentType)) {
-            value = traverse_fault_tree(nodeList[key]);
+            value = traverseFaultTree(key);
             if (value) {
                subv.push({ vt: value, vreduced: value });
             }
          }
       });
-      op = get_logic_state(node);
+      op = getLogicState(node);
       result = 0;
       switch (op) {
          case AndState:
-            risk += risk_sub(threatList);
-            result = vulnerability_and(subv);
+            risk += riskSub(threatList);
+            result = vulnerabilityAnd(subv);
             break;
          case OrState:
-            risk += risk_sub(threatList);
-            result = vulnerability_or(subv);
+            risk += riskSub(threatList);
+            result = vulnerabilityOr(subv);
             break;
          case XOrState:
-            risk += risk_xor(threatList);
-            result = vulnerability_xor(subv);
+            risk += riskXor(threatList);
+            result = vulnerabilityXor(subv);
             break;
          default: self.log.error("Unknown logic operator: " + op); break;
       }
@@ -586,12 +586,12 @@ var traverse_fault_tree = function (node) {
    return result;
 };
 
-function log_defender_term(object) {
+var logDefenderTerm = function(object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
       result = object.cost / result;
-      if (object.gamma > 0 && result > 0) {
+      if ((object.gamma > 0) && (result > 0)) {
          result = (object.cost / object.gamma) * Math.log(result);
       }
       else {
@@ -604,7 +604,7 @@ function log_defender_term(object) {
    return result;
 }
 
-function log_defender(object) {
+var logDefender = function(object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
@@ -619,10 +619,10 @@ function log_defender(object) {
 simMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
-         start_work();
+         startWork();
       }
       else {
-         stop_work();
+         stopWork();
       }
    }
 });
@@ -651,6 +651,7 @@ vinfinityMessage.subscribe(self, function (data) {
    }
 });
 
-function stop_plugin() {
-   dmz.time.cancleTimer(self, work); haveSetTimer = false;
+var stopPlugin = function() {
+   dmz.time.cancleTimer(self, work);
+   haveSetTimer = false;
 }

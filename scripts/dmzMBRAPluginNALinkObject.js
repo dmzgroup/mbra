@@ -3,7 +3,7 @@ var dmz =
       , defs: require("dmz/runtime/definitions")
       }
    , LinkHandle = dmz.defs.createNamedHandle("Node_Link")
-   , objectList = []
+   , objectList = {}
    ;
 
 // Keep track of links, link labels, and the objects that are represented by link labels
@@ -66,18 +66,18 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    if (AttrObj) {
       link = { superLink: Super, sub: Sub, attr: AttrObj, linkHandle: linkHandle };
       if (!objectList[Super]) {
-         objectList[Super] = [];
+         objectList[Super] = {};
       }
       objectList[Super][linkHandle] = link;
       if (!objectList[Sub]) {
-         objectList[Sub] = [];
+         objectList[Sub] = {};
       }
       objectList[Sub][linkHandle] = link;
 
       update_object_position(Super);
    }
    else if (objectList[Super] && objectList[Super][linkHandle] &&
-                 objectList[Super][linkHandle].attr == PrevObj) {
+         objectList[Super][linkHandle].attr == PrevObj) {
       delete objectList[Super][linkHandle];
       delete objectList[Sub][linkHandle];
    }

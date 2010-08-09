@@ -7,10 +7,10 @@ var dmz =
    , NodeLinkType = dmz.objectType.lookup("na_link_attribute")
    , LinkHandle = dmz.defs.createNamedHandle("Node_Link")
    , DegreeHandle = dmz.defs.createNamedHandle("NA_Node_Degrees")
-   , list = []
+   , list = {}
    ;
 
-var update_degrees = function (handle) {
+var updateDegrees = function (handle) {
    var count = 0
      , sub = dmz.object.subLinks(handle, LinkHandle)
      , superLinks
@@ -42,18 +42,18 @@ dmz.object.destroy.observe(self, function (handle) {
 
 dmz.object.link.observe(self, LinkHandle, function (link, attr, superLink, sub) {
    if (list[superLink]) {
-      update_degrees(superLink);
+      updateDegrees(superLink);
    }
    if (list[sub]) {
-      update_degrees(sub);
+      updateDegrees(sub);
    }
 });
 
 dmz.object.unlink.observe(self, LinkHandle, function (link, attr, superLink, sub) {
    if (list[superLink]) {
-      update_degrees(superLink);
+      updateDegrees(superLink);
    }
    if (list[sub]) {
-      update_degrees(sub);
+      updateDegrees(sub);
    }
 });

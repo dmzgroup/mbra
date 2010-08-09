@@ -6,6 +6,8 @@ var dmz =
       , message: require("dmz/runtime/messaging")
       }
    , NodeType = dmz.objectType.lookup("na_node")
+   , nanpHandle = dmz.defs.createNamedHandle("NetworkAnalysisNodeProperties")
+   , nalpHandle = dmz.defs.createNamedHandle("NetworkAnalysisLinkProperties")
    //, NodeType = dmz.objectType.lookup("na_node")
    , MsgType = dmz.message.create(
       self.config.string("edit.name","EditObjectAttributesMessage"))
@@ -25,16 +27,13 @@ MsgType.subscribe (self,function (data) {
       var handle = data.handle("object", 0);
       if (dmz.object.isObject (handle)) {
          if (dmz.object.type(handle).isOfType(NodeType)) {
-            nanpHandle = dmz.defs.createNamedHandle("NetworkAnalysisNodeProperties");
             MsgType.send(nanpHandle, data);
          }
          else {
-            nalpHandle = dmz.defs.createNamedHandle("NetworkAnalysisLinkProperties");
             MsgType.send(nalpHandle, data);
          }
       }
       else if (dmz.object.isLink (handle)) {
-         nalpHandle = dmz.defs.createNamedHandle("NetworkAnalysisLinkProperties");
          MsgType.send(nalpHandle, data);
       }
    }

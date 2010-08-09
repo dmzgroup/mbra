@@ -46,6 +46,7 @@ message.subscribe(self, function receive (data) {
       if (dmz.object.isObject (handle)) {
          dmz.object.activate (handle);
          dmz.undo.stopRecord (undoHandle);
-      } else { dmz.undo.abortRecord (undoHandle); }
+      }
+      else { dmz.undo.abortRecord (undoHandle); }
    }
 });

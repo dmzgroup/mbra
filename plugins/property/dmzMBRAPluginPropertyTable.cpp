@@ -604,6 +604,7 @@ dmz::MBRAPluginPropertyTable::receive_message (
          const String Var = _convert.to_string (InData);
          _sub.store (Type.get_name (), Var);
       }
+
       _update_horizontal_headers ();
       _model.setHorizontalHeaderLabels (_qLabelList);
    }
@@ -876,8 +877,9 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
             }
 
             count++;
-            _labelList.add (name.get_buffer ());
+            _labelList.add (name);
          }
+
          else { delete pe; pe = 0; }
       }
    }
@@ -885,6 +887,18 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
    _model.setHorizontalHeaderLabels (_qLabelList);
 }
 
+void
+dmz::MBRAPluginPropertyTable::_update_horizontal_headers () {
+
+   _qLabelList.clear ();
+   if (_labelList.get_count () > 0) {
+      StringContainerIterator strIt;
+      String value;
+      while (_labelList.get_next (strIt, value)) {
+         _qLabelList << to_qstring (_sub.convert (value));
+      }
+   }
+}
 
 void
 dmz::MBRAPluginPropertyTable::_init (Config &local) {
@@ -951,22 +965,7 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
          context);
 
    subscribe_to_message (_unitsMessage);
-
 }
-
-void
-dmz::MBRAPluginPropertyTable::_update_horizontal_headers () {
-
-   _qLabelList.clear ();
-   if (_labelList.get_count () > 0) {
-      StringContainerIterator strIt;
-      String value;
-      while (_labelList.get_next (strIt, value)) {
-         _qLabelList << to_qstring (_sub.convert (value));
-      }
-   }
-}
-
 
 extern "C" {
 

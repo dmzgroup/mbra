@@ -729,7 +729,6 @@ dmz::MBRAPluginPropertyEditor::receive_message (
 
          const String Var = _convert.to_string (InData);
          _sub.store (Type.get_name (), Var);
-
       }
    }
 }

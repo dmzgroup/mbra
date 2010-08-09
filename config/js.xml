@@ -24,12 +24,6 @@
    <instance name="dmzMBRAPluginFTSimulator"/>
    <instance name="dmzMBRAPluginFTPath"/>
    <instance name="dmzMBRAPluginNACascadeFailure"/>
-   
-   <!--
-
-   <instance name="dmzMBRAPluginCreateLinkedFaultTree"/>
-   -->
-   
 </javascript>
 </dmz>
 

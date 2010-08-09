@@ -61,24 +61,27 @@ var dmz =
    , vinfinityMessage = dmz.message.create(
       self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
    , updateObjectiveGraphMessage = dmz.message.create(
-      self.config.string("update-objective-graph-message.name",
-                          "NA_Objective_Graph_Visible_Message"))
+                                      self.config.string(
+                                         "update-objective-graph-message.name",
+                                         "NA_Objective_Graph_Visible_Message"))
    , updateSumsMessage = dmz.message.create(
-      self.config.string("message.sums.name", "NA_Objective_Sums_Message"))
+                            self.config.string(
+                               "message.sums.name",
+                               "NA_Objective_Sums_Message"))
    , doRankCount = 0
-   , do_rank = function () {
-      doRankCount = 2;
-   }
+   , doRank = function () {
+        doRankCount = 2;
+     }
    , doGraphCount = 0
-   , do_graph = function () {
-      doGraphCount = 2;
-   }
-   , objects = []
-   , calc_objective_none = function (object) {
-      dmz.object.text(object, LabelHandle, "");
-      return [1, 1];
-   }
-   , objective = calc_objective_none
+   , doGraph = function () {
+        doGraphCount = 2;
+     }
+   , objects = {}
+   , calcObjectiveNone = function (object) {
+        dmz.object.text(object, LabelHandle, "");
+        return [1, 1];
+     }
+   , objective = calcObjectiveNone
    , weightList = []
    , preventionBudget = 0
    , maxPreventionBudget = 0
@@ -96,12 +99,46 @@ var dmz =
    , origSum = 0
    , updateGraph = false
    , rankLimit = self.config.number("rank.limit", 9)
+   , EmptyMask = dmz.mask.create()
 
-   , update_objective_graph
-   , weigh_object
-   , allocate_prevention_budget
-   , calc_risk_reduced
-   , receive_rank
+   , updateObjectiveGraph
+   , weighObject
+   , allocatePreventionBudget
+   , calcRiskReduced
+   , receiveRank
+   , workFunc
+   , timeSlice = dmz.time.setRepeatingTimer(self, workFunc)
+   , notZero = dmz.util.isNotZero
+   , calcRiskInitial
+   , calcVulnerability
+   , calcRiskReduced
+   , formatResult
+   , calcObjectiveRisk
+   , calcObjectiveTxV
+   , calcObjectiveThreat
+   , calcObjectiveVulnerability
+   , calcObjectiveConsequence
+   , weightDegrees
+   , linkReachable
+   , allLinksFlow
+   , isSink
+   , addToNodeBetweennessCounter
+   , addToLinkBetweennessCounter
+   , findBetweenness
+   , weightBetweenness
+   , updateHeight
+   , findHeight
+   , weightHeight
+   , weightContagious
+   , weighObject
+   , logDefenderTerm
+   , logDefender
+   , allocatePreventionBudget
+   , rankObject
+   , receiveRank
+   , receiveHide
+   , updateSimulatorFlag
+   , updateObjectScalar
    ;
 
 (function () {
@@ -114,30 +151,24 @@ var dmz =
    }
 }());
 
-var work_func = function () {
+workFunc = function () {
    if (doGraphCount > 1) {
       doGraphCount -= 1;
    }
    else if (doGraphCount == 1) {
-      update_objective_graph();
+      updateObjectiveGraph();
       doGraphCount = 0;
    }
    if (doRankCount > 1) {
       doRankCount -= 1;
    }
    else if (doRankCount == 1) {
-      receive_rank();
+      receiveRank();
       doRankCount = 0;
    }
 };
 
-var timeSlice = dmz.time.setRepeatingTimer(self, work_func);
-
-var not_zero = function (value) {
-   return dmz.util.isNotZero(value);
-};
-
-var calc_risk_initial = function (object) {
+calcRiskInitial = function (object) {
    var Threat = dmz.object.scalar(object, ThreatHandle)
      , Vulnerability = dmz.object.scalar(object, VulnerabilityHandle)
      , Consequence = dmz.object.scalar(object, ConsequenceHandle)
@@ -153,7 +184,7 @@ var calc_risk_initial = function (object) {
    }
 };
 
-var calc_vulnerability = function (object) {
+calcVulnerability = function (object) {
    var result = 0
      , Allocation = dmz.object.scalar(object, PreventionAllocationHandle)
      , Vulnerability = dmz.object.scalar(object, VulnerabilityHandle)
@@ -165,19 +196,19 @@ var calc_vulnerability = function (object) {
    }
    Cost = dmz.object.scalar(object, PreventionCostHandle);
    Gamma = dmz.object.scalar(object, GammaHandle);
-   if (Gamma && not_zero(Gamma) && Vulnerability && (Vulnerability > 0) &&
-         Cost && (Cost > 0) && not_zero(Cost) &&
-         Allocation && not_zero(Allocation)) {
+   if (Gamma && notZero(Gamma) && Vulnerability && (Vulnerability > 0) &&
+         Cost && (Cost > 0) && notZero(Cost) &&
+         Allocation && notZero(Allocation)) {
       result = Vulnerability * Math.exp(-Gamma * Allocation / Cost);
    }
    dmz.object.scalar(object, VulnerabilityReducedHandle, result);
    return result;
 };
 
-var calc_risk_reduced = function (object) {
+calcRiskReduced = function (object) {
    var result = 0
      , Threat = dmz.object.scalar(object, ThreatHandle)
-     , Vulnerability = calc_vulnerability(object)
+     , Vulnerability = calcVulnerability(object)
      , Consequence = dmz.object.scalar(object, ConsequenceHandle)
      ;
    if (Threat && Vulnerability && Consequence) {
@@ -187,11 +218,11 @@ var calc_risk_reduced = function (object) {
    return result;
 };
 
-var format_result = function (value) {
+formatResult = function (value) {
    return "" + Math.round(value * 100) + "%";
 };
 
-var calc_objective_risk = function (object) {
+calcObjectiveRisk = function (object) {
    var result = dmz.object.scalar(object, RiskReducedHandle)
      , orig = dmz.object.scalar(object, RiskInitialHandle)
      ;
@@ -204,27 +235,7 @@ var calc_objective_risk = function (object) {
    return [result, orig];
 };
 
-var calc_objective_contagiousness = function (object) {
-   var result = 0
-     , orig = 0
-     , Threat = dmz.object.scalar(object, ThreatHandle)
-     , VulnerabilityReduced = dmz.object.scalar(object, VulnerabilityReducedHandle)
-     , Vulnerability = dmz.object.scalar(object, VulnerabilityHandle)
-     , Degrees = dmz.object.scalar(object, DegreeHandle)
-     ;
-   if (Threat && VulnerabilityReduced && Degrees) {
-      result = Threat * VulnerabilityReduced * Degrees;
-   }
-   if (Threat && Vulnerability && Degrees) {
-      orig = Threat * Vulnerability * Degrees;
-   }
-   if (visible) {
-      dmz.object.text(object, LabelHandle, "Contagiousness = " + result.toFixed(2));
-   }
-   return [result, orig];
-};
-
-var calc_objective_txv = function (object) {
+calcObjectiveTxV = function (object) {
    var result = 0
      , orig = 0
      , Threat = dmz.object.scalar(object, ThreatHandle)
@@ -238,24 +249,24 @@ var calc_objective_txv = function (object) {
       orig = Threat * Vulnerability;
    }
    if (visible) {
-      dmz.object.text(object, LabelHandle, "T x V = " + format_result(result));
+      dmz.object.text(object, LabelHandle, "T x V = " + formatResult(result));
    }
    return [result, orig];
 };
 
-var calc_objective_threat = function (object) {
+calcObjectiveThreat = function (object) {
    var result = dmz.object.scalar(object, ThreatHandle)
      ;
    if (!result) {
       result = 0;
    }
    if (visible) {
-      dmz.object.text(object, LabelHandle, "Threat = " + format_result(result));
+      dmz.object.text(object, LabelHandle, "Threat = " + formatResult(result));
    }
    return [result, result];
 };
 
-var calc_objective_vulnerability = function (object) {
+calcObjectiveVulnerability = function (object) {
    var result = dmz.object.scalar(object, VulnerabilityReducedHandle)
      , orig = dmz.object.scalar(object, VulnerabilityHandle)
      ;
@@ -264,12 +275,12 @@ var calc_objective_vulnerability = function (object) {
    }
    if (visible) {
       dmz.object.text(object, LabelHandle,
-                       "Vulnerability = " + format_result(result));
+                       "Vulnerability = " + formatResult(result));
    }
    return [result, orig];
 };
 
-var calc_objective_consequence = function (object) {
+calcObjectiveConsequence = function (object) {
    var result = dmz.object.scalar(object, ConsequenceHandle)
      , str
      ;
@@ -283,7 +294,7 @@ var calc_objective_consequence = function (object) {
    return [result, result];
 };
 
-var weight_degrees = {
+weightDegrees = {
 
    setup: function () {
 
@@ -308,9 +319,7 @@ var weight_degrees = {
 
 };
 
-var EmptyMask = dmz.mask.create();
-
-var link_reachable = function (link, flowState) {
+linkReachable = function (link, flowState) {
    var result = true
      , obj = dmz.object.linkAttributeObject(link)
      , state
@@ -326,7 +335,7 @@ var link_reachable = function (link, flowState) {
    return result;
 };
 
-var all_links_flow = function (superList, subList, flowState) {
+allLinksFlow = function (superList, subList, flowState) {
    var result = true
      , subBool = true
      , link
@@ -374,7 +383,7 @@ var all_links_flow = function (superList, subList, flowState) {
    return result;
 };
 
-var is_sink = function (object) {
+isSink = function (object) {
    var sinkObjList = []
      , result = false
      , sub = dmz.object.subLinks(object, LinkHandle)
@@ -382,22 +391,22 @@ var is_sink = function (object) {
      ;
    sinkObjList[0] = object;
    if (sub || superLink) {
-      if (all_links_flow(sinkObjList, sub, ReverseState) &&
-          all_links_flow(superLink, sinkObjList, ForwardState)) {
+      if (allLinksFlow(sinkObjList, sub, ReverseState) &&
+          allLinksFlow(superLink, sinkObjList, ForwardState)) {
          result = true;
       }
    }
    return result;
 };
 
-var add_to_node_betweenness_counter = function (object) {
+addToNodeBetweennessCounter = function (object) {
    var value = dmz.object.addToCounter(object, BetweennessHandle);
    if (value > maxBetweenness) {
       maxBetweenness = value;
    }
 };
 
-var add_to_link_betweenness_counter = function (link) {
+addToLinkBetweennessCounter = function (link) {
    var linkObj = dmz.object.linkAttributeObject(link)
      , value
      ;
@@ -409,7 +418,7 @@ var add_to_link_betweenness_counter = function (link) {
    }
 };
 
-var find_betweenness = function (current, target, visited) {
+findBetweenness = function (current, target, visited) {
    var found = false
      , list = []
      , item
@@ -427,12 +436,12 @@ var find_betweenness = function (current, target, visited) {
       if (subs) {
          Object.keys(subs).forEach(function (sub) {
             link = dmz.object.linkHandle(LinkHandle, item.object, subs[sub]);
-            if (link_reachable(link, ForwardState)) {
+            if (linkReachable(link, ForwardState)) {
                if (subs[sub] == target) {
                   found = true;
                   item.found = true;
-                  add_to_node_betweenness_counter(target);
-                  add_to_link_betweenness_counter(link);
+                  addToNodeBetweennessCounter(target);
+                  addToLinkBetweennessCounter(link);
                }
                else if (!visited[subs[sub]]) {
                   list.push({ object: subs[sub], link: link, parent: item });
@@ -444,12 +453,12 @@ var find_betweenness = function (current, target, visited) {
       if (supers) {
          Object.keys(supers).forEach(function (superLink) {
             link = dmz.object.linkHandle(LinkHandle, supers[superLink], item.object);
-            if (link_reachable(link, ReverseState)) {
+            if (linkReachable(link, ReverseState)) {
                if (supers[superLink] == target) {
                   found = true;
                   item.found = true;
-                  add_to_node_betweenness_counter(target);
-                  add_to_link_betweenness_counter(link);
+                  addToNodeBetweennessCounter(target);
+                  addToLinkBetweennessCounter(link);
                }
                else if (!visited[supers[superLink]]) {
                   list.push({ object: supers[superLink], link: link, parent: item});
@@ -459,19 +468,19 @@ var find_betweenness = function (current, target, visited) {
       }
    });
    if (!found && list.length > 0) {
-      find_betweenness(list, target, visited);
+      findBetweenness(list, target, visited);
       for (place = list.length - 1; place >= 0; place -= 1) {
          item = list[place];
          if (item.found) {
-            add_to_node_betweenness_counter(item.object);
-            add_to_link_betweenness_counter(item.link);
+            addToNodeBetweennessCounter(item.object);
+            addToLinkBetweennessCounter(item.link);
             item.parent.found = true;
          }
       }
    }
 };
 
-var weight_betweenness = {
+weightBetweenness = {
 
    setup: function () {
       var root
@@ -491,9 +500,9 @@ var weight_betweenness = {
                if (root != target && dmz.object.type(target).isOfType(NodeType)) {
                   list = [{object: root}];
                   visited = [];
-                  find_betweenness(list, target, visited);
+                  findBetweenness(list, target, visited);
                   if (list[0]) {
-                     add_to_node_betweenness_counter(root);
+                     addToNodeBetweennessCounter(root);
                   }
                }
             });
@@ -513,7 +522,7 @@ var weight_betweenness = {
 
 };
 
-var update_height = function (obj, level, visited) {
+updateHeight = function (obj, level, visited) {
    var result = false
      , value
      ;
@@ -534,7 +543,7 @@ var update_height = function (obj, level, visited) {
    return result;
 };
 
-var find_height = function (sink) {
+findHeight = function (sink) {
    var queue = []
      , visited = []
      , node
@@ -544,7 +553,7 @@ var find_height = function (sink) {
      , link
      ;
    queue.push(sink);
-   update_height(sink, 1, visited);
+   updateHeight(sink, 1, visited);
    while (queue.length > 0)  {
       node = queue.shift();
       height = dmz.object.counter(node, HeightHandle);
@@ -557,9 +566,9 @@ var find_height = function (sink) {
          Object.keys(subList).forEach(function (key) {
             link = dmz.object.linkHandle(LinkHandle, node, subList[key]);
             if (link) {
-               if (link_reachable(link, ReverseState)) {
-                  update_height(link, height + 1, visited);
-                  if (update_height(subList[key], height + 2, visited)) {
+               if (linkReachable(link, ReverseState)) {
+                  updateHeight(link, height + 1, visited);
+                  if (updateHeight(subList[key], height + 2, visited)) {
                      queue.push(subList[key]);
                   }
                }
@@ -571,9 +580,9 @@ var find_height = function (sink) {
          Object.keys(superList).forEach(function (key) {
             link = dmz.object.linkHandle(LinkHandle, superList[key], node);
             if (link) {
-               if (link_reachable(link, ForwardState)) {
-                  update_height(link, height + 1, visited);
-                  if (update_height(superList[key], height + 2, visited)) {
+               if (linkReachable(link, ForwardState)) {
+                  updateHeight(link, height + 1, visited);
+                  if (updateHeight(superList[key], height + 2, visited)) {
                      queue.push(superList[key]);
                   }
                }
@@ -583,7 +592,7 @@ var find_height = function (sink) {
    }
 };
 
-var weight_height = {
+weightHeight = {
 
    setup: function () {
       var sinkFound
@@ -596,9 +605,9 @@ var weight_height = {
 
       sinkFound = false;
       Object.keys(objects).forEach(function (key) {
-         if (is_sink(objects[key])) {
+         if (isSink(objects[key])) {
             sinkFound = true;
-            find_height(objects[key]);
+            findHeight(objects[key]);
          }
       });
       if (sinkFound) {
@@ -628,7 +637,7 @@ var weight_height = {
    }
 };
 
-var weight_contagious = {
+weightContagious = {
 
    setup: function () {
       maxContagious = 0;
@@ -659,7 +668,7 @@ var weight_contagious = {
    }
 };
 
-var weigh_object = function (object) {
+weighObject = function (object) {
    var value = 1;
    Object.keys(weightList).forEach(function (key) {
       value *= weightList[key].calc(object);
@@ -667,12 +676,12 @@ var weigh_object = function (object) {
    dmz.object.scalar(object, WeightHandle, value);
 };
 
-var log_defender_term = function (object) {
+logDefenderTerm = function (object) {
    var result = object.weight * object.threat * object.consequence * object.vul *
-         object.gamma;
-   if (not_zero(result)) {
+      object.gamma;
+   if (notZero(result)) {
       result = object.cost / result;
-      if (not_zero(object.gamma) && not_zero(result)) {
+      if (notZero(object.gamma) && notZero(result)) {
          result = (object.cost / object.gamma) * Math.log(result);
       }
       else {
@@ -685,10 +694,10 @@ var log_defender_term = function (object) {
    return result;
 };
 
-var log_defender = function (object) {
+logDefender = function (object) {
    var result = object.weight * object.threat * object.consequence * object.vul *
-         object.gamma;
-   if (not_zero(result) && not_zero(object.cost)) {
+      object.gamma;
+   if (notZero(result) && notZero(object.cost)) {
       result = Math.log(object.cost / result);
    }
    else {
@@ -697,7 +706,7 @@ var log_defender = function (object) {
    return result;
 };
 
-var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) {
+allocatePreventionBudget = function (handleList, budget, maxBudget, vinf) {
    var objectList
      , object
      , A
@@ -751,23 +760,23 @@ var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) 
       A = 0;
       B = 0;
       Object.keys(objectList).forEach(function (key) {
-         A = A + log_defender_term(objectList[key]);
-         if (not_zero(objectList[key].gamma)) {
+         A = A + logDefenderTerm(objectList[key]);
+         if (notZero(objectList[key].gamma)) {
             B = B + (objectList[key].cost / objectList[key].gamma);
          }
       });
       totalAllocation = 0;
       logLamda = 0;
-      if (not_zero(B)) {
+      if (notZero(B)) {
          logLamda = (-budget - A) / B;
       }
       Object.keys(objectList).forEach(function (key) {
          object = objectList[key];
          A = 0;
-         if (not_zero(objectList[key].gamma)) {
+         if (notZero(objectList[key].gamma)) {
             A = object.cost / object.gamma;
          }
-         B = log_defender(object);
+         B = logDefender(object);
          object.allocation = -A * (logLamda + B);
          if (object.allocation < 0) {
             object.allocation = 0;
@@ -782,7 +791,7 @@ var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) 
          size = objectList.length - 1;
          count = 0;
          remainder = budget - totalAllocation;
-         while (not_zero(remainder) && (count <= size))  {
+         while (notZero(remainder) && (count <= size))  {
             object = objectList[count];
             max = object.cost - object.allocation;
             if (max > remainder) {
@@ -810,7 +819,7 @@ var allocate_prevention_budget = function (handleList, budget, maxBudget, vinf) 
    }
 };
 
-var rank_object = function (object) {
+rankObject = function (object) {
    var result = dmz.object.scalar(object, WeightHandle)
      , objectiveArray
      , reduced
@@ -831,7 +840,7 @@ var rank_object = function (object) {
    return result;
 };
 
-var receive_rank = function () {
+receiveRank = function () {
    var list = []
      , state
      , object
@@ -844,9 +853,9 @@ var receive_rank = function () {
       weightList[key].setup();
    });
    Object.keys(objects).forEach(function (key) {
-      weigh_object(objects[key]);
+      weighObject(objects[key]);
    });
-   allocate_prevention_budget(objects, preventionBudget, maxPreventionBudget, vinf);
+   allocatePreventionBudget(objects, preventionBudget, maxPreventionBudget, vinf);
    reducedSum = 0;
    origSum = 0;
    Object.keys(objects).forEach(function (key) {
@@ -860,9 +869,9 @@ var receive_rank = function () {
          if (dmz.object.text(objects[key], RankHandle)) {
             dmz.object.text.remove(objects[key], RankHandle);
          }
-         calc_risk_reduced(objects[key]);
+         calcRiskReduced(objects[key]);
          object = { handle: objects[key] };
-         object.rank = rank_object(object.handle);
+         object.rank = rankObject(object.handle);
          list.push(object);
       }
    });
@@ -896,7 +905,7 @@ var receive_rank = function () {
    });
 };
 
-var receive_hide = function () {
+receiveHide = function () {
    var handle
      , state
      ;
@@ -917,7 +926,7 @@ var receive_hide = function () {
    });
 };
 
-update_objective_graph = function () {
+updateObjectiveGraph = function () {
    var max = 0
      , budgets = []
      , list = []
@@ -934,13 +943,13 @@ update_objective_graph = function () {
             weightList[key].setup();
          });
          Object.keys(objects).forEach(function (object) {
-            weigh_object(objects[object]);
+            weighObject(objects[object]);
          });
-         allocate_prevention_budget(objects, budget, maxPreventionBudget, vinf);
+         allocatePreventionBudget(objects, budget, maxPreventionBudget, vinf);
          result = 0;
          if (objective) {
             Object.keys(objects).forEach(function (key) {
-               calc_risk_reduced(objects[key]);
+               calcRiskReduced(objects[key]);
                array = objective(objects[key]);
                result += array[0];
             });
@@ -971,10 +980,10 @@ update_objective_graph = function () {
 simulatorMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
-         do_rank();
+         doRank();
       }
       else {
-         receive_hide();
+         receiveHide();
       }
    }
 });
@@ -991,7 +1000,7 @@ preventionBudgetMessage.subscribe(self, function (data, message) {
          maxPreventionBudget = 0;
       }
       if (visible) {
-         do_rank();
+         doRank();
       }
    }
 });
@@ -1002,7 +1011,7 @@ responseBudgetMessage.subscribe(self, function (data) {
       responseBudget = data.number("Budget", 0);
       maxResponseBudget = data.number("Budget", 1);
       if (visible) {
-         do_rank();
+         doRank();
       }
    }
 });
@@ -1015,7 +1024,7 @@ vinfinityMessage.subscribe(self, function (data) {
          vinf = 0.05;
       }
       if (visible) {
-         do_rank();
+         doRank();
       }
    }
 });
@@ -1023,7 +1032,7 @@ vinfinityMessage.subscribe(self, function (data) {
 updateObjectiveGraphMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       updateGraph = data.boolean("Boolean", 0);
-      update_objective_graph();
+      updateObjectiveGraph();
    }
 });
 
@@ -1032,78 +1041,77 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
          objects[handle] = handle;
          if (visible && objects[handle]) {
-            do_rank();
+            doRank();
          }
-         do_graph();
+         doGraph();
       }
    }
 });
 
-var update_object_scalar = function (handle) {
+updateObjectScalar = function (handle) {
    if (visible && objects[handle]) {
 
-      do_rank();
+      doRank();
    }
-   calc_risk_initial(handle);
-   do_graph();
+   calcRiskInitial(handle);
+   doGraph();
 };
 
-dmz.object.scalar.observe(self, ThreatHandle, update_object_scalar);
-dmz.object.scalar.observe(self, VulnerabilityHandle, update_object_scalar);
-dmz.object.scalar.observe(self, PreventionCostHandle, update_object_scalar);
-dmz.object.scalar.observe(self, ConsequenceHandle, update_object_scalar);
-dmz.object.scalar.observe(self, DegreeHandle, update_object_scalar);
+dmz.object.scalar.observe(self, ThreatHandle, updateObjectScalar);
+dmz.object.scalar.observe(self, VulnerabilityHandle, updateObjectScalar);
+dmz.object.scalar.observe(self, PreventionCostHandle, updateObjectScalar);
+dmz.object.scalar.observe(self, ConsequenceHandle, updateObjectScalar);
+dmz.object.scalar.observe(self, DegreeHandle, updateObjectScalar);
 
-
-var update_simulator_flag = function (handle, attr, value) {
+updateSimulatorFlag = function (handle, attr, value) {
    if (value) {
       if (attr == WeightDegreesHandle) {
-         weightList[WeightDegreesHandle] = weight_degrees;
+         weightList[WeightDegreesHandle] = weightDegrees;
       }
       else if (attr == WeightBetweennessHandle) {
-         weightList[WeightBetweennessHandle] = weight_betweenness;
+         weightList[WeightBetweennessHandle] = weightBetweenness;
       }
       else if (attr == WeightHeightHandle) {
-         weightList[WeightHeightHandle] = weight_height;
+         weightList[WeightHeightHandle] = weightHeight;
       }
       else if (attr == WeightContagiousHandle) {
-         weightList[WeightContagiousHandle] = weight_contagious;
+         weightList[WeightContagiousHandle] = weightContagious;
       }
       else if (attr == ObjectiveNoneHandle) {
-         objective = calc_objective_none;
+         objective = calcObjectiveNone;
       }
       else if (attr == ObjectiveRiskHandle) {
-         objective = calc_objective_risk;
+         objective = calcObjectiveRisk;
       }
       else if (attr == ObjectiveTxVHandle) {
-         objective = calc_objective_txv;
+         objective = calcObjectiveTxV;
       }
       else if (attr == ObjectiveThreatHandle) {
-         objective = calc_objective_threat;
+         objective = calcObjectiveThreat;
       }
       else if (attr == ObjectiveVulnerabilityHandle) {
-         objective = calc_objective_vulnerability;
+         objective = calcObjectiveVulnerability;
       }
-      do_graph();
+      doGraph();
    }
    else if (weightList[attr]) {
       delete weightList[attr];
-      do_graph();
+      doGraph();
    }
    if (visible) {
-      do_rank();
+      doRank();
    }
 };
 
-dmz.object.flag.observe(self, WeightDegreesHandle, update_simulator_flag);
-dmz.object.flag.observe(self, WeightBetweennessHandle, update_simulator_flag);
-dmz.object.flag.observe(self, WeightHeightHandle, update_simulator_flag);
-dmz.object.flag.observe(self, WeightContagiousHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveNoneHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveRiskHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveTxVHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveThreatHandle, update_simulator_flag);
-dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, update_simulator_flag);
+dmz.object.flag.observe(self, WeightDegreesHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, WeightBetweennessHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, WeightHeightHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, WeightContagiousHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, ObjectiveNoneHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, ObjectiveRiskHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, ObjectiveTxVHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, ObjectiveThreatHandle, updateSimulatorFlag);
+dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, updateSimulatorFlag);
 
 
 dmz.object.destroy.observe(self, function (handle) {
@@ -1113,36 +1121,36 @@ dmz.object.destroy.observe(self, function (handle) {
    }
    delete objects[handle];
    if (updateRank) {
-      do_rank();
+      doRank();
    }
-   do_graph();
+   doGraph();
 });
 
 dmz.object.link.observe(self, LinkHandle, function (link, attr, Super, sub) {
    if (visible && objects[Super]) {
-      do_rank();
+      doRank();
    }
-   do_graph();
+   doGraph();
 });
 
 dmz.object.unlink.observe(self, LinkHandle, function (link, attr, Super, sub) {
    if (visible && objects[Super]) {
-      do_rank();
+      doRank();
    }
-   do_graph();
+   doGraph();
 });
 
 dmz.object.linkAttributeObject.observe(self, LinkHandle,
 function (link, attr, Super, sub, object) {
    if (visible && object && objects[object]) {
-      do_rank();
+      doRank();
    }
-   do_graph();
+   doGraph();
 });
 
 dmz.object.state.observe(self, LinkFlowHandle, function (object) {
    if (visible && object && objects[object]) {
-      do_rank();
+      doRank();
    }
-   do_graph();
+   doGraph();
 });

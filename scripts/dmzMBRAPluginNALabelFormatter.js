@@ -11,13 +11,13 @@ var dmz =
    , LabelHandle = dmz.defs.createNamedHandle("NA_Node_Objective_Label")
    , NodeName = dmz.defs.createNamedHandle("NA_Node_Name")
    , NodeLabel = dmz.defs.createNamedHandle("NA_Node_Label")
-   , objects = []
+   , objects = {}
    , toggle = true
    ;
 
 // Update text fields for nodes and links
 
-var update_object = function (obj) {
+var updateObject = function (obj) {
    var value = "";
    if (toggle) {
       value = obj.name;
@@ -42,7 +42,7 @@ dmz.object.text.observe(self, NodeName, function (handle, attr, value) {
    var obj = objects[handle];
    if (obj) {
       obj.name = value;
-      update_object(obj);
+      updateObject(obj);
    }
 });
 
@@ -50,7 +50,7 @@ dmz.object.text.observe(self, LabelHandle, function (handle, attr, value) {
    var obj = objects[handle];
    if (obj) {
       obj.objective = value;
-      update_object(obj);
+      updateObject(obj);
    }
 });
 
@@ -58,7 +58,7 @@ message.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       toggle = data.boolean("toggle", 0);
       Object.keys(objects).forEach(function (key) {
-         update_object(objects[key]);
+         updateObject(objects[key]);
       });
    }
 });

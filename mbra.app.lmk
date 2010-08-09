@@ -41,10 +41,7 @@ app.add_data {
 
 app.add_scripts { 
    "scripts/",
-   "../js/scripts/dmz/types/mask.js",
-   "../js/scripts/dmz/types/matrix.js",
-   "../js/scripts/dmz/types/util.js",
-   "../js/scripts/dmz/types/vector.js",
+   "../js/scripts/dmz",
 }
 
 lmk.add_vars ({

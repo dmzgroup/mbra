@@ -9,7 +9,7 @@ var dmz =
    , iparis = iparis
    , pairs = pairs
    , work
-   , list = []
+   , list = {}
    ;
 
 var update_path = function (path, handle) {
@@ -47,7 +47,7 @@ work = dmz.time.setRepeatingTimer(self, function () {
      , root
      ;
    if (list) {
-      roots = [];
+      roots = {};
       Object.keys(list).forEach(function (key) {
          root = find_root(list[key]);
          roots[root] = root;
@@ -61,14 +61,14 @@ work = dmz.time.setRepeatingTimer(self, function () {
 
 dmz.object.text.observe(self, FTNameHandle, function (handle) {
    if (!list) {
-      list = [];
+      list = {};
    }
    list[handle] = handle;
 });
 
 dmz.object.link.observe(self, FTLinkHandle, function (link, attr, Super, sub) {
    if (!list) {
-      list = [];
+      list = {};
    }
    list[Super] = Super;
    list[sub] = sub;

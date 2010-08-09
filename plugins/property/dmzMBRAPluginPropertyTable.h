@@ -188,6 +188,7 @@ namespace dmz {
          typedef QList<QStandardItem *> QStandardItemList;
 
          void _create_properties (Config &list);
+         void _update_horizontal_headers ();
          void _init (Config &local);
 
          Log _log;
@@ -224,7 +225,6 @@ namespace dmz {
          Message _unitsMessage;
          StringContainer _labelList;
          QStringList _qLabelList;
-         void _update_horizontal_headers ();
 
       private:
          MBRAPluginPropertyTable ();

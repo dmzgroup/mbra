@@ -10,7 +10,7 @@ var dmz =
    , NodeLinkType = dmz.defs.createNamedHandle("Node_Link")
    , message = dmz.message.create (
       self.config.string("message.name", "DestroyObjectMessage"))
-   , objects = []
+   , objects = {}
    ;
 
 message.subscribe (self, function (data) {
@@ -29,12 +29,14 @@ message.subscribe (self, function (data) {
             undoHandle = dmz.undo.startRecord ("Delete Node");
             dmz.object.destroy (handle);
             dmz.undo.stopRecord (undoHandle);
-         } else if (dmz.object.isLink (handle)) {
+         }
+         else if (dmz.object.isLink (handle)) {
             undoHandle = dmz.undo.startRecord ("Unlink Nodes");
             dmz.object.unlink (handle);
             dmz.undo.stopRecord (undoHandle);
          }
-      } else { self.log.error ("Got null handle!"); }
+      }
+      else { self.log.error ("Got null handle!"); }
    }
 });
 

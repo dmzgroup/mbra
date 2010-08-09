@@ -103,9 +103,9 @@ dmz::MBRAPluginNASimulate::_slot_direction (int index) {
 
    String val;
 
-   if (index == 0) { val = "Bidirectional"; }
    if (index == 1) { val = "Upstream"; }
-   if (index == 2) { val = "Downstream"; }
+   else if (index == 2) { val = "Downstream"; }
+   else { val = "Bidirectional"; }
    Data data = _convertString.to_data (val);
    _simulateDirectionMessage.send (&data);
 
@@ -139,38 +139,40 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
       &_log);
 
    _simulateDirectionMessage = config_create_message (
-         "simulate-direction-message.name",
-         local,
-         "NASimulateDirectionMessage",
-         get_plugin_runtime_context (),
-         &_log);
+      "simulate-direction-message.name",
+      local,
+      "NASimulateDirectionMessage",
+      get_plugin_runtime_context (),
+      &_log);
 
    _updateDelayMessage = config_create_message (
-         "simulate-delay-message.name",
-         local,
-         "NASimulateDelayMessage",
-         get_plugin_runtime_context (),
-         &_log);
+      "simulate-delay-message.name",
+      local,
+      "NASimulateDelayMessage",
+      get_plugin_runtime_context (),
+      &_log);
 
    _updateIterationsMessage = config_create_message (
-         "simulate-itercount-message.name",
-         local,
-         "NASimulateIterCountMessage",
-         get_plugin_runtime_context (),
-         &_log);
+      "simulate-itercount-message.name",
+      local,
+      "NASimulateIterCountMessage",
+      get_plugin_runtime_context (),
+      &_log);
 
    _simulateAllowLinksMessage = config_create_message (
-         "simulate-allow-links-message.name",
-         local,
-         "NASimulateLinksMessage",
-         get_plugin_runtime_context (),
-         &_log);
+      "simulate-allow-links-message.name",
+      local,
+      "NASimulateLinksMessage",
+      get_plugin_runtime_context (),
+      &_log);
 
    subscribe_to_message (_updateIterationsMessage);
 
    connect (
-         _ui.updateDelayBox, SIGNAL (valueChanged (int)),
-         this, SLOT (_slot_delay (int)));
+      _ui.updateDelayBox,
+      SIGNAL (valueChanged (int)),
+      this,
+      SLOT (_slot_delay (int)));
 
    qwidget_config_read ("widget", local, this);
 
@@ -183,9 +185,10 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
    if (action) {
 
       connect (
-         action, SIGNAL (toggled (bool)),
-         this, SLOT (_slot_calculate (bool)));
-
+         action,
+         SIGNAL (toggled (bool)),
+         this,
+         SLOT (_slot_calculate (bool)));
    }
 
    QStringList failDirections;
@@ -194,13 +197,16 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
    _ui.failDirectionBox->insertItems (0, failDirections);
 
    connect (
-         _ui.failDirectionBox, SIGNAL (currentIndexChanged (int)),
-         this, SLOT (_slot_direction (int)));
+      _ui.failDirectionBox,
+      SIGNAL (currentIndexChanged (int)),
+      this,
+      SLOT (_slot_direction (int)));
 
    connect (
-         _ui.allowLinkFail, SIGNAL (stateChanged (int)),
-         this, SLOT (_slot_links_allow_change (int)));
-
+      _ui.allowLinkFail,
+      SIGNAL (stateChanged (int)),
+      this,
+      SLOT (_slot_links_allow_change (int)));
 }
 
 

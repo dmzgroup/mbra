@@ -38,15 +38,15 @@ var dmz =
       self.config.string("simulate-message.name", "NASimulateMessage"))
    , simulateDirectionMessage = dmz.message.create(
       self.config.string("simulate-direction-message.name",
-                            "NASimulateDirectionMessage"))
+         "NASimulateDirectionMessage"))
    , simulateDelayMessage = dmz.message.create(
       self.config.string("simulate-delay-message.name", "NASimulateDelayMessage"))
    , simulateIterCountMessage = dmz.message.create(
       self.config.string("simulate-itercount-message.name",
-                         "NASimulateIterCountMessage"))
+         "NASimulateIterCountMessage"))
    , simulateLinksMessage = dmz.message.create(
       self.config.string("simulate-allow--links-message.name",
-                         "NASimulateLinksMessage"))
+         "NASimulateLinksMessage"))
    , cleanupMessage = dmz.message.create("CleanupObjectsMessage")
 
    , objectList = {}
@@ -60,7 +60,7 @@ var dmz =
    , updateGraphDelay = 500
    , allowLinks = true
 
-   , cascade_failure_simulation
+   , cascadeFailureSimulation
 
 
    , startTime = dmz.time.getSystemTime();
@@ -74,16 +74,16 @@ dmz.object.create.observe(self, function(handle, objType) {
    }
 });
 
-var data_updated = function(objHandle) {
+var dataUpdated = function(objHandle) {
    if (objHandle && (objectList[objHandle] || linkObjectList[objHandle])) {
       dataReset = true;
    }
 };
 
-dmz.object.scalar.observe(self, ConsequenceHandle, data_updated);
-dmz.object.scalar.observe(self, ThreatHandle, data_updated);
-dmz.object.scalar.observe(self, VulnerabilityHandle, data_updated);
-dmz.object.state.observe(self, LinkFlowHandle, data_updated);
+dmz.object.scalar.observe(self, ConsequenceHandle, dataUpdated);
+dmz.object.scalar.observe(self, ThreatHandle, dataUpdated);
+dmz.object.scalar.observe(self, VulnerabilityHandle, dataUpdated);
+dmz.object.state.observe(self, LinkFlowHandle, dataUpdated);
 
 dmz.object.destroy.observe(self, function (handle) {
    var list = objectList[handle]
@@ -112,7 +112,7 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
       linkObjectList[AttrObj] = link;
    }
    else if (objectList[Super] && objectList[Super][linkHandle] &&
-                 objectList[Super][linkHandle].attr == PrevObj) {
+         objectList[Super][linkHandle].attr == PrevObj) {
       delete linkObjectList[PrevObj];
       delete objectList[Super][linkHandle];
       delete objectList[Sub][linkHandle];
@@ -136,7 +136,7 @@ var object_linkList = function (objHandle) {
    return result;
 };
 
-var cascade_init = function () {
+var cascadeInit = function () {
    var sumTV = 0
      , pdf = []
      , threat
@@ -199,7 +199,7 @@ var cascade_init = function () {
    dataReset = false;
 };
 
-var cascade_cdf = function () {
+var cascadeCDF = function () {
    var key
      , random = Math.random()
      , result = null
@@ -209,7 +209,7 @@ var cascade_cdf = function () {
       result = objectArray[0];
    }
 
-   for (key = 0; result == null && key < cdf.length; key += 1) {
+   for (key = 0; (result === null) && (key < cdf.length); key += 1) {
       if (random <= cdf[key]) {
          result = objectArray[key];
       }
@@ -222,7 +222,7 @@ var check_object_cascade_fail = function (objectHandle) {
                            dmz.object.scalar(objectHandle, ThreatHandle));
 };
 
-cascade_failure_simulation = function() {
+cascadeFailureSimulation = function() {
    var totalConsequences = 0
      , failedConsequences = 0
      , consequence = 0
@@ -241,10 +241,10 @@ cascade_failure_simulation = function() {
      ;
 
      if (dataReset) {
-        cascade_init();
+        cascadeInit();
      }
 
-     initFailure = cascade_cdf();
+     initFailure = cascadeCDF();
 
      if (initFailure && !objectList[initFailure]) {
         failedConsequences += dmz.object.scalar(initFailure.attr, ConsequenceHandle);
@@ -288,7 +288,6 @@ cascade_failure_simulation = function() {
         }
         visited[initFailure.attr] = true;
      }
-
      else if (initFailure) {
         list.push(initFailure);
         visited[initFailure] = true;
@@ -375,12 +374,12 @@ cascade_failure_simulation = function() {
                              cascadeEP[counter + 1];
      }
 
-     if (cascadeTrialCount % updateGraphDelay == 0) {
-        update_cascade_graph();
+     if ((cascadeTrialCount % updateGraphDelay) === 0) {
+        updateCascadeGraph();
      }
 };
 
-var update_cascade_graph = function () {
+var updateCascadeGraph = function () {
   var ix
     ;
 
@@ -396,12 +395,12 @@ var update_cascade_graph = function () {
 simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
-         dmz.time.setRepeatingTimer(self, cascade_failure_simulation);
-         //cascade_failure_simulation();
+         dmz.time.setRepeatingTimer(self, cascadeFailureSimulation);
+         //cascadeFailureSimulation();
       }
       else if (!firstRun){
-         dmz.time.cancleTimer(self, cascade_failure_simulation);
-         update_cascade_graph();
+         dmz.time.cancleTimer(self, cascadeFailureSimulation);
+         updateCascadeGraph();
       }
    }
 });
@@ -421,8 +420,8 @@ simulateDirectionMessage.subscribe(self, function (data) {
    var stateString;
    if (dmz.data.isTypeOf(data)) {
       stateString = data.string("String", 0);
-      if (stateString == "Upstream") { failureType = CascadeFailUpstreamState; }
-      else if (stateString == "Downstream") { failureType = CascadeFailDownstreamState; }
+      if (stateString === "Upstream") { failureType = CascadeFailUpstreamState; }
+      else if (stateString === "Downstream") { failureType = CascadeFailDownstreamState; }
       else { failureType = CascadeFailBothState; }
       dataReset = true;
    }
