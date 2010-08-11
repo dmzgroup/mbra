@@ -355,13 +355,6 @@ cascadeFailureSimulation = function () {
       failedConsequences += dmz.object.scalar(current, ConsequenceHandle);
    }
 
-//   Object.keys(visited).forEach(function (key) {
-//      if (allowLinks || objectList[parseInt(key)]) {
-//         totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle);
-//      }
-//   });
-
-
    Object.keys(objectList).forEach(function (key) {
       totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle);
    });
@@ -372,7 +365,6 @@ cascadeFailureSimulation = function () {
       });
    }
 
-//   self.log.warn ("Total failed consequences: " + failedConsequences + " Total cons: " + totalConsequences);
    if (totalConsequences > 0) {
       failedConsequences = Math.round(failedConsequences / totalConsequences * 100);
    }
@@ -380,16 +372,13 @@ cascadeFailureSimulation = function () {
       failedConsequences = 0;
    }
 
-//   self.log.warn ("Ratio: " + failedConsequences + "%");
    cascadePDF[failedConsequences] += 1;
    cascadeTrialCount += 1;
 
    cascadeEP[100] = cascadePDF[100] / cascadeTrialCount;
-//   self.log.warn ("cascadeEP[100] = " + cascadeEP[100]);
    for (counter = 99; counter >= 1; counter -= 1) {
       cascadeEP[counter] = (cascadePDF[counter] / cascadeTrialCount) +
                            cascadeEP[counter + 1];
-//      self.log.warn ("cascadeEP["+counter+"] = " + cascadeEP[counter]);
    }
 
    if ((cascadeTrialCount % updateGraphDelay) === 0) {
@@ -403,39 +392,9 @@ updateCascadeGraph = function () {
    simulateIterCountMessage.send(dmz.data.wrapNumber(cascadeTrialCount));
    for (ix = 0; ix < barCount; ix += 1) {
       dmz.object.counter(bars[ix], CascadeBarValueHandle, cascadeEP[ix + 1] * 100);
-//      if (cascadeEP[ix + 1] > 0 && Math.log(ix+1) > 0) {
-//         self.log.warn ("Q: " + (-Math.log(cascadeEP[ix + 1]) / Math.log(ix + 1)));
-//      }
-//      if (cascadeEP[ix + 1] > 0) {
-//         self.log.warn ((ix+1) + ": " + cascadeEP[ix + 1]);
-//      }
    }
-
-   var qQ = 0, sumY = 0, sumX = 0, sumXY = 0, sumX2 = 0;
-   var nN = 0;
-   var xX = 0, yY = 0;
-   for (ix = 0; ix < barCount; ix += 1) {
-
-      xX = Math.log(ix+1);
-
-      if ((cascadeEP[ix+1] *100) >= 1) {
-         yY = Math.log (cascadeEP[ix+1] * 130);
-
-         sumY += yY;
-         sumX += xX;
-         sumXY += xX*yY;
-         sumX2 += xX*xX;
-         nN += 1;
-         self.log.warn ((ix+1), ":", Math.floor(cascadeEP[ix+1] * 100) / 100 * 130, yY, sumY, sumXY, sumX2, nN);
-      }
-
-   }
-   qQ = ((nN * sumXY) - (sumX * sumY)) / ((nN * sumX2) - (sumX*sumX));
-   self.log.warn ("q:", qQ, "sY:", sumY, "sXY", sumXY);
-   self.log.warn("Q: " + qQ.toFixed(3));
 };
 
-// Temporarily start/stop based on calculation button
 simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
