@@ -42,9 +42,9 @@ var dmz =
    , budgetMessage = dmz.message.create(
       self.config.string("budget-message.name", "FTBudgetMessage"))
    , vinfinityMessage = dmz.message.create(
-                           self.config.string(
-                              "v-infinity-message.name",
-                              "FTVulnerabilityInfinityMessage"))
+        self.config.string(
+           "v-infinity-message.name",
+           "FTVulnerabilityInfinityMessage"))
    , index = []
    , objects = {}
    , budget = 0

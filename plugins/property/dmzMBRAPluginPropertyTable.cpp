@@ -883,9 +883,11 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
          else { delete pe; pe = 0; }
       }
    }
+
    _update_horizontal_headers();
    _model.setHorizontalHeaderLabels (_qLabelList);
 }
+
 
 void
 dmz::MBRAPluginPropertyTable::_update_horizontal_headers () {
@@ -899,6 +901,7 @@ dmz::MBRAPluginPropertyTable::_update_horizontal_headers () {
       }
    }
 }
+
 
 void
 dmz::MBRAPluginPropertyTable::_init (Config &local) {
