@@ -217,7 +217,7 @@ cascadeCDF = function () {
       result = objectArray[0];
    }
 
-   for (key = 0; (result == null) && (key < cdf.length); key += 1) {
+   for (key = 0; (result === null) && (key < cdf.length); key += 1) {
       if (random <= cdf[key]) {
          result = objectArray[key];
       }

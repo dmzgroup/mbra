@@ -7,7 +7,7 @@ var dmz =
       }
    , NodeType = dmz.objectType.lookup("na_node")
    , message = dmz.message.create(
-               self.config.string("toggle-message.name", "ToggleNodeLabelMessage"))
+        self.config.string("toggle-message.name", "ToggleNodeLabelMessage"))
    , LabelHandle = dmz.defs.createNamedHandle("NA_Node_Objective_Label")
    , NodeName = dmz.defs.createNamedHandle("NA_Node_Name")
    , NodeLabel = dmz.defs.createNamedHandle("NA_Node_Label")

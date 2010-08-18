@@ -19,16 +19,16 @@ var dmz =
    , ThreatHandle = dmz.defs.createNamedHandle("NA_Node_Threat")
    , VulnerabilityHandle = dmz.defs.createNamedHandle("NA_Node_Vulnerability")
    , VulnerabilityReducedHandle = dmz.defs.createNamedHandle(
-         "NA_Node_Vulnerability_Reduced")
+        "NA_Node_Vulnerability_Reduced")
    , PreventionCostHandle = dmz.defs.createNamedHandle("NA_Node_Prevention_Cost")
    , PreventionAllocationHandle = dmz.defs.createNamedHandle(
-         "NA_Node_Prevention_Allocation")
+        "NA_Node_Prevention_Allocation")
    , ConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Consequence")
    , RiskInitialHandle = dmz.defs.createNamedHandle("NA_Node_Risk_Initial")
    , RiskReducedHandle = dmz.defs.createNamedHandle("NA_Node_Risk_Reduced")
    , WeightHandle = dmz.defs.createNamedHandle("NA_Node_Weight")
    , WeightAndObjectiveHandle = dmz.defs.createNamedHandle(
-         "NA_Node_Weight_And_Objective")
+        "NA_Node_Weight_And_Objective")
    , GammaHandle = dmz.defs.createNamedHandle("NA_Node_Gamma")
    , RankHandle = dmz.defs.createNamedHandle("NA_Node_Rank")
    , DegreeHandle = dmz.defs.createNamedHandle("NA_Node_Degrees")
@@ -52,23 +52,23 @@ var dmz =
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
                                        "NA_Objective_Vulnerability")
    , simulatorMessage = dmz.message.create(
-      self.config.string("simulator-message.name", "NASimulatorMessage"))
+        self.config.string("simulator-message.name", "NASimulatorMessage"))
    , preventionBudgetMessage = dmz.message.create(
-                               self.config.string(
-                                  "message.prevention-budget.name",
-                                  "PreventionBudgetMessage"))
+        self.config.string(
+           "message.prevention-budget.name",
+           "PreventionBudgetMessage"))
    , responseBudgetMessage = dmz.message.create(
-      self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
+        self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
    , vinfinityMessage = dmz.message.create(
-      self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
+        self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
    , updateObjectiveGraphMessage = dmz.message.create(
-                                   self.config.string(
-                                      "update-objective-graph-message.name",
-                                      "NA_Objective_Graph_Visible_Message"))
+        self.config.string(
+           "update-objective-graph-message.name",
+           "NA_Objective_Graph_Visible_Message"))
    , updateSumsMessage = dmz.message.create(
-                         self.config.string(
-                            "message.sums.name",
-                            "NA_Objective_Sums_Message"))
+        self.config.string(
+           "message.sums.name",
+           "NA_Objective_Sums_Message"))
    , doRankCount = 0
    , doRank = function () {
         doRankCount = 2;
