@@ -20,8 +20,6 @@ var dmz =
 
 MsgType.subscribe (self,function (data) {
    var handle
-     , nanpHandle
-     , nalpHandle
      ;
    if (dmz.data.isTypeOf (data)) {
       var handle = data.handle("object", 0);
