@@ -879,7 +879,6 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
             count++;
             _labelList.add (name);
          }
-
          else { delete pe; pe = 0; }
       }
    }
@@ -969,6 +968,7 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
 
    subscribe_to_message (_unitsMessage);
 }
+
 
 extern "C" {
 
