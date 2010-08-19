@@ -83,7 +83,7 @@ var dmz =
    , startWork
    ;
 
-(function() {
+(function () {
    Level[0] = dmz.defs.lookupState("FT_Threat_Level_0");
    Level[1] = dmz.defs.lookupState("FT_Threat_Level_1");
    Level[2] = dmz.defs.lookupState("FT_Threat_Level_2");
@@ -99,7 +99,7 @@ var dmz =
       .or(Level[5]).or(Level[6]).or(Level[7]).or(Level[8]).or(Level[9]).or(Level[10]);
 }());
 
-startWork = function() {
+startWork = function () {
    var vulnerability
      , A
      , B
@@ -276,13 +276,13 @@ startWork = function() {
    reset = null;
 }
 
-stopWork = function() {
+stopWork = function () {
    reset = null;
    dmz.time.cancleTimer(self, work);
    haveSetTimer = false;
 }
 
-getLogicState = function(node) {
+getLogicState = function (node) {
    var logicTable = dmz.object.subLinks(node, FTLogicLinkHandle)
      , logic = OrState
      , logicState
@@ -301,7 +301,7 @@ getLogicState = function(node) {
    return logic;
 }
 
-newObject = function(handle) {
+newObject = function (handle) {
 
    return {
       handle: handle,
@@ -315,7 +315,7 @@ newObject = function(handle) {
    };
 }
 
-updateVulnerabilityReduced = function(object) {
+updateVulnerabilityReduced = function (object) {
    var value
      , state
      ;
@@ -458,7 +458,7 @@ function (objHandle, attrHandle, value) {
 	}
 });
 
-buildIndex = function(node) {
+buildIndex = function (node) {
    var nodeList = null
      , otype
      , ref
@@ -482,7 +482,7 @@ buildIndex = function(node) {
    }
 }
 
-riskSub = function(objects) {
+riskSub = function (objects) {
    var result = 0;
    objects.forEach(function (key) {
       result += (key.threat * key.vreduced * key.consequence);
@@ -490,7 +490,7 @@ riskSub = function(objects) {
    return result;
 }
 
-riskXor = function(objects) {
+riskXor = function (objects) {
    var result = 0
      , value
      , current
@@ -511,7 +511,7 @@ riskXor = function(objects) {
    return result;
 }
 
-vulnerabilityAnd = function(subv) {
+vulnerabilityAnd = function (subv) {
    var result = 1;
    subv.forEach(function (key) {
       result *= key.vt;
@@ -519,7 +519,7 @@ vulnerabilityAnd = function(subv) {
    return result;
 }
 
-vulnerabilityOr = function(subv) {
+vulnerabilityOr = function (subv) {
    var result = 0;
    if (subv.length == 1) {
       result = subv[0].vt;
@@ -534,7 +534,7 @@ vulnerabilityOr = function(subv) {
    return result;
 }
 
-vulnerabilityXor = function(subv) {
+vulnerabilityXor = function (subv) {
    var result = 0
      , product
      ;
@@ -606,7 +606,7 @@ traverseFaultTree = function (node) {
    return result;
 };
 
-logDefenderTerm = function(object) {
+logDefenderTerm = function (object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
@@ -624,7 +624,7 @@ logDefenderTerm = function(object) {
    return result;
 }
 
-logDefender = function(object) {
+logDefender = function (object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
    if (result > 0) {
@@ -671,7 +671,7 @@ vinfinityMessage.subscribe(self, function (data) {
    }
 });
 
-stopPlugin = function() {
+stopPlugin = function () {
    dmz.time.cancleTimer(self, work);
    haveSetTimer = false;
 }
