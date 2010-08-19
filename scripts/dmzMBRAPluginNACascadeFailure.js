@@ -35,21 +35,21 @@ var dmz =
    , objectArray = []
 
    , simulateMessage = dmz.message.create(
-                       self.config.string("simulate-message.name", "NASimulateMessage"))
+        self.config.string("simulate-message.name", "NASimulateMessage"))
    , simulateDirectionMessage = dmz.message.create(
-                                self.config.string(
-                                   "simulate-direction-message.name",
-                                   "NASimulateDirectionMessage"))
+        self.config.string(
+           "simulate-direction-message.name",
+           "NASimulateDirectionMessage"))
    , simulateDelayMessage = dmz.message.create(
       self.config.string("simulate-delay-message.name", "NASimulateDelayMessage"))
    , simulateIterCountMessage = dmz.message.create(
-                                self.config.string(
-                                   "simulate-itercount-message.name",
-                                   "NASimulateIterCountMessage"))
+        self.config.string(
+           "simulate-itercount-message.name",
+           "NASimulateIterCountMessage"))
    , simulateLinksMessage = dmz.message.create(
-                            self.config.string(
-                               "simulate-allow--links-message.name",
-                               "NASimulateLinksMessage"))
+        self.config.string(
+           "simulate-allow--links-message.name",
+           "NASimulateLinksMessage"))
    , cleanupMessage = dmz.message.create("CleanupObjectsMessage")
 
    , objectList = {}
@@ -302,6 +302,7 @@ cascadeFailureSimulation = function () {
 
       Object.keys(linkList).forEach(function (linkobj) {
          link = linkList[linkobj];
+
          if (!visited[link.attr]) {
             visited[link.attr] = true;
             if (!allowLinks || checkObjectCascadeFail(link.attr)) {

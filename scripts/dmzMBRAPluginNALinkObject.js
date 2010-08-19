@@ -3,6 +3,11 @@ var dmz =
       , defs: require("dmz/runtime/definitions")
       }
    , LinkHandle = dmz.defs.createNamedHandle("Node_Link")
+   , LinkFlowHandle = dmz.defs.createNamedHandle("NA_Link_Flow")
+   , ForwardFlowState = dmz.defs.lookupState("NA_Flow_Forward")
+   , ReverseFlowState = dmz.defs.lookupState("NA_Flow_Reverse")
+   , FlowStateBoth = ForwardFlowState.or(ReverseFlowState)
+
    , objectList = {}
    , updateObjectPosition
    ;
@@ -84,5 +89,8 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
    }
    if (PrevObj && dmz.object.isObject(PrevObj)) {
       dmz.object.destroy(PrevObj);
+   }
+   if (AttrObj && !dmz.object.state(AttrObj, LinkFlowHandle)) {
+      dmz.object.state(AttrObj, LinkFlowHandle, FlowStateBoth);
    }
 });
