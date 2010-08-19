@@ -252,7 +252,9 @@ cascadeFailureSimulation = function () {
    if (initFailure && !objectList[initFailure]) {
       failedConsequences += dmz.object.scalar(initFailure.attr, ConsequenceHandle);
       linkState = dmz.object.state(initFailure.attr, LinkFlowHandle);
-
+      if (!linkState) {
+         linkState = FlowStateBoth;
+      }
       if (failureType.and(CascadeFailDownstreamState).bool()) {
 
          if (ForwardFlowState.and(linkState).bool()) {
@@ -310,6 +312,9 @@ cascadeFailureSimulation = function () {
                   failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
                }
                linkState = dmz.object.state(link.attr, LinkFlowHandle);
+               if (!linkState) {
+                  linkState = FlowStateBoth;
+               }
 
                if (failureType.and(CascadeFailDownstreamState).bool()) {
 
