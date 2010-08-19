@@ -226,8 +226,9 @@ cascadeCDF = function () {
 };
 
 checkObjectCascadeFail = function (objectHandle) {
-   return Math.random() <= (dmz.object.scalar(objectHandle, VulnerabilityHandle) *
-                           dmz.object.scalar(objectHandle, ThreatHandle));
+   var result = Math.random() <= (dmz.object.scalar(objectHandle, VulnerabilityHandle) *
+                                  dmz.object.scalar(objectHandle, ThreatHandle));
+   return ((result === true) || (result === false)) ? result : false;
 };
 
 cascadeFailureSimulation = function () {
@@ -248,8 +249,8 @@ cascadeFailureSimulation = function () {
    }
 
    initFailure = cascadeCDF();
-
-   if (initFailure && !objectList[initFailure]) {
+   if (initFailure && typeof(initFailure) == "object") {
+      visited[initFailure.attr] = true;
       failedConsequences += dmz.object.scalar(initFailure.attr, ConsequenceHandle);
       linkState = dmz.object.state(initFailure.attr, LinkFlowHandle);
       if (!linkState) {
@@ -274,7 +275,7 @@ cascadeFailureSimulation = function () {
             visited[initFailure.superLink] = true;
          }
       }
-      else if (failureType.and(CascadeFailUpstreamState).bool()) {
+      if (failureType.and(CascadeFailUpstreamState).bool()) {
 
          if (ForwardFlowState.and(linkState).bool()) {
 
@@ -291,9 +292,8 @@ cascadeFailureSimulation = function () {
             visited[initFailure.sub] = true;
          }
       }
-      visited[initFailure.attr] = true;
    }
-   else if (initFailure) {
+   else if (initFailure && objectList[initFailure]) {
       list.push(initFailure);
       visited[initFailure] = true;
    }
@@ -311,6 +311,7 @@ cascadeFailureSimulation = function () {
                if (allowLinks) {
                   failedConsequences += dmz.object.scalar(link.attr, ConsequenceHandle);
                }
+
                linkState = dmz.object.state(link.attr, LinkFlowHandle);
                if (!linkState) {
                   linkState = FlowStateBoth;
@@ -335,7 +336,7 @@ cascadeFailureSimulation = function () {
                      visited[link.superLink] = true;
                   }
                }
-               else if (failureType.and(CascadeFailUpstreamState).bool()) {
+               if (failureType.and(CascadeFailUpstreamState).bool()) {
 
                   if (ForwardFlowState.and(linkState).bool() &&
                       link.sub == current && !visited[link.superLink]) {
@@ -366,7 +367,7 @@ cascadeFailureSimulation = function () {
    });
 
    if (allowLinks) {
-      Object.keys(objectLinkList).forEach(function (key) {
+      Object.keys(linkObjectList).forEach(function (key) {
          totalConsequences += dmz.object.scalar(parseInt(key), ConsequenceHandle)
       });
    }
@@ -405,7 +406,7 @@ simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
          dmz.time.setRepeatingTimer(self, cascadeFailureSimulation);
-         //cascadeFailureSimulation();
+//         cascadeFailureSimulation();
       }
       else if (!firstRun) {
          dmz.time.cancleTimer(self, cascadeFailureSimulation);
