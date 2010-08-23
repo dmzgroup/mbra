@@ -10,6 +10,9 @@ var dmz =
       }
    , ConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Consequence")
    , ThreatHandle = dmz.defs.createNamedHandle("NA_Node_Threat")
+   , ReducedVulnerabilityHandle = dmz.defs.createNamedHandle(
+        "NA_Node_Vulnerability_Reduced")
+
    , VulnerabilityHandle = dmz.defs.createNamedHandle("NA_Node_Vulnerability")
 
    , LinkFlowHandle = dmz.defs.createNamedHandle("NA_Link_Flow")
@@ -91,6 +94,7 @@ dataUpdated = function (objHandle) {
 
 dmz.object.scalar.observe(self, ConsequenceHandle, dataUpdated);
 dmz.object.scalar.observe(self, ThreatHandle, dataUpdated);
+dmz.object.scalar.observe(self, ReducedVulnerabilityHandle, dataUpdated);
 dmz.object.scalar.observe(self, VulnerabilityHandle, dataUpdated);
 dmz.object.state.observe(self, LinkFlowHandle, dataUpdated);
 
@@ -181,7 +185,8 @@ cascadeInit = function () {
    Object.keys(objectList).forEach(function (key) {
       handle = parseInt(key);
       threat = dmz.object.scalar(handle, ThreatHandle);
-      vuln = dmz.object.scalar(handle, VulnerabilityHandle);
+      vuln = dmz.object.scalar(handle, ReducedVulnerabilityHandle);
+      if (!vuln) { vuln = dmz.object.scalar(handle, VulnerabilityHandle); }
       pdf[count] = threat * vuln;
       sumTV += pdf[count];
       objectArray[count] = handle;
@@ -191,7 +196,8 @@ cascadeInit = function () {
    if (allowLinks) {
       Object.keys(linkObjectList).forEach(function (key) {
          threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
-         vuln = dmz.object.scalar(linkObjectList[key].attr, VulnerabilityHandle);
+         vuln = dmz.object.scalar(linkObjectList[key].attr, ReducedVulnerabilityHandle);
+         if (!vuln) { vuln = dmz.object.scalar(handle, VulnerabilityHandle); }
          pdf[count] = threat * vuln;
          sumTV += pdf[count];
          objectArray[count] = linkObjectList[key];
@@ -226,8 +232,10 @@ cascadeCDF = function () {
 };
 
 checkObjectCascadeFail = function (objectHandle) {
-   var result = Math.random() <= (dmz.object.scalar(objectHandle, VulnerabilityHandle) *
-                                  dmz.object.scalar(objectHandle, ThreatHandle));
+   var vuln = dmz.object.scalar(objectHandle, ReducedVulnerabilityHandle) ?
+              dmz.object.scalar(objectHandle, ReducedVulnerabilityHandle) :
+              dmz.object.scalar(objectHandle, VulnerabilityHandle)
+     , result = Math.random() <= (vuln * dmz.object.scalar(objectHandle, ThreatHandle));
    return ((result === true) || (result === false)) ? result : false;
 };
 
