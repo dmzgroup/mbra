@@ -373,11 +373,6 @@
             text-attribute="FT_Name"
             super="false"
          />
-         <property 
-            type="scalar-label" 
-            name="Contagiousness" 
-            attribute="NA_Node_Contagiousness"
-         />
       </property-list>
    </na-node-properties>
    <na-link-properties>
@@ -493,11 +488,6 @@
             attribute="NA_Fault_Tree_Link"
             text-attribute="FT_Name"
             super="false"
-         />
-         <property 
-            type="scalar-label" 
-            name="Contagiousness" 
-            attribute="NA_Node_Contagiousness"
          />
       </property-list>
    </na-link-properties>
