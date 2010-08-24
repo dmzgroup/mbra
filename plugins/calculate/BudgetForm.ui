@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>235</height>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,6 +170,65 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Max Attack Budget:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="macLabel">
+       <property name="text">
+        <string>$0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="acLabel">
+       <property name="text">
+        <string>Attack Budget</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="attackBudgetBox"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QSlider" name="attackBudgetSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -241,6 +300,38 @@
     <hint type="destinationlabel">
      <x>164</x>
      <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>attackBudgetSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>attackBudgetBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>455</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>220</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>attackBudgetBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>attackBudgetSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>411</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>455</y>
     </hint>
    </hints>
   </connection>

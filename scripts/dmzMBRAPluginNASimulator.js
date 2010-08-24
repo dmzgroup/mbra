@@ -23,6 +23,10 @@ var dmz =
    , PreventionCostHandle = dmz.defs.createNamedHandle("NA_Node_Prevention_Cost")
    , PreventionAllocationHandle = dmz.defs.createNamedHandle(
         "NA_Node_Prevention_Allocation")
+   , ResponseAllocationHandle = dmz.defs.createNamedHandle(
+        "NA_Node_Response_Allocation")
+   , AttackAllocationHandle = dmz.defs.createNamedHandle(
+        "NA_Node_Attack_Allocation")
    , ConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Consequence")
    , RiskInitialHandle = dmz.defs.createNamedHandle("NA_Node_Risk_Initial")
    , RiskReducedHandle = dmz.defs.createNamedHandle("NA_Node_Risk_Reduced")
@@ -35,6 +39,8 @@ var dmz =
    , BetweennessHandle = dmz.defs.createNamedHandle("NA_Node_Betweenness")
    , HeightHandle = dmz.defs.createNamedHandle("NA_Node_Height")
    , ContagiousHandle = dmz.defs.createNamedHandle("NA_Node_Contagiousness")
+   , ResponseHandle = dmz.defs.createNamedHandle("NA_Node_Response_Cost")
+   , AttackHandle = dmz.defs.createNamedHandle("NA_Node_Attack_Cost")
    , OverlayState = dmz.defs.lookupState("NA_Node_Overlay")
    , ForwardState = dmz.defs.lookupState("NA_Flow_Forward")
    , ReverseState = dmz.defs.lookupState("NA_Flow_Reverse")
@@ -59,6 +65,10 @@ var dmz =
            "PreventionBudgetMessage"))
    , responseBudgetMessage = dmz.message.create(
         self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
+   , attackBudgetMessage = dmz.message.create (
+        self.config.string("message.attack-budget.name", "AttackBudgetMessage"))
+   , cinfinityMessage = dmz.message.create(
+        self.config.string("c-infinity-message.name", "NAConsequenceInfinityMessage"))
    , vinfinityMessage = dmz.message.create(
         self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
    , updateObjectiveGraphMessage = dmz.message.create(
@@ -88,11 +98,14 @@ var dmz =
    , maxPreventionBudget = 0
    , responseBudget = 0
    , maxResponseBudget = 0
+   , attackBudget = 0
+   , maxAttackBudget = 0
    , maxDegrees = 0
    , maxHeight = 0
    , maxBetweenness = 0
    , maxContagious = 0
    , vinf = 0.05
+   , cinf = 0.05
    , barCount = 10
    , bars = []
    , visible = false
@@ -105,6 +118,9 @@ var dmz =
    , updateObjectiveGraph
    , weighObject
    , allocatePreventionBudget
+   , allocateResponseBudget
+   , allocateAttackBudget
+   , allocateBudgets
    , calcRiskReduced
    , receiveRank
    , workFunc
@@ -112,7 +128,6 @@ var dmz =
    , notZero = dmz.util.isNotZero
    , calcRiskInitial
    , calcVulnerability
-   , calcRiskReduced
    , formatResult
    , calcObjectiveRisk
    , calcObjectiveTxV
@@ -134,7 +149,12 @@ var dmz =
    , weighObject
    , logDefenderTerm
    , logDefender
-   , allocatePreventionBudget
+   , preventionLogTerm
+   , preventionLog
+   , responseLogTerm
+   , responseLog
+   , attackLogTerm
+   , attackLog
    , rankObject
    , receiveRank
    , receiveHide
@@ -741,7 +761,7 @@ allocatePreventionBudget = function (handleList, budget, maxBudget, vinf) {
             object.gamma = 0;
          }
          dmz.object.scalar(handleList[key], GammaHandle, object.gamma);
-         object.cost = dmz.object.scalar(handleList[key], PreventionCostHandle);
+         object.cost = dmz.object.scalar(handleList[key], AttackHandle);
          if (!object.cost) {
             object.cost = 0;
          }
@@ -822,6 +842,559 @@ allocatePreventionBudget = function (handleList, budget, maxBudget, vinf) {
    }
 };
 
+allocateResponseBudget = function (handleList, budget, maxBudget, rinf) {
+   var objectList
+     , object
+     , A
+     , B
+     , totalAllocation
+     , logLamda
+     , scale
+     , size
+     , count
+     , remainder
+     , max
+     ;
+   if (dmz.util.isZero(budget)) {
+      Object.keys(handleList).forEach(function (key) {
+         dmz.object.scalar(handleList[key], ResponseAllocationHandle, 0);
+         dmz.object.scalar(handleList[key], GammaHandle, 0);
+      });
+   }
+   else {
+      objectList = [];
+      Object.keys(handleList).forEach(function (key) {
+         object = { handle: handleList[key] };
+         object.vul = dmz.object.scalar(handleList[key], VulnerabilityHandle);
+         if (!object.vul || (object.vul <= 0)) {
+            object.vul = 1;
+         }
+         object.gamma = -Math.log(rinf);
+         dmz.object.scalar(handleList[key], GammaHandle, object.gamma);
+         object.cost = dmz.object.scalar(handleList[key], ResponseHandle);
+         if (!object.cost) {
+            object.cost = 0;
+         }
+         object.weight = dmz.object.scalar(handleList[key], WeightHandle);
+         if (!object.weight) {
+            object.weight = 0;
+         }
+         object.threat = dmz.object.scalar(handleList[key], ThreatHandle);
+         if (!object.threat) {
+            object.threat = 0;
+         }
+         object.consequence = dmz.object.scalar(handleList[key], ConsequenceHandle);
+         if (!object.consequence) {
+            object.consequence = 0;
+         }
+         object.allocation = 0;
+         objectList.push(object);
+      });
+      A = 0;
+      B = 0;
+      Object.keys(objectList).forEach(function (key) {
+         A += logDefenderTerm(objectList[key]);
+         if (notZero(objectList[key].gamma)) {
+            B += (objectList[key].cost / objectList[key].gamma);
+         }
+      });
+      totalAllocation = 0;
+      logLamda = 0;
+      if (notZero(B)) {
+         logLamda = (-budget - A) / B;
+      }
+      Object.keys(objectList).forEach(function (key) {
+         object = objectList[key];
+         A = 0;
+         if (notZero(objectList[key].gamma)) {
+            A = object.cost / object.gamma;
+         }
+         B = logDefender(object);
+         object.allocation = -A * (logLamda + B);
+//         self.log.warn("obj.allo1:",object.allocation);
+         if (object.allocation < 0) {
+            object.allocation = 0;
+         }
+         if (object.allocation > object.cost) {
+            object.allocation = object.cost;
+         }
+         totalAllocation += object.allocation;
+      });
+      scale = 1;
+      if (totalAllocation < budget) {
+//         size = objectList.length - 1;
+//         count = 0;
+//         remainder = budget - totalAllocation;
+//         while (notZero(remainder) && (count <= size))  {
+//            object = objectList[count];
+//            max = object.cost - object.allocation;
+//            if (max > remainder) {
+//               max = remainder;
+//               remainder = 0;
+//            }
+//            else {
+//               remainder = remainder - max;
+//            }
+//            object.allocation += max;
+//            count += 1;
+//         }
+      }
+      else {
+         scale = budget / totalAllocation;
+      }
+//      self.log.warn("budget:", budget, " totalAllocation:", totalAllocation);
+      totalAllocation = 0;
+//      self.log.warn("scale:",scale);
+      Object.keys(objectList).forEach(function (key) {
+         object = objectList[key];
+         object.allocation = object.allocation * scale;
+         totalAllocation = totalAllocation + object.allocation;
+//         self.log.warn("obj.allo:", object.allocation);
+         dmz.object.scalar(object.handle, ResponseAllocationHandle,
+                            object.allocation);
+      });
+   }
+};
+
+preventionLogTerm = function (object) {
+   var result = object.weight * object.threat * object.consequence * object.vul *
+      object.gamma;
+   if (notZero(result)) {
+      result = object.preventionCost / result;
+      if (notZero(object.gamma) && notZero(result)) {
+         result = (object.preventionCost / object.gamma) * Math.log(result);
+      }
+      else {
+         result = 0;
+      }
+   }
+   else {
+      result = 0;
+   }
+   return result;
+};
+
+preventionLog = function (object) {
+   var result = object.weight * object.threat * object.consequence * object.vul *
+      object.gamma;
+   if (notZero(result) && notZero(object.preventionCost)) {
+      result = Math.log(object.preventionCost / result);
+   }
+   else {
+      result = 0;
+   }
+//   self.log.warn(result);
+   return result;
+};
+
+responseLogTerm = function (object) {
+   var result = object.weight * object.threat * object.consequence * object.vul *
+      object.beta;
+   if (notZero(result)) {
+      result = object.responseCost / result;
+      if (notZero(object.beta) && notZero(result)) {
+         result = (object.responseCost / object.beta) * Math.log(result);
+      }
+      else {
+         result = 0;
+      }
+   }
+   else {
+      result = 0;
+   }
+   return result;
+};
+
+responseLog = function (object) {
+   var result = object.weight * object.threat * object.consequence * object.vul *
+      object.beta;
+   if (notZero(result) && notZero(object.responseCost)) {
+      result = Math.log(object.responseCost / result);
+   }
+   else {
+      result = 0;
+   }
+//   self.log.warn(result);
+   return result;
+};
+
+attackLogTerm = function (object) {
+   var result = object.weight * object.vul * object.attackMod * object.gamma *
+      object.consequence * Math.exp (-object.gamma * object.vul / object.responseCost);
+   if (notZero(result)) {
+      result = object.attackCost / result;
+      if (notZero(object.gamma) && notZero(result)) {
+         result = (object.attackCost / object.gamma) * Math.log(result);
+      }
+      else {
+         result = 0;
+      }
+   }
+   else {
+      result = 0;
+   }
+   return result;
+};
+
+attackLog = function (object) {
+   var result = object.weight * object.vul * object.attackMod * object.gamma *
+      object.consequence * Math.exp (-object.gamma * object.vul / object.responseCost);
+//   self.log.warn(object.weight, object.vul, object.attack, object.gamma, object.consequence,
+//                 Math.exp (-object.gamma * object.vul / object.responseCost));
+   if (notZero(result) && notZero(object.attackCost)) {
+      result = Math.log(object.attackCost / result);
+   }
+   else {
+      result = 0;
+   }
+//   self.log.warn(result);
+   return result;
+};
+
+allocateAttackBudget = function (handleList, budget, maxBudget, vinf) {
+   var objectList
+     , object
+     , A
+     , B
+     , totalAllocation
+     , logLamda
+     , scale
+     , size
+     , count
+     , remainder
+     , max
+     , result
+     ;
+   if (dmz.util.isZero(budget)) {
+      Object.keys(handleList).forEach(function (key) {
+         dmz.object.scalar(handleList[key], AttackAllocationHandle, 0);
+         dmz.object.scalar(handleList[key], GammaHandle, 0);
+      });
+   }
+   else {
+      objectList = [];
+      Object.keys(handleList).forEach(function (key) {
+         object = { handle: handleList[key] };
+         object.vul = dmz.object.scalar(handleList[key], VulnerabilityHandle);
+         if (!object.vul || (object.vul <= 0)) {
+            object.vul = 1;
+         }
+         if (object.vul < vinf) {
+            object.vul = vinf;
+         }
+
+         object.gamma = -Math.log(vinf / object.vul);
+         dmz.object.scalar(handleList[key], GammaHandle, object.gamma);
+         object.cost = dmz.object.scalar(handleList[key], AttackHandle);
+         if (!object.cost) {
+            object.cost = 0;
+         }
+         object.responseCost = dmz.object.scalar(handleList[key], ResponseHandle);
+         if (!object.responseCost) {
+            object.responseCost = 0;
+         }
+         object.weight = dmz.object.scalar(handleList[key], WeightHandle);
+         if (!object.weight) {
+            object.weight = 0;
+         }
+         object.threat = dmz.object.scalar(handleList[key], ThreatHandle);
+         if (!object.threat) {
+            object.threat = 0;
+         }
+         object.consequence = dmz.object.scalar(handleList[key], ConsequenceHandle);
+         if (!object.consequence) {
+            object.consequence = 0;
+         }
+         object.attack = 1;
+         //Will have to add iteration if threat is XOR, see notes
+         object.allocation = 0;
+         objectList.push(object);
+      });
+      A = 0;
+      B = 0;
+      Object.keys(objectList).forEach(function (key) {
+         A += attackLogTerm(objectList[key]);
+         if (notZero(objectList[key].gamma)) {
+            B += (objectList[key].cost / objectList[key].gamma);
+         }
+      });
+      totalAllocation = 0;
+      logLamda = 0;
+      if (notZero(B)) {
+         logLamda = (-budget - A) / B;
+      }
+      Object.keys(objectList).forEach(function (key) {
+         object = objectList[key];
+         A = 0;
+         if (notZero(objectList[key].gamma)) {
+            A = object.cost / object.gamma;
+         }
+         B = attackLog(object);
+         object.allocation = -A * (logLamda + B);
+         if (object.allocation < 0) {
+            object.allocation = 0;
+         }
+         if (object.allocation > object.cost) {
+            object.allocation = object.cost;
+         }
+         totalAllocation += object.allocation;
+      });
+      scale = 1;
+      if (totalAllocation < budget) {
+//         size = objectList.length - 1;
+//         count = 0;
+//         remainder = budget - totalAllocation;
+//         while (notZero(remainder) && (count <= size))  {
+//            object = objectList[count];
+//            max = object.cost - object.allocation;
+//            if (max > remainder) {
+//               max = remainder;
+//               remainder = 0;
+//            }
+//            else {
+//               remainder = remainder - max;
+//            }
+//            object.allocation += max;
+//            count += 1;
+//         }
+      }
+      else {
+         scale = budget / totalAllocation;
+      }
+      totalAllocation = 0;
+      Object.keys(objectList).forEach(function (key) {
+         object = objectList[key];
+         object.allocation = object.allocation * scale;
+         totalAllocation = totalAllocation + object.allocation;
+         dmz.object.scalar(object.handle, AttackAllocationHandle,
+                            object.allocation);
+      });
+   }
+};
+
+allocateBudgets = function (budget) {
+   var objectList
+     , object
+     , A
+     , B
+     , totalAllocation
+     , logLamda
+     , scale
+     , size
+     , count
+     , remainder
+     , max
+     , result
+     , objectList
+     , zeroFlag = false
+     , counter
+     ;
+
+   objectList = [];
+   Object.keys(objects).forEach(function (key) {
+      object = { handle: objects[key] };
+      object.vul = dmz.object.scalar(objects[key], VulnerabilityHandle);
+      if (!object.vul || (object.vul <= 0)) {
+         object.vul = 1;
+      }
+      if (object.vul < vinf) {
+         object.vul = vinf;
+      }
+
+      object.gamma = -Math.log(vinf / object.vul);
+      object.beta = -Math.log(cinf);
+      dmz.object.scalar(objects[key], GammaHandle, object.gamma);
+
+      object.preventionCost = dmz.object.scalar(objects[key], PreventionCostHandle);
+      if (!object.preventionCost) {
+         object.preventionCost = 0;
+      }
+
+      object.responseCost = dmz.object.scalar(objects[key], ResponseHandle);
+      if (!object.responseCost) {
+         object.responseCost = 0;
+      }
+
+      object.attackCost = dmz.object.scalar(objects[key], AttackHandle);
+      if (!object.attackCost) {
+         object.attackCost = 0;
+      }
+
+      object.weight = dmz.object.scalar(objects[key], WeightHandle);
+      if (!object.weight) {
+         object.weight = 0;
+      }
+      object.threat = dmz.object.scalar(objects[key], ThreatHandle);
+      if (!object.threat) {
+         object.threat = 0;
+      }
+      object.consequence = dmz.object.scalar(objects[key], ConsequenceHandle);
+      if (!object.consequence) {
+         object.consequence = 0;
+      }
+
+      object.attackMod = 1;
+      //Will have to add iteration if threat is XOR, see notes
+      object.preventionAllocation = 0;
+      object.responseAllocation = 0;
+      object.attackAllocation = 0;
+      objectList.push(object);
+   });
+   if (dmz.util.isZero(preventionBudget) && dmz.util.isZero(responseBudget) &&
+      dmz.util.isZero(attackBudget)) {
+      Object.keys(objects).forEach(function (key) {
+         if (dmz.util.isZero(preventionBudget)) {
+            dmz.object.scalar(objects[key], PreventionAllocationHandle, 0);
+         }
+         if (dmz.util.isZero(responseBudget)) {
+            dmz.object.scalar(objects[key], ResponseAllocationHandle, 0);
+         }
+         if (dmz.util.isZero(attackBudget)) {
+            dmz.object.scalar(objects[key], AttackAllocationHandle, 0);
+         }
+         if (dmz.util.isZero(preventionBudget) && dmz.util.isZero(responseBudget) &&
+            dmz.util.isZero(attackBudget)) {
+            dmz.object.scalar(objects[key], GammaHandle, 0);
+            zeroFlag = true;
+         }
+      });
+   }
+
+   if (!zeroFlag) {
+
+      A = [0, 0, 0];
+      B = [0, 0, 0];
+      objectList.forEach(function (object) {
+         A[0] += preventionLogTerm(object);
+         A[1] += responseLogTerm(object);
+         A[2] += attackLogTerm(object);
+         if (notZero(object.gamma)) {
+            B[0] += (object.preventionCost / object.gamma);
+            B[1] += (object.responseCost / object.gamma);
+            B[2] += (object.attackCost / object.gamma);
+         }
+//         self.log.warn("A:", A, " B:", B);
+      });
+      totalAllocation = [0, 0, 0];
+      logLamda = [0, 0, 0];
+      for (counter = 0; counter < B.length; counter += 1) {
+         if (notZero(B[counter])) {
+            logLamda[counter] = (-budget[counter] - A[counter]) / B[counter];
+         }
+      }
+//      self.log.warn("lL:", logLamda);
+
+      objectList.forEach(function (object) {
+         A = [0, 0, 0];
+         if (notZero(object.gamma)) {
+            A[0] += (object.preventionCost / object.gamma);
+            A[1] += (object.responseCost / object.gamma);
+            A[2] += (object.attackCost / object.gamma);
+         }
+
+         B = [preventionLog(object), responseLog(object), attackLog(object)];
+         object.preventionAllocation = -A[0] * (logLamda[0] + B[0]);
+         object.responseAllocation = -A[1] * (logLamda[1] + B[1]);
+         object.attackAllocation = -A[2] * (logLamda[2] + B[2]);
+         //self.log.warn(object.handle, (-A[2]), logLamda[2], B[2]);
+//         self.log.warn(object.handle, A, logLamda, B);
+
+         if (object.preventionAllocation < 0) { object.preventionAllocation = 0; }
+         if (object.responseAllocation < 0) { object.responseAllocation = 0; }
+         if (object.attackAllocation < 0) { object.attackAllocation = 0; }
+
+         if (object.preventionAllocation > object.preventionCost) {
+            object.preventionAllocation = object.preventionCost;
+         }
+
+         if (object.responseAllocation > object.responseCost) {
+            object.responseAllocation = object.responseCost;
+         }
+
+         if (object.attackAllocation > object.attackCost) {
+            object.attackAllocation = object.attackCost;
+         }
+
+         totalAllocation[0] += object.preventionAllocation;
+         totalAllocation[1] += object.responseAllocation;
+         totalAllocation[2] += object.attackAllocation;
+      });
+      scale = [1, 1, 1];
+      for (counter = 0; counter < budget.length; counter += 1) {
+         if (totalAllocation[counter] > budget[counter]) {
+            scale[counter] = budget[counter] / totalAllocation[counter];
+         }
+      }
+
+      counter = 0;
+      while ((totalAllocation[0] < budget[0]) && (totalAllocation[1] < budget[1]) &&
+             (totalAllocation[2] < budget[2]) && (counter < objectList.length)) {
+
+         if (totalAllocation[0] < budget[0]) {
+            remainder = budget[0] - totalAllocation[0];
+            max = objectList[counter].preventionCost -
+               objectList[counter].preventionAllocation;
+            if (max > remainder) {
+               max = remainder;
+               remainder = 0;
+            }
+            else {
+               remainder -= max;
+            }
+            object.preventionAllocation += max;
+         }
+
+         if (totalAllocation[1] < budget[1]) {
+            remainder = budget[1] - totalAllocation[1];
+            max = objectList[counter].responseCost -
+               objectList[counter].responseAllocation;
+            if (max > remainder) {
+               max = remainder;
+               remainder = 0;
+            }
+            else {
+               remainder -= max;
+            }
+            object.preventionAllocation += max;
+         }
+
+         if (totalAllocation[2] < budget[2]) {
+            remainder = budget[2] - totalAllocation[2];
+            max = objectList[counter].attackCost - objectList[counter].attackAllocation;
+            if (max > remainder) {
+               max = remainder;
+               remainder = 0;
+            }
+            else {
+               remainder -= max;
+            }
+            object.attackAllocation += max;
+         }
+
+         counter += 1;
+
+      }
+
+//      self.log.warn(totalAllocation);
+      objectList.forEach(function (object) {
+//         self.log.warn (object.handle, object.preventionAllocation, object.responseAllocation, object.attackAllocation);
+         dmz.object.scalar(
+            object.handle,
+            PreventionAllocationHandle,
+            object.preventionAllocation * scale[0]);
+         dmz.object.scalar(
+            object.handle,
+            ResponseAllocationHandle,
+            object.responseAllocation * scale[1]);
+         dmz.object.scalar(
+            object.handle,
+            AttackAllocationHandle,
+            object.attackAllocation * scale[2]);
+      });
+   }
+};
+
+
 rankObject = function (object) {
    var result = dmz.object.scalar(object, WeightHandle)
      , objectiveArray
@@ -858,7 +1431,12 @@ receiveRank = function () {
    Object.keys(objects).forEach(function (key) {
       weighObject(objects[key]);
    });
-   allocatePreventionBudget(objects, preventionBudget, maxPreventionBudget, vinf);
+//   allocatePreventionBudget(objects, preventionBudget, maxPreventionBudget, vinf);
+//   allocateResponseBudget(objects, responseBudget, maxResponseBudget, cinf);
+//   allocateAttackBudget(objects, attackBudget, maxAttackBudget, vinf);
+
+   allocateBudgets([preventionBudget, responseBudget, attackBudget]);
+
    reducedSum = 0;
    origSum = 0;
    Object.keys(objects).forEach(function (key) {
@@ -1012,7 +1590,21 @@ preventionBudgetMessage.subscribe(self, function (data, message) {
 responseBudgetMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       responseBudget = data.number("Budget", 0);
+      if (!responseBudget) { responseBudget = 0; }
       maxResponseBudget = data.number("Budget", 1);
+      if (!maxResponseBudget) { responseBudget = 0; }
+      if (visible) {
+         doRank();
+      }
+   }
+});
+
+attackBudgetMessage.subscribe(self, function (data) {
+   if (dmz.data.isTypeOf(data)) {
+      attackBudget = data.number("Budget", 0);
+      if (!attackBudget) { attackBudget = 0; }
+      maxAttackBudget = data.number("Budget", 1);
+      if (!maxAttackBudget) { maxAttackBudget = 0; }
       if (visible) {
          doRank();
       }
@@ -1029,6 +1621,14 @@ vinfinityMessage.subscribe(self, function (data) {
       if (visible) {
          doRank();
       }
+   }
+});
+
+cinfinityMessage.subscribe(self, function(data) {
+   if (dmz.data.isTypeOf(data)) {
+      cinf = data.number("value", 0);
+      if (!cinf) { cinf = 0.05; }
+      if (visible) { doRank(); }
    }
 });
 

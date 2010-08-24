@@ -25,10 +25,10 @@
    <plugin name="dmzQtPluginStackedWidget" unique="charts-palette"/>
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
- 
+      <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
+
 
 <!--
-     <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginUndoDump"/>
@@ -108,6 +108,12 @@
       <attribute name="NA_Node_Prevention_Allocation">
          <mask name="scalar"/>
       </attribute>
+      <attribute name="NA_Node_Attack_Allocation">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Response_Allocation">
+         <mask name="scalar"/>
+      </attribute>      
       <attribute name="NA_Node_Risk_Initial">
          <mask name="scalar"/>
       </attribute>

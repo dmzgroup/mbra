@@ -303,14 +303,16 @@
             name="Prevention Cost $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Cost"
          />
-<!--
          <property
             type="scalar"
-            name="Response Cost"
+            name="Response Cost $$(UnitsMessage)"
             attribute="NA_Node_Response_Cost"
-            prefix="$"
          />
--->
+         <property
+            type="scalar"
+            name="Attack Cost $$(UnitsMessage)"
+            attribute="NA_Node_Attack_Cost"
+         />
          <property
             type="scalar-label"
             name="Risk Initial $$(UnitsMessage)"
@@ -322,6 +324,16 @@
             name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
          />
+         <property
+            type="scalar-label"
+            name="Response Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Response_Allocation"
+         />
+         <property
+            type="scalar-label"
+            name="Attack Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Attack_Allocation"
+         />   
          <property
             type="scalar-label"
             name="Risk Reduced $$(UnitsMessage)"
@@ -424,19 +436,31 @@
             name="Prevention Cost $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Cost"
          />
-<!--
          <property
             type="scalar"
-            name="Response Cost"
+            name="Response Cost $$(UnitsMessage)"
             attribute="NA_Node_Response_Cost"
-            prefix="$"
          />
--->
+         <property
+            type="scalar"
+            name="Attack Cost $$(UnitsMessage)"
+            attribute="NA_Node_Attack_Cost"
+         />
          <property
             type="scalar-label"
             name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
          />
+         <property
+            type="scalar-label"
+            name="Response Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Response_Allocation"
+         />
+         <property
+            type="scalar-label"
+            name="Attack Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Attack_Allocation"
+         />         
          <property type="state" name="Flow" attribute="NA_Link_Flow">
             <state label="both" name="NA_Flow_Forward|NA_Flow_Reverse" default="true"/>
             <state label="forward" name="NA_Flow_Forward"/>
@@ -459,6 +483,16 @@
             name="Prevention Allocation $$(UnitsMessage)"
             attribute="NA_Node_Prevention_Allocation"
          />
+         <property
+            type="scalar-label"
+            name="Response Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Response_Allocation"
+         />
+         <property
+            type="scalar-label"
+            name="Attack Allocation $$(UnitsMessage)"
+            attribute="NA_Node_Attack_Allocation"
+         />   
          <property
             type="scalar-label"
             name="Risk Reduced $$(UnitsMessage)"
