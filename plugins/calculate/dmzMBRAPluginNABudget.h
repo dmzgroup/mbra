@@ -64,21 +64,18 @@ namespace dmz {
       protected slots:
          void on_preventionBudgetBox_valueChanged (int value);
          void on_responseBudgetBox_valueChanged (int value);
-         void on_attackBudgetBox_valueChanged (int value);
 
       protected:
          struct ObjectStruct {
 
             Float64 pc;
             Float64 rc;
-            Float64 ac;
 
-            ObjectStruct () : pc (0.0), rc (0.0), ac (0.0) {;}
+            ObjectStruct () : pc (0.0), rc (0.0) {;}
          };
 
          void _update_max_prevention_budget ();
          void _update_max_response_budget ();
-         void _update_max_attack_budget ();
 
          void _init (Config &local);
 
@@ -91,17 +88,14 @@ namespace dmz {
 
          Message _preventionBudgetMessage;
          Message _responseBudgetMessage;
-         Message _attackBudgetMessage;
 
          Handle _budgetHandle;
 
          Handle _pcAttrHandle;
          Handle _rcAttrHandle;
-         Handle _acAttrHandle;
 
          Float64 _maxPreventionBudget;
          Float64 _maxResponseBudget;
-         Float64 _maxAttackBudget;
 
          HashTableHandleTemplate<ObjectStruct> _objectTable;
 

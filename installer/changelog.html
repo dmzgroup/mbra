@@ -40,10 +40,13 @@
 <hr noshade size='1'>
 -->
 
-<h2>Version 2.3.0 test 9 (2010-08-23)</h2>
+<h2>Version 2.3.0 test 10 (2010-08-26)</h2>
 
 <h3>New Features</h3>
 <ul>
+   <li>Added Consequence Reduction, Threat Maximization, and enhanced Risk Minimization to the
+   NA calculations.</li>
+   <li>NA calculations now optimize based upon consequence, vulnerability, and threat.</li>
    <li>Added cascade failure simulation to the tools and graphs palettes.</li>
    <li>Monetary Units have been added to the MBRA Preferences menu. These add a text
    label next to all monetary units for user reference. They are solely text-based, and
@@ -52,23 +55,15 @@
 
 <h3>Changes</h3>
 <ul>
-   <li>Modified cascade failure power law line to start from the last consecutive max-value bar.</li>
-   <li>Changed the graph Power Law line to scale to the data on the Cascade Failure graph.</li>
    <li>Contagiousness is now a "Weight By" option, rather than an "Objective Function".</li>
-   <li>Updating object information via the Data Table window or Edit Tool will now properly
-   cause Cascade Failure data to be reset and recalculated. This will happen every time a
-   relevant data field is adjusted, so it is recommended that the simulation is turned off
-   before editing multiple objects.</li>
 </ul>
 
 <h3>Bugs fixed</h3>
 <ul>
-   <li>Added logic to cascade failure to use Reduced Vulnerability numbers if available.</li>
-   <li>Fixed a logic error in cascade failure calculations.</li>
+   <li>Fixed the Consequence Objective functionality for NA calculations.</li>
    <li>Fixed a bug in NA edit tool that was causing both the link edit and node edit windows to appear
    when a node was selected for editing.</li>
    <li>Fixed bug in loading of files from previous versions that did not save enough data.</li>
-   <li>Fixed incorrect consequence calculations in cascade failures.</li>
    <li>Fixed a link bug that would cause errors if nodes were deleted or added.</li>
 </ul>
 

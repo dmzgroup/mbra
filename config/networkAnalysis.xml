@@ -308,11 +308,13 @@
             name="Response Cost $$(UnitsMessage)"
             attribute="NA_Node_Response_Cost"
          />
+<!--
          <property
             type="scalar"
             name="Attack Cost $$(UnitsMessage)"
             attribute="NA_Node_Attack_Cost"
          />
+-->
          <property
             type="scalar-label"
             name="Risk Initial $$(UnitsMessage)"
@@ -385,11 +387,13 @@
             text-attribute="FT_Name"
             super="false"
          />
+<!--       
          <property 
             type="scalar-label" 
             name="Contagiousness" 
             attribute="NA_Node_Contagiousness"
          />
+-->
       </property-list>
    </na-node-properties>
    <na-link-properties>
@@ -441,11 +445,13 @@
             name="Response Cost $$(UnitsMessage)"
             attribute="NA_Node_Response_Cost"
          />
+<!--
          <property
             type="scalar"
             name="Attack Cost $$(UnitsMessage)"
             attribute="NA_Node_Attack_Cost"
          />
+-->         
          <property
             type="scalar-label"
             name="Prevention Allocation $$(UnitsMessage)"
@@ -528,11 +534,13 @@
             text-attribute="FT_Name"
             super="false"
          />
+<!--         
          <property 
             type="scalar-label" 
             name="Contagiousness" 
             attribute="NA_Node_Contagiousness"
          />
+-->         
       </property-list>
    </na-link-properties>
 
