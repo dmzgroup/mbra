@@ -19,13 +19,6 @@ dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &loc
 
    _ui.setupUi (this);
 
-   _ui.line->hide ();
-   _ui.mrbLabel->hide ();
-   _ui.maxResponseBudgetLabel->hide ();
-   _ui.rbLabel->hide ();
-   _ui.responseBudgetBox->hide ();
-   _ui.responseBudgetSlider->hide ();
-
    _init (local);
 }
 
@@ -180,7 +173,6 @@ dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
 
    _responseBudgetMessage.send (&data);
 }
-
 
 void
 dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
