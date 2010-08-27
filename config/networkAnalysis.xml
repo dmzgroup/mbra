@@ -387,16 +387,6 @@
             text-attribute="FT_Name"
             super="false"
          />
-<<<<<<< HEAD
-=======
-<!--       
-         <property 
-            type="scalar-label" 
-            name="Contagiousness" 
-            attribute="NA_Node_Contagiousness"
-         />
--->
->>>>>>> f7c6b7425045151931e00dc6593b98c1fab0d61c
       </property-list>
    </na-node-properties>
    <na-link-properties>
@@ -537,16 +527,6 @@
             text-attribute="FT_Name"
             super="false"
          />
-<<<<<<< HEAD
-=======
-<!--         
-         <property 
-            type="scalar-label" 
-            name="Contagiousness" 
-            attribute="NA_Node_Contagiousness"
-         />
--->         
->>>>>>> f7c6b7425045151931e00dc6593b98c1fab0d61c
       </property-list>
    </na-link-properties>
 
