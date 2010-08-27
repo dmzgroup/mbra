@@ -351,6 +351,12 @@
             suffix="%"
          />
          <property
+            type="scalar-label"
+            name="Consequence Reduced $$(UnitsMessage)"
+            attribute="NA_Node_Consequence_Reduced"
+            decimals="2"
+         />
+         <property
             type="text"
             name="Description"
             attribute="NA_Node_Description"
@@ -505,6 +511,12 @@
             scale="100"
             decimals="0"
             suffix="%"
+         />
+         <property
+            type="scalar-label"
+            name="Consequence Reduced $$(UnitsMessage)"
+            attribute="NA_Node_Consequence_Reduced"
+            decimals="2"
          />
          <property
             type="scalar-label"
