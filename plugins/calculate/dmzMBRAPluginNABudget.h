@@ -64,6 +64,8 @@ namespace dmz {
       protected slots:
          void on_preventionBudgetBox_valueChanged (int value);
          void on_responseBudgetBox_valueChanged (int value);
+         void _responseSliderReleased ();
+         void _preventionSliderReleased ();
 
       protected:
          struct ObjectStruct {

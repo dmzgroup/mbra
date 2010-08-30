@@ -194,6 +194,20 @@ dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
 
 
 void
+dmz::MBRAPluginNABudget::_responseSliderReleased () {
+
+   _ui.responseBudgetBox->setValue (_ui.responseBudgetSlider->value ());
+}
+
+
+void
+dmz::MBRAPluginNABudget::_preventionSliderReleased () {
+
+   _ui.preventionBudgetBox->setValue (_ui.preventionBudgetSlider->value ());
+}
+
+
+void
 dmz::MBRAPluginNABudget::_update_max_response_budget () {
 
    _maxResponseBudget = 0.0;
@@ -254,6 +268,18 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
    _rcAttrHandle = activate_object_attribute (
       config_to_string ("response-cost.name", local, "NA_Node_Response_Cost"),
       ObjectRemoveAttributeMask | ObjectScalarMask);
+
+   connect (
+      _ui.responseBudgetSlider,
+      SIGNAL (sliderReleased ()),
+      this,
+      SLOT (_responseSliderReleased ()));
+
+   connect (
+      _ui.preventionBudgetSlider,
+      SIGNAL (sliderReleased ()),
+      this,
+      SLOT (_preventionSliderReleased ()));
 }
 
 
