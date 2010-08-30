@@ -168,6 +168,7 @@ dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
    _lastResponseBudget = (Float64)value;
 }
 
+
 void
 dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
 

@@ -1201,6 +1201,7 @@ preventionBudgetMessage.subscribe(self, function (data, message) {
       maxAttackBudget = maxPreventionBudget;
       if (visible) {
          doRank();
+         doGraph();
       }
    }
 });
@@ -1214,6 +1215,7 @@ responseBudgetMessage.subscribe(self, function (data) {
       if (!maxResponseBudget) { responseBudget = 0; }
       if (visible) {
          doRank();
+         doGraph();
       }
    }
 });
