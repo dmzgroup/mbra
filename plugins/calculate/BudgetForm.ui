@@ -212,5 +212,37 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>responseBudgetSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>responseBudgetBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>preventionBudgetSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preventionBudgetBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>92</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>237</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

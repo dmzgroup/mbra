@@ -15,7 +15,9 @@ dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &loc
       _pcAttrHandle (0),
       _rcAttrHandle (0),
       _maxPreventionBudget (0.0),
-      _maxResponseBudget (0.0) {
+      _maxResponseBudget (0.0),
+      _lastResponseBudget (0.0),
+      _lastPreventionBudget (0.0) {
 
    _ui.setupUi (this);
 
@@ -156,22 +158,14 @@ dmz::MBRAPluginNABudget::update_object_scalar (
 void
 dmz::MBRAPluginNABudget::on_preventionBudgetBox_valueChanged (int value) {
 
-   Data data;
-   data.store_float64 (_budgetHandle, 0, (Float64)value);
-   data.store_float64 (_budgetHandle, 1, _maxPreventionBudget);
-
-   _preventionBudgetMessage.send (&data);
+   _lastPreventionBudget = (Float64)value;
 }
 
 
 void
 dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
 
-   Data data;
-   data.store_float64 (_budgetHandle, 0, (Float64)value);
-   data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
-
-   _responseBudgetMessage.send (&data);
+   _lastResponseBudget = (Float64)value;
 }
 
 void
@@ -196,14 +190,24 @@ dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
 void
 dmz::MBRAPluginNABudget::_responseSliderReleased () {
 
-   _ui.responseBudgetBox->setValue (_ui.responseBudgetSlider->value ());
+   Data data;
+   data.store_float64 (_budgetHandle, 0, _lastResponseBudget);
+   data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
+
+   _responseBudgetMessage.send (&data);
+//   _ui.responseBudgetBox->setValue (_ui.responseBudgetSlider->value ());
 }
 
 
 void
 dmz::MBRAPluginNABudget::_preventionSliderReleased () {
 
-   _ui.preventionBudgetBox->setValue (_ui.preventionBudgetSlider->value ());
+   Data data;
+   data.store_float64 (_budgetHandle, 0, _lastPreventionBudget);
+   data.store_float64 (_budgetHandle, 1, _maxPreventionBudget);
+
+   _preventionBudgetMessage.send (&data);
+//   _ui.preventionBudgetBox->setValue (_ui.preventionBudgetSlider->value ());
 }
 
 

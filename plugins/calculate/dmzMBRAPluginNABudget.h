@@ -98,6 +98,8 @@ namespace dmz {
 
          Float64 _maxPreventionBudget;
          Float64 _maxResponseBudget;
+         Float64 _lastResponseBudget;
+         Float64 _lastPreventionBudget;
 
          HashTableHandleTemplate<ObjectStruct> _objectTable;
 
