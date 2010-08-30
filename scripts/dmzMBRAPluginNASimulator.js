@@ -59,7 +59,7 @@ var dmz =
    , ObjectiveTxVHandle = dmz.defs.createNamedHandle("NA_Objective_TxV")
    , ObjectiveThreatHandle = dmz.defs.createNamedHandle("NA_Objective_Threat")
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
-                                       "NA_Objective_Vulnerability")
+        "NA_Objective_Vulnerability")
    , ObjectiveConsequenceHandle = dmz.defs.createNamedHandle("NA_Objective_Consequence")
    , simulatorMessage = dmz.message.create(
         self.config.string("simulator-message.name", "NASimulatorMessage"))
@@ -182,14 +182,14 @@ workFunc = function () {
    if (doGraphCount > 1) {
       doGraphCount -= 1;
    }
-   else if (doGraphCount == 1) {
+   else if (doGraphCount === 1) {
       updateObjectiveGraph();
       doGraphCount = 0;
    }
    if (doRankCount > 1) {
       doRankCount -= 1;
    }
-   else if (doRankCount == 1) {
+   else if (doRankCount === 1) {
       receiveRank();
       doRankCount = 0;
    }
@@ -225,8 +225,8 @@ calcVulnerability = function (object) {
    if (Vulnerability) { result = Vulnerability; }
 
    if (Gamma && notZero(Gamma) && Vulnerability && (Vulnerability > 0) &&
-      Cost && (Cost > 0) && notZero(Cost) && Allocation && notZero(Allocation) &&
-      notZero(Budget)) {
+         Cost && (Cost > 0) && notZero(Cost) && Allocation && notZero(Allocation) &&
+         notZero(Budget)) {
       result = Vulnerability * Math.exp(-Gamma * Allocation / Cost);
    }
 
@@ -247,7 +247,7 @@ calcConsequence = function (object) {
    if (Consequence) { result = Consequence; }
 
    if (Consequence && (Consequence > 0) && Cost && (Cost > 0) && notZero(Cost) &&
-      Allocation && notZero(Allocation) && notZero(Budget)) {
+         Allocation && notZero(Allocation) && notZero(Budget)) {
       result = Consequence * Math.exp((Math.log(cinf)) * Allocation / Cost);
    }
 
@@ -267,7 +267,7 @@ calcThreat = function (object) {
      ;
 
    if (Gamma && notZero(Gamma) && Cost && (Cost > 0) && notZero(Cost) &&
-      Allocation && notZero(Allocation) && notZero(Budget)) {
+         Allocation && notZero(Allocation) && notZero(Budget)) {
       result -= Math.exp(-Gamma * Allocation / Cost);
    }
    else {
@@ -290,7 +290,7 @@ calcPreventionAllocation = function (object) {
      ;
 
    if (Gamma && notZero(Gamma) && Weight && notZero(Weight) && Cost && notZero(Cost) &&
-      notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
+         notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
       result = - Cost / Gamma * (logLambdaVulnerability + Math.log(
          Cost / (Weight * Threat * Vulnerability * Consequence * AttackMod * Gamma)));
    }
@@ -339,7 +339,7 @@ calcResponseAllocation = function (object) {
      ;
 
    if (Weight && notZero(Weight) && Cost && notZero(Cost) &&
-      notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
+         notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
 
       result = -Cost / Beta * (logLambdaConsequence +
          Math.log(Cost / (Weight * Threat * Vulnerability * Consequence * Beta)));
@@ -592,7 +592,7 @@ findBetweenness = function (current, target, visited) {
          Object.keys(subs).forEach(function (sub) {
             link = dmz.object.linkHandle(LinkHandle, item.object, subs[sub]);
             if (linkReachable(link, ForwardState)) {
-               if (subs[sub] == target) {
+               if (subs[sub] === target) {
                   found = true;
                   item.found = true;
                   addToNodeBetweennessCounter(target);
@@ -609,7 +609,7 @@ findBetweenness = function (current, target, visited) {
          Object.keys(supers).forEach(function (superLink) {
             link = dmz.object.linkHandle(LinkHandle, supers[superLink], item.object);
             if (linkReachable(link, ReverseState)) {
-               if (supers[superLink] == target) {
+               if (supers[superLink] === target) {
                   found = true;
                   item.found = true;
                   addToNodeBetweennessCounter(target);
@@ -652,7 +652,7 @@ weightBetweenness = {
          if (dmz.object.type(root).isOfType(NodeType)) {
             Object.keys(objects).forEach(function (index) {
                target = objects[index];
-               if (root != target && dmz.object.type(target).isOfType(NodeType)) {
+               if (root !== target && dmz.object.type(target).isOfType(NodeType)) {
                   list = [{object: root}];
                   visited = [];
                   findBetweenness(list, target, visited);
@@ -1007,9 +1007,9 @@ stackleberg = function () {
             }
          }
 
-         if (currV != -1) { object.reducedV = currV; }
-         if (currT != -1) { object.reducedT = currT; }
-         if (currC != -1) { object.reducedC = currC; }
+         if (currV !== -1) { object.reducedV = currV; }
+         if (currT !== -1) { object.reducedT = currT; }
+         if (currC !== -1) { object.reducedC = currC; }
       });
 
       iterationCount -= 1;
@@ -1290,34 +1290,34 @@ dmz.object.scalar.observe(self, DegreeHandle, updateObjectScalar);
 
 updateSimulatorFlag = function (handle, attr, value) {
    if (value) {
-      if (attr == WeightDegreesHandle) {
+      if (attr === WeightDegreesHandle) {
          weightList[WeightDegreesHandle] = weightDegrees;
       }
-      else if (attr == WeightBetweennessHandle) {
+      else if (attr === WeightBetweennessHandle) {
          weightList[WeightBetweennessHandle] = weightBetweenness;
       }
-      else if (attr == WeightHeightHandle) {
+      else if (attr === WeightHeightHandle) {
          weightList[WeightHeightHandle] = weightHeight;
       }
-      else if (attr == WeightContagiousHandle) {
+      else if (attr === WeightContagiousHandle) {
          weightList[WeightContagiousHandle] = weightContagious;
       }
-      else if (attr == ObjectiveNoneHandle) {
+      else if (attr === ObjectiveNoneHandle) {
          objective = calcObjectiveNone;
       }
-      else if (attr == ObjectiveRiskHandle) {
+      else if (attr === ObjectiveRiskHandle) {
          objective = calcObjectiveRisk;
       }
-      else if (attr == ObjectiveTxVHandle) {
+      else if (attr === ObjectiveTxVHandle) {
          objective = calcObjectiveTxV;
       }
-      else if (attr == ObjectiveThreatHandle) {
+      else if (attr === ObjectiveThreatHandle) {
          objective = calcObjectiveThreat;
       }
-      else if (attr == ObjectiveVulnerabilityHandle) {
+      else if (attr === ObjectiveVulnerabilityHandle) {
          objective = calcObjectiveVulnerability;
       }
-      else if (attr == ObjectiveConsequenceHandle) {
+      else if (attr === ObjectiveConsequenceHandle) {
          objective = calcObjectiveConsequence;
       }
       doGraph();

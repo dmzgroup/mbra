@@ -208,7 +208,6 @@ dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
 void
 dmz::MBRAPluginNABudget::_responseSliderReleased () {
 
-
    Data data;
    data.store_float64 (_budgetHandle, 0, _lastResponseBudget);
    data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
