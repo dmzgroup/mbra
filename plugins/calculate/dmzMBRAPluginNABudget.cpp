@@ -195,7 +195,6 @@ dmz::MBRAPluginNABudget::_responseSliderReleased () {
    data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
 
    _responseBudgetMessage.send (&data);
-//   _ui.responseBudgetBox->setValue (_ui.responseBudgetSlider->value ());
 }
 
 
@@ -207,7 +206,6 @@ dmz::MBRAPluginNABudget::_preventionSliderReleased () {
    data.store_float64 (_budgetHandle, 1, _maxPreventionBudget);
 
    _preventionBudgetMessage.send (&data);
-//   _ui.preventionBudgetBox->setValue (_ui.preventionBudgetSlider->value ());
 }
 
 
