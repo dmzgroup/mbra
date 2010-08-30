@@ -159,6 +159,15 @@ void
 dmz::MBRAPluginNABudget::on_preventionBudgetBox_valueChanged (int value) {
 
    _lastPreventionBudget = (Float64)value;
+
+   if (!_ui.preventionBudgetSlider->isSliderDown ()) {
+
+      Data data;
+      data.store_float64 (_budgetHandle, 0, _lastPreventionBudget);
+      data.store_float64 (_budgetHandle, 1, _maxPreventionBudget);
+
+      _preventionBudgetMessage.send (&data);
+   }
 }
 
 
@@ -166,6 +175,14 @@ void
 dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
 
    _lastResponseBudget = (Float64)value;
+   if (!_ui.responseBudgetSlider->isSliderDown ()) {
+
+      Data data;
+      data.store_float64 (_budgetHandle, 0, _lastResponseBudget);
+      data.store_float64 (_budgetHandle, 1, _maxResponseBudget);
+
+      _responseBudgetMessage.send (&data);
+   }
 }
 
 
@@ -190,6 +207,7 @@ dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
 
 void
 dmz::MBRAPluginNABudget::_responseSliderReleased () {
+
 
    Data data;
    data.store_float64 (_budgetHandle, 0, _lastResponseBudget);

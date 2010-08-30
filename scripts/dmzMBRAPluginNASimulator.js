@@ -97,10 +97,13 @@ var dmz =
    , objective = calcObjectiveNone
    , weightList = []
    , preventionBudget = 0
+   , activePreventionBudget = 0
    , maxPreventionBudget = 0
    , responseBudget = 0
+   , activeResponseBudget = 0
    , maxResponseBudget = 0
    , attackBudget = 0
+   , activeAttackBudget = 0
    , maxAttackBudget = 0
    , maxDegrees = 0
    , maxHeight = 0
@@ -216,7 +219,7 @@ calcVulnerability = function (object) {
      , Vulnerability = dmz.object.scalar(object, VulnerabilityHandle)
      , Cost = dmz.object.scalar(object, PreventionCostHandle)
      , Gamma = dmz.object.scalar(object, GammaHandle)
-     , Budget = preventionBudget
+     , Budget = activePreventionBudget
      ;
 
    if (Vulnerability) { result = Vulnerability; }
@@ -238,7 +241,7 @@ calcConsequence = function (object) {
      , Allocation = dmz.object.scalar(object, ResponseAllocationHandle)
      , Consequence = dmz.object.scalar(object, ConsequenceHandle)
      , Cost = dmz.object.scalar(object, ResponseHandle)
-     , Budget = responseBudget
+     , Budget = activeResponseBudget
      ;
 
    if (Consequence) { result = Consequence; }
@@ -260,7 +263,7 @@ calcThreat = function (object) {
      , Allocation = dmz.object.scalar(object, AttackAllocationHandle)
      , Cost = dmz.object.scalar(object, PreventionCostHandle)
      , Gamma = dmz.object.scalar(object, GammaHandle)
-     , Budget = attackBudget
+     , Budget = activeAttackBudget
      ;
 
    if (Gamma && notZero(Gamma) && Cost && (Cost > 0) && notZero(Cost) &&
@@ -353,9 +356,9 @@ calcResponseAllocation = function (object) {
 
 calcRiskReduced = function (object) {
    var result = 0
-     , Threat = calcThreat(object)
-     , Vulnerability = calcVulnerability(object)
-     , Consequence = calcConsequence(object)
+     , Threat = dmz.object.scalar(object, ThreatCalculatedHandle)
+     , Vulnerability = dmz.object.scalar(object, VulnerabilityReducedHandle)
+     , Consequence = dmz.object.scalar(object, ConsequenceReducedHandle)
      ;
 
    if (Threat && Vulnerability && Consequence) {
@@ -869,7 +872,7 @@ attackLogTerm = function (object) {
    return result;
 };
 
-calculateLambdas = function (objectList, preventionBudget, responseBudget, attackBudget) {
+calculateLambdas = function (objectList) {
    var A = [0, 0, 0]
      , B = [0, 0, 0]
      ;
@@ -887,13 +890,15 @@ calculateLambdas = function (objectList, preventionBudget, responseBudget, attac
       }
    });
 
-   logLambdaVulnerability = notZero(B[0]) ? ((-preventionBudget - A[0]) / B[0]) : 0;
-   logLambdaConsequence = notZero(B[1]) ? ((-responseBudget - A[1]) / B[1]) : 0;
-   logLambdaThreat = notZero(B[2]) ? ((-attackBudget - A[2]) / B[2]) : 0;
+   logLambdaVulnerability = notZero(B[0]) ?
+      ((-activePreventionBudget - A[0]) / B[0]) :
+      0;
+   logLambdaConsequence = notZero(B[1]) ? ((-activeResponseBudget - A[1]) / B[1]) : 0;
+   logLambdaThreat = notZero(B[2]) ? ((-activeAttackBudget - A[2]) / B[2]) : 0;
 
 };
 
-stackleberg = function (budget) {
+stackleberg = function () {
    var objectList
      , object
      , iterationCount = 40
@@ -973,7 +978,7 @@ stackleberg = function (budget) {
 
    while (iterationCount > 0) {
 
-      calculateLambdas(objectList, budget[0], budget[1], budget[2]);
+      calculateLambdas(objectList);
 
       objectList.forEach(function (object) {
          currV = currT = currC = -1;
@@ -1049,7 +1054,7 @@ receiveRank = function () {
       weighObject(objects[key]);
    });
 
-   stackleberg([preventionBudget, responseBudget, attackBudget]);
+   stackleberg();
 
    reducedSum = 0;
    origSum = 0;
@@ -1132,10 +1137,12 @@ updateObjectiveGraph = function () {
      ;
    if (updateGraph) {
       for (ix = 0; ix <= barCount; ix += 1) {
-         budget[0] = maxPreventionBudget * (ix / barCount);
-         budget[1] = maxResponseBudget * (ix / barCount);
-         budget[2] = maxAttackBudget * (ix / barCount);
-         budgets[ix] = budget[0] + budget[1] + budget[2];
+         activePreventionBudget = maxPreventionBudget * (ix / barCount);
+         activeResponseBudget = maxResponseBudget * (ix / barCount);
+         activeAttackBudget = maxAttackBudget * (ix / barCount);
+
+         budgets[ix] = activeAttackBudget + activeResponseBudget +
+            activePreventionBudget;
          Object.keys(weightList).forEach(function (key) {
             weightList[key].setup();
          });
@@ -1143,7 +1150,7 @@ updateObjectiveGraph = function () {
             weighObject(objects[object]);
          });
 
-         stackleberg(budget);
+         stackleberg();
          result = 0;
          if (objective) {
             Object.keys(objects).forEach(function (key) {
@@ -1171,6 +1178,10 @@ updateObjectiveGraph = function () {
          dmz.object.counter(bars[ix], ObjectiveBarValueHandle, list[ix]);
          dmz.object.text(bars[ix], ObjectiveBarLabel, "$" + Math.floor(budgets[ix]));
       }
+      activeAttackBudget = attackBudget;
+      activePreventionBudget = preventionBudget;
+      activeResponseBudget = responseBudget;
+      stackleberg();
    }
 };
 
@@ -1179,6 +1190,7 @@ simulatorMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
          doRank();
+         doGraph();
       }
       else {
          receiveHide();
@@ -1190,18 +1202,18 @@ simulatorMessage.subscribe(self, function (data) {
 preventionBudgetMessage.subscribe(self, function (data, message) {
    if (dmz.data.isTypeOf(data)) {
       preventionBudget = data.number("Budget", 0);
-      if (!preventionBudget) {
-         preventionBudget = 0;
-      }
+      if (!preventionBudget) { preventionBudget = 0; }
+      activePreventionBudget = preventionBudget;
       maxPreventionBudget = data.number("Budget", 1);
       if (!maxPreventionBudget) {
          maxPreventionBudget = 0;
       }
       attackBudget = preventionBudget;
+      activeAttackBudget = preventionBudget;
       maxAttackBudget = maxPreventionBudget;
       if (visible) {
          doRank();
-         doGraph();
+//         doGraph();
       }
    }
 });
@@ -1211,11 +1223,12 @@ responseBudgetMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       responseBudget = data.number("Budget", 0);
       if (!responseBudget) { responseBudget = 0; }
+      activeResponseBudget = responseBudget;
       maxResponseBudget = data.number("Budget", 1);
-      if (!maxResponseBudget) { responseBudget = 0; }
+      if (!maxResponseBudget) { maxResponseBudget = 0; }
       if (visible) {
          doRank();
-         doGraph();
+//         doGraph();
       }
    }
 });
