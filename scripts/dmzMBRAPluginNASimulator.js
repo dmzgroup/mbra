@@ -61,6 +61,10 @@ var dmz =
    , ObjectiveVulnerabilityHandle = dmz.defs.createNamedHandle(
         "NA_Objective_Vulnerability")
    , ObjectiveConsequenceHandle = dmz.defs.createNamedHandle("NA_Objective_Consequence")
+
+   , UnfixedPreventionHandle = dmz.defs.createNamedHandle("NA_Objective_Var_Prevention")
+   , UnfixedResponseHandle = dmz.defs.createNamedHandle("NA_Objective_Var_Response")
+   , UnfixedAttackHandle = dmz.defs.createNamedHandle("NA_Objective_Var_Attack")
    , simulatorMessage = dmz.message.create(
         self.config.string("simulator-message.name", "NASimulatorMessage"))
    , preventionBudgetMessage = dmz.message.create(
@@ -81,6 +85,10 @@ var dmz =
         self.config.string(
            "message.sums.name",
            "NA_Objective_Sums_Message"))
+   , updateFixedMessage = dmz.message.create(
+        self.config.string(
+           "message.objective-budgets.name",
+           "NA_Objective_Fixed_Budgets_Message"))
    , doRankCount = 0
    , doRank = function () {
         doRankCount = 2;
@@ -122,6 +130,8 @@ var dmz =
    , logLambdaVulnerability
    , logLambdaConsequence
    , logLambdaThreat
+   , UnfixedVariable = UnfixedPreventionHandle
+   , doCalculations = false
 
    , updateObjectiveGraph
    , weighObject
@@ -164,6 +174,7 @@ var dmz =
    , receiveHide
    , updateSimulatorFlag
    , updateObjectScalar
+   , updateFixedObjectiveFlag
    , stackleberg
    , calculateLambdas
    ;
@@ -1134,15 +1145,28 @@ updateObjectiveGraph = function () {
      , result
      , budget = []
      , array
+     , startTime = dmz.time.getSystemTime()
      ;
    if (updateGraph) {
-      for (ix = 0; ix <= barCount; ix += 1) {
-         activePreventionBudget = maxPreventionBudget * (ix / barCount);
-         activeResponseBudget = maxResponseBudget * (ix / barCount);
-         activeAttackBudget = maxAttackBudget * (ix / barCount);
 
-         budgets[ix] = activeAttackBudget + activeResponseBudget +
-            activePreventionBudget;
+      activeAttackBudget = attackBudget;
+      activePreventionBudget = preventionBudget;
+      activeResponseBudget = responseBudget;
+
+      for (ix = 0; ix <= barCount; ix += 1) {
+         if (UnfixedVariable === UnfixedPreventionHandle) {
+            activePreventionBudget = maxPreventionBudget * (ix / barCount);
+            budgets[ix] = activePreventionBudget;
+         }
+         else if (UnfixedVariable === UnfixedResponseHandle) {
+            activeResponseBudget = maxResponseBudget * (ix / barCount);
+            budgets[ix] = activeResponseBudget;
+         }
+         else if (UnfixedVariable === UnfixedAttackHandle) {
+            activeAttackBudget = maxAttackBudget * (ix / barCount);
+            budgets[ix] = activeAttackBudget;
+         }
+
          Object.keys(weightList).forEach(function (key) {
             weightList[key].setup();
          });
@@ -1164,6 +1188,7 @@ updateObjectiveGraph = function () {
          }
          list[ix] = result;
       }
+      self.log.warn(list);
       if (max > 0) {
          for (ix = 0; ix <= barCount; ix += 1) {
             list[ix] = Math.ceil(list[ix] / max * 100);
@@ -1174,14 +1199,18 @@ updateObjectiveGraph = function () {
             list[ix] = 0;
          }
       }
+      self.log.warn(list);
       for (ix = 0; ix <= barCount; ix += 1) {
          dmz.object.counter(bars[ix], ObjectiveBarValueHandle, list[ix]);
          dmz.object.text(bars[ix], ObjectiveBarLabel, "$" + Math.floor(budgets[ix]));
       }
+
       activeAttackBudget = attackBudget;
       activePreventionBudget = preventionBudget;
       activeResponseBudget = responseBudget;
       stackleberg();
+
+      self.log.error("Update Graph:", (dmz.time.getSystemTime() - startTime));
    }
 };
 
@@ -1189,10 +1218,12 @@ updateObjectiveGraph = function () {
 simulatorMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
+         doCalculations = true;
          doRank();
          doGraph();
       }
       else {
+         doCalculations = false;
          receiveHide();
       }
    }
@@ -1211,9 +1242,9 @@ preventionBudgetMessage.subscribe(self, function (data, message) {
       attackBudget = preventionBudget;
       activeAttackBudget = preventionBudget;
       maxAttackBudget = maxPreventionBudget;
-      if (visible) {
+      if (visible && doCalculations) {
          doRank();
-//         doGraph();
+         doGraph();
       }
    }
 });
@@ -1226,9 +1257,9 @@ responseBudgetMessage.subscribe(self, function (data) {
       activeResponseBudget = responseBudget;
       maxResponseBudget = data.number("Budget", 1);
       if (!maxResponseBudget) { maxResponseBudget = 0; }
-      if (visible) {
+      if (visible && doCalculations) {
          doRank();
-//         doGraph();
+         doGraph();
       }
    }
 });
@@ -1240,7 +1271,7 @@ vinfinityMessage.subscribe(self, function (data) {
       if (!vinf) {
          vinf = 0.05;
       }
-      if (visible) {
+      if (visible && doCalculations) {
          doRank();
       }
    }
@@ -1250,7 +1281,7 @@ cinfinityMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       cinf = data.number("value", 0);
       if (!cinf) { cinf = 0.05; }
-      if (visible) { doRank(); }
+      if (visible && doCalculations) { doRank(); }
    }
 });
 
@@ -1265,21 +1296,25 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
    if (objType) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
          objects[handle] = handle;
-         if (visible && objects[handle]) {
-            doRank();
+         if (doCalculations) {
+            if (visible && objects[handle]) {
+               doRank();
+            }
+            doGraph();
          }
-         doGraph();
       }
    }
 });
 
 updateObjectScalar = function (handle) {
-   if (visible && objects[handle]) {
+   if (doCalculations) {
+      if (visible && objects[handle]) {
 
-      doRank();
+         doRank();
+      }
+      calcRiskInitial(handle);
+      doGraph();
    }
-   calcRiskInitial(handle);
-   doGraph();
 };
 
 dmz.object.scalar.observe(self, ThreatHandle, updateObjectScalar);
@@ -1326,7 +1361,7 @@ updateSimulatorFlag = function (handle, attr, value) {
       delete weightList[attr];
       doGraph();
    }
-   if (visible) {
+   if (visible && doCalculations) {
       doRank();
    }
 };
@@ -1342,6 +1377,17 @@ dmz.object.flag.observe(self, ObjectiveThreatHandle, updateSimulatorFlag);
 dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, updateSimulatorFlag);
 dmz.object.flag.observe(self, ObjectiveConsequenceHandle, updateSimulatorFlag);
 
+updateFixedObjectiveFlag = function (handle, attr, value) {
+   if (value) {
+      UnfixedVariable = attr;
+      if (doCalculations) { doGraph(); }
+   }
+};
+
+dmz.object.flag.observe(self, UnfixedAttackHandle, updateFixedObjectiveFlag);
+dmz.object.flag.observe(self, UnfixedPreventionHandle, updateFixedObjectiveFlag);
+dmz.object.flag.observe(self, UnfixedResponseHandle, updateFixedObjectiveFlag);
+
 
 dmz.object.destroy.observe(self, function (handle) {
    var updateRank = false;
@@ -1349,37 +1395,45 @@ dmz.object.destroy.observe(self, function (handle) {
       updateRank = true;
    }
    delete objects[handle];
-   if (updateRank) {
+   if (updateRank && doCal) {
       doRank();
    }
    doGraph();
 });
 
 dmz.object.link.observe(self, LinkHandle, function (link, attr, Super, sub) {
-   if (visible && objects[Super]) {
-      doRank();
+   if (doCalculations) {
+      if (visible && objects[Super]) {
+         doRank();
+      }
+      doGraph();
    }
-   doGraph();
 });
 
 dmz.object.unlink.observe(self, LinkHandle, function (link, attr, Super, sub) {
-   if (visible && objects[Super]) {
-      doRank();
+   if (doCalculations) {
+      if (visible && objects[Super]) {
+         doRank();
+      }
+      doGraph();
    }
-   doGraph();
 });
 
 dmz.object.linkAttributeObject.observe(self, LinkHandle,
 function (link, attr, Super, sub, object) {
-   if (visible && object && objects[object]) {
-      doRank();
+   if (doCalculations) {
+      if (visible && object && objects[object]) {
+         doRank();
+      }
+      doGraph();
    }
-   doGraph();
 });
 
 dmz.object.state.observe(self, LinkFlowHandle, function (object) {
-   if (visible && object && objects[object]) {
-      doRank();
+   if (doCalculations) {
+      if (visible && object && objects[object]) {
+         doRank();
+      }
+      doGraph();
    }
-   doGraph();
 });

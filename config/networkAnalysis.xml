@@ -723,6 +723,9 @@
       <objective-function text="Threat" attribute="NA_Objective_Threat"/>
       <objective-function text="Vulnerability" attribute="NA_Objective_Vulnerability"/>
       <objective-function text="Consequence" attribute="NA_Objective_Consequence"/>
+      <objective-variable text="Prevention" attribute="NA_Objective_Var_Prevention"/>
+      <objective-variable text="Response" attribute="NA_Objective_Var_Response"/>
+      <objective-variable text="Attack" attribute="NA_Objective_Var_Attack"/>
    </dmzMBRAPluginNACalculate>
    <dmzQtPluginCanvasAutoLink>
       <link>

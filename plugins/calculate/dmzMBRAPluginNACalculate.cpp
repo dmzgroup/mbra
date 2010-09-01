@@ -26,6 +26,7 @@ dmz::MBRAPluginNACalculate::MBRAPluginNACalculate (
       _weightByHandles (),
       _weightByGroup (),
       _objectiveFunctionHandles (),
+      _unfixedBudgetHandles (),
       _ignoreUpdates (False) {
 
    _ui.setupUi (this);
@@ -176,6 +177,28 @@ dmz::MBRAPluginNACalculate::on_objectiveComboBox_currentIndexChanged (int id) {
 
 
 void
+dmz::MBRAPluginNACalculate::on_unfixedBudgetBox_currentIndexChanged (int id) {
+
+   ObjectModule *objMod = get_object_module ();
+
+   if (objMod && _simulatorHandle) {
+
+      const Handle ActiveHandle (_ui.unfixedBudgetBox->itemData (id).toLongLong ());
+
+      foreach (Handle attrHandle, _unfixedBudgetHandles) {
+
+         Boolean value (False);
+         if (ActiveHandle == attrHandle) { value = true; }
+
+         _ignoreUpdates = True;
+         objMod->store_flag (_simulatorHandle, attrHandle, value);
+         _ignoreUpdates = False;
+      }
+   }
+}
+
+
+void
 dmz::MBRAPluginNACalculate::_init (Config &local) {
 
    RuntimeContext *context = get_plugin_runtime_context ();
@@ -249,11 +272,39 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
       }
    }
    
+   if (local.lookup_all_config ("objective-variable", itemList)) {
+
+      ConfigIterator it;
+      Config cd;
+
+      while (itemList.get_next_config (it, cd)) {
+
+         const String Text (config_to_string ("text", cd));
+
+         const String AttrName (config_to_string ("attribute", cd));
+
+         if (Text && AttrName) {
+
+            const Handle AttrHandle (activate_object_attribute (AttrName, ObjectFlagMask));
+
+            _ui.unfixedBudgetBox->addItem (Text.get_buffer (), (qlonglong)AttrHandle);
+            _unfixedBudgetHandles.append (AttrHandle);
+         }
+      }
+   }
+
    _simulatorType = config_to_object_type (
       "type.simulator",
       local,
       "na_simulator",
       context);
+
+   _updateFixedBudgetMsg = config_create_message (
+      "message.objective-budgets.name",
+      local,
+      "NA_Objective_Fixed_Budgets_Message",
+      context,
+      &_log);
 
    _updateObjectiveMsg = config_create_message (
       "message.objective-sums.name",
@@ -263,6 +314,7 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
       &_log);
 
    subscribe_to_message (_updateObjectiveMsg);
+   subscribe_to_message (_updateFixedBudgetMsg);
 }
 
 
