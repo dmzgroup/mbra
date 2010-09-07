@@ -849,13 +849,13 @@ weightContagious = {
             if (AllowWrites) {
                dmz.object.scalar(objects[key].handle, ContagiousHandle, value);
             }
-            object.contagious = value;
+            objects[key].contagious = value;
          }
          else {
             if (AllowWrites) {
                dmz.object.scalar(objects[key].handle, ContagiousHandle, 0);
             }
-            object.contagious = 0;
+            objects[key].contagious = 0;
          }
       });
    },
