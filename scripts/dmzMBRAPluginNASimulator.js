@@ -99,7 +99,9 @@ var dmz =
      }
    , objects = {}
    , calcObjectiveNone = function (object) {
-        dmz.object.text(object.handle, LabelHandle, "");
+        if (AllowWrites) {
+           dmz.object.text(object.handle, LabelHandle, "");
+        }
         return [0, 0];
      }
    , objective = calcObjectiveNone
@@ -132,6 +134,7 @@ var dmz =
    , logLambdaThreat
    , UnfixedVariable = UnfixedPreventionHandle
    , doStacklebergFlag = false
+   , AllowWrites = true
 
    , updateObjectiveGraph
    , weighObject
@@ -214,22 +217,16 @@ workFunc = function () {
 timeSlice = dmz.time.setRepeatingTimer(self, workFunc);
 
 calcRiskInitial = function (object) {
-//   var Threat = dmz.object.scalar(object, ThreatHandle)
-//     , Vulnerability = dmz.object.scalar(object, VulnerabilityHandle)
-//     , Consequence = dmz.object.scalar(object, ConsequenceHandle)
    var Threat = object.threat
      , Vulnerability = object.vul
      , Consequence = object.consequence
+     , result = 0
      ;
    if (Threat && Vulnerability && Consequence) {
-      dmz.object.scalar(
-         object.handle,
-         RiskInitialHandle,
-         Threat * Vulnerability * Consequence);
+      result = Threat * Vulnerability * Consequence;
    }
-   else {
-      dmz.object.scalar(object.handle, RiskInitialHandle, 0);
-   }
+   object.riskInit = result;
+   dmz.object.scalar(object.handle, RiskInitialHandle, result);
 };
 
 calcVulnerability = function (object) {
@@ -360,7 +357,6 @@ calcAttackAllocation = function (object) {
       object.allocA = false;
    }
 
-//   dmz.object.scalar(object.handle, AttackAllocationHandle, result);
    object.attackAllocation = result;
    return result;
 };
@@ -387,7 +383,6 @@ calcResponseAllocation = function (object) {
       object.allocR = false;
    }
 
-//   dmz.object.scalar(object.handle, ResponseAllocationHandle, result);
    object.responseAllocation = result;
    return result;
 };
@@ -403,7 +398,10 @@ calcRiskReduced = function (object) {
       result = Threat * Vulnerability * Consequence;
    }
 
-   dmz.object.scalar(object.handle, RiskReducedHandle, result);
+   object.riskReduced = result;
+   if (AllowWrites) {
+      dmz.object.scalar(object.handle, RiskReducedHandle, result);
+   }
    return result;
 };
 
@@ -412,13 +410,13 @@ formatResult = function (value) {
 };
 
 calcObjectiveRisk = function (object) {
-   var result = dmz.object.scalar(object.handle, RiskReducedHandle)
-     , orig = dmz.object.scalar(object.handle, RiskInitialHandle)
+   var result = object.riskReduced
+     , orig = object.riskInit
      ;
    if (!result) {
       result = 0;
    }
-   if (visible) {
+   if (visible && AllowWrites) {
       dmz.object.text(object.handle, LabelHandle, "Risk = " + result.toFixed(2));
    }
    return [result, orig];
@@ -439,37 +437,33 @@ calcObjectiveTxV = function (object) {
    if (Threat && Vulnerability) {
       orig = Threat * Vulnerability;
    }
-   if (visible) {
+   if (visible && AllowWrites) {
       dmz.object.text(object.handle, LabelHandle, "T x V = " + formatResult(result));
    }
    return [result, orig];
 };
 
 calcObjectiveThreat = function (object) {
-//   var result = dmz.object.scalar(object, ThreatCalculatedHandle)
-//     , orig = dmz.object.scalar(object, ThreatHandle)
    var result = object.reducedT
      , orig = object.threat
      ;
    if (!result) {
       result = 0;
    }
-   if (visible) {
+   if (visible && AllowWrites) {
       dmz.object.text(object.handle, LabelHandle, "Threat = " + formatResult(result));
    }
    return [result, orig];
 };
 
 calcObjectiveVulnerability = function (object) {
-//   var result = dmz.object.scalar(object, VulnerabilityReducedHandle)
-//     , orig = dmz.object.scalar(object, VulnerabilityHandle)
    var result = object.reducedV
      , orig = object.vul
      ;
    if (!result) {
       result = 0;
    }
-   if (visible) {
+   if (visible && AllowWrites) {
       dmz.object.text(object.handle, LabelHandle,
                        "Vulnerability = " + formatResult(result));
    }
@@ -477,8 +471,6 @@ calcObjectiveVulnerability = function (object) {
 };
 
 calcObjectiveConsequence = function (object) {
-//   var result = dmz.object.scalar(object, ConsequenceReducedHandle)
-//     , orig = dmz.object.scalar(object, ConsequenceHandle)
    var result = object.reducedC
      , orig = object.consequence
      , str
@@ -486,9 +478,11 @@ calcObjectiveConsequence = function (object) {
    if (!result) {
       result = 0;
    }
-   if (visible) {
-      str = "Consequence = $" + result.toFixed(2);
-      dmz.object.text(object.handle, LabelHandle, str);
+   if (visible && AllowWrites) {
+      dmz.object.text(
+         object.handle,
+         LabelHandle,
+         "Consequence = $" + result.toFixed(2));
    }
    return [result, orig];
 };
@@ -499,7 +493,9 @@ weightDegrees = {
 
       maxDegrees = 0;
       Object.keys(objects).forEach(function (key) {
-         objects[key].degree = dmz.object.scalar(objects[key].handle, DegreeHandle);
+         if (!objects[key].degree) {
+            objects[key].degree = dmz.object.scalar(objects[key].handle, DegreeHandle);
+         }
          if (objects[key].degree && (objects[key].degree > maxDegrees)) {
             maxDegrees = objects[key].degree;
          }
@@ -850,17 +846,24 @@ weightContagious = {
             if (value && (value > maxContagious)) {
                maxContagious = value;
             }
-            dmz.object.scalar(objects[key].handle, ContagiousHandle, value);
+            if (AllowWrites) {
+               dmz.object.scalar(objects[key].handle, ContagiousHandle, value);
+            }
+            object.contagious = value;
          }
          else {
-            dmz.object.scalar(objects[key].handle, ContagiousHandle, 0);
+            if (AllowWrites) {
+               dmz.object.scalar(objects[key].handle, ContagiousHandle, 0);
+            }
+            object.contagious = 0;
          }
       });
    },
 
    calc: function (object) {
       var result = 0
-        , value = dmz.object.scalar(object.handle, ContagiousHandle)
+        //, value = dmz.object.scalar(object.handle, ContagiousHandle)
+        , value = object.contagious
         ;
 
       if (value > 0 && (maxContagious > 0)) {
@@ -875,7 +878,9 @@ weighObject = function (object) {
    Object.keys(weightList).forEach(function (key) {
       value *= weightList[key].calc(object);
    });
-   dmz.object.scalar(object.handle, WeightHandle, value);
+   if (AllowWrites) {
+      dmz.object.scalar(object.handle, WeightHandle, value);
+   }
    object.weight = value;
 };
 
@@ -1067,7 +1072,7 @@ receiveRank = function () {
          ResponseAllocationHandle,
          object.responseAllocation);
       dmz.object.scalar(object.handle,AttackAllocationHandle, object.attackAllocation);
-      dmz.object.scalar(object.handle, RiskReducedHandle, calcRiskReduced(object));
+      dmz.object.scalar(object.handle, RiskReducedHandle, object.riskReduced);
    });
 
    reducedSum = 0;
@@ -1151,6 +1156,10 @@ updateObjectiveGraph = function () {
      ;
    if (updateGraph && (objective !== ObjectiveNoneHandle)) {
 
+      // Set flag so that operations performed during multiple iterations of the
+      // calculations will not write to dmz.object.
+      AllowWrites = false;
+
       activeAttackBudget = attackBudget;
       activePreventionBudget = preventionBudget;
       activeResponseBudget = responseBudget;
@@ -1200,6 +1209,8 @@ updateObjectiveGraph = function () {
             list[ix] = 0;
          }
       }
+
+      AllowWrites = true;
       for (ix = 0; ix <= barCount; ix += 1) {
          dmz.object.counter(bars[ix], ObjectiveBarValueHandle, list[ix]);
          dmz.object.text(bars[ix], ObjectiveBarLabel, "$" + Math.floor(budgets[ix]));
