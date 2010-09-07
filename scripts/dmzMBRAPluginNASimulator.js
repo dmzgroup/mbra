@@ -131,6 +131,7 @@ var dmz =
    , logLambdaConsequence
    , logLambdaThreat
    , UnfixedVariable = UnfixedPreventionHandle
+   , doStacklebergFlag = false
 
    , updateObjectiveGraph
    , weighObject
@@ -177,26 +178,6 @@ var dmz =
    , stackleberg
    , calculateLambdas
 
-   , timeFlag = false
-   , updateObjectiveGraphTime = 0
-   , preventionLogTermTime = 0
-   , responseLogTermTime = 0
-   , attackLogTermTime = 0
-   , stacklebergTime = 0
-   , calculateLambdasTime = 0
-   , stacklebergTime2 = 0
-   , stacklebergTime3 = 0
-   , stacklebergTime4 = 0
-   , stacklebergTime5 = 0
-   , stacklebergTime6 = 0
-   , stacklebergTime7 = 0
-   , stacklebergTime8 = 0
-   , cAACount = 0
-   , cRACount = 0
-   , cPACount = 0
-   , cpaTime1 = 0
-   , cpaTime2 = 0
-   , cpa
    ;
 
 (function () {
@@ -214,14 +195,18 @@ workFunc = function () {
       doGraphCount -= 1;
    }
    else if (doGraphCount === 1) {
-      updateObjectiveGraph();
+      if (doStacklebergFlag) {
+         updateObjectiveGraph();
+      }
       doGraphCount = 0;
    }
    if (doRankCount > 1) {
       doRankCount -= 1;
    }
    else if (doRankCount === 1) {
-      receiveRank();
+      if (doStacklebergFlag) {
+         receiveRank();
+      }
       doRankCount = 0;
    }
 };
@@ -262,9 +247,6 @@ calcVulnerability = function (object) {
       Cost = object.preventionCost;
       Gamma = object.gamma;
    }
-   else {
-      self.log.warn("calcVuln old object");
-   }
 
    if (Vulnerability) { result = Vulnerability; }
 
@@ -291,9 +273,6 @@ calcConsequence = function (object) {
       Allocation = object.responseAllocation;
       Consequence = object.consequence;
       Cost = object.responseCost;
-   }
-   else {
-      self.log.warn("calcConsequence old object");
    }
 
    if (Consequence) { result = Consequence; }
@@ -322,9 +301,6 @@ calcThreat = function (object) {
       Cost = object.preventionCost;
       Gamma = object.gamma;
    }
-   else {
-      self.log.warn("calcThreat old object");
-   }
 
    if (Gamma && notZero(Gamma) && Cost && (Cost > 0) && notZero(Cost) &&
          Allocation && notZero(Allocation) && notZero(Budget)) {
@@ -339,8 +315,6 @@ calcThreat = function (object) {
 };
 
 calcPreventionAllocation = function (object) {
-   cPACount += 1;
-   var time = dmz.time.getSystemTime();
    var result = 0
      , Cost = object.preventionCost
      , Vulnerability = object.vul
@@ -351,29 +325,22 @@ calcPreventionAllocation = function (object) {
      , AttackMod = object.attackMod // Changes when FT has XOR, used for v3.0
      ;
 
-
    if (Gamma && notZero(Gamma) && Weight && notZero(Weight) && Cost && notZero(Cost) &&
          notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
       result = - Cost / Gamma * (logLambdaVulnerability + Math.log(
          Cost / (Weight * Threat * Vulnerability * Consequence * AttackMod * Gamma)));
    }
-   cpaTime1 += (dmz.time.getSystemTime() - time);
-
 
    if (result < 0) {
       result = 0;
       object.allocP = false;
    }
 
-   time = dmz.time.getSystemTime()
-//   dmz.object.scalar(object.handle, PreventionAllocationHandle, result);
    object.preventionAllocation = result;
-   cpaTime2 += (dmz.time.getSystemTime() - time);
    return result;
 };
 
 calcAttackAllocation = function (object) {
-   cAACount += 1;
    var result = 0
      , Cost = object.preventionCost
      , Vulnerability = object.reducedV
@@ -399,7 +366,6 @@ calcAttackAllocation = function (object) {
 };
 
 calcResponseAllocation = function (object) {
-   cRACount += 1;
    var result = 0
      , Cost = object.responseCost
      , Beta = object.beta
@@ -533,16 +499,16 @@ weightDegrees = {
 
       maxDegrees = 0;
       Object.keys(objects).forEach(function (key) {
-         var value = dmz.object.scalar(objects[key], DegreeHandle);
-         if (value && (value > maxDegrees)) {
-            maxDegrees = value;
+         objects[key].degree = dmz.object.scalar(objects[key].handle, DegreeHandle);
+         if (objects[key].degree && (objects[key].degree > maxDegrees)) {
+            maxDegrees = objects[key].degree;
          }
       });
    },
    
    calc: function (object) {
       var result = 0
-        , value = dmz.object.scalar(object.handle, DegreeHandle)
+        , value = object.degree
         ;
       if (value && (maxDegrees > 0)) {
          result = value / maxDegrees;
@@ -876,7 +842,7 @@ weightContagious = {
       var object;
       maxContagious = 0;
       Object.keys(objects).forEach(function (key) {
-         var degree = dmz.object.scalar(objects[key].handle, DegreeHandle)
+         var degree = objects[key].degree
            , threat = objects[key].threat
            , vuln = objects[key].vul
            , value = degree * threat * vuln;
@@ -914,7 +880,6 @@ weighObject = function (object) {
 };
 
 preventionLogTerm = function (object) {
-   var time = dmz.time.getSystemTime();
    var result = object.weight * object.reducedT * object.vul * object.reducedC *
       object.gamma;
 
@@ -924,12 +889,10 @@ preventionLogTerm = function (object) {
          result = object.preventionCost / object.gamma * Math.log(result);
       }
    }
-   preventionLogTermTime += (dmz.time.getSystemTime() - time);
    return result;
 };
 
 responseLogTerm = function (object) {
-   var time = dmz.time.getSystemTime();
    var result = object.weight * object.reducedT * object.reducedV * object.consequence *
       object.beta;
 
@@ -939,12 +902,10 @@ responseLogTerm = function (object) {
          result = object.responseCost / object.beta * Math.log(result);
       }
    }
-   responseLogTermTime += (dmz.time.getSystemTime() - time);
    return result;
 };
 
 attackLogTerm = function (object) {
-   var time = dmz.time.getSystemTime();
    var result = object.weight * object.reducedV * object.reducedC * object.gamma;
 
    if (notZero(result)) {
@@ -953,12 +914,10 @@ attackLogTerm = function (object) {
          result = (object.attackCost / object.gamma) * Math.log(result);
       }
    }
-   attackLogTermTime += (dmz.time.getSystemTime() - time);
    return result;
 };
 
 calculateLambdas = function () {
-   var time = dmz.time.getSystemTime();
    var A = [0, 0, 0]
      , B = [0, 0, 0]
      , object
@@ -984,13 +943,11 @@ calculateLambdas = function () {
    logLambdaConsequence = notZero(B[1]) ? ((-activeResponseBudget - A[1]) / B[1]) : 0;
    logLambdaThreat = notZero(B[2]) ? ((-activeAttackBudget - A[2]) / B[2]) : 0;
 
-   calculateLambdasTime += (dmz.time.getSystemTime() - time);
 };
 
 stackleberg = function () {
-   var time = dmz.time.getSystemTime();
    var object
-     , iterationCount = 20
+     , iterationCount = 40
      , Threshold = 0.001
      , currV
      , currT
@@ -1021,12 +978,10 @@ stackleberg = function () {
 
       calculateLambdas();
 
-      var time3 = dmz.time.getSystemTime();
       Object.keys(objects).forEach(function (key) {
          object = objects[key];
          currV = currT = currC = -1;
 
-         var time2 = dmz.time.getSystemTime();
          if (object.updateV && object.allocP) {
             calcPreventionAllocation(object);
             currV = calcVulnerability(object);
@@ -1034,9 +989,7 @@ stackleberg = function () {
                object.updateV = false;
             }
          }
-         stacklebergTime2 += (dmz.time.getSystemTime() - time2);
 
-         var time4 = dmz.time.getSystemTime();
          if (object.updateT && object.allocA) {
             calcAttackAllocation(object);
             currT = calcThreat(object);
@@ -1044,35 +997,22 @@ stackleberg = function () {
                object.updateT = false;
             }
          }
-         stacklebergTime4 += (dmz.time.getSystemTime() - time4);
 
-         var time5 = dmz.time.getSystemTime();
          if (object.updateC && object.allocR) {
-            var time6 = dmz.time.getSystemTime();
             calcResponseAllocation(object);
-            stacklebergTime6 += (dmz.time.getSystemTime() - time6);
-            var time7 = dmz.time.getSystemTime();
             currC = calcConsequence(object);
-            stacklebergTime7 += (dmz.time.getSystemTime() - time7);
             if (Math.abs((currC - object.reducedC) / object.reducedC) <= Threshold) {
                object.updateC = false;
             }
          }
-         stacklebergTime5 += (dmz.time.getSystemTime() - time5);
-
 
          if (currV !== -1) { object.reducedV = currV; }
          if (currT !== -1) { object.reducedT = currT; }
          if (currC !== -1) { object.reducedC = currC; }
       });
-      stacklebergTime3 += (dmz.time.getSystemTime() - time3);
 
       iterationCount -= 1;
    }
-   stacklebergTime += (dmz.time.getSystemTime() - time);
-
-   time = dmz.time.getSystemTime();
-   stacklebergTime8 += (dmz.time.getSystemTime() - time);
 };
 
 rankObject = function (object) {
@@ -1201,7 +1141,6 @@ receiveHide = function () {
 };
 
 updateObjectiveGraph = function () {
-   var time = dmz.time.getSystemTime();
    var max = 0
      , budgets = []
      , list = []
@@ -1209,7 +1148,6 @@ updateObjectiveGraph = function () {
      , result
      , budget = []
      , array
-     , startTime = dmz.time.getSystemTime()
      ;
    if (updateGraph && (objective !== ObjectiveNoneHandle)) {
 
@@ -1252,7 +1190,6 @@ updateObjectiveGraph = function () {
          }
          list[ix] = result;
       }
-      self.log.warn(list);
       if (max > 0) {
          for (ix = 0; ix <= barCount; ix += 1) {
             list[ix] = Math.ceil(list[ix] / max * 100);
@@ -1263,7 +1200,6 @@ updateObjectiveGraph = function () {
             list[ix] = 0;
          }
       }
-      self.log.warn(list);
       for (ix = 0; ix <= barCount; ix += 1) {
          dmz.object.counter(bars[ix], ObjectiveBarValueHandle, list[ix]);
          dmz.object.text(bars[ix], ObjectiveBarLabel, "$" + Math.floor(budgets[ix]));
@@ -1272,37 +1208,20 @@ updateObjectiveGraph = function () {
       activeAttackBudget = attackBudget;
       activePreventionBudget = preventionBudget;
       activeResponseBudget = responseBudget;
-//      stackleberg();
 
-
-//      self.log.error("Update Graph:", (dmz.time.getSystemTime() - startTime));
    }
-//   updateObjectiveGraphTime += (dmz.time.getSystemTime() - time);
-//   self.log.warn ("updateObjectiveGraphTime", updateObjectiveGraphTime);
-//   self.log.warn ("preventionLogTermTime", preventionLogTermTime);
-//   self.log.warn ("responseLogTermTime", responseLogTermTime);
-//   self.log.warn ("attackLogTermTime", attackLogTermTime);
-//   self.log.warn ("calculateLambdasTime", calculateLambdasTime);
-//   self.log.warn ("stacklebergTime", stacklebergTime);
-//   self.log.warn ("stackle objectLoop:", stacklebergTime3);
-//   self.log.warn ("stackle updateV:", stacklebergTime2, cPACount);
-//   self.log.warn ("cpa Calc:", cpaTime1);
-//   self.log.warn ("cpa Write:", cpaTime2);
-//   self.log.warn ("stackle updateA:", stacklebergTime4, cAACount);
-//   self.log.warn ("stackle updateR:", stacklebergTime5, cRACount);
-//   self.log.warn ("stackle cRA:", stacklebergTime6);
-//   self.log.warn ("stackle cC:", stacklebergTime7);
-//   self.log.warn ("stackle Write:", stacklebergTime8);
 };
 
 // function receive_simulator
 simulatorMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
+         doStacklebergFlag = true;
          doRank();
          doGraph();
       }
       else {
+         doStacklebergFlag = false;
          receiveHide();
       }
    }
@@ -1400,6 +1319,7 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
          if (object.gamma < 0) {
             object.gamma = 0;
          }
+
          object.beta = -Math.log(cinf);
          if (object.beta < 0) {
             object.beta = 0;
@@ -1438,10 +1358,8 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
          objects[handle] = object;
 
          if (visible && objects[handle]) {
-            self.log.warn ("doRank()");
             doRank();
          }
-         self.log.warn ("doGraph()");
          doGraph();
       }
    }
@@ -1455,11 +1373,14 @@ updateObjectScalar = function (handle, attr, val) {
          case VulnerabilityHandle:
             object.vul = val;
             object.gamma = -Math.log(vinf / val);
+            if (object.gamma < 0) {
+               object.gamma = 0;
+            }
             break;
          case PreventionCostHandle: object.preventionCost = val; break;
          case ConsequenceHandle: object.consequence = val; break;
          case ResponseHandle: object.responseCost = val; break;
-         case DegreeHandle: break;
+         case DegreeHandle: object.degree = val; break;
       }
    }
 
@@ -1545,16 +1466,6 @@ dmz.object.flag.observe(self, UnfixedResponseHandle, updateFixedObjectiveFlag);
 
 
 dmz.object.destroy.observe(self, function (handle) {
-   if (!timeFlag) {
-      self.log.warn ("updateObjectiveGraphTime", updateObjectiveGraphTime);
-      self.log.warn ("preventionLogTermTime", preventionLogTermTime);
-      self.log.warn ("responseLogTermTime", responseLogTermTime);
-      self.log.warn ("attackLogTermTime", attackLogTermTime);
-      self.log.warn ("calculateLambdasTime", calculateLambdasTime);
-      self.log.warn ("stacklebergTime", stacklebergTime);
-      timeFlag = true;
-   }
-
    var updateRank = false;
    if (visible && objects[handle]) {
       updateRank = true;
