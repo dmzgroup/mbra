@@ -332,10 +332,12 @@ calcPreventionAllocation = function (object) {
      , Weight = object.weight
      , Gamma = object.gamma
      , AttackMod = object.attackMod // Changes when FT has XOR, used for v3.0
+     , Budget = activePreventionBudget;
      ;
 
    if (Gamma && notZero(Gamma) && Weight && notZero(Weight) && Cost && notZero(Cost) &&
-         notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
+         notZero(Consequence) && notZero(Threat) && notZero(Vulnerability) &&
+         notZero(Budget)) {
       result = - Cost / Gamma * (logLambdaVulnerability + Math.log(
          Cost / (Weight * Threat * Vulnerability * Consequence * AttackMod * Gamma)));
    }
@@ -359,9 +361,11 @@ calcAttackAllocation = function (object) {
      , Weight = object.weight
      , AttackMod = object.attackMod // Changes when FT has XOR, used for v3.0
      , Gamma = object.gamma
+     , Budget = activeAttackBudget
      ;
 
-   if (Gamma && notZero(Gamma) && Weight && notZero(Weight) && Cost && notZero(Cost)) {
+   if (Gamma && notZero(Gamma) && Weight && notZero(Weight) && Cost && notZero(Cost) &&
+       notZero(Budget)) {
       result = - Cost / Gamma * (logLambdaThreat +
          Math.log(Cost / (Weight * Vulnerability * Consequence * AttackMod * Gamma)));
    }
@@ -385,10 +389,11 @@ calcResponseAllocation = function (object) {
      , Threat = object.reducedT
      , Vulnerability = object.reducedV
      , Consequence = object.consequence
+     , Budget = activeResponseBudget
      ;
 
-   if (Weight && notZero(Weight) && Cost && notZero(Cost) &&
-         notZero(Consequence) && notZero(Threat) && notZero(Vulnerability)) {
+   if (Weight && notZero(Weight) && Cost && notZero(Cost) && notZero(Consequence) &&
+       notZero(Threat) && notZero(Vulnerability) && notZero(Budget)) {
 
       result = -Cost / Beta * (logLambdaConsequence +
          Math.log(Cost / (Weight * Threat * Vulnerability * Consequence * Beta)));
@@ -1372,6 +1377,7 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
          object.vul = dmz.object.scalar(handle, VulnerabilityHandle);
          if (!object.vul || (object.vul <= 0)) {
             object.vul = 1;
+            dmz.object.scalar(handle, VulnerabilityHandle, object.vul);
          }
          if (object.vul < vinf) {
             object.vul = vinf;
@@ -1392,11 +1398,13 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
          object.preventionCost = dmz.object.scalar(handle, PreventionCostHandle);
          if (!object.preventionCost) {
             object.preventionCost = 0;
+            dmz.object.scalar(handle, PreventionCostHandle, 0);
          }
 
          object.responseCost = dmz.object.scalar(handle, ResponseHandle);
          if (!object.responseCost) {
             object.responseCost = 0;
+            dmz.object.scalar(handle, ResponseHandle, 0);
          }
 
          object.attackCost = object.preventionCost;
@@ -1410,11 +1418,13 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
          }
          object.threat = dmz.object.scalar(handle, ThreatHandle);
          if (!object.threat) {
-            object.threat = 0;
+            object.threat = 1;
+            dmz.object.scalar(handle, ThreatHandle, object.threat);
          }
          object.consequence = dmz.object.scalar(handle, ConsequenceHandle);
          if (!object.consequence) {
             object.consequence = 0;
+            dmz.object.scalar(handle, ConsequenceHandle, 0);
          }
 
          objects[handle] = object;

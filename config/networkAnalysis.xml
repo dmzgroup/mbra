@@ -357,6 +357,14 @@
             decimals="2"
          />
          <property
+            type="scalar-label"
+            name="Calculated Threat"
+            attribute="NA_Node_Threat_Calculated"
+            scale="100"
+            decimals="0"
+            suffix="%"
+         />
+         <property
             type="text"
             name="Description"
             attribute="NA_Node_Description"
