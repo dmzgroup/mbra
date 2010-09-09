@@ -101,6 +101,7 @@ dmz::MBRAPluginNABudget::receive_message (
    }
 }
 
+
 // Object Observer Interface
 void
 dmz::MBRAPluginNABudget::create_object (
