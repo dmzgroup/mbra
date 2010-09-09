@@ -67,12 +67,22 @@ var dmz =
    , UnfixedAttackHandle = dmz.defs.createNamedHandle("NA_Objective_Var_Attack")
    , simulatorMessage = dmz.message.create(
         self.config.string("simulator-message.name", "NASimulatorMessage"))
+   , objectiveFunctionLabelMessage = dmz.message.create(
+        self.config.string(
+           "objective-function-graph-label.name",
+           "NA_Objective_Graph_Y_Label"))
+   , unfixedBudgetLabelMessage = dmz.message.create(
+        self.config.string(
+           "objective-function-unfixed-budget-label.name",
+           "NA_Objective_Graph_X_Label"))
    , preventionBudgetMessage = dmz.message.create(
         self.config.string(
            "message.prevention-budget.name",
            "PreventionBudgetMessage"))
    , responseBudgetMessage = dmz.message.create(
         self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
+   , attackBudgetMessage = dmz.message.create(
+        self.config.string("message.attack-budget.name", "AttackBudgetMessage"))
    , cinfinityMessage = dmz.message.create(
         self.config.string("c-infinity-message.name", "NAConsequenceInfinityMessage"))
    , vinfinityMessage = dmz.message.create(
@@ -333,13 +343,19 @@ calcPreventionAllocation = function (object) {
       object.allocP = false;
    }
 
+   if (result > Cost) {
+      result = Cost;
+      object.allocP = false;
+      activePreventionBudget -= Cost;
+   }
+
    object.preventionAllocation = result;
    return result;
 };
 
 calcAttackAllocation = function (object) {
    var result = 0
-     , Cost = object.preventionCost
+     , Cost = object.attackCost
      , Vulnerability = object.reducedV
      , Consequence = object.reducedC
      , Weight = object.weight
@@ -355,6 +371,12 @@ calcAttackAllocation = function (object) {
    if (result < 0) {
       result = 0;
       object.allocA = false;
+   }
+
+   if (result > Cost) {
+      result = Cost;
+      object.allocA = false;
+      activeAttackBudget -= Cost;
    }
 
    object.attackAllocation = result;
@@ -381,6 +403,12 @@ calcResponseAllocation = function (object) {
    if (result < 0) {
       result = 0;
       object.allocR = false;
+   }
+
+   if (result > Cost) {
+      result = Cost;
+      object.allocR = false;
+      activeResponseBudget -= Cost;
    }
 
    object.responseAllocation = result;
@@ -1058,6 +1086,9 @@ receiveRank = function () {
    });
 
    stackleberg();
+   activeAttackBudget = attackBudget;
+   activePreventionBudget = preventionBudget;
+   activeResponseBudget = responseBudget;
    Object.keys(objects).forEach(function (key) {
       object = objects[key];
       dmz.object.scalar(object.handle, ThreatCalculatedHandle, object.reducedT);
@@ -1167,14 +1198,20 @@ updateObjectiveGraph = function () {
       for (ix = 0; ix <= barCount; ix += 1) {
          if (UnfixedVariable === UnfixedPreventionHandle) {
             activePreventionBudget = maxPreventionBudget * (ix / barCount);
+            activeAttackBudget = attackBudget;
+            activeResponseBudget = responseBudget;
             budgets[ix] = activePreventionBudget;
          }
          else if (UnfixedVariable === UnfixedResponseHandle) {
             activeResponseBudget = maxResponseBudget * (ix / barCount);
+            activeAttackBudget = attackBudget;
+            activePreventionBudget = preventionBudget;
             budgets[ix] = activeResponseBudget;
          }
          else if (UnfixedVariable === UnfixedAttackHandle) {
             activeAttackBudget = maxAttackBudget * (ix / barCount);
+            activePreventionBudget = preventionBudget;
+            activeResponseBudget = responseBudget;
             budgets[ix] = activeAttackBudget;
          }
 
@@ -1248,15 +1285,13 @@ preventionBudgetMessage.subscribe(self, function (data, message) {
       if (!maxPreventionBudget) {
          maxPreventionBudget = 0;
       }
-      attackBudget = preventionBudget;
-      activeAttackBudget = preventionBudget;
-      maxAttackBudget = maxPreventionBudget;
       if (visible) {
          doRank();
          doGraph();
       }
    }
 });
+
 
 // function receive_response_budget
 responseBudgetMessage.subscribe(self, function (data) {
@@ -1266,6 +1301,20 @@ responseBudgetMessage.subscribe(self, function (data) {
       activeResponseBudget = responseBudget;
       maxResponseBudget = data.number("Budget", 1);
       if (!maxResponseBudget) { maxResponseBudget = 0; }
+      if (visible) {
+         doRank();
+         doGraph();
+      }
+   }
+});
+
+attackBudgetMessage.subscribe(self, function (data) {
+   if (dmz.data.isTypeOf(data)) {
+      attackBudget = data.number("Budget", 0);
+      if (!responseBudget) { responseBudget = 0; }
+      activeAttackBudget = attackBudget;
+      maxAttackBudget = data.number("Budget", 1);
+      if (!maxAttackBudget) { maxAttackBudget = 0; }
       if (visible) {
          doRank();
          doGraph();
@@ -1411,6 +1460,7 @@ dmz.object.scalar.observe(self, DegreeHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, ResponseHandle, updateObjectScalar);
 
 updateSimulatorFlag = function (handle, attr, value) {
+
    if (value) {
       if (attr === WeightDegreesHandle) {
          weightList[WeightDegreesHandle] = weightDegrees;
@@ -1426,21 +1476,33 @@ updateSimulatorFlag = function (handle, attr, value) {
       }
       else if (attr === ObjectiveNoneHandle) {
          objective = calcObjectiveNone;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: None"));
       }
       else if (attr === ObjectiveRiskHandle) {
          objective = calcObjectiveRisk;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: Risk"));
       }
       else if (attr === ObjectiveTxVHandle) {
          objective = calcObjectiveTxV;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: TxV"));
       }
       else if (attr === ObjectiveThreatHandle) {
          objective = calcObjectiveThreat;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: Threat"));
       }
       else if (attr === ObjectiveVulnerabilityHandle) {
          objective = calcObjectiveVulnerability;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: Vulnerability"));
       }
       else if (attr === ObjectiveConsequenceHandle) {
          objective = calcObjectiveConsequence;
+         objectiveFunctionLabelMessage.send(
+            dmz.data.wrapString("Objective: Consequence"));
       }
       doGraph();
    }
@@ -1467,6 +1529,18 @@ dmz.object.flag.observe(self, ObjectiveConsequenceHandle, updateSimulatorFlag);
 updateFixedObjectiveFlag = function (handle, attr, value) {
    if (value) {
       UnfixedVariable = attr;
+      switch (attr) {
+         case UnfixedAttackHandle:
+            unfixedBudgetLabelMessage.send(dmz.data.wrapString("Attack Budget"));
+            break;
+         case UnfixedPreventionHandle:
+            unfixedBudgetLabelMessage.send(dmz.data.wrapString("Prevention Budget"));
+            break;
+         case UnfixedResponseHandle:
+            unfixedBudgetLabelMessage.send(dmz.data.wrapString("Response Budget"));
+            break;
+      }
+
       doGraph();
    }
 };

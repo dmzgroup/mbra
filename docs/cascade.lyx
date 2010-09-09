@@ -1,0 +1,321 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+MBRA 2.3.0 Cascade Failure Simulation
+\end_layout
+
+\begin_layout Standard
+The MBRA 2.3.0 Tool Window Simulation tab is used to perform analysis on the
+ failure rate of a network.
+ Its function is to estimate the cascade effect of a single failure on a
+ network on the network as a whole.
+ To save typing, the 
+\emph on
+n
+\emph default
+ nodes and 
+\emph on
+m
+\emph default
+ links are referred to together as nodes, where there are a total of 
+\begin_inset Formula $i=n+m$
+\end_inset
+
+ of these nodes.
+\end_layout
+
+\begin_layout Standard
+In order to simulate this effect, the algorithm calculates a CDF (cumulative
+ distribution function) that allows it to pick a random node based on the
+ Threat x Vulnerability values of every node.
+ Once it has selected a random node 
+\emph on
+j
+\emph default
+ to fail, the algorithm propagates that failure to adjacent nodes, repeating
+ until there are no more adjacent nodes that are unvisited.
+ Nodes may only be visited once, and if they do not fail, are safe (and
+ do not cause their own adjacent nodes to be tested).
+ Once the cascade has finished, the amount of 
+\begin_inset Quotes eld
+\end_inset
+
+damage
+\begin_inset Quotes erd
+\end_inset
+
+ that was done to the network is calculated by adding up the 
+\begin_inset Quotes eld
+\end_inset
+
+consequence
+\begin_inset Quotes erd
+\end_inset
+
+ value for each node that failed and dividing it by the sum of every 
+\begin_inset Quotes eld
+\end_inset
+
+consequence
+\begin_inset Quotes erd
+\end_inset
+
+ value of nodes in the network.
+ 
+\end_layout
+
+\begin_layout Standard
+In order to end up with a useful amount of data, the algorithm collects
+ the results of running the algorithm a large number of times in order to
+ create a probability density function for the network.
+ From the PDF, an Exceedence Probability for the network is calculated and
+ displayed on the graph.
+ The exceedence probability graph is the true goal of the whole algorithm.
+ Its x-axis goes from [1, 100] and represents a percentage of the total
+ number of nodes in the network.
+ The graph's y-axis represents the probability that 
+\emph on
+at least
+\emph default
+ that percentage of nodes in the network will have failed.
+ For example, if EP(60) = 30, then in 30% of all cascade failures, at least
+ 60% of the network will fail.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Network Cascade Failure
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Repeat forever:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Construct a CDF of the network using Threat x Vulnerability values
+\end_layout
+
+\begin_layout Enumerate
+Pick a random node from the CDF by selecting a random number 
+\begin_inset Formula $R\,\epsilon\,[0,1]$
+\end_inset
+
+.
+ Iterate through the CDF, and when 
+\begin_inset Formula $CDF(x)\leq R<CDF(x+1)$
+\end_inset
+
+, pick node 
+\emph on
+x 
+\emph default
+and add to queue Q.
+\end_layout
+
+\begin_layout Enumerate
+A node or link 
+\emph on
+X
+\emph default
+ fails if after picking a random 
+\begin_inset Formula $R\,\epsilon\,[0,1)$
+\end_inset
+
+, 
+\begin_inset Formula $R\leq(X_{vulnerability}*X_{threat})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+While there are nodes in Q: 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Select a node 
+\begin_inset Formula $i\,\epsilon\, Q$
+\end_inset
+
+, and mark it as FAILED.
+\end_layout
+
+\begin_layout Enumerate
+For all links 
+\emph on
+l
+\emph default
+ adjacent to 
+\emph on
+i 
+\emph default
+that have not been visited:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If links failures are allowed, 
+\emph on
+l
+\emph default
+ fails, the node 
+\emph on
+j
+\emph default
+ it connects to 
+\emph on
+i 
+\emph default
+fails, add 
+\emph on
+j
+\emph default
+ to Q.
+
+\emph on
+ 
+\emph default
+Mark 
+\emph on
+l
+\emph default
+ visited, but only mark 
+\emph on
+j
+\emph default
+ visited if 
+\emph on
+l
+\emph default
+ fails.
+\end_layout
+
+\begin_layout Enumerate
+If link failures are not allowed and node 
+\emph on
+j
+\emph default
+ fails, add 
+\emph on
+j
+\emph default
+ to Q and mark both 
+\emph on
+l
+\emph default
+ and 
+\emph on
+j
+\emph default
+ visited.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+Find 
+\begin_inset Formula $k=\frac{\underset{i\,\epsilon\, failed\, nodes}{\sum consequence_{i}}}{\underset{i\,\epsilon\, all\, nodes}{\sum consequence_{i}}}*100$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Increment the global PDF array: 
+\begin_inset Formula $pdf(k)++$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Increment the global trial counter: 
+\begin_inset Formula $N++$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate the Exceedence Probability:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $EP(100)=\frac{pdf(100)}{N}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\forall k\,\epsilon\,[1,99],\, EP(k)=\frac{pdf(k)}{N}+EP(k+1)$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
