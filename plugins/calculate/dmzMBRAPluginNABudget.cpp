@@ -9,15 +9,23 @@
 dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &local) :
       QtWidget (Info),
       Plugin (Info),
+      MessageObserver (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
+      _convert (Info),
       _budgetHandle (0),
       _pcAttrHandle (0),
       _rcAttrHandle (0),
+      _acAttrHandle (0),
       _maxPreventionBudget (0.0),
       _maxResponseBudget (0.0),
+      _maxAttackBudget (0.0),
+      _unspentPreventionBudget (0.0),
+      _unspentResponseBudget (0.0),
+      _unspentAttackBudget (0.0),
       _lastResponseBudget (0.0),
-      _lastPreventionBudget (0.0) {
+      _lastPreventionBudget (0.0),
+      _lastAttackBudget (0.0) {
 
    _ui.setupUi (this);
 
@@ -70,6 +78,30 @@ dmz::MBRAPluginNABudget::discover_plugin (
 }
 
 
+// Message Observer Interface
+void
+dmz::MBRAPluginNABudget::receive_message (
+   const Message &Type,
+   const Handle MessageSendHandle,
+   const Handle TargetObserverHandle,
+   const Data *InData,
+   Data *outData) {
+
+   if (Type == _unspentBudgetMessage) {
+
+      _unspentPreventionBudget = _convert.to_float64 (InData, 0);
+      _unspentResponseBudget = _convert.to_float64 (InData, 1);
+      _unspentAttackBudget = _convert.to_float64 (InData, 2);
+      _ui.unspentPreventionBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentPreventionBudget)));
+      _ui.unspentResponseBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentResponseBudget)));
+      _ui.unspentAttackBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentAttackBudget)));
+   }
+}
+
+
 // Object Observer Interface
 void
 dmz::MBRAPluginNABudget::create_object (
@@ -100,6 +132,7 @@ dmz::MBRAPluginNABudget::destroy_object (
 
       _update_max_prevention_budget ();
       _update_max_response_budget ();
+      _update_max_attack_budget ();
    }
 }
 
@@ -120,10 +153,14 @@ dmz::MBRAPluginNABudget::remove_object_attribute (
          os->pc = 0.0;
          _update_max_prevention_budget ();
       }
-      else if (AttributeHandle == _rcAttrHandle) {
+      if (AttributeHandle == _rcAttrHandle) {
 
          os->rc = 0.0;
          _update_max_response_budget ();
+      }
+      if (AttributeHandle == _acAttrHandle) {
+         os->ac = 0.0;
+         _update_max_attack_budget ();
       }
    }
 }
@@ -146,10 +183,14 @@ dmz::MBRAPluginNABudget::update_object_scalar (
          os->pc = Value;
          _update_max_prevention_budget ();
       }
-      else if (AttributeHandle == _rcAttrHandle) {
+      if (AttributeHandle == _rcAttrHandle) {
 
          os->rc = Value;
          _update_max_response_budget ();
+      }
+      if (AttributeHandle == _acAttrHandle) {
+         os->ac = Value;
+         _update_max_attack_budget ();
       }
    }
 }
@@ -187,21 +228,17 @@ dmz::MBRAPluginNABudget::on_responseBudgetBox_valueChanged (int value) {
 
 
 void
-dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
+dmz::MBRAPluginNABudget::on_attackBudgetBox_valueChanged (int value) {
 
-   _maxPreventionBudget = 0.0;
+   _lastAttackBudget = (Float64)value;
+   if (!_ui.attackBudgetSlider->isSliderDown ()) {
 
-   HashTableHandleIterator it;
-   ObjectStruct *os (0);
+      Data data;
+      data.store_float64 (_budgetHandle, 0, _lastAttackBudget);
+      data.store_float64 (_budgetHandle, 1, _maxAttackBudget);
 
-   while (_objectTable.get_next (it, os)) { _maxPreventionBudget += os->pc; }
-
-   _ui.preventionBudgetSlider->setMaximum (int (_maxPreventionBudget));
-   _ui.preventionBudgetBox->setMaximum (int (_maxPreventionBudget));
-   _ui.maxPreventionBudgetLabel->setText (
-      QString ("$") + QString::number (int (_maxPreventionBudget)));
-
-   on_preventionBudgetBox_valueChanged (_ui.preventionBudgetBox->value ());
+      _attackBudgetMessage.send (&data);
+   }
 }
 
 
@@ -228,6 +265,36 @@ dmz::MBRAPluginNABudget::_preventionSliderReleased () {
 
 
 void
+dmz::MBRAPluginNABudget::_attackSliderReleased () {
+
+   Data data;
+   data.store_float64 (_budgetHandle, 0, _lastAttackBudget);
+   data.store_float64 (_budgetHandle, 1, _maxAttackBudget);
+
+   _attackBudgetMessage.send (&data);
+}
+
+
+void
+dmz::MBRAPluginNABudget::_update_max_prevention_budget () {
+
+   _maxPreventionBudget = 0.0;
+
+   HashTableHandleIterator it;
+   ObjectStruct *os (0);
+
+   while (_objectTable.get_next (it, os)) { _maxPreventionBudget += os->pc; }
+
+   _ui.preventionBudgetSlider->setMaximum (int (_maxPreventionBudget));
+   _ui.preventionBudgetBox->setMaximum (int (_maxPreventionBudget));
+   _ui.maxPreventionBudgetLabel->setText (
+      QString ("$") + QString::number (int (_maxPreventionBudget)));
+
+   on_preventionBudgetBox_valueChanged (_ui.preventionBudgetBox->value ());
+}
+
+
+void
 dmz::MBRAPluginNABudget::_update_max_response_budget () {
 
    _maxResponseBudget = 0.0;
@@ -243,6 +310,24 @@ dmz::MBRAPluginNABudget::_update_max_response_budget () {
       QString ("$") + QString::number (int (_maxResponseBudget)));
 
    on_responseBudgetBox_valueChanged (_ui.responseBudgetBox->value ());
+}
+
+void
+dmz::MBRAPluginNABudget::_update_max_attack_budget () {
+
+   _maxAttackBudget = 0.0;
+
+   HashTableHandleIterator it;
+   ObjectStruct *os (0);
+
+   while (_objectTable.get_next (it, os)) { _maxAttackBudget += os->ac; }
+
+   _ui.attackBudgetSlider->setMaximum (int (_maxAttackBudget));
+   _ui.attackBudgetBox->setMaximum (int (_maxAttackBudget));
+   _ui.maxAttackBudgetLabel->setText (
+      QString ("$") + QString::number (int (_maxAttackBudget)));
+
+   on_attackBudgetBox_valueChanged (_ui.attackBudgetBox->value ());
 }
 
 
@@ -273,6 +358,22 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
       context,
       &_log);
 
+   _attackBudgetMessage = config_create_message (
+      "attack-budget-message.name",
+      local,
+      "AttackBudgetMessage",
+      context,
+      &_log);
+
+   _unspentBudgetMessage = config_create_message (
+      "unspent-budget-message.name",
+      local,
+      "UnspentBudgetMessage",
+      context,
+      &_log);
+
+   subscribe_to_message (_unspentBudgetMessage);
+
    _budgetHandle = config_to_named_handle (
       "budget.name",
       local,
@@ -289,6 +390,8 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
       config_to_string ("response-cost.name", local, "NA_Node_Response_Cost"),
       ObjectRemoveAttributeMask | ObjectScalarMask);
 
+   _acAttrHandle = _pcAttrHandle;
+
    connect (
       _ui.responseBudgetSlider,
       SIGNAL (sliderReleased ()),
@@ -300,6 +403,12 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
       SIGNAL (sliderReleased ()),
       this,
       SLOT (_preventionSliderReleased ()));
+
+   connect (
+      _ui.attackBudgetSlider,
+      SIGNAL (sliderReleased ()),
+      this,
+      SLOT (_attackSliderReleased ()));
 }
 
 

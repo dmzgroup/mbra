@@ -6,6 +6,7 @@
    </time>
    <message name="PreventionBudgetMessage" monostate="true"/>
    <message name="ResponseBudgetMessage" monostate="true"/>
+   <message name="AttackBudgetMessage" monostate="true"/>
    <message name="NASimulatorMessage" monostate="true"/>
    <message name="NASimulateMessage" monostate="true"/>
    <message name="FTSimulatorMessage" monostate="true"/>

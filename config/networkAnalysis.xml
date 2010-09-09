@@ -757,6 +757,12 @@
    <set>
       <object-type name="na_objective_bar"/>
    </set>
+   <x-axis-label text="Prevention Budget">
+      <update-msg name="NA_Objective_Graph_X_Label"/>
+   </x-axis-label>
+   <y-axis-label text="Objective Function">
+      <update-msg name="NA_Objective_Graph_Y_Label"/>
+   </y-axis-label>
    <attribute type="counter" name="NA_Objective_Bar_Number"/>
    <counter-handle name="NA_Objective_Bar_Value"/>
    <label-handle name="NA_Objective_Bar_Label"/>

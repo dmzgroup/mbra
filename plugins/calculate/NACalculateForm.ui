@@ -84,7 +84,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Objective Function Variable</string>
+      <string>Objective Function Chart Variable</string>
      </property>
      <property name="flat">
       <bool>true</bool>
