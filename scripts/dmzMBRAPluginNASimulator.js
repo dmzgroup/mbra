@@ -79,6 +79,8 @@ var dmz =
         self.config.string(
            "message.prevention-budget.name",
            "PreventionBudgetMessage"))
+   , unspentBudgetMessage = dmz.message.create(
+        self.config.string("unspent-budget-message.name", "UnspentBudgetMessage"))
    , responseBudgetMessage = dmz.message.create(
         self.config.string("message.response-budget.name", "ResponseBudgetMessage"))
    , attackBudgetMessage = dmz.message.create(
@@ -343,11 +345,7 @@ calcPreventionAllocation = function (object) {
       object.allocP = false;
    }
 
-   if (result > Cost) {
-      result = Cost;
-      object.allocP = false;
-      activePreventionBudget -= Cost;
-   }
+   if (result > Cost) { result = Cost; }
 
    object.preventionAllocation = result;
    return result;
@@ -373,11 +371,7 @@ calcAttackAllocation = function (object) {
       object.allocA = false;
    }
 
-   if (result > Cost) {
-      result = Cost;
-      object.allocA = false;
-      activeAttackBudget -= Cost;
-   }
+   if (result > Cost) { result = Cost; }
 
    object.attackAllocation = result;
    return result;
@@ -405,11 +399,7 @@ calcResponseAllocation = function (object) {
       object.allocR = false;
    }
 
-   if (result > Cost) {
-      result = Cost;
-      object.allocR = false;
-      activeResponseBudget -= Cost;
-   }
+   if (result > Cost) { result = Cost; }
 
    object.responseAllocation = result;
    return result;
@@ -1076,6 +1066,9 @@ receiveRank = function () {
      , data
      , count
      , lastRank
+     , attackLeftovers = attackBudget
+     , preventionLeftovers = preventionBudget
+     , responseLeftovers = responseBudget
      ;
    visible = true;
    Object.keys(weightList).forEach(function (key) {
@@ -1104,7 +1097,16 @@ receiveRank = function () {
          object.responseAllocation);
       dmz.object.scalar(object.handle,AttackAllocationHandle, object.attackAllocation);
       dmz.object.scalar(object.handle, RiskReducedHandle, object.riskReduced);
+      attackLeftovers -= object.attackAllocation;
+      preventionLeftovers -= object.preventionAllocation;
+      responseLeftovers -= object.responseAllocation;
    });
+
+   data = dmz.data.create();
+   data.number("Float64", 0, (preventionLeftovers > 0) ? preventionLeftovers : 0);
+   data.number("Float64", 1, (responseLeftovers > 0) ? responseLeftovers : 0);
+   data.number("Float64", 2, (attackLeftovers > 0) ? attackLeftovers : 0);
+   unspentBudgetMessage.send(data);
 
    reducedSum = 0;
    origSum = 0;

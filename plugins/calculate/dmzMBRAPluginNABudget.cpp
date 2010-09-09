@@ -9,8 +9,10 @@
 dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &local) :
       QtWidget (Info),
       Plugin (Info),
+      MessageObserver (Info),
       ObjectObserverUtil (Info, local),
       _log (Info),
+      _convert (Info),
       _budgetHandle (0),
       _pcAttrHandle (0),
       _rcAttrHandle (0),
@@ -18,6 +20,9 @@ dmz::MBRAPluginNABudget::MBRAPluginNABudget (const PluginInfo &Info, Config &loc
       _maxPreventionBudget (0.0),
       _maxResponseBudget (0.0),
       _maxAttackBudget (0.0),
+      _unspentPreventionBudget (0.0),
+      _unspentResponseBudget (0.0),
+      _unspentAttackBudget (0.0),
       _lastResponseBudget (0.0),
       _lastPreventionBudget (0.0),
       _lastAttackBudget (0.0) {
@@ -72,6 +77,29 @@ dmz::MBRAPluginNABudget::discover_plugin (
    }
 }
 
+
+// Message Observer Interface
+void
+dmz::MBRAPluginNABudget::receive_message (
+   const Message &Type,
+   const Handle MessageSendHandle,
+   const Handle TargetObserverHandle,
+   const Data *InData,
+   Data *outData) {
+
+   if (Type == _unspentBudgetMessage) {
+
+      _unspentPreventionBudget = _convert.to_float64 (InData, 0);
+      _unspentResponseBudget = _convert.to_float64 (InData, 1);
+      _unspentAttackBudget = _convert.to_float64 (InData, 2);
+      _ui.unspentPreventionBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentPreventionBudget)));
+      _ui.unspentResponseBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentResponseBudget)));
+      _ui.unspentAttackBudgetLabel->setText (
+         QString ("$") + QString::number (int (_unspentAttackBudget)));
+   }
+}
 
 // Object Observer Interface
 void
@@ -336,6 +364,15 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
       context,
       &_log);
 
+   _unspentBudgetMessage = config_create_message (
+      "unspent-budget-message.name",
+      local,
+      "UnspentBudgetMessage",
+      context,
+      &_log);
+
+   subscribe_to_message (_unspentBudgetMessage);
+
    _budgetHandle = config_to_named_handle (
       "budget.name",
       local,
@@ -351,10 +388,6 @@ dmz::MBRAPluginNABudget::_init (Config &local) {
    _rcAttrHandle = activate_object_attribute (
       config_to_string ("response-cost.name", local, "NA_Node_Response_Cost"),
       ObjectRemoveAttributeMask | ObjectScalarMask);
-
-//   _acAttrHandle = activate_object_attribute (
-//      config_to_string ("attack-cost.name", local, "NA_Node_Attack_Cost"),
-//      ObjectRemoveAttributeMask | ObjectScalarMask);
 
    _acAttrHandle = _pcAttrHandle;
 

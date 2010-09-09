@@ -3,6 +3,7 @@
 
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
@@ -19,6 +20,7 @@ namespace dmz {
          public QWidget,
          public QtWidget,
          public Plugin,
+         public MessageObserver,
          public ObjectObserverUtil {
 
       Q_OBJECT
@@ -38,6 +40,14 @@ namespace dmz {
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
+
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
 
          // Object Observer Interface
          virtual void create_object (
@@ -92,9 +102,12 @@ namespace dmz {
          ObjectType _nodeType;
          ObjectType _linkType;
 
+         DataConverterFloat64 _convert;
+
          Message _preventionBudgetMessage;
          Message _responseBudgetMessage;
          Message _attackBudgetMessage;
+         Message _unspentBudgetMessage;
 
          Handle _budgetHandle;
 
@@ -105,6 +118,9 @@ namespace dmz {
          Float64 _maxPreventionBudget;
          Float64 _maxResponseBudget;
          Float64 _maxAttackBudget;
+         Float64 _unspentPreventionBudget;
+         Float64 _unspentResponseBudget;
+         Float64 _unspentAttackBudget;
          Float64 _lastResponseBudget;
          Float64 _lastPreventionBudget;
          Float64 _lastAttackBudget;

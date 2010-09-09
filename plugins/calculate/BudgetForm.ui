@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
+    <width>354</width>
     <height>469</height>
    </rect>
   </property>
@@ -49,6 +49,20 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Unspent:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="unspentPreventionBudgetLabel">
+       <property name="text">
+        <string>$0</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -134,6 +148,20 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Unspent:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="unspentResponseBudgetLabel">
+       <property name="text">
+        <string>$0</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -205,6 +233,20 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Unspent:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="unspentAttackBudgetLabel">
+       <property name="text">
+        <string>$0</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
