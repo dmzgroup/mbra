@@ -39,6 +39,8 @@ var dmz =
 
    , simulateMessage = dmz.message.create(
         self.config.string("simulate-message.name", "NASimulateMessage"))
+   , simulationTypeMessage = dmz.message.create(
+        self.config.string("simulation-type-message.name", "NAGraphSimulationType"))
    , simulateDirectionMessage = dmz.message.create(
         self.config.string(
            "simulate-direction-message.name",
