@@ -58,6 +58,16 @@ dmz::MBRAPluginCalculate::_slot_calculate (bool on) {
 
 
 void
+dmz::MBRAPluginCalculate::_simulation_type_change (bool state) {
+
+   Data data;
+   data = _convert.to_data (state);
+
+   _simulationTypeMessage.send (&data);
+}
+
+
+void
 dmz::MBRAPluginCalculate::_init (Config &local) {
 
    Definitions defs (get_plugin_runtime_context ());
@@ -66,6 +76,13 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
       "simulator-message.name",
       local,
       "NASimulatorMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
+   _simulationTypeMessage = config_create_message (
+      "simulation-type-message.name",
+      local,
+      "NACalcSimulationType",
       get_plugin_runtime_context (),
       &_log);
 
@@ -83,6 +100,12 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
          action, SIGNAL (toggled (bool)),
          this, SLOT (_slot_calculate (bool)));
    }
+
+   connect (
+      _ui.cascadeButton,
+      SIGNAL (toggled (bool)),
+      this,
+      SLOT (_simulation_type_change (bool)));
 }
 
 

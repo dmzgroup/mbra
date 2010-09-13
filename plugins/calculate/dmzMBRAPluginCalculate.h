@@ -37,6 +37,7 @@ namespace dmz {
 
       protected slots:
          void _slot_calculate (bool On);
+         void _simulation_type_change (bool state);
 
       protected:
          void _init (Config &local);
@@ -44,6 +45,7 @@ namespace dmz {
          Log _log;
          DataConverterBoolean _convert;
          Message _simulatorMessage;
+         Message _simulationTypeMessage;
          Ui::calculateForm _ui;
 
       private:

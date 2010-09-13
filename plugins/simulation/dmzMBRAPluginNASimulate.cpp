@@ -126,6 +126,19 @@ dmz::MBRAPluginNASimulate::_slot_links_allow_change (int state) {
 
 }
 
+
+void
+dmz::MBRAPluginNASimulate::_simulation_type_change (bool state) {
+
+   Data data;
+   data = _convertBool.to_data (state);
+   _ui.failDirectionBox->setVisible (state);
+   _ui.failDirectionLabel->setVisible (state);
+
+   _simulationTypeMessage.send (&data);
+}
+
+
 void
 dmz::MBRAPluginNASimulate::_init (Config &local) {
 
@@ -163,6 +176,13 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
       "simulate-allow-links-message.name",
       local,
       "NASimulateLinksMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
+   _simulationTypeMessage = config_create_message (
+      "simulation-type-message.name",
+      local,
+      "NAGraphSimulationType",
       get_plugin_runtime_context (),
       &_log);
 
@@ -207,6 +227,13 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
       SIGNAL (stateChanged (int)),
       this,
       SLOT (_slot_links_allow_change (int)));
+
+   connect (
+      _ui.cascadeButton,
+      SIGNAL (toggled (bool)),
+      this,
+      SLOT (_simulation_type_change (bool)));
+
 }
 
 

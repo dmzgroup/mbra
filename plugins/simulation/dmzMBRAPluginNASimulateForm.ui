@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>426</width>
-    <height>195</height>
+    <height>258</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,12 +32,42 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="cascadeButton">
+       <property name="text">
+        <string>Cascade</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="flowButton">
+       <property name="text">
+        <string>Flow</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="failDirectionLabel">
        <property name="text">
         <string>Failure Direction:</string>
        </property>
@@ -49,9 +79,9 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_8">
        <property name="text">
         <string># Iterations Between Updates:</string>
        </property>
@@ -85,11 +115,11 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Total Number of Iterations:</string>
+        <string>Total Iteration Count:</string>
        </property>
       </widget>
      </item>
@@ -123,7 +153,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>0</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
