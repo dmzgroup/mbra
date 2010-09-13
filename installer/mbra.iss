@@ -1,6 +1,6 @@
 #define BuildMode "opt"
 #define AppName "MBRA"
-#define AppVerName "MBRA 2.0"
+#define AppVerName "MBRA 2.3.0 test 17"
 #define Publisher "CHDS"
 #define AppURL "http://dmzdev.org"
 #define AppExeName "mbra.exe"
@@ -60,6 +60,7 @@ Source: {#DependDir}\bin\QtOpenGL4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtNetwork4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtSvg4.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\QtXml4.dll; DestDir: {app}\bin
+Source: {#DependDir}\bin\v8.dll; DestDir: {app}\bin
 Source: {#DependDir}\bin\qjpeg4.dll; DestDir: {app}\bin\plugins\imageformats
 Source: {#DependDir}\bin\qgif4.dll; DestDir: {app}\bin\plugins\imageformats
 Source: {#DependDir}\bin\qtiff4.dll; DestDir: {app}\bin\plugins\imageformats
