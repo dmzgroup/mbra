@@ -192,6 +192,7 @@ var dmz =
    , updateFixedObjectiveFlag
    , stackleberg
    , calculateLambdas
+   , graphHasSource
 
    ;
 

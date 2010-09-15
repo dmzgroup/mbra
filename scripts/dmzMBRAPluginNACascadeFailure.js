@@ -475,7 +475,7 @@ graphHasSink = function (matrix) {
 
    sinkList = [];
 
-   for (rowIter = 0; (rowIter < n); rowIter += 1) {
+   for (rowIter = 0; rowIter < n; rowIter += 1) {
       rowSum = 0;
       for (colIter = 0; (colIter < n) && (rowSum === 0); colIter += 1) {
          if (colIter != rowIter) {
@@ -612,8 +612,24 @@ calculateFractionMatrix = function (capacityMatrix) {
    return matrix;
 };
 
-calculateNetworkFlow = function (capacityMatrix, fractionMatrix) {
+graphHasSource = function (capacityMatrix) {
    var vec = capacityMatrix.diagonal()
+     , counter = 0
+     , result = false
+     ;
+
+   for (counter = 0; (counter < vec.length) && !result; counter += 1) {
+      if (vec.v[counter] > 0) {
+         result = true;
+      }
+   }
+
+   return result;
+}
+
+calculateNetworkFlow = function (capacityMatrix, currFail) {
+   var vec = capacityMatrix.diagonal()
+     , fractionMatrix = calculateFractionMatrix(capacityMatrix)
      , trans = fractionMatrix.transpose()
      , ccount
      , rcount
@@ -622,36 +638,60 @@ calculateNetworkFlow = function (capacityMatrix, fractionMatrix) {
      , tvec = dmz.nvector.create(vec.length)
 //     , keyList = Object.keys(objectList)
      , ix
+     , result = 0
+     , error
      ;
 
-   for (ix = 0; ix < n; ix += 1) {
-      self.log.warn (ix, vec);
-      for (rcount = 0; rcount < n; rcount += 1) {
-         sum = 0;
-         for (ccount = 0; ccount < n; ccount += 1) {
-            sum += Math.min (
-               capacityMatrix.m[rcount][ccount],
-               trans.m[ccount][rcount] * vec.v[ccount]);
-         }
-         tvec.setElement(rcount, sum);
+   self.log.warn ("\n\n" + fractionMatrix);
+//   self.log.warn ("\n\n" + fractionMatrix.transpose());
+
+
+   if (!graphHasSink(capacityMatrix)) {
+      if (!currFail) {
+         error = dmz.data.wrapString("Error: Graph must have a \"sink\" node.");
+         self.log.error("Error: Graph must have a \"sink\" node.");
       }
-      vec = tvec.copy();
+   }
+   else if (!graphHasSource(capacityMatrix)) {
+      if (!currFail) {
+         error = dmz.data.wrapString("Error: Graph must have a \"source\" node.");
+         self.log.error("Error: Graph must have a \"source\" node.");
+      }
+   }
+   if (error) {
+      errorMessage.send(error);
+   }
+   else {
+      for (ix = 0; ix < n; ix += 1) {
+         self.log.warn (ix, vec);
+         for (rcount = 0; rcount < n; rcount += 1) {
+            sum = 0;
+            for (ccount = 0; ccount < n; ccount += 1) {
+               sum += Math.min (
+                  capacityMatrix.m[rcount][ccount],
+                  trans.m[ccount][rcount] * vec.v[ccount]);
+            }
+            tvec.setElement(rcount, sum);
+         }
+         vec = tvec.copy();
+      }
+
+      self.log.warn(vec);
+      sum = 0;
+      sinkList.forEach(function (sinkIndex) {
+         if (sinkIndex != currFail) {
+            sum += vec.v[sinkIndex];
+         }
+      });
+      result = sum;
    }
 
-   self.log.warn(vec);
-   sum = 0;
-   sinkList.forEach(function (sinkIndex) {
-      sum += vec.v[sinkIndex];
-   });
-
-   return sum;
-
+   return result;
 };
 
 GraphType.FLOW.function = function () {
 
-   var error = null
-     , capacityMatrix
+   var capacityMatrix
      , fractionMatrix
      , origFlow
      , newFlow
@@ -662,40 +702,24 @@ GraphType.FLOW.function = function () {
       graphInit();
    }
 
-   capacityMatrix = calculateCapacityMatrix();
-   self.log.warn ("capacity matrix:\n", capacityMatrix);
-
-   fractionMatrix = calculateFractionMatrix(capacityMatrix);
-
-   self.log.warn ("\n\n" + fractionMatrix);
-//   self.log.warn ("\n\n" + fractionMatrix.transpose());
-
    if (graphHasBiLinks()) {
-         error = dmz.data.wrapString("Error: Graph may not contain bidirectional links.");
+      if (!currFail) {
+         errorMessage.send(
+            dmz.data.wrapString("Error: Graph may not contain bidirectional links."));
          self.log.error("Error: Graph may not contain bidirectional links.");
-   }
-   else if (!graphHasSink(capacityMatrix)) {
-      error = dmz.data.wrapString("Error: Graph must have a \"sink\" node.");
-      self.log.error("Error: Graph must have a \"sink\" node.");
-   }
-   else if (!GraphHasSource) {
-      error = dmz.data.wrapString("Error: Graph must have a \"source\" node.");
-      self.log.error("Error: Graph must have a \"source\" node.");
-   }
-   if (error) {
-      errorMessage.send(error);
+      }
    }
    else {
-      origFlow = calculateNetworkFlow(capacityMatrix, fractionMatrix);
+      capacityMatrix = calculateCapacityMatrix();
+      self.log.warn ("capacity matrix:\n", capacityMatrix);
+      origFlow = calculateNetworkFlow(capacityMatrix);
       self.log.warn ("orig flow:", origFlow);
 
       // Loop to test node failures
       // Loop to test link failures
       // For each tested, increment exceedence in correct location
       // Set count = total number of nodes and links
-
    }
-
    self.log.error ("END FLOW function");
 
 };
