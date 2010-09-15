@@ -78,6 +78,7 @@ var dmz =
 
    , objectList = {}
    , linkObjectList = {}
+   , sinkList = []
 
    , firstRun = true
    , bars = []
@@ -456,7 +457,7 @@ graphHasBiLinks = function () {
       link = linkObjectList[key];
       state = dmz.object.state(link.attr, LinkFlowHandle);
       if (state) {
-         if (state.and(FlowStateBoth).bool()) {
+         if (state.and(FlowStateBoth).equal(FlowStateBoth)) {
             result = true;
          }
       }
@@ -466,22 +467,25 @@ graphHasBiLinks = function () {
 }
 
 graphHasSink = function (matrix) {
-   var result = false
-     , n = Object.keys(objectList).length
+   var n = Object.keys(objectList).length
      , colIter
      , rowIter
      , rowSum
      ;
 
-   for (colIter = 0; (colIter < n) && (!result); colIter += 1) {
+   sinkList = [];
+
+   for (rowIter = 0; (rowIter < n); rowIter += 1) {
       rowSum = 0;
-      for (rowIter = colIter + 1; (rowIter < n) && (rowSum === 0); rowIter += 1) {
-         rowSum += matrix.m[colIter][rowIter];
+      for (colIter = 0; (colIter < n) && (rowSum === 0); colIter += 1) {
+         if (colIter != rowIter) {
+            rowSum += matrix.m[colIter][rowIter];
+         }
       }
-      if (rowSum === 0) { result = true; }
+      if (rowSum === 0) { sinkList.push(rowIter); }
    }
 
-   return result;
+   return sinkList.length > 0;
 };
 
 calculateCapacityMatrix = function () {
@@ -616,10 +620,12 @@ calculateNetworkFlow = function (capacityMatrix, fractionMatrix) {
      , sum
      , n = vec.length
      , tvec = dmz.nvector.create(vec.length)
+//     , keyList = Object.keys(objectList)
      , ix
      ;
 
    for (ix = 0; ix < n; ix += 1) {
+      self.log.warn (ix, vec);
       for (rcount = 0; rcount < n; rcount += 1) {
          sum = 0;
          for (ccount = 0; ccount < n; ccount += 1) {
@@ -630,10 +636,15 @@ calculateNetworkFlow = function (capacityMatrix, fractionMatrix) {
          tvec.setElement(rcount, sum);
       }
       vec = tvec.copy();
-      self.log.warn (ix, vec);
    }
 
-   return vec;
+   self.log.warn(vec);
+   sum = 0;
+   sinkList.forEach(function (sinkIndex) {
+      sum += vec.v[sinkIndex];
+   });
+
+   return sum;
 
 };
 
@@ -652,21 +663,24 @@ GraphType.FLOW.function = function () {
    }
 
    capacityMatrix = calculateCapacityMatrix();
-//   self.log.warn ("capacity matrix:\n", capacityMatrix);
+   self.log.warn ("capacity matrix:\n", capacityMatrix);
 
    fractionMatrix = calculateFractionMatrix(capacityMatrix);
 
-//   self.log.warn ("\n\n" + fractionMatrix);
+   self.log.warn ("\n\n" + fractionMatrix);
 //   self.log.warn ("\n\n" + fractionMatrix.transpose());
 
-   if (!graphHasSink(capacityMatrix)) {
+   if (graphHasBiLinks()) {
+         error = dmz.data.wrapString("Error: Graph may not contain bidirectional links.");
+         self.log.error("Error: Graph may not contain bidirectional links.");
+   }
+   else if (!graphHasSink(capacityMatrix)) {
       error = dmz.data.wrapString("Error: Graph must have a \"sink\" node.");
+      self.log.error("Error: Graph must have a \"sink\" node.");
    }
    else if (!GraphHasSource) {
       error = dmz.data.wrapString("Error: Graph must have a \"source\" node.");
-   }
-   else if (graphHasBiLinks()) {
-      error = dmz.data.wrapString("Error: Graph may not contain bidirectional links.");
+      self.log.error("Error: Graph must have a \"source\" node.");
    }
    if (error) {
       errorMessage.send(error);
