@@ -12,9 +12,11 @@
 dmz::MBRAPluginCalculate::MBRAPluginCalculate (const PluginInfo &Info, Config &local) :
       QWidget (0),
       Plugin (Info),
+      MessageObserver (Info),
       QtWidget (Info),
       _log (Info),
-      _convert (Info) {
+      _convert (Info),
+      _convertString (Info) {
 
    setObjectName (get_plugin_name ().get_buffer ());
 
@@ -44,6 +46,23 @@ dmz::MBRAPluginCalculate::discover_plugin (
 }
 
 
+void
+dmz::MBRAPluginCalculate::receive_message (
+      const Message &Type,
+      const Handle MessageSendHandle,
+      const Handle TargetObserverHandle,
+      const Data *InData,
+      Data *outData) {
+
+   if (Type == _simulationErrorMessage) {
+
+      _ui.errorLabel->setText (
+         QString ("<font color='red'>") + to_qstring (_convertString.to_string (InData))
+         + QString ("</font>"));
+   }
+}
+
+
 // QtWidget Interface
 QWidget *
 dmz::MBRAPluginCalculate::get_qt_widget () { return this; }
@@ -53,6 +72,7 @@ void
 dmz::MBRAPluginCalculate::_slot_calculate (bool on) {
 
    Data data = _convert.to_data (on ? True : False);
+   _ui.errorLabel->hide ();
    _simulatorMessage.send (&data);
 }
 
@@ -63,6 +83,7 @@ dmz::MBRAPluginCalculate::_simulation_type_change (bool state) {
    Data data;
    data = _convert.to_data (state);
 
+   _ui.errorLabel->hide ();
    _simulationTypeMessage.send (&data);
 }
 
@@ -82,9 +103,20 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
    _simulationTypeMessage = config_create_message (
       "simulation-type-message.name",
       local,
-      "NACalcSimulationType",
+      "CalcSimulationType",
       get_plugin_runtime_context (),
       &_log);
+
+   _simulationErrorMessage = config_create_message (
+      "simulation-error-message.name",
+      local,
+      "SimulationErrorMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
+   subscribe_to_message (_simulationErrorMessage);
+
+   _ui.errorLabel->hide ();
 
    qwidget_config_read ("widget", local, this);
 
@@ -106,6 +138,7 @@ dmz::MBRAPluginCalculate::_init (Config &local) {
       SIGNAL (toggled (bool)),
       this,
       SLOT (_simulation_type_change (bool)));
+
 }
 
 

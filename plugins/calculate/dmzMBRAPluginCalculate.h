@@ -15,7 +15,11 @@ class QDockWidget;
 
 namespace dmz {
 
-   class MBRAPluginCalculate : public QWidget, public Plugin, public QtWidget {
+   class MBRAPluginCalculate :
+         public QWidget,
+         public Plugin,
+         public MessageObserver,
+         public QtWidget {
 
       Q_OBJECT
 
@@ -32,6 +36,14 @@ namespace dmz {
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
 
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
+
          // QtWidget Interface
          virtual QWidget *get_qt_widget ();
 
@@ -44,8 +56,10 @@ namespace dmz {
 
          Log _log;
          DataConverterBoolean _convert;
+         DataConverterString _convertString;
          Message _simulatorMessage;
          Message _simulationTypeMessage;
+         Message _simulationErrorMessage;
          Ui::calculateForm _ui;
 
       private:

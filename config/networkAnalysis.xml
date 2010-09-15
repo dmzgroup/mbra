@@ -51,11 +51,11 @@
       <plugin name="dmzQtPluginCanvasAutoLink"/>
       <plugin name="dmzQtPluginGraph" unique="na-degree-graph"/>
       <plugin name="dmzQtPluginGraph" unique="na-objective-graph"/>
-      <plugin name="dmzQtPluginGraph" unique="na-cascade-graph"/>
+      <plugin name="dmzQtPluginGraph" unique="na-simulation-graph"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-tool-tab"/>
       <plugin name="dmzQtPluginTabWidget" unique="na-charts-tab"/>
       <plugin name="dmzQtPluginWidget" unique="na-tool-simulator"/>
-      <plugin name="dmzQtPluginWidget" unique="na-tool-cascade"/>
+      <plugin name="dmzQtPluginWidget" unique="na-tool-simulation"/>
       <plugin name="dmzQtPluginMapObjectPosition"/>
       <plugin name="dmzInputPluginChannelSwitch" scope="na-edit-tool"/>
       <plugin name="dmzInputPluginChannelRules"  scope="na-edit-tool"/>
@@ -87,13 +87,13 @@
       <widget name="dmzMBRAPluginNABudget"/>
       <widget name="dmzMBRAPluginNACalculate"/>
    </na-tool-simulator>
-   <na-tool-cascade>
+   <na-tool-simulation>
       <widget name="dmzMBRAPluginNASimulate"/>
-   </na-tool-cascade>
+   </na-tool-simulation>
    <na-tool-tab>
       <widget name="na-tool-simulator" title="Calculate"/>
       <widget name="dmzQtPluginButtonToChannel" title="Edit"/>
-      <widget name="na-tool-cascade" title="Simulation"/>
+      <widget name="na-tool-simulation" title="Simulation"/>
    </na-tool-tab>
    <na-charts-tab>
       <tab>
@@ -101,7 +101,7 @@
       </tab>
       <widget name="na-degree-graph" title="Degree Graph"/>
       <widget name="na-objective-graph" title="Objective Graph"/>
-      <widget name="na-cascade-graph" title="Cascade Failure Graph"/>
+      <widget name="na-simulation-graph" title="Simulation Graph"/>
    </na-charts-tab>
    <NACanvas>
       <canvas opengl="false" antialiasing="true" textantialiasing="true"/>
@@ -784,17 +784,17 @@
       </fill>
    </bar>
 </na-objective-graph>
-<na-cascade-graph>
+<na-simulation-graph>
    <start value="1"/>
    <ascending value="true"/>
    <percents show="true"/>
    <set>
-     <object-type name = "na_cascade_bar"/>
+     <object-type name = "na_simulation_bar"/>
    </set>
-   <attribute type="counter" name="NA_Cascade_Bar_Number"/>
-   <counter-handle name="NA_Cascade_Bar_Value"/>
-   <label-handle name="NA_Cascade_Bar_Label"/>
-   <visible-message name="NA_Cascade_Graph_Visible_Message"/>
+   <attribute type="counter" name="NA_Simulation_Bar_Number"/>
+   <counter-handle name="NA_Simulation_Bar_Value"/>
+   <label-handle name="NA_Simulation_Bar_Label"/>
+   <visible-message name="NA_Simulation_Graph_Visible_Message"/>
    <power-law show="true">
       <stroke>
          <color blue="1"/>
@@ -808,7 +808,7 @@
          <color red="0.3" green="0.8" blue="0.3"/>
       </fill>
    </bar>
-</na-cascade-graph>
+</na-simulation-graph>
 <dmzQtPluginMapObjectPosition>
    <order x="0" y="2" z="1"/>
    <set>

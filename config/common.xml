@@ -92,7 +92,7 @@
       <object-type-set>
          <object-type name="na_tool_link_node"/>
          <object-type name="na_objective_bar"/>
-         <object-type name="na_cascade_bar"/>
+         <object-type name="na_simulation_bar"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">

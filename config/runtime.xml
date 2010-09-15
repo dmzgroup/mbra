@@ -12,7 +12,7 @@
    <message name="FTSimulatorMessage" monostate="true"/>
    <message name="FTBudgetMessage" monostate="true"/>
    <message name="NA_Objective_Graph_Visible_Message" monostate="true"/>
-   <message name="NA_Cascade_Graph_Visible_Message" monostate="true"/>
+   <message name="NA_Simulation_Graph_Visible_Message" monostate="true"/>
    <state name="NA_Node_Overlay"/>
    <state name="NA_Node_Highlight"/>
    <state name="NA_Node_Flagged"/>
@@ -44,7 +44,7 @@
    </object-type>
    <object-type name="na_simulator"/>
    <object-type name="na_objective_bar"/>
-   <object-type name="na_cascade_bar"/>
+   <object-type name="na_simulation_bar"/>
    <object-type name="na_tool_link_node">
       <NACanvasObject/>
    </object-type>

@@ -59,6 +59,13 @@ Critical Nodes</string>
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QLabel" name="errorLabel">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
