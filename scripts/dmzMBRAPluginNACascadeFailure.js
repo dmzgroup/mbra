@@ -11,6 +11,7 @@ var dmz =
       , time: require("dmz/runtime/time")
       }
    , ConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Consequence")
+   , FlowConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Flow_Consequence")
    , ThreatHandle = dmz.defs.createNamedHandle("NA_Node_Threat")
    , ReducedVulnerabilityHandle = dmz.defs.createNamedHandle(
         "NA_Node_Vulnerability_Reduced")
@@ -43,8 +44,7 @@ var dmz =
              , pdf: []
              , delay: 500
              , function: function () { self.log.warn ("FLOW GRAPH FUNCTION"); }
-             , sinkList: {}
-             , sourceList: {}
+             , origFlow: 0
              }
         }
 
@@ -103,6 +103,8 @@ var dmz =
    , calculateNetworkFlow
    , calculateCapacityMatrix
    , calculateFractionMatrix
+   , removeNodeFromCapacityMatrix
+   , removeLinkFromCapacityMatrix
    ;
 
 
@@ -244,6 +246,8 @@ graphInit = function () {
 
    if (allowLinks) {
       Object.keys(linkObjectList).forEach(function (key) {
+         linkObjectList[key].fromIndex = -1;
+         linkObjectList[key].toIndex = -1;
          threat = dmz.object.scalar(linkObjectList[key].attr, ThreatHandle);
          vuln = dmz.object.scalar(linkObjectList[key].attr, ReducedVulnerabilityHandle);
          if (!vuln) { vuln = dmz.object.scalar(handle, VulnerabilityHandle); }
@@ -564,6 +568,8 @@ calculateCapacityMatrix = function () {
 //            self.log.warn(link, link ? true : false);
             if (link) {
 //               self.log.warn(link.consequence);
+               link.fromIndex = iParent;
+               link.toIndex = iChild;
                matrix.setElement(
                   iChild,
                   iParent,
@@ -689,10 +695,33 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
    return result;
 };
 
+removeNodeFromCapacityMatrix = function (capacityMatrix, handle) {
+
+   Object.keys(objectList[handle]).forEach(function (index) {
+      removeLinkFromCapacityMatrix(capacityMatrix, objectList[handle][index]);
+   });
+
+};
+
+removeLinkFromCapacityMatrix = function (capacityMatrix, link) {
+   var keyList = Object.keys(objectList)
+     ;
+
+   if ((link.fromIndex !== -1) && (link.toIndex !== -1)) {
+      capacityMatrix.setElement(link.toIndex, link.fromIndex, 0);
+   }
+   else {
+      self.log.error(
+         "Trying to remove link with unset from / to:",
+         link.fromIndex,
+         link.toIndex);
+   }
+};
+
 GraphType.FLOW.function = function () {
 
    var capacityMatrix
-     , fractionMatrix
+     , tempMatrix
      , origFlow
      , newFlow
      ;
@@ -712,13 +741,33 @@ GraphType.FLOW.function = function () {
    else {
       capacityMatrix = calculateCapacityMatrix();
       self.log.warn ("capacity matrix:\n", capacityMatrix);
-      origFlow = calculateNetworkFlow(capacityMatrix);
+      GrpahType.FLOW.origFlow = calculateNetworkFlow(capacityMatrix);
       self.log.warn ("orig flow:", origFlow);
 
       // Loop to test node failures
+      Object.keys(objectList).forEach(function (key) {
+         var tempMatrix = capacityMatrix.copy()
+           , newFlow = 0
+           ;
+         removeNodeFromCapacityMatrix(tempMatrix, key);
+         newFlow = calculateNetworkFlow(tempMatrix);
+         dmz.object.scalar(parseInt(key), FlowConsequenceHandle, (origFlow - newFlow));
+      });
+
       // Loop to test link failures
-      // For each tested, increment exceedence in correct location
-      // Set count = total number of nodes and links
+      Object.keys(objectLinkList).forEach(function (key) {
+         var tempMatrix = capacityMatrix.copy()
+           , newFlow = 0
+           ;
+
+         removeLinkFromCapacityMatrix(tempMatrix, objectLinkList[key]);
+         newFlow = calculateNetworkFlow(tempMatrix);
+         dmz.object.scalar(
+            objectLinkList[key].attr,
+            FlowConsequenceHandle,
+            (origFlow - newFlow));
+      });
+
    }
    self.log.error ("END FLOW function");
 
