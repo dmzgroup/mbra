@@ -129,6 +129,8 @@ dmz.object.create.observe(self, function (handle, objType) {
    if (objType) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
          dataReset = true;
+         GraphType.FLOW.dataReset = true;
+         GraphType.CASCADE.dataReset = true;
       }
    }
 });
@@ -137,6 +139,8 @@ dmz.object.create.observe(self, function (handle, objType) {
 dataUpdated = function (objHandle, attrHandle, val) {
    if (objHandle && (objectList[objHandle] || linkObjectList[objHandle])) {
       dataReset = true;
+      GraphType.FLOW.dataReset = true;
+      GraphType.CASCADE.dataReset = true;
       if (linkObjectList[objHandle]) {
          if (attrHandle === ConsequenceHandle) {
             linkObjectList[objHandle].consequence = val;
@@ -160,6 +164,8 @@ dmz.object.destroy.observe(self, function (handle) {
    if (list) {
       delete objectList[handle];
       dataReset = true;
+      GraphType.FLOW.dataReset = true;
+      GraphType.CASCADE.dataReset = true;
    }
 });
 
@@ -197,6 +203,8 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
       dmz.object.destroy(PrevObj);
    }
    dataReset = true;
+   GraphType.FLOW.dataReset = true;
+   GraphType.CASCADE.dataReset = true;
 });
 
 objectLinkList = function (objHandle) {
@@ -406,7 +414,8 @@ GraphType.CASCADE.function = function () {
                      visited[link.superLink] = true;
                   }
                }
-               if (failureType.and(CascadeFailUpstreamState).bool()) {
+               if (
+                     failureType.and(CascadeFailUpstreamState).bool()) {
 
                   if (ForwardFlowState.and(linkState).bool() &&
                       link.sub == current && !visited[link.superLink]) {
@@ -478,14 +487,15 @@ graphHasBiLinks = function () {
    return result;
 }
 
-graphHasSink = function (matrix) {
+graphHasSink = function (matrix, hasFailedObject) {
    var n = Object.keys(objectList).length
      , colIter
      , rowIter
      , rowSum
+     , counter = 0
      ;
 
-   sinkList = [];
+   if (!hasFailedObject) { sinkList = []; }
 
    for (rowIter = 0; rowIter < n; rowIter += 1) {
       rowSum = 0;
@@ -494,10 +504,13 @@ graphHasSink = function (matrix) {
             rowSum += matrix.m[colIter][rowIter];
          }
       }
-      if (rowSum === 0) { sinkList.push(rowIter); }
+      if (rowSum === 0) {
+         counter += 1;
+         if (!hasFailedObject) { sinkList.push(rowIter); }
+      }
    }
 
-   return sinkList.length > 0;
+   return counter > 0;
 };
 
 isSource = function (node) {
@@ -658,10 +671,10 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
      ;
 
 //   self.log.warn ("\n\n" + fractionMatrix);
-//   self.log.warn ("\n\n" + fractionMatrix.transpose());
+   self.log.warn ("\n\n" + fractionMatrix.transpose());
 
 //   self.log.warn (capacityMatrix, "\n\n" + fractionMatrix, "\n\n" + trans);
-   if (!graphHasSink(capacityMatrix)) {
+   if (!graphHasSink(capacityMatrix, currFail)) {
       if (!currFail) {
          error = dmz.data.wrapString("Error: Graph must have a \"sink\" node.");
          self.log.error("Error: Graph must have a \"sink\" node.");
@@ -680,7 +693,7 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
    }
    else {
       for (ix = 0; ix < n; ix += 1) {
-//         self.log.warn (ix, vec);
+         self.log.warn (ix, vec);
          for (rcount = 0; rcount < n; rcount += 1) {
             sum = 0;
             for (ccount = 0; ccount < n; ccount += 1) {
@@ -693,8 +706,9 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
          vec = tvec.copy();
       }
 
-//      self.log.warn(vec);
+      self.log.warn(vec);
       sum = 0;
+      self.log.warn ("sinkList:", sinkList);
       sinkList.forEach(function (sinkIndex) {
          if (sinkIndex != currFail) {
             sum += vec.v[sinkIndex];
@@ -742,7 +756,7 @@ removeLinkFromCapacityMatrix = function (capacityMatrix, link) {
    }
 };
 
-GraphType.FLOW.function = function () {
+GraphType.FLOW.calculate = function () {
 
    var capacityMatrix
      , tempMatrix
@@ -780,6 +794,13 @@ GraphType.FLOW.function = function () {
 //            self.log.error (capacityMatrix);
             newFlow = calculateNetworkFlow(tempMatrix, parseInt(key));
             self.log.warn(key, newFlow);
+            if (newFlow > GraphType.FLOW.origFlow) {
+               newFlow = GraphType.FLOW.origFlow;
+               errorMessage.send(
+                  dmz.data.wrapString(
+                     "Warning: Graph contains link(s) or node(s) with negative flow" +
+                     "consequence."));
+            }
             dmz.object.scalar(
                parseInt(key),
                FlowConsequenceHandle,
@@ -787,17 +808,25 @@ GraphType.FLOW.function = function () {
          });
 
          // Loop to test link failures
-         Object.keys(objectLinkList).forEach(function (key) {
+         Object.keys(linkObjectList).forEach(function (key) {
+            self.log.warn ("removing from OLL");
             var tempMatrix = capacityMatrix.copy()
               , newFlow = 0
               ;
 
-            removeLinkFromCapacityMatrix(tempMatrix, objectLinkList[key]);
+            removeLinkFromCapacityMatrix(tempMatrix, linkObjectList[key]);
             self.log.error (tempMatrix);
-            newFlow = calculateNetworkFlow(tempMatrix, objectLinkList[key]);
-            self.log.warn(key, newFlow);
+            newFlow = calculateNetworkFlow(tempMatrix, linkObjectList[key]);
+            if (newFlow > GraphType.FLOW.origFlow) {
+               newFlow = GraphType.FLOW.origFlow;
+               errorMessage.send(
+                  dmz.data.wrapString(
+                     "Warning: Graph contains link(s) or node(s) with negative flow" +
+                     "consequence."));
+            }
+            self.log.warn("link", key, newFlow);
             dmz.object.scalar(
-               objectLinkList[key].attr,
+               linkObjectList[key].attr,
                FlowConsequenceHandle,
                (GraphType.FLOW.origFlow - newFlow));
          });
@@ -806,6 +835,38 @@ GraphType.FLOW.function = function () {
       GraphType.FLOW.dataReset = false;
    }
    self.log.error ("END FLOW function");
+
+};
+
+GraphType.FLOW.function = function () {
+   var failure
+     , consequence = 0
+     ;
+
+   if (GraphType.FLOW.dataReset) {
+      GraphType.FLOW.calculate();
+   }
+
+   failure = objectFromCDF();
+   if (failure.attr) {
+      consequence = failure.consequence;
+   }
+   else {
+      consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle);
+   }
+
+   if (GraphType.FLOW.origFlow > 0) {
+      consequence = Math.round(consequence / GraphType.FLOW.origFlow * 100);
+   }
+   else {
+      consequence = 0;
+   }
+
+   GraphType.FLOW.pdf[consequence] += 1;
+   GraphType.FLOW.count += 1;
+   if ((GraphType.FLOW.count % updateGraphDelay) === 0) {
+      updateGraph(GraphType.FLOW);
+   }
 
 };
 
@@ -834,24 +895,13 @@ updateGraph = function (graphType) {
 simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
-//         dmz.time.setRepeatingTimer(self, cascadeFailureSimulation);
-         if (currentType == GraphType.CASCADE) {
-            dmz.time.setRepeatingTimer(self, GraphType.CASCADE.function);
-         }
-         else {
-            dmz.time.setTimer(self, GraphType.FLOW.function);
-         }
-
+         dmz.time.setRepeatingTimer(self, currentType.function);
          GraphActive = true;
-//         cascadeFailureSimulation();
       }
       else if (GraphActive) {
-//         dmz.time.cancelTimer(self, cascadeFailureSimulation);
          dmz.time.cancelTimer(self, currentType.function);
          GraphActive = false;
-         if (currentType == GraphType.CASCADE) {
-            updateGraph(currentType);
-         }
+         updateGraph(currentType);
       }
    }
 });
@@ -861,17 +911,14 @@ simulationTypeMessage.subscribe(self, function (data) {
      ;
 
    if (dmz.data.isTypeOf(data)) {
-      self.log.warn ("type:", data.boolean("Boolean", 0), dmz.data.unwrapBoolean(data));
       if (!data.boolean("Boolean", 0)) {
-         self.log.warn ("setting to FLOW");
          if (GraphActive) {
             dmz.time.cancelTimer(self, GraphType.CASCADE.function);
-            dmz.time.setTimer(self, GraphType.FLOW.function);
+            dmz.time.setRepeatingTimer(self, GraphType.FLOW.function);
          }
          currentType = GraphType.FLOW;
       }
       else {
-         self.log.warn ("setting to CASCADE");
          if (GraphActive) {
             dmz.time.cancelTimer(self, GraphType.FLOW.function);
             dmz.time.setRepeatingTimer(self, GraphType.CASCADE.function);
@@ -889,6 +936,8 @@ simulateLinksMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       allowLinks = dmz.data.unwrapBoolean(data);
       dataReset = true;
+      GraphType.FLOW.dataReset = true;
+      GraphType.CASCADE.dataReset = true;
    }
 });
 
@@ -906,5 +955,7 @@ simulateDirectionMessage.subscribe(self, function (data) {
          failureType = CascadeFailBothState;
       }
       dataReset = true;
+      GraphType.FLOW.dataReset = true;
+      GraphType.CASCADE.dataReset = true;
    }
 });
