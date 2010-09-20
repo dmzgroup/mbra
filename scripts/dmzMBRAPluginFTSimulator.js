@@ -278,7 +278,7 @@ startWork = function () {
 
 stopWork = function () {
    reset = null;
-   dmz.time.cancleTimer(self, work);
+   dmz.time.cancelTimer(self, work);
    haveSetTimer = false;
 }
 
@@ -672,6 +672,6 @@ vinfinityMessage.subscribe(self, function (data) {
 });
 
 stopPlugin = function () {
-   dmz.time.cancleTimer(self, work);
+   dmz.time.cancelTimer(self, work);
    haveSetTimer = false;
 }

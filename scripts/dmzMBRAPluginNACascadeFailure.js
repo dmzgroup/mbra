@@ -810,8 +810,8 @@ simulateMessage.subscribe(self, function (data) {
 //         cascadeFailureSimulation();
       }
       else if (GraphActive) {
-//         dmz.time.cancleTimer(self, cascadeFailureSimulation);
-         dmz.time.cancleTimer(self, currentType.function);
+//         dmz.time.cancelTimer(self, cascadeFailureSimulation);
+         dmz.time.cancelTimer(self, currentType.function);
          GraphActive = false;
          if (currentType == GraphType.CASCADE) {
             updateGraph(currentType);
@@ -829,7 +829,7 @@ simulationTypeMessage.subscribe(self, function (data) {
       if (!data.boolean("Boolean", 0)) {
          self.log.warn ("setting to FLOW");
          if (GraphActive) {
-            dmz.time.cancleTimer(self, GraphType.CASCADE.function);
+            dmz.time.cancelTimer(self, GraphType.CASCADE.function);
             dmz.time.setTimer(self, GraphType.FLOW.function);
          }
          currentType = GraphType.FLOW;
@@ -837,7 +837,7 @@ simulationTypeMessage.subscribe(self, function (data) {
       else {
          self.log.warn ("setting to CASCADE");
          if (GraphActive) {
-            dmz.time.cancleTimer(self, GraphType.FLOW.function);
+            dmz.time.cancelTimer(self, GraphType.FLOW.function);
             dmz.time.setRepeatingTimer(self, GraphType.CASCADE.function);
          }
          currentType = GraphType.CASCADE;
