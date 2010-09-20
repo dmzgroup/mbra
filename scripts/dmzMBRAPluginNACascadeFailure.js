@@ -38,6 +38,7 @@ var dmz =
              { count: 0
              , pdf: []
              , function: function () { self.log.warn ("CASCADE GRAPH FUNCTION"); }
+             , dataReset: true
              }
         , FLOW:
              { count: 0
@@ -45,6 +46,7 @@ var dmz =
              , delay: 500
              , function: function () { self.log.warn ("FLOW GRAPH FUNCTION"); }
              , origFlow: 0
+             , dataReset: true
              }
         }
 
@@ -98,6 +100,7 @@ var dmz =
    , graphHasBiLinks
    , graphHasSink
    , objectLinkList
+   , isSource
    , isSink
    , allLinksFlow
    , calculateNetworkFlow
@@ -105,6 +108,10 @@ var dmz =
    , calculateFractionMatrix
    , removeNodeFromCapacityMatrix
    , removeLinkFromCapacityMatrix
+   , graphHasSource
+
+   , LabelHandle = dmz.defs.createNamedHandle("NA_Node_Name")
+
    ;
 
 
@@ -306,8 +313,9 @@ GraphType.CASCADE.function = function () {
      , linkState
      ;
 
-   if (dataReset) {
-      graphInit();
+   if (GraphType.CASCADE.dataReset) {
+      if (dataReset) { graphInit(); }
+      GraphType.CASCADE.dataReset = false;
    }
 
    initFailure = objectFromCDF();
@@ -492,9 +500,31 @@ graphHasSink = function (matrix) {
    return sinkList.length > 0;
 };
 
+isSource = function (node) {
+   var link
+     , linkState
+     , result = true
+     ;
+
+   Object.keys(linkObjectList).forEach(function (index) {
+      link = linkObjectList[index];
+      linkState = link.state;
+      if (((link.superLink === node) && linkState.and(ReverseFlowState).bool()) ||
+          ((link.sub === node) && linkState.and(ForwardFlowState).bool())) {
+
+         result = false;
+      }
+   });
+
+   if (result) {
+      GraphHasSource = true;
+   }
+
+   return result;
+};
+
 calculateCapacityMatrix = function () {
    var matrix = dmz.nmmatrix.create(Object.keys(objectList).length)
-     , isSource
      , isDownHillFrom
      , keyList = Object.keys(objectList)
      , iParent
@@ -504,28 +534,6 @@ calculateCapacityMatrix = function () {
      , link
      ;
 
-   isSource = function (node) {
-      var link
-        , linkState
-        , result = true
-        ;
-
-      Object.keys(linkObjectList).forEach(function (index) {
-         link = linkObjectList[index];
-         linkState = link.state;
-         if (((link.superLink === node) && linkState.and(ReverseFlowState).bool()) ||
-             ((link.sub === node) && linkState.and(ForwardFlowState).bool())) {
-
-            result = false;
-         }
-      });
-
-      if (result) {
-         GraphHasSource = true;
-      }
-
-      return result;
-   };
 
    isDownHillFrom = function (child, parent) {
       var result = null
@@ -598,7 +606,7 @@ calculateFractionMatrix = function (capacityMatrix) {
             rowSum += capacityMatrix.m[colIter][rowIter];
          }
       }
-      self.log.warn (rowIter, rowSum);
+//      self.log.warn (rowIter, rowSum);
       if (rowSum > 0) {
          for (colIter = 0; colIter < n; colIter += 1) {
             if (capacityMatrix.m[rowIter][rowIter] > 0) {
@@ -630,6 +638,7 @@ graphHasSource = function (capacityMatrix) {
       }
    }
 
+   GraphHasSource = result;
    return result;
 }
 
@@ -648,28 +657,30 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
      , error
      ;
 
-   self.log.warn ("\n\n" + fractionMatrix);
+//   self.log.warn ("\n\n" + fractionMatrix);
 //   self.log.warn ("\n\n" + fractionMatrix.transpose());
 
-
+//   self.log.warn (capacityMatrix, "\n\n" + fractionMatrix, "\n\n" + trans);
    if (!graphHasSink(capacityMatrix)) {
       if (!currFail) {
          error = dmz.data.wrapString("Error: Graph must have a \"sink\" node.");
          self.log.error("Error: Graph must have a \"sink\" node.");
       }
+      self.log.error("Error: Graph must have a \"sink\" node.");
    }
    else if (!graphHasSource(capacityMatrix)) {
       if (!currFail) {
          error = dmz.data.wrapString("Error: Graph must have a \"source\" node.");
          self.log.error("Error: Graph must have a \"source\" node.");
       }
+      self.log.error("Error: Graph must have a \"source\" node.");
    }
    if (error) {
       errorMessage.send(error);
    }
    else {
       for (ix = 0; ix < n; ix += 1) {
-         self.log.warn (ix, vec);
+//         self.log.warn (ix, vec);
          for (rcount = 0; rcount < n; rcount += 1) {
             sum = 0;
             for (ccount = 0; ccount < n; ccount += 1) {
@@ -682,7 +693,7 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
          vec = tvec.copy();
       }
 
-      self.log.warn(vec);
+//      self.log.warn(vec);
       sum = 0;
       sinkList.forEach(function (sinkIndex) {
          if (sinkIndex != currFail) {
@@ -697,9 +708,22 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
 
 removeNodeFromCapacityMatrix = function (capacityMatrix, handle) {
 
+   var counter
+     , keyList = Object.keys(objectList)
+     ;
+
+   if (isSource(handle)) {
+      for (counter = 0; counter < keyList.length; counter += 1) {
+         if (keyList[counter] == handle) {
+            capacityMatrix.setElement(counter, counter, 0);
+         }
+      }
+   }
+
    Object.keys(objectList[handle]).forEach(function (index) {
       removeLinkFromCapacityMatrix(capacityMatrix, objectList[handle][index]);
    });
+
 
 };
 
@@ -727,47 +751,59 @@ GraphType.FLOW.function = function () {
      ;
 
    self.log.error ("FLOW function");
-   if (dataReset) {
-      graphInit();
-   }
+   if (GraphType.FLOW.dataReset) {
+      if (dataReset) { graphInit(); }
 
-   if (graphHasBiLinks()) {
-      if (!currFail) {
-         errorMessage.send(
-            dmz.data.wrapString("Error: Graph may not contain bidirectional links."));
-         self.log.error("Error: Graph may not contain bidirectional links.");
+      if (graphHasBiLinks()) {
+         if (!currFail) {
+            errorMessage.send(
+               dmz.data.wrapString(
+                  "Error: Graph may not contain bidirectional links."));
+            self.log.error("Error: Graph may not contain bidirectional links.");
+         }
       }
-   }
-   else {
-      capacityMatrix = calculateCapacityMatrix();
-      self.log.warn ("capacity matrix:\n", capacityMatrix);
-      GrpahType.FLOW.origFlow = calculateNetworkFlow(capacityMatrix);
-      self.log.warn ("orig flow:", origFlow);
+      else {
+         capacityMatrix = calculateCapacityMatrix();
+         self.log.warn ("capacity matrix:\n", capacityMatrix);
+         GraphType.FLOW.origFlow = calculateNetworkFlow(capacityMatrix);
+         self.log.warn ("orig flow:", GraphType.FLOW.origFlow);
 
-      // Loop to test node failures
-      Object.keys(objectList).forEach(function (key) {
-         var tempMatrix = capacityMatrix.copy()
-           , newFlow = 0
-           ;
-         removeNodeFromCapacityMatrix(tempMatrix, key);
-         newFlow = calculateNetworkFlow(tempMatrix);
-         dmz.object.scalar(parseInt(key), FlowConsequenceHandle, (origFlow - newFlow));
-      });
+         // Loop to test node failures
+         Object.keys(objectList).forEach(function (key) {
+            var tempMatrix = capacityMatrix.copy()
+              , newFlow = 0
+              ;
 
-      // Loop to test link failures
-      Object.keys(objectLinkList).forEach(function (key) {
-         var tempMatrix = capacityMatrix.copy()
-           , newFlow = 0
-           ;
+            removeNodeFromCapacityMatrix(tempMatrix, parseInt(key));
+            self.log.warn ("Removing:", dmz.object.text(parseInt(key), LabelHandle));
+            self.log.warn (tempMatrix);
+//            self.log.error (capacityMatrix);
+            newFlow = calculateNetworkFlow(tempMatrix, parseInt(key));
+            self.log.warn(key, newFlow);
+            dmz.object.scalar(
+               parseInt(key),
+               FlowConsequenceHandle,
+               (GraphType.FLOW.origFlow - newFlow));
+         });
 
-         removeLinkFromCapacityMatrix(tempMatrix, objectLinkList[key]);
-         newFlow = calculateNetworkFlow(tempMatrix);
-         dmz.object.scalar(
-            objectLinkList[key].attr,
-            FlowConsequenceHandle,
-            (origFlow - newFlow));
-      });
+         // Loop to test link failures
+         Object.keys(objectLinkList).forEach(function (key) {
+            var tempMatrix = capacityMatrix.copy()
+              , newFlow = 0
+              ;
 
+            removeLinkFromCapacityMatrix(tempMatrix, objectLinkList[key]);
+            self.log.error (tempMatrix);
+            newFlow = calculateNetworkFlow(tempMatrix, objectLinkList[key]);
+            self.log.warn(key, newFlow);
+            dmz.object.scalar(
+               objectLinkList[key].attr,
+               FlowConsequenceHandle,
+               (GraphType.FLOW.origFlow - newFlow));
+         });
+
+      }
+      GraphType.FLOW.dataReset = false;
    }
    self.log.error ("END FLOW function");
 
@@ -784,13 +820,13 @@ updateGraph = function (graphType) {
 
    ep[100] = graphType.pdf[100] / graphType.count;
    for (counter = 99; counter >= 1; counter -= 1) {
-      self.log.warn (graphType.pdf[counter], graphType.count, ep[counter + 1]);
+//      self.log.warn (graphType.pdf[counter], graphType.count, ep[counter + 1]);
       ep[counter] = (graphType.pdf[counter] / graphType.count) + ep[counter + 1];
    }
 
    simulateIterCountMessage.send(dmz.data.wrapNumber(graphType.count));
    for (ix = 0; ix < barCount; ix += 1) {
-      self.log.warn ((ix+1), (ep[ix+1]*100));
+//      self.log.warn ((ix+1), (ep[ix+1]*100));
       dmz.object.counter(bars[ix], BarValueHandle, ep[ix + 1] * 100);
    }
 };
