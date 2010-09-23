@@ -69,6 +69,7 @@ namespace dmz {
          Message _updateDelayMessage;
          Message _simulateAllowLinksMessage;
          Message _simulationTypeMessage;
+         Message _simulationErrorMessage;
          Ui::simulateForm _ui;
 
       private:

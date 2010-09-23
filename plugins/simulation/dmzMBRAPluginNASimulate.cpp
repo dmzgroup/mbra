@@ -79,8 +79,17 @@ dmz::MBRAPluginNASimulate::receive_message (
    const Data *InData,
    Data *outData) {
 
-   Float64 val = _convertFloat.to_float64 (InData, 0);
-   _ui.iterationTotal->display(val);
+   if (Type == _updateIterationsMessage) {
+
+      Float64 val = _convertFloat.to_float64 (InData, 0);
+      _ui.iterationTotal->display(val);
+   }
+   else if (Type == _simulationErrorMessage) {
+
+      _ui.errorLabel->setText (
+         QString ("<font color='red'>") + to_qstring (_convertString.to_string (InData))
+         + QString ("</font>"));
+   }
 }
 
 void
@@ -134,6 +143,7 @@ dmz::MBRAPluginNASimulate::_simulation_type_change (bool state) {
    data = _convertBool.to_data (state);
    _ui.failDirectionBox->setVisible (state);
    _ui.failDirectionLabel->setVisible (state);
+   _ui.allowLinkFail->setVisible (state);
 
    _simulationTypeMessage.send (&data);
 }
@@ -186,7 +196,15 @@ dmz::MBRAPluginNASimulate::_init (Config &local) {
       get_plugin_runtime_context (),
       &_log);
 
+   _simulationErrorMessage = config_create_message (
+      "simulation-error-message.name",
+      local,
+      "SimulationErrorMessage",
+      get_plugin_runtime_context (),
+      &_log);
+
    subscribe_to_message (_updateIterationsMessage);
+   subscribe_to_message (_simulationErrorMessage);
 
    connect (
       _ui.updateDelayBox,
