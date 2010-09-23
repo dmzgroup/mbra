@@ -151,7 +151,7 @@ var dmz =
    , doStacklebergFlag = false
    , AllowWrites = true
    , CalculationType = { FLOW: "FLOW", CASCADE: "CASCADE" }
-   , currentCalculationType = CASCADE
+   , currentCalculationType = CalculationType.CASCADE
 
    , updateObjectiveGraph
    , weighObject
@@ -1652,6 +1652,10 @@ simulationTypeMessage.subscribe(self, function (data) {
                dmz.object.scalar(object.handle, ConsequenceHandle, 0);
             }
          });
+      }
+      if (doStacklebergFlag) {
+         doRank();
+         doGraph();
       }
    }
 });

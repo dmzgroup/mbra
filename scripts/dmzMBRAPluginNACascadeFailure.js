@@ -830,10 +830,12 @@ GraphType.FLOW.function = function () {
 
    failure = objectFromCDF();
    if (failure.attr) {
-      consequence = failure.consequence;
+      consequence = dmz.object.scalar(parseInt(failure.attr), FlowConsequenceHandle) -
+                    failure.consequence;
    }
    else {
-      consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle);
+      consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle) -
+                    dmz.object.scalar(parseInt(failure), ConsequenceHandle);
    }
 
    if (GraphType.FLOW.origFlow > 0) {
