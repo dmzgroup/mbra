@@ -785,7 +785,8 @@ GraphType.FLOW.calculate = function () {
                dmz.object.scalar(
                   parseInt(key),
                   FlowConsequenceHandle,
-                  (GraphType.FLOW.origFlow - newFlow));
+                  dmz.object.scalar(parseInt(key), ConsequenceHandle) +
+                     (GraphType.FLOW.origFlow - newFlow));
             });
 
             // Loop to test link failures
@@ -806,7 +807,8 @@ GraphType.FLOW.calculate = function () {
                dmz.object.scalar(
                   linkObjectList[key].attr,
                   FlowConsequenceHandle,
-                  (GraphType.FLOW.origFlow - newFlow));
+                  linkObjectList[key].consequence +
+                     (GraphType.FLOW.origFlow - newFlow));
             });
          }
 

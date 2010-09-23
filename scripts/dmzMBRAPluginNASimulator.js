@@ -29,6 +29,7 @@ var dmz =
    , AttackAllocationHandle = dmz.defs.createNamedHandle(
         "NA_Node_Attack_Allocation")
    , ConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Consequence")
+   , FlowConsequenceHandle = dmz.defs.createNamedHandle("NA_Node_Flow_Consequence")
    , ConsequenceReducedHandle = dmz.defs.createNamedHandle(
         "NA_Node_Consequence_Reduced")
    , RiskInitialHandle = dmz.defs.createNamedHandle("NA_Node_Risk_Initial")
@@ -89,6 +90,8 @@ var dmz =
         self.config.string("c-infinity-message.name", "NAConsequenceInfinityMessage"))
    , vinfinityMessage = dmz.message.create(
         self.config.string("v-infinity-message.name", "NAVulnerabilityInfinityMessage"))
+   , simulationTypeMessage = dmz.message.create(
+        self.config.string("simulator-message.name", "CalcSimulationType"))
    , updateObjectiveGraphMessage = dmz.message.create(
         self.config.string(
            "update-objective-graph-message.name",
@@ -147,6 +150,8 @@ var dmz =
    , UnfixedVariable = UnfixedPreventionHandle
    , doStacklebergFlag = false
    , AllowWrites = true
+   , CalculationType = { FLOW: "FLOW", CASCADE: "CASCADE" }
+   , currentCalculationType = CASCADE
 
    , updateObjectiveGraph
    , weighObject
@@ -1422,12 +1427,16 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
             object.threat = 1;
             dmz.object.scalar(handle, ThreatHandle, object.threat);
          }
-         object.consequence = dmz.object.scalar(handle, ConsequenceHandle);
-         if (!object.consequence) {
-            object.consequence = 0;
-            dmz.object.scalar(handle, ConsequenceHandle, 0);
+         if (currentCalculationType == CalculationType.FLOW) {
+            object.consequence = dmz.object.scalar(handle, FlowConsequenceHandle);
          }
-
+         if (!object.consequence) {
+            object.consequence = dmz.object.scalar(handle, ConsequenceHandle);
+            if (!object.consequence) {
+               object.consequence = 0;
+               dmz.object.scalar(handle, ConsequenceHandle, 0);
+            }
+         }
          objects[handle] = object;
 
          if (visible && objects[handle]) {
@@ -1451,7 +1460,16 @@ updateObjectScalar = function (handle, attr, val) {
             }
             break;
          case PreventionCostHandle: object.preventionCost = val; break;
-         case ConsequenceHandle: object.consequence = val; break;
+         case FlowConsequenceHandle:
+            if (currentCalculationType == CalculationType.FLOW) {
+               object.consequence = val;
+            }
+            break;
+         case ConsequenceHandle:
+            if (currentCalculationType == CalculationType.CASCADE) {
+               object.consequence = val;
+            }
+            break;
          case ResponseHandle: object.responseCost = val; break;
          case DegreeHandle: object.degree = val; break;
       }
@@ -1469,6 +1487,7 @@ dmz.object.scalar.observe(self, ThreatHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, VulnerabilityHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, PreventionCostHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, ConsequenceHandle, updateObjectScalar);
+dmz.object.scalar.observe(self, FlowConsequenceHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, DegreeHandle, updateObjectScalar);
 dmz.object.scalar.observe(self, ResponseHandle, updateObjectScalar);
 
@@ -1517,6 +1536,7 @@ updateSimulatorFlag = function (handle, attr, value) {
          objectiveFunctionLabelMessage.send(
             dmz.data.wrapString("Objective: Consequence"));
       }
+
       doGraph();
    }
    else if (weightList[attr]) {
@@ -1603,3 +1623,36 @@ dmz.object.state.observe(self, LinkFlowHandle, function (object) {
    }
    doGraph();
 });
+
+simulationTypeMessage.subscribe(self, function (data) {
+   var state
+     ;
+
+   if (dmz.data.isTypeOf(data)) {
+      if (!data.boolean("Boolean", 0)) {
+         currentCalculationType = CalculationType.FLOW;
+         Object.keys(objects).forEach(function (key) {
+            var object = objects[key];
+            object.consequence =
+               dmz.object.scalar(object.handle, FlowConsequenceHandle);
+            if (!object.consequence) {
+               object.consequence = 0;
+               dmz.object.scalar(object.handle, FlowConsequenceHandle, 0);
+            }
+         });
+      }
+      else {
+         currentCalculationType = CalculationType.CASCADE;
+         Object.keys(objects).forEach(function (key) {
+            var object = objects[key];
+            object.consequence =
+               dmz.object.scalar(object.handle, ConsequenceHandle);
+            if (!object.consequence) {
+               object.consequence = 0;
+               dmz.object.scalar(object.handle, ConsequenceHandle, 0);
+            }
+         });
+      }
+   }
+});
+
