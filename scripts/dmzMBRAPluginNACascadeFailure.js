@@ -74,7 +74,7 @@ var dmz =
            "NASimulateIterCountMessage"))
    , simulateLinksMessage = dmz.message.create(
         self.config.string(
-           "simulate-allow--links-message.name",
+           "simulate-allow-links-message.name",
            "NASimulateLinksMessage"))
    , cleanupMessage = dmz.message.create("CleanupObjectsMessage")
 
