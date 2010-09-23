@@ -22,7 +22,7 @@ var dmz =
    , LinkHandle = null
    , Handle = null
    , NodeLink = dmz.defs.createNamedHandle("Node_Link")
-   , undoLinkRecord = dmz.defs.createNamedHandle("Link Nodes")
+   , undoLinkRecord = "Link Nodes"
    ;
 
 (function () {

@@ -13,7 +13,7 @@ var dmz =
          self.config.string("message.unselect.name", "UnselectMoveObjectMessage"))
    , moveMessage = dmz.message.create(
          self.config.string("message.move.name", "MoveSelectedObjectMessage"))
-   , MoveNode = dmz.defs.createNamedHandle("Move Node")
+   , MoveNode = "Move Node"
    , firstMove = false
    , Handle = null
    , Offset = null

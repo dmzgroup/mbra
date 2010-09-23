@@ -628,7 +628,8 @@ dmz::MBRAPluginPropertyTable::_item_changed (QStandardItem *item) {
       if (Object && objMod && pw) {
 
          const String Msg ("Edit Property ");
-         const Handle UndoHandle = _undo.start_record (Msg + pw->Name);
+         String name = _sub.convert(pw->Name);
+         const Handle UndoHandle = _undo.start_record (Msg + name);
          pw->update_property (Object, item->data (Qt::DisplayRole), *objMod);
          _undo.stop_record (UndoHandle);
       }
