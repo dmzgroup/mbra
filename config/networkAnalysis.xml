@@ -320,6 +320,18 @@
             name="Risk Initial $$(UnitsMessage)"
             attribute="NA_Node_Risk_Initial"
             decimals="2"
+         />   
+         <property
+            type="scalar-label"
+            name="Risk Reduced $$(UnitsMessage)"
+            attribute="NA_Node_Risk_Reduced"
+            decimals="2"
+         />
+         <property
+            type="scalar-label"
+            name="Flow Consequence $$(UnitsMessage)"
+            attribute="NA_Node_Flow_Consequence"
+            decimals="2"
          />
          <property
             type="scalar-label"
@@ -335,12 +347,6 @@
             type="scalar-label"
             name="Attack Allocation $$(UnitsMessage)"
             attribute="NA_Node_Attack_Allocation"
-         />   
-         <property
-            type="scalar-label"
-            name="Risk Reduced $$(UnitsMessage)"
-            attribute="NA_Node_Risk_Reduced"
-            decimals="2"
          />
          <property
             type="scalar-label"
@@ -354,12 +360,6 @@
             type="scalar-label"
             name="Consequence Reduced $$(UnitsMessage)"
             attribute="NA_Node_Consequence_Reduced"
-            decimals="2"
-         />
-         <property
-            type="scalar-label"
-            name="Flow Consequence $$(UnitsMessage)"
-            attribute="NA_Node_Flow_Consequence"
             decimals="2"
          />
          <property

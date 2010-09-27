@@ -60,6 +60,8 @@ var dmz =
         self.config.string("simulate-message.name", "NASimulateMessage"))
    , simulationTypeMessage = dmz.message.create(
         self.config.string("simulation-type-message.name", "NAGraphSimulationType"))
+   , calculationTypeMessage = dmz.message.create(
+         self.config.string("simulator-message.name", "CalcSimulationType"))
    , errorMessage = dmz.message.create(
         self.config.string("simulation-error-message.name", "SimulationErrorMessage"))
    , simulateDirectionMessage = dmz.message.create(
@@ -111,13 +113,12 @@ var dmz =
    , removeLinkFromCapacityMatrix
    , graphHasSource
 
-   , LabelHandle = dmz.defs.createNamedHandle("NA_Node_Name")
-
    ;
 
 
 (function () {
    var ix;
+   errorMessage.send(dmz.data.wrapString(""));
    for (ix = 0; ix < barCount; ix += 1) {
       bars[ix] = dmz.object.create("na_simulation_bar");
       dmz.object.counter(bars[ix], BarNumberHandle, ix + 1);
@@ -140,8 +141,11 @@ dmz.object.create.observe(self, function (handle, objType) {
 dataUpdated = function (objHandle, attrHandle, val) {
    if (objHandle && (objectList[objHandle] || linkObjectList[objHandle])) {
       dataReset = true;
-      GraphType.FLOW.dataReset = true;
+      if ((attrHandle !== ThreatHandle) && (attrHandle !== VulnerabilityHandle)) {
+         GraphType.FLOW.dataReset = true;
+      }
       GraphType.CASCADE.dataReset = true;
+
       if (linkObjectList[objHandle]) {
          if (attrHandle === ConsequenceHandle) {
             linkObjectList[objHandle].consequence = val;
@@ -198,8 +202,8 @@ function (linkHandle, AttrHandle, Super, Sub, AttrObj, PrevObj) {
       delete linkObjectList[PrevObj];
       delete objectList[Super][linkHandle];
       delete objectList[Sub][linkHandle];
-
    }
+
    if (PrevObj && dmz.object.isObject(PrevObj)) {
       dmz.object.destroy(PrevObj);
    }
@@ -221,7 +225,6 @@ objectLinkList = function (objHandle) {
 };
 
 graphInit = function () {
-//cascadeInit = function () {
    var sumTV = 0
      , pdf = []
      , threat
@@ -233,7 +236,6 @@ graphInit = function () {
      ;
 
    simulateIterCountMessage.send(dmz.data.wrapNumber(0));
-
    GraphHasSource = false;
 
    GraphType.CASCADE.count = 0;
@@ -332,9 +334,7 @@ GraphType.CASCADE.function = function () {
       visited[initFailure.attr] = true;
       failedConsequences += dmz.object.scalar(initFailure.attr, ConsequenceHandle);
       linkState = dmz.object.state(initFailure.attr, LinkFlowHandle);
-      if (!linkState) {
-         linkState = FlowStateBoth;
-      }
+      if (!linkState) { linkState = FlowStateBoth; }
       if (failureType.and(CascadeFailDownstreamState).bool()) {
 
          if (ForwardFlowState.and(linkState).bool()) {
@@ -415,8 +415,7 @@ GraphType.CASCADE.function = function () {
                      visited[link.superLink] = true;
                   }
                }
-               if (
-                     failureType.and(CascadeFailUpstreamState).bool()) {
+               if (failureType.and(CascadeFailUpstreamState).bool()) {
 
                   if (ForwardFlowState.and(linkState).bool() &&
                       link.sub == current && !visited[link.superLink]) {
@@ -429,9 +428,7 @@ GraphType.CASCADE.function = function () {
                   else if (ReverseFlowState.and(linkState).bool() &&
                            link.superLink == current && !visited[link.sub]) {
 
-                     if (checkObjectCascadeFail(link.sub)) {
-                        list.push(link.sub);
-                     }
+                     if (checkObjectCascadeFail(link.sub)) { list.push(link.sub); }
                      visited[link.sub] = true;
                   }
                }
@@ -501,16 +498,13 @@ graphHasSink = function (matrix, hasFailedObject) {
    for (rowIter = 0; rowIter < n; rowIter += 1) {
       rowSum = 0;
       for (colIter = 0; (colIter < n) && (rowSum === 0); colIter += 1) {
-         if (colIter != rowIter) {
-            rowSum += matrix.m[colIter][rowIter];
-         }
+         if (colIter != rowIter) { rowSum += matrix.m[colIter][rowIter]; }
       }
       if (rowSum === 0) {
          counter += 1;
          if (!hasFailedObject) { sinkList.push(rowIter); }
       }
    }
-
    return counter > 0;
 };
 
@@ -530,10 +524,7 @@ isSource = function (node) {
       }
    });
 
-   if (result) {
-      GraphHasSource = true;
-   }
-
+   if (result) { GraphHasSource = true; }
    return result;
 };
 
@@ -547,7 +538,6 @@ calculateCapacityMatrix = function () {
      , childHandle
      , link
      ;
-
 
    isDownHillFrom = function (child, parent) {
       var result = null
@@ -586,10 +576,7 @@ calculateCapacityMatrix = function () {
             if (link) {
                link.fromIndex = iParent;
                link.toIndex = iChild;
-               matrix.setElement(
-                  iChild,
-                  iParent,
-                  link.consequence);
+               matrix.setElement(iChild, iParent, link.consequence);
             }
          }
       }
@@ -610,9 +597,7 @@ calculateFractionMatrix = function (capacityMatrix) {
    for (rowIter = 0; rowIter < n; rowIter += 1) {
       rowSum = 0;
       for (colIter = 0; colIter < n; colIter += 1) {
-         if (rowIter != colIter) {
-            rowSum += capacityMatrix.m[colIter][rowIter];
-         }
+         if (rowIter != colIter) { rowSum += capacityMatrix.m[colIter][rowIter]; }
       }
       if (rowSum > 0) {
          for (colIter = 0; colIter < n; colIter += 1) {
@@ -639,9 +624,7 @@ graphHasSource = function (capacityMatrix) {
      ;
 
    for (counter = 0; (counter < vec.length) && !result; counter += 1) {
-      if (vec.v[counter] > 0) {
-         result = true;
-      }
+      if (vec.v[counter] > 0) { result = true; }
    }
 
    GraphHasSource = result;
@@ -693,9 +676,7 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
 
       sum = 0;
       sinkList.forEach(function (sinkIndex) {
-         if (sinkIndex != currFail) {
-            sum += vec.v[sinkIndex];
-         }
+         if (sinkIndex != currFail) { sum += vec.v[sinkIndex]; }
       });
       result = sum;
    }
@@ -747,7 +728,6 @@ GraphType.FLOW.calculate = function () {
      , newFlow
      ;
 
-//   self.log.error ("FLOW function");
      errorMessage.send(dmz.data.wrapString(""));
      flowError = null;
    if (GraphType.FLOW.dataReset) {
@@ -761,7 +741,6 @@ GraphType.FLOW.calculate = function () {
       }
       else {
          capacityMatrix = calculateCapacityMatrix();
-//         self.log.warn ("capacity matrix:\n", capacityMatrix);
          GraphType.FLOW.origFlow = calculateNetworkFlow(capacityMatrix);
          if (GraphType.FLOW.origFlow > -1) {
 
@@ -772,8 +751,6 @@ GraphType.FLOW.calculate = function () {
                  ;
 
                removeNodeFromCapacityMatrix(tempMatrix, parseInt(key));
-//               self.log.warn ("remove:", dmz.object.text(parseInt(key), LabelHandle),
-//                              "tempMatrix:", tempMatrix);
                newFlow = calculateNetworkFlow(tempMatrix, parseInt(key));
                if (newFlow > GraphType.FLOW.origFlow) {
                   newFlow = GraphType.FLOW.origFlow;
@@ -785,8 +762,7 @@ GraphType.FLOW.calculate = function () {
                dmz.object.scalar(
                   parseInt(key),
                   FlowConsequenceHandle,
-                  dmz.object.scalar(parseInt(key), ConsequenceHandle) +
-                     (GraphType.FLOW.origFlow - newFlow));
+                  (GraphType.FLOW.origFlow - newFlow));
             });
 
             // Loop to test link failures
@@ -807,16 +783,12 @@ GraphType.FLOW.calculate = function () {
                dmz.object.scalar(
                   linkObjectList[key].attr,
                   FlowConsequenceHandle,
-                  linkObjectList[key].consequence +
-                     (GraphType.FLOW.origFlow - newFlow));
+                  (GraphType.FLOW.origFlow - newFlow));
             });
          }
-
       }
       GraphType.FLOW.dataReset = false;
    }
-//   self.log.error ("END FLOW function");
-
 };
 
 GraphType.FLOW.function = function () {
@@ -824,33 +796,22 @@ GraphType.FLOW.function = function () {
      , consequence = 0
      ;
 
-   if (GraphType.FLOW.dataReset) {
-      GraphType.FLOW.calculate();
-   }
+   if (GraphType.FLOW.dataReset) { GraphType.FLOW.calculate(); }
 
    failure = objectFromCDF();
    if (failure.attr) {
-      consequence = dmz.object.scalar(parseInt(failure.attr), FlowConsequenceHandle) -
-                    failure.consequence;
+      consequence = dmz.object.scalar(parseInt(failure.attr), FlowConsequenceHandle);
    }
-   else {
-      consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle) -
-                    dmz.object.scalar(parseInt(failure), ConsequenceHandle);
-   }
+   else { consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle); }
 
    if (GraphType.FLOW.origFlow > 0) {
       consequence = Math.round(consequence / GraphType.FLOW.origFlow * 100);
    }
-   else {
-      consequence = 0;
-   }
+   else { consequence = 0; }
 
    GraphType.FLOW.pdf[consequence] += 1;
    GraphType.FLOW.count += 1;
-   if ((GraphType.FLOW.count % updateGraphDelay) === 0) {
-      updateGraph(GraphType.FLOW);
-   }
-
+   if ((GraphType.FLOW.count % updateGraphDelay) === 0) { updateGraph(GraphType.FLOW); }
 };
 
 updateGraph = function (graphType) {
@@ -870,7 +831,6 @@ updateGraph = function (graphType) {
 
    simulateIterCountMessage.send(dmz.data.wrapNumber(graphType.count));
    for (ix = 0; ix < barCount; ix += 1) {
-//      self.log.warn ((ix+1), (ep[ix+1]*100));
       dmz.object.counter(bars[ix], BarValueHandle, ep[ix + 1] * 100);
    }
 };
@@ -890,8 +850,6 @@ simulateMessage.subscribe(self, function (data) {
 });
 
 simulationTypeMessage.subscribe(self, function (data) {
-   var state
-     ;
 
    if (dmz.data.isTypeOf(data)) {
       if (!data.boolean("Boolean", 0)) {
@@ -899,6 +857,7 @@ simulationTypeMessage.subscribe(self, function (data) {
             dmz.time.cancelTimer(self, GraphType.CASCADE.function);
             dmz.time.setRepeatingTimer(self, GraphType.FLOW.function);
          }
+
          currentType = GraphType.FLOW;
       }
       else {
@@ -907,6 +866,17 @@ simulationTypeMessage.subscribe(self, function (data) {
             dmz.time.setRepeatingTimer(self, GraphType.CASCADE.function);
          }
          currentType = GraphType.CASCADE;
+      }
+   }
+});
+
+calculationTypeMessage.subscribe(self, function (data) {
+
+   if (dmz.data.isTypeOf(data)) {
+
+      if (!data.boolean("Boolean", 0)) {
+
+         if (GraphType.FLOW.dataReset) { GraphType.FLOW.calculate(); }
       }
    }
 });
@@ -928,19 +898,13 @@ simulateDirectionMessage.subscribe(self, function (data) {
    var stateString;
    if (dmz.data.isTypeOf(data)) {
       stateString = data.string("String", 0);
-      if (stateString === "Upstream") {
-         failureType = CascadeFailUpstreamState;
-      }
+      if (stateString === "Upstream") { failureType = CascadeFailUpstreamState; }
       else if (stateString === "Downstream") {
          failureType = CascadeFailDownstreamState;
       }
-      else {
-         failureType = CascadeFailBothState;
-      }
+      else { failureType = CascadeFailBothState; }
       dataReset = true;
       GraphType.FLOW.dataReset = true;
       GraphType.CASCADE.dataReset = true;
    }
 });
-
-errorMessage.send(dmz.data.wrapString(""));

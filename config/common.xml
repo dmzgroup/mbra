@@ -104,6 +104,15 @@
       <attribute name="NA_Node_Vulnerability_Reduced">
          <mask name="scalar"/>
       </attribute>
+      <attribute name="NA_Node_Flow_Consequence">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Threat_Calculated">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Consequence_Reduced">
+         <mask name="scalar"/>
+      </attribute>
       <attribute name="NA_Node_Prevention_Allocation">
          <mask name="scalar"/>
       </attribute>
