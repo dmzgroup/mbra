@@ -534,6 +534,14 @@
          />
          <property
             type="scalar-label"
+            name="Calculated Threat"
+            attribute="NA_Node_Threat_Calculated"
+            scale="100"
+            decimals="0"
+            suffix="%"
+         />
+         <property
+            type="scalar-label"
             name="Weight"
             attribute="NA_Node_Weight"
             decimals="3"
