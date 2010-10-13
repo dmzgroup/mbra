@@ -801,6 +801,7 @@
 <na-simulation-graph>
    <start value="1"/>
    <ascending value="true"/>
+   <rotate-label value="true"/>
    <percents show="true"/>
    <set>
      <object-type name = "na_simulation_bar"/>
@@ -814,7 +815,7 @@
          <color blue="1"/>
       </stroke>
    </power-law>
-   <bar>
+   <bar width="12.5">
       <stroke>
          <color green="0.5"/>
       </stroke>
