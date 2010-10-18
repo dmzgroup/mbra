@@ -47,7 +47,6 @@ var dmz =
         , FLOW:
              { count: 0
              , pdf: []
-             , delay: 500
              , function: function () { self.log.warn ("FLOW GRAPH FUNCTION"); }
              , origFlow: 0
              , dataReset: true
@@ -92,7 +91,7 @@ var dmz =
    , bars = []
    , barCount = 100
    , failureType = CascadeFailBothState
-   , updateGraphDelay = 500
+   , updateGraphDelay = 50
    , allowLinks = true
    , GraphHasSource = false
    , flowError
