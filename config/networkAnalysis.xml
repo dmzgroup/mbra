@@ -761,6 +761,12 @@
    <set>
       <object-type name="na_node"/>
    </set>
+   <x-axis-label text="# Links">
+      <update-msg name="NA_Degree_Graph_X_Label"/>
+   </x-axis-label>
+   <y-axis-label text="% Nodes">
+      <update-msg name="NA_Degree_Graph_Y_Label"/>
+   </y-axis-label>
    <attribute type="link" name="Node_Link"/>
    <bar>
       <stroke>
@@ -806,6 +812,12 @@
    <set>
      <object-type name = "na_simulation_bar"/>
    </set>
+   <x-axis-label text="Exceedence Probability %">
+      <update-msg name="NA_Simulation_Graph_X_Label"/>
+   </x-axis-label>
+   <y-axis-label text="% Consequence">
+      <update-msg name="NA_Simulation_Graph_Y_Label"/>
+   </y-axis-label>
    <attribute type="counter" name="NA_Simulation_Bar_Number"/>
    <counter-handle name="NA_Simulation_Bar_Value"/>
    <label-handle name="NA_Simulation_Bar_Label"/>
