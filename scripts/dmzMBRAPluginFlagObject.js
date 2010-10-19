@@ -21,11 +21,11 @@ message.subscribe(self, function (data, type) {
 
    if (dmz.data.isTypeOf(data)) {
 
-      sendMessage = dmz.defs.createNamedHandle("Flag Node");
+      sendMessage = "Flag Node";
       handle = data.handle("object", 0);
 
       if (handle && dmz.object.isLink(handle)) {
-         sendMessage = dmz.defs.createNamedHandle("Flag Link");
+         sendMessage = "Flag Link";
          handle = dmz.object.linkAttributeObject(handle);
       }
 

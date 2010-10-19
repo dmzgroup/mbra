@@ -8,12 +8,12 @@ Vector = function (n) {
    var c1
      ;
 
-   if (n === 0) {
+   if ((n === 0) || (n === undefined)) {
       throw createError("Invalid nvector initialization value:", n);
    }
 
    this.length = n;
-   this.v = [];
+   this.v = new Array(n);
    for (c1 = 0; c1 < n; c1 += 1) {
       this.v[c1] = 0;
    }
@@ -44,10 +44,7 @@ Vector.prototype.copy = function () {
      , result = new Vector(this.length);
      ;
 
-   for (c1 = 0; c1 < this.length; c1 += 1) {
-      result.v[c1] = this.v[c1];
-   }
-
+   result.v = this.v.slice(0);
    return result;
 };
 
@@ -73,7 +70,7 @@ Vector.prototype.toArray = function () {
 
 Vector.prototype.fromArray = function (array) {
 
-   this.v = array;
+   this.v = array.slice(0);
    this.length = array.length;
 };
 
@@ -96,7 +93,7 @@ Vector.prototype.magnitude = function () {
 
 Vector.prototype.normalize = function () {
 
-   var mag = this.magnitude,
+   var mag = this.magnitude(),
       div = 0.0;
 
    if (mag > Epsilon) {

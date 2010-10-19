@@ -10,7 +10,7 @@ Matrix = function (cols, rows) {
      , c2
      ;
 
-   if ((rows === 0) || (cols === 0)) {
+   if ((rows === 0) || (cols === 0) || (rows === undefined) || (cols === undefined)) {
       throw createError("Invalid nmmatrix initialization values:", rows, cols);
    }
    this.rows = rows;

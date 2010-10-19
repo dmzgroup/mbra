@@ -41,13 +41,13 @@ var dmz =
         { CASCADE:
              { count: 0
              , pdf: []
-             , function: function () { self.log.warn ("CASCADE GRAPH FUNCTION"); }
+             , fnc: function () { self.log.warn ("CASCADE GRAPH FUNCTION"); }
              , dataReset: true
              }
         , FLOW:
              { count: 0
              , pdf: []
-             , function: function () { self.log.warn ("FLOW GRAPH FUNCTION"); }
+             , fnc: function () { self.log.warn ("FLOW GRAPH FUNCTION"); }
              , origFlow: 0
              , dataReset: true
              }
@@ -318,7 +318,7 @@ checkObjectCascadeFail = function (objectHandle) {
    return ((result === true) || (result === false)) ? result : false;
 };
 
-GraphType.CASCADE.function = function () {
+GraphType.CASCADE.fnc = function () {
    var totalConsequences = 0
      , failedConsequences = 0
      , initFailure
@@ -337,7 +337,7 @@ GraphType.CASCADE.function = function () {
    }
 
    initFailure = objectFromCDF();
-   if (initFailure && typeof(initFailure) == "object") {
+   if (initFailure && typeof(initFailure) === "object") {
       visited[initFailure.attr] = true;
       failedConsequences += dmz.object.scalar(initFailure.attr, currentConsequenceHandle);
       linkState = dmz.object.state(initFailure.attr, LinkFlowHandle);
@@ -720,8 +720,6 @@ removeNodeFromCapacityMatrix = function (capacityMatrix, handle) {
 };
 
 removeLinkFromCapacityMatrix = function (capacityMatrix, link) {
-   var keyList = Object.keys(objectList)
-     ;
 
    if ((link.fromIndex !== -1) && (link.toIndex !== -1)) {
       capacityMatrix.setElement(link.toIndex, link.fromIndex, 0);
@@ -810,7 +808,7 @@ GraphType.FLOW.calculate = function () {
    }
 };
 
-GraphType.FLOW.function = function () {
+GraphType.FLOW.fnc = function () {
    var failure
      , consequence = 0
      ;
@@ -857,11 +855,11 @@ updateGraph = function (graphType) {
 simulateMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (data.boolean("Boolean", 0)) {
-         dmz.time.setRepeatingTimer(self, currentType.function);
+         dmz.time.setRepeatingTimer(self, currentType.fnc);
          GraphActive = true;
       }
       else if (GraphActive) {
-         dmz.time.cancelTimer(self, currentType.function);
+         dmz.time.cancelTimer(self, currentType.fnc);
          GraphActive = false;
          updateGraph(currentType);
       }
@@ -873,8 +871,8 @@ simulationTypeMessage.subscribe(self, function (data) {
    if (dmz.data.isTypeOf(data)) {
       if (!data.boolean("Boolean", 0)) {
          if (GraphActive) {
-            dmz.time.cancelTimer(self, GraphType.CASCADE.function);
-            dmz.time.setRepeatingTimer(self, GraphType.FLOW.function);
+            dmz.time.cancelTimer(self, GraphType.CASCADE.fnc);
+            dmz.time.setRepeatingTimer(self, GraphType.FLOW.fnc);
          }
 
          currentType = GraphType.FLOW;
@@ -886,8 +884,8 @@ simulationTypeMessage.subscribe(self, function (data) {
       }
       else {
          if (GraphActive) {
-            dmz.time.cancelTimer(self, GraphType.FLOW.function);
-            dmz.time.setRepeatingTimer(self, GraphType.CASCADE.function);
+            dmz.time.cancelTimer(self, GraphType.FLOW.fnc);
+            dmz.time.setRepeatingTimer(self, GraphType.CASCADE.fnc);
          }
          currentType = GraphType.CASCADE;
          if (!allowLinks) {
