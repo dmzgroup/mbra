@@ -56,7 +56,8 @@ class LineWidget : public pedit {
          const Handle Object,
          ObjectModule &module,
          QWidget *parent,
-         QFormLayout *layout);
+         QFormLayout *layout,
+         StringSub &sub);
 
    protected:
       virtual ~LineWidget () {;}
@@ -96,7 +97,8 @@ class TextWidget : public pedit {
          const Handle Object,
          ObjectModule &module,
          QWidget *parent,
-         QFormLayout *layout);
+         QFormLayout *layout,
+         StringSub &sub);
 
    protected:
       virtual ~TextWidget () {;}
@@ -145,7 +147,8 @@ class ScalarWidget : public pedit {
          const Handle Object,
          ObjectModule &module,
          QWidget *parent,
-         QFormLayout *layout);
+         QFormLayout *layout,
+         StringSub &sub);
 
    protected:
       virtual ~ScalarWidget () {;}
@@ -178,7 +181,8 @@ class LinkLabel : public pedit {
          const Handle Object,
          ObjectModule &module,
          QWidget *parent,
-         QFormLayout *layout);
+         QFormLayout *layout,
+         StringSub &sub);
 
    protected:
       virtual ~LinkLabel () {;}
@@ -226,7 +230,8 @@ class StateWidget : public pedit {
          const Handle Object,
          ObjectModule &module,
          QWidget *parent,
-         QFormLayout *layout);
+         QFormLayout *layout,
+         StringSub &sub);
 
    protected:
       String _defaultStateName;
@@ -287,11 +292,12 @@ LineWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
-      QFormLayout *layout) {
+      QFormLayout *layout,
+      StringSub &sub) {
 
    const Handle RealObject = get_real_object (Object, module);
 
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
+   QLabel *label = new QLabel (sub.convert(Name).get_buffer (), parent);
 
    String text;
 
@@ -336,11 +342,12 @@ TextWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
-      QFormLayout *layout) {
+      QFormLayout *layout,
+      StringSub &sub) {
 
    const Handle RealObject = get_real_object (Object, module);
 
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
+   QLabel *label = new QLabel (sub.convert(Name).get_buffer (), parent);
 
    String text;
 
@@ -405,11 +412,12 @@ ScalarWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
-      QFormLayout *layout) {
+      QFormLayout *layout,
+      StringSub &sub) {
 
    const Handle RealObject = get_real_object (Object, module);
 
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
+   QLabel *label = new QLabel (sub.convert(Name).get_buffer (), parent);
 
    Float64 value (_DefaultValue);
 
@@ -459,9 +467,10 @@ LinkLabel::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
-      QFormLayout *layout) {
+      QFormLayout *layout,
+      StringSub &sub) {
 
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
+   QLabel *label = new QLabel (sub.convert(Name).get_buffer (), parent);
 
    if (!_TextHandle) {
 
@@ -570,11 +579,12 @@ StateWidget::create_widgets (
       const Handle Object,
       ObjectModule &module,
       QWidget *parent,
-      QFormLayout *layout) {
+      QFormLayout *layout,
+      StringSub &sub) {
 
    const Handle RealObject = get_real_object (Object, module);
 
-   QLabel *label = new QLabel (Name.get_buffer (), parent);
+   QLabel *label = new QLabel (sub.convert(Name).get_buffer (), parent);
 
    Mask state;
 
@@ -627,6 +637,7 @@ dmz::MBRAPluginPropertyEditor::MBRAPluginPropertyEditor (
       _log (Info),
       _undo (Info),
       _defs (Info),
+      _convert (Info),
       _objMod (0),
       _window (0),
       _showFTButton (False),
@@ -712,6 +723,14 @@ dmz::MBRAPluginPropertyEditor::receive_message (
          }
       }
    }
+   else if (Type == _unitsMessage) {
+
+      if (InData) {
+
+         const String Var = _convert.to_string (InData);
+         _sub.store (Type.get_name (), Var);
+      }
+   }
 }
 
 
@@ -784,7 +803,8 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
                Object,
                *_objMod,
                ts->widget,
-               ts->layout);
+               ts->layout,
+               _sub);
 
             if (next) {
 
@@ -970,6 +990,14 @@ dmz::MBRAPluginPropertyEditor::_init (Config &local) {
       local,
       "CreateLinkedFaultTreeMessage",
       context);
+
+   _unitsMessage = config_create_message (
+         "units-message.name",
+         local,
+         "UnitsMessage",
+         context);
+
+   subscribe_to_message(_unitsMessage);
 
    _objectDataHandle =
       config_to_named_handle ("attribute.object.name", local, "object", context);

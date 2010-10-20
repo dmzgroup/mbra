@@ -7,7 +7,7 @@
       <plugin name="dmzQtPluginPreferencesAppUpdater" unique="preferences-updates"/>
       <plugin name="dmzPluginSaveMessageMonostate" scope="save-preferences"/>
       <plugin name="dmzQtPluginAppUpdater" scope="updater"/>
-      <!-- <plugin name="dmzQtPluginMessageInspector" /> -->
+<!--      <plugin name="dmzQtPluginMessageInspector" /> -->
    </plugin-list>
    <preferences>
       <widget name="preferences-general" title="General"/>
@@ -38,10 +38,25 @@
          step="1"
          suffix="%"/>
       <property
+         type="scalar"
+         name="Network Minimum consequence at maximum budget"
+         message="NAConsequenceInfinityMessage"
+         default="5"
+         decimals="0"
+         scale="100"
+         min="1"
+         max="100"
+         step="1"
+         suffix="%"/>
+      <property
          type="boolean"
          name="Save files uncompressed (MBRA 2.0 Compatible)"
          message="MBRAUncompressedFilesMessage"
       />
+      <property type="state" name="Monetary Units Display" message="UnitsMessage">
+         <state label="(millions)"/>
+         <state label="(dollars)"/>
+      </property>
    </preferences-general>
    <preferences-updates>
       <update value="true"/>
@@ -51,6 +66,7 @@
    <save-preferences>
       <message name="NAVulnerabilityInfinityMessage"/>
       <message name="FTVulnerabilityInfinityMessage"/>
+      <message name="NAConsequenceInfinityMessage"/>
       <message name="AppUpdaterUpdateMessage"/>
       <message name="AppUpdaterChannelMessage"/>
       <message name="MBRAUncompressedFilesMessage"/>

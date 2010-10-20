@@ -1,11 +1,13 @@
 #ifndef DMZ_MBRA_PLUGIN_PROPERTY_EDITOR_DOT_H
 #define DMZ_MBRA_PLUGIN_PROPERTY_EDITOR_DOT_H
 
+#include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeDefinitions.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
 #include <dmzRuntimeUndo.h>
+#include <dmzTypesStringSub.h>
 #include <dmzTypesHashTableUInt32Template.h>
 
 class QWidget;
@@ -78,7 +80,8 @@ namespace dmz {
                   const Handle Object,
                   ObjectModule &module,
                   QWidget *parent,
-                  QFormLayout *layout) = 0;
+                  QFormLayout *layout,
+                  StringSub &sub) = 0;
 
             protected:
                PropertyWidget (
@@ -128,6 +131,8 @@ namespace dmz {
 
          HashTableUInt32Template<String> _tabNameTable;
 
+         DataConverterString _convert;
+
          ObjectModule *_objMod;
          QtModuleMainWindow *_window;
 
@@ -135,12 +140,16 @@ namespace dmz {
 
          Message _editMessage;
          Message _ftMessage;
+         Message _unitsMessage;
+
 
          Handle _objectDataHandle;
          Handle _createdDataHandle;
          Handle _ftHandle;
 
          String _dialogTitle;
+
+         StringSub _sub;
 
          PropertyWidget *_widgets;
 

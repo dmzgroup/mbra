@@ -5,6 +5,7 @@ cp -RL $DEPTH/bin/macos-opt/MBRA.app $DEPTH
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins
 mkdir $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
+mkdir $DEPTH/MBRA.app/Contents/Frameworks/v8
 cp $DEPTH/depend/Qt/QtCore $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/QtGui $DEPTH/MBRA.app/Contents/Frameworks/Qt
 cp $DEPTH/depend/Qt/QtXml $DEPTH/MBRA.app/Contents/Frameworks/Qt
@@ -15,6 +16,7 @@ cp $DEPTH/depend/Qt/libqgif.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins
 cp $DEPTH/depend/Qt/libqjpeg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqtiff.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
 cp $DEPTH/depend/Qt/libqsvg.dylib $DEPTH/MBRA.app/Contents/Frameworks/Qt/plugins/imageformats
+cp $DEPTH/depend/v8/lib/libv8.dylib $DEPTH/MBRA.app/Contents/Frameworks/v8
 if [ -d $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib ] ; then
 cp -R $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib $DEPTH/MBRA.app/Contents/Resources
 fi

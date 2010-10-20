@@ -60,7 +60,7 @@ dmz::MBRAPluginMenu::MBRAPluginMenu (
       _toggleLabelsMsg (0),
       _toggleLabelsTarget (0),
       _toggleLabelsAttr (0),
-      _onlineHelpUrl ("http://dmzdev.org/wiki/mbra"),
+      _onlineHelpUrl ("http://mbra-help.dmzdev.org"),
       _undoAction (0),
       _redoAction (0),
       _recentFilesMenu (0),
@@ -876,7 +876,7 @@ dmz::MBRAPluginMenu::_save_file (const QString &FileName) {
 void
 dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
 
-   if (_mainWindowModule && !FileName.isEmpty ()) {
+   if (_mainWindowModule) {
 
       QMainWindow *mainWindow = _mainWindowModule->get_qt_main_window ();
       if (mainWindow) {
@@ -894,12 +894,14 @@ dmz::MBRAPluginMenu::_set_current_file (const QString &FileName) {
 
          _exportName = FileName;
          
-         Int32 index = _fileCache.indexOf  (FileName);
-         if (index >= 0) { _fileCache.removeAt (index); }
+         if (!FileName.isEmpty ()) {
+
+            Int32 index = _fileCache.indexOf  (FileName);
+            if (index >= 0) { _fileCache.removeAt (index); }
          
-         _fileCache << FileName;
-         
-         _update_recent_actions ();
+            _fileCache << FileName;
+            _update_recent_actions ();
+         }
       }
    }
    

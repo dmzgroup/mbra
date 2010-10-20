@@ -60,6 +60,7 @@ namespace dmz {
       protected slots:
          void _slot_weight_by_clicked (int id);
          void on_objectiveComboBox_currentIndexChanged (int id);
+         void on_unfixedBudgetBox_currentIndexChanged (int id);
          
       protected:
          void _init (Config &local);
@@ -67,12 +68,14 @@ namespace dmz {
          Log _log;
          DataConverterFloat64 _convert;
          Message _updateObjectiveMsg;
+         Message _updateFixedBudgetMsg;
          Ui::NACalculateForm _ui;
          Handle _simulatorHandle;
          ObjectType _simulatorType;
          HandleContainer _weightByHandles;
          QButtonGroup _weightByGroup;
          QList<Handle> _objectiveFunctionHandles;
+         QList<Handle> _unfixedBudgetHandles;
          Boolean _ignoreUpdates;
 
       private:

@@ -1,13 +1,14 @@
-#ifndef DMZ_MBRA_PLUGIN_CALCULATE_DOT_H
-#define DMZ_MBRA_PLUGIN_CALCULATE_DOT_H
+#ifndef DMZ_MBRA_PLUGIN_NA_SIMULATE_DOT_H
+#define DMZ_MBRA_PLUGIN_NA_SIMULATE_DOT_H
 
 #include <dmzQtWidget.h>
 #include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimePlugin.h>
+#include <QtGui/QComboBox>
 #include <QtGui/QWidget>
-#include "ui_dmzMBRACalculateForm.h"
+#include "ui_dmzMBRAPluginNASimulateForm.h"
 
 class QAction;
 class QDockWidget;
@@ -15,8 +16,8 @@ class QDockWidget;
 
 namespace dmz {
 
-   class MBRAPluginCalculate :
-         public QWidget,
+   class MBRAPluginNASimulate :
+         public QFrame,
          public Plugin,
          public MessageObserver,
          public QtWidget {
@@ -24,17 +25,20 @@ namespace dmz {
       Q_OBJECT
 
       public:
-         MBRAPluginCalculate (const PluginInfo &Info, Config &local);
-         ~MBRAPluginCalculate ();
+         MBRAPluginNASimulate (const PluginInfo &Info, Config &local);
+         ~MBRAPluginNASimulate ();
 
          // Plugin Interface
          virtual void update_plugin_state (
             const PluginStateEnum State,
-            const UInt32 Level) {;}
+            const UInt32 Level);
 
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
+
+         // QtWidget Interface
+         virtual QWidget *get_qt_widget ();
 
          // Message Observer Interface
          virtual void receive_message (
@@ -44,30 +48,36 @@ namespace dmz {
             const Data *InData,
             Data *outData);
 
-         // QtWidget Interface
-         virtual QWidget *get_qt_widget ();
-
       protected slots:
+         void _slot_delay (int delay);
          void _slot_calculate (bool On);
+         void _slot_direction (int index);
+         void _slot_links_allow_change (int state);
          void _simulation_type_change (bool state);
+
 
       protected:
          void _init (Config &local);
 
          Log _log;
-         DataConverterBoolean _convert;
+         DataConverterBoolean _convertBool;
          DataConverterString _convertString;
-         Message _simulatorMessage;
+         DataConverterFloat64 _convertFloat;
+         Message _simulateMessage;
+         Message _simulateDirectionMessage;
+         Message _updateIterationsMessage;
+         Message _updateDelayMessage;
+         Message _simulateAllowLinksMessage;
          Message _simulationTypeMessage;
          Message _simulationErrorMessage;
-         Ui::calculateForm _ui;
+         Ui::simulateForm _ui;
 
       private:
-         MBRAPluginCalculate ();
-         MBRAPluginCalculate (const MBRAPluginCalculate &);
-         MBRAPluginCalculate &operator= (const MBRAPluginCalculate &);
+         MBRAPluginNASimulate ();
+         MBRAPluginNASimulate (const MBRAPluginNASimulate &);
+         MBRAPluginNASimulate &operator= (const MBRAPluginNASimulate &);
 
    };
 };
 
-#endif // DMZ_MBRA_PLUGIN_CALCULATE_DOT_H
+#endif // DMZ_MBRA_PLUGIN_NA_SIMULATE_DOT_H

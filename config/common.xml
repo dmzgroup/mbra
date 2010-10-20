@@ -26,8 +26,8 @@
    <plugin name="dmzMBRAPluginLinkEditor"/>
    <plugin name="dmzMBRAPluginMenu"/>
 
-<!--
-   <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/>
+<!--  
+   <plugin name="dmzQtPluginObjectInspector" unique="object-inspector"/> 
    <plugin name="dmzPluginMsgDump"/>
    <plugin name="dmzObjectPluginDump"/>
    <plugin name="dmzPluginUndoDump"/>
@@ -92,6 +92,7 @@
       <object-type-set>
          <object-type name="na_tool_link_node"/>
          <object-type name="na_objective_bar"/>
+         <object-type name="na_simulation_bar"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
       <attribute name="NA_Node_Rank">
@@ -103,9 +104,24 @@
       <attribute name="NA_Node_Vulnerability_Reduced">
          <mask name="scalar"/>
       </attribute>
+      <attribute name="NA_Node_Flow_Consequence">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Threat_Calculated">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Consequence_Reduced">
+         <mask name="scalar"/>
+      </attribute>
       <attribute name="NA_Node_Prevention_Allocation">
          <mask name="scalar"/>
       </attribute>
+      <attribute name="NA_Node_Attack_Allocation">
+         <mask name="scalar"/>
+      </attribute>
+      <attribute name="NA_Node_Response_Allocation">
+         <mask name="scalar"/>
+      </attribute>      
       <attribute name="NA_Node_Risk_Initial">
          <mask name="scalar"/>
       </attribute>
@@ -129,6 +145,9 @@
       </attribute>
       <attribute name="NA_Node_Height">
          <mask name="counter"/>
+      </attribute>
+      <attribute name="NA_Node_Contagiousness">
+         <mask name="scalar"/>
       </attribute>
       <attribute name="NA_Node_Objective_Label">
          <mask name="text"/>

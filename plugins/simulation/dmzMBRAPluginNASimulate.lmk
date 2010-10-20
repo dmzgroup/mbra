@@ -1,0 +1,13 @@
+require "lmkQt"
+lmkQt.set_name "dmzMBRAPluginNASimulate"
+lmk.set_type "plugin"
+lmk.add_files {"dmzMBRAPluginNASimulateForm.ui",}
+lmk.add_files ({"dmzMBRAPluginNASimulate.h",},{src="moc"})
+lmk.add_files {"dmzMBRAPluginNASimulate.cpp",}
+lmk.add_libs {
+   "dmzQtUtil",
+   "dmzObjectUtil",
+   "dmzKernel",
+}
+lmk.add_preqs {"dmzQtFramework","dmzObjectFramework",}
+lmkQt.add_libs {"QtCore","QtGui",}

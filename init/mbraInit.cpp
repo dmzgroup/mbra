@@ -271,7 +271,7 @@ void
 dmz::mbraInit::on_buttonBox_helpRequested () {
 
    const String UrlValue =
-      config_to_string ("help.url", init.manifest, "http://dmzdev.org/wiki/mbra");
+      config_to_string ("help.url", init.manifest, "http://mbra-help.dmzdev.org");
 
    if (UrlValue) {
 

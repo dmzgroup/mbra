@@ -3,6 +3,7 @@
 
 #include <dmzObjectObserverUtil.h>
 #include <dmzQtWidget.h>
+#include <dmzRuntimeDataConverterTypesBase.h>
 #include <dmzRuntimeLog.h>
 #include <dmzRuntimeMessaging.h>
 #include <dmzRuntimeObjectType.h>
@@ -19,6 +20,7 @@ namespace dmz {
          public QWidget,
          public QtWidget,
          public Plugin,
+         public MessageObserver,
          public ObjectObserverUtil {
 
       Q_OBJECT
@@ -38,6 +40,14 @@ namespace dmz {
          virtual void discover_plugin (
             const PluginDiscoverEnum Mode,
             const Plugin *PluginPtr);
+
+         // Message Observer Interface
+         virtual void receive_message (
+            const Message &Type,
+            const Handle MessageSendHandle,
+            const Handle TargetObserverHandle,
+            const Data *InData,
+            Data *outData);
 
          // Object Observer Interface
          virtual void create_object (
@@ -64,18 +74,24 @@ namespace dmz {
       protected slots:
          void on_preventionBudgetBox_valueChanged (int value);
          void on_responseBudgetBox_valueChanged (int value);
+         void on_attackBudgetBox_valueChanged (int value);
+         void _responseSliderReleased ();
+         void _preventionSliderReleased ();
+         void _attackSliderReleased ();
 
       protected:
          struct ObjectStruct {
 
             Float64 pc;
             Float64 rc;
+            Float64 ac;
 
-            ObjectStruct () : pc (0.0), rc (0.0) {;}
+            ObjectStruct () : pc (0.0), rc (0.0), ac (0.0) {;}
          };
 
          void _update_max_prevention_budget ();
          void _update_max_response_budget ();
+         void _update_max_attack_budget ();
 
          void _init (Config &local);
 
@@ -86,16 +102,28 @@ namespace dmz {
          ObjectType _nodeType;
          ObjectType _linkType;
 
+         DataConverterFloat64 _convert;
+
          Message _preventionBudgetMessage;
          Message _responseBudgetMessage;
+         Message _attackBudgetMessage;
+         Message _unspentBudgetMessage;
 
          Handle _budgetHandle;
 
          Handle _pcAttrHandle;
          Handle _rcAttrHandle;
+         Handle _acAttrHandle;
 
          Float64 _maxPreventionBudget;
          Float64 _maxResponseBudget;
+         Float64 _maxAttackBudget;
+         Float64 _unspentPreventionBudget;
+         Float64 _unspentResponseBudget;
+         Float64 _unspentAttackBudget;
+         Float64 _lastResponseBudget;
+         Float64 _lastPreventionBudget;
+         Float64 _lastAttackBudget;
 
          HashTableHandleTemplate<ObjectStruct> _objectTable;
 

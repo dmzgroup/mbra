@@ -5,6 +5,7 @@
 #include <dmzQtConfigRead.h>
 #include <dmzQtModuleCanvas.h>
 #include <dmzQtModuleMap.h>
+#include <dmzQtUtil.h>
 #include <dmzRuntimeConfig.h>
 #include <dmzRuntimeConfigToTypesBase.h>
 #include <dmzRuntimePluginFactoryLinkSymbol.h>
@@ -231,10 +232,12 @@ dmz::MBRAPluginPropertyTable::MBRAPluginPropertyTable (
       QFrame (0),
       Plugin (Info),
       ObjectObserverUtil (Info, local),
+      MessageObserver (Info),
       QtWidget (Info),
       _log (Info),
       _defs (Info, &_log),
       _undo (Info),
+      _convert (Info),
       _canvas (0),
       _map (0),
       _lastPath (get_home_directory ()),
@@ -586,6 +589,26 @@ dmz::MBRAPluginPropertyTable::update_object_text (
    }
 }
 
+void
+dmz::MBRAPluginPropertyTable::receive_message (
+      const Message &Type,
+      const Handle MessageSendHandle,
+      const Handle TargetObserverHandle,
+      const Data *InData,
+      Data *outData) {
+
+   if (Type == _unitsMessage) {
+
+      if (InData) {
+
+         const String Var = _convert.to_string (InData);
+         _sub.store (Type.get_name (), Var);
+      }
+
+      _update_horizontal_headers ();
+      _model.setHorizontalHeaderLabels (_qLabelList);
+   }
+}
 
 // QtWidget Interface
 QWidget *
@@ -605,7 +628,8 @@ dmz::MBRAPluginPropertyTable::_item_changed (QStandardItem *item) {
       if (Object && objMod && pw) {
 
          const String Msg ("Edit Property ");
-         const Handle UndoHandle = _undo.start_record (Msg + pw->Name);
+         String name = _sub.convert(pw->Name);
+         const Handle UndoHandle = _undo.start_record (Msg + name);
          pw->update_property (Object, item->data (Qt::DisplayRole), *objMod);
          _undo.stop_record (UndoHandle);
       }
@@ -770,7 +794,7 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
    Config property;
    Int32 count = 0;
 
-   QStringList labels;
+   _labelList.clear ();
 
    while (list.get_next_config (it, property)) {
 
@@ -854,13 +878,28 @@ dmz::MBRAPluginPropertyTable::_create_properties (Config &list) {
             }
 
             count++;
-            labels << name.get_buffer ();
+            _labelList.add (name);
          }
          else { delete pe; pe = 0; }
       }
    }
 
-   _model.setHorizontalHeaderLabels (labels);
+   _update_horizontal_headers();
+   _model.setHorizontalHeaderLabels (_qLabelList);
+}
+
+
+void
+dmz::MBRAPluginPropertyTable::_update_horizontal_headers () {
+
+   _qLabelList.clear ();
+   if (_labelList.get_count () > 0) {
+      StringContainerIterator strIt;
+      String value;
+      while (_labelList.get_next (strIt, value)) {
+         _qLabelList << to_qstring (_sub.convert (value));
+      }
+   }
 }
 
 
@@ -921,6 +960,14 @@ dmz::MBRAPluginPropertyTable::_init (Config &local) {
    connect (
       &_model, SIGNAL (itemChanged (QStandardItem *)),
       this, SLOT (_item_changed (QStandardItem *)));
+
+   _unitsMessage = config_create_message (
+         "units-message.name",
+         local,
+         "UnitsMessage",
+         context);
+
+   subscribe_to_message (_unitsMessage);
 }
 
 
