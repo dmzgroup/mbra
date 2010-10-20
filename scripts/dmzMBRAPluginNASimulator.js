@@ -1058,7 +1058,7 @@ rankObject = function (object) {
    if (!result) {
       result = 1;
    }
-   if (objective) {
+   if (objective && (objective != calcObjectiveNone)) {
       objectiveArray = objective(object);
       reduced = objectiveArray[0];
       Orig = objectiveArray[1];
