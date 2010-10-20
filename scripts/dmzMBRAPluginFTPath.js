@@ -6,8 +6,6 @@ var dmz =
    , FTNameHandle = dmz.defs.createNamedHandle("FT_Name")
    , FTLinkHandle = dmz.defs.createNamedHandle("FT_Link")
    , FTPathHandle = dmz.defs.createNamedHandle("FT_Node_Path_Name")
-   , iparis = iparis
-   , pairs = pairs
    , work
    , list = {}
    , updatePath
@@ -17,27 +15,30 @@ var dmz =
 updatePath = function (path, handle) {
    var name = dmz.object.text(handle, FTNameHandle)
      , subList
+     , newPath = path
      ;
+
    if (name) {
       if (path == "") {
-         path = name;
+         newPath = name;
       }
       else {
-         path += "." + name;
+         newPath += "." + name;
       }
    }
-   dmz.object.text(handle, FTPathHandle, path);
+   dmz.object.text(handle, FTPathHandle, newPath);
    subList = dmz.object.subLinks(handle, FTLinkHandle);
    if (subList) {
-      Object.keys(list).forEach(function (key) {
-         updatePath(path, subList[key]);
+      Object.keys(subList).forEach(function (key) {
+         updatePath(newPath, subList[key]);
       });
    }
 };
 
 findRoot = function (handle) {
    var result = handle
-     , superList = dmz.object.superLinks(handle, FTLinkHandle);
+     , superList = dmz.object.superLinks(handle, FTLinkHandle)
+     ;
    if (superList) {
       result = findRoot(superList[0]);
    }
@@ -57,7 +58,7 @@ work = dmz.time.setRepeatingTimer(self, function () {
       Object.keys(roots).forEach(function (key) {
          updatePath("", roots[key]);
       });
-      list = null;
+      list = false;
    }
 });
 

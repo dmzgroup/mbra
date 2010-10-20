@@ -5,7 +5,7 @@ lmk.add_vars {
    majorVersion = "2",
    minorVersion = "3",
    bugVersion = "0",
-   releaseType = "test 18",
+   releaseType = "",
    aboutImage = "images:IconFiles/AppIconMBRA_128x128.png",
 }
 lmk.add_files ({"version.xml",}, {src="version"})

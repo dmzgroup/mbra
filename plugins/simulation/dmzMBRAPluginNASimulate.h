@@ -53,6 +53,7 @@ namespace dmz {
          void _slot_calculate (bool On);
          void _slot_direction (int index);
          void _slot_links_allow_change (int state);
+         void _simulation_type_change (bool state);
 
 
       protected:
@@ -67,6 +68,8 @@ namespace dmz {
          Message _updateIterationsMessage;
          Message _updateDelayMessage;
          Message _simulateAllowLinksMessage;
+         Message _simulationTypeMessage;
+         Message _simulationErrorMessage;
          Ui::simulateForm _ui;
 
       private:
