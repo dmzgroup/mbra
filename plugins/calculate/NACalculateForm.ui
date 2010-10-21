@@ -86,6 +86,9 @@
      <property name="title">
       <string>Objective Function Chart Variable</string>
      </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QLabel" name="label_3">
