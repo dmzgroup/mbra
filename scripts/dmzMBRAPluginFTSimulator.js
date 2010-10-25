@@ -66,7 +66,6 @@ var dmz =
    , getLogicState
    , newObject
    , updateVulnerabilityReduced
-   , buildIndex
    , riskSub
    , riskXor
    , vulnerabilityAnd
@@ -288,7 +287,7 @@ getLogicState = function (node) {
      , logicState
      ;
    if (logicTable) {
-      logicState = dmz.object.state(logicTable[1]);
+      logicState = dmz.object.state(logicTable[0]);
       if (logicState) {
          if (logicState.contains(AndMask)) {
             logic = AndState;
