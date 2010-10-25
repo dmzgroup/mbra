@@ -4,7 +4,7 @@ lmk.add_vars {
    appName = "MBRA",
    majorVersion = "2",
    minorVersion = "3",
-   bugVersion = "1",
+   bugVersion = "2",
    releaseType = "",
    aboutImage = "images:IconFiles/AppIconMBRA_128x128.png",
 }
