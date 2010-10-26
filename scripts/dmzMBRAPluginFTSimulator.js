@@ -626,7 +626,7 @@ logDefenderTerm = function (object) {
 logDefender = function (object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
-   if (result > 0) {
+   if (notZero(result) && notZero(object.cost)) {
       result = Math.log(object.cost / result);
    }
    else {
