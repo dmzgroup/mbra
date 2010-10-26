@@ -725,7 +725,7 @@ weightBetweenness = {
                   list = [{object: root}];
                   visited = [];
                   findBetweenness(list, target, visited);
-                  if (list[0]) {
+                  if (list[0].found) {
                      addToNodeBetweennessCounter(root);
                   }
                }
