@@ -826,6 +826,10 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
          pe = pe->next;
       }
 
+      dialog.move (
+         _window->get_qt_main_window ()->frameGeometry ().center () -
+            dialog.rect ().center ());
+
       tabs.empty ();
 
       if (prevWidget && _showFTButton) { QWidget::setTabOrder (prevWidget, ui.ftButton); }
@@ -860,6 +864,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
       }
 
       if (head) { delete head; head = 0; }
+
    }
 }
 
