@@ -826,7 +826,7 @@ dmz::MBRAPluginPropertyEditor::_edit (const Handle Object, const Boolean Created
          pe = pe->next;
       }
 
-      dialog.move (_window->get_qt_main_window ()->frameGeometry ().center () - dialog.rect ().center ());
+      dialog.move (_window->get_qt_main_window ()->rect ().center () - dialog.rect ().center ());
 
       tabs.empty ();
 
