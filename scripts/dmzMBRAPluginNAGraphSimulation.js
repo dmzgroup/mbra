@@ -868,6 +868,7 @@ simulateMessage.subscribe(self, function (data) {
 
 simulationTypeMessage.subscribe(self, function (data) {
 
+   var ix;
    if (dmz.data.isTypeOf(data)) {
       if (!data.boolean("Boolean", 0)) {
          if (GraphActive) {
@@ -893,6 +894,9 @@ simulationTypeMessage.subscribe(self, function (data) {
             GraphType.FLOW.dataReset = true;
             GraphType.CASCADE.dataReset = true;
          }
+      }
+      for (ix = 0; ix < barCount; ix += 1) {
+         dmz.object.counter(bars[ix], BarValueHandle, 0);
       }
    }
 });
