@@ -446,7 +446,8 @@ dmz::MBRAPluginMenu::on_screenGrabAction_triggered () {
 
             if (mainWindow) {
                
-               QString msg = tr ("Saved image %1.").arg (QFileInfo (FileName).fileName ()); 
+               QString msg =
+                  tr ("Saved image %1.").arg (QFileInfo (FileName).fileName ());
                mainWindow->statusBar ()->showMessage (msg, 2000);
             }
 
@@ -483,7 +484,9 @@ dmz::MBRAPluginMenu::on_printAction_triggered () {
 
          const QSizeF pixmapSize (pixmap.size ());
          printer.setOrientation (
-            pixmapSize.width () > pixmapSize.height () ? QPrinter::Landscape : QPrinter::Portrait);
+            pixmapSize.width () > pixmapSize.height () ?
+               QPrinter::Landscape :
+               QPrinter::Portrait);
 
          QPrintDialog dialog (&printer, mainWindow);
 
@@ -501,10 +504,12 @@ dmz::MBRAPluginMenu::on_printAction_triggered () {
                      page.size ().height () / pixmapSize.height ());
                   
             const double xOffset =
-               page.left () + qMax (0.0, (page.size ().width () - scaling * pixmapSize.width ())  / 2.0);
+               page.left () + qMax (0.0, (page.size ().width () -
+                                          scaling * pixmapSize.width ())  / 2.0);
                
             const double yOffset =
-               page.top ()  + qMax (0.0, (page.size ().height () - scaling * pixmapSize.height ()) / 2.0);
+               page.top ()  + qMax (0.0, (page.size ().height () -
+                                          scaling * pixmapSize.height ()) / 2.0);
 
             // Draw
             painter.translate (xOffset, yOffset);

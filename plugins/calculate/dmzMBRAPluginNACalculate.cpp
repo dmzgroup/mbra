@@ -234,7 +234,8 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
          
          if (Text && AttrName) {
             
-            const Handle AttrHandle (activate_object_attribute (AttrName, ObjectFlagMask));
+            const Handle AttrHandle (
+               activate_object_attribute (AttrName, ObjectFlagMask));
             
             QCheckBox *checkBox = new QCheckBox (Text.get_buffer ());
             checkBox->setObjectName (Text.get_buffer ());
@@ -264,7 +265,8 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
          
          if (Text && AttrName) {
             
-            const Handle AttrHandle (activate_object_attribute (AttrName, ObjectFlagMask));
+            const Handle AttrHandle (
+               activate_object_attribute (AttrName, ObjectFlagMask));
 
             _ui.objectiveComboBox->addItem (Text.get_buffer (), (qlonglong)AttrHandle);
             _objectiveFunctionHandles.append (AttrHandle);
@@ -285,7 +287,8 @@ dmz::MBRAPluginNACalculate::_init (Config &local) {
 
          if (Text && AttrName) {
 
-            const Handle AttrHandle (activate_object_attribute (AttrName, ObjectFlagMask));
+            const Handle AttrHandle (
+               activate_object_attribute (AttrName, ObjectFlagMask));
 
             _ui.unfixedBudgetBox->addItem (Text.get_buffer (), (qlonglong)AttrHandle);
             _unfixedBudgetHandles.append (AttrHandle);
