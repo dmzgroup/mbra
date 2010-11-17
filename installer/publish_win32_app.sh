@@ -20,6 +20,9 @@ scp $VERSION_XML dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL
 echo "scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$UPDATE.html"
 scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$UPDATE.html
 
+echo "scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$OLD_UPDATE.html"
+scp ./changelog.html dmzdev.org:/home/update.dmzdev.org/public/downloads/$OLD_UPDATE.html
+
 echo "scp $INSTALLER dmzdev.org:/home/update.dmzdev.org/public/downloads"
 scp $INSTALLER dmzdev.org:/home/update.dmzdev.org/public/downloads
 
