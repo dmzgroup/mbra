@@ -147,6 +147,6 @@
       <update
          host="http://update.dmzdev.org"
          path="/latest/{system_name}-{release_channel}/{app_name}"/>
-      <download path="/downloads/{app_name}-{build_number}"/>
+      <download path="/downloads/{app_name}-{major}-{minor}-{bug}-{build_number}"/>
    </updater>
 </dmz>
