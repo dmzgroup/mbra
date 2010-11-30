@@ -87,7 +87,8 @@ dmz::MBRAPluginFileToolBar::discover_plugin (
                
                if (!_startFile.isEmpty ()) {
 
-                  QString name (_mainWindowModule->get_window_name () + ": " + _startFile);
+                  QString name (
+                     _mainWindowModule->get_window_name () + ": " + _startFile);
                   mainWindow->setWindowTitle (name);
                }
             }

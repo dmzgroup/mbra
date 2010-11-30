@@ -812,10 +812,10 @@
    <set>
      <object-type name = "na_simulation_bar"/>
    </set>
-   <x-axis-label text="Exceedence Probability %">
+   <x-axis-label text="% Consequence">
       <update-msg name="NA_Simulation_Graph_X_Label"/>
    </x-axis-label>
-   <y-axis-label text="% Consequence">
+   <y-axis-label text="Exceedence Probability %">
       <update-msg name="NA_Simulation_Graph_Y_Label"/>
    </y-axis-label>
    <attribute type="counter" name="NA_Simulation_Bar_Number"/>

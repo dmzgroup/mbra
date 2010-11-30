@@ -651,11 +651,6 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
      , result = 0
      ;
 
-//   self.log.warn ("currFail:", dmz.object.text(parseInt(currFail), LabelHandle), currFail);
-//   self.log.warn ("capacityMatrix:", capacityMatrix);
-//   self.log.warn ("fractionMatrix:", fractionMatrix);
-//   self.log.warn ("transposeMatrix:", trans);
-
    if (!graphHasSink(capacityMatrix, currFail)) {
       if (!currFail) {
          errorMessage.send(
@@ -765,7 +760,6 @@ GraphType.FLOW.calculate = function () {
 
                removeNodeFromCapacityMatrix(tempMatrix, parseInt(key));
                newFlow = calculateNetworkFlow(tempMatrix, parseInt(key));
-//               self.log.warn(dmz.object.text(parseInt(key), LabelHandle), "New:", newFlow, "Delta:", GraphType.FLOW.origFlow - newFlow)
 
                if (newFlow > GraphType.FLOW.origFlow) {
                   newFlow = GraphType.FLOW.origFlow;
@@ -789,7 +783,6 @@ GraphType.FLOW.calculate = function () {
 
                removeLinkFromCapacityMatrix(tempMatrix, linkObjectList[key]);
                newFlow = calculateNetworkFlow(tempMatrix, linkObjectList[key]);
-//               self.log.warn(dmz.object.text(linkObjectList[key].attr, LabelHandle), "New:", newFlow, "Delta:", GraphType.FLOW.origFlow - newFlow)
                if (newFlow > GraphType.FLOW.origFlow) {
                   newFlow = GraphType.FLOW.origFlow;
                   errorMessage.send(
@@ -868,6 +861,7 @@ simulateMessage.subscribe(self, function (data) {
 
 simulationTypeMessage.subscribe(self, function (data) {
 
+   var ix;
    if (dmz.data.isTypeOf(data)) {
       if (!data.boolean("Boolean", 0)) {
          if (GraphActive) {
@@ -893,6 +887,9 @@ simulationTypeMessage.subscribe(self, function (data) {
             GraphType.FLOW.dataReset = true;
             GraphType.CASCADE.dataReset = true;
          }
+      }
+      for (ix = 0; ix < barCount; ix += 1) {
+         dmz.object.counter(bars[ix], BarValueHandle, 0);
       }
    }
 });

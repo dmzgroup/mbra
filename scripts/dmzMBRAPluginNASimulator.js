@@ -96,6 +96,8 @@ var dmz =
         self.config.string(
            "update-objective-graph-message.name",
            "NA_Objective_Graph_Visible_Message"))
+   , updateObjectiveGraphLabelMessage = dmz.message.create(
+        "NA_Simulation_Graph_X_Label")
    , updateSumsMessage = dmz.message.create(
         self.config.string(
            "message.sums.name",
@@ -147,7 +149,7 @@ var dmz =
    , logLambdaVulnerability
    , logLambdaConsequence
    , logLambdaThreat
-   , UnfixedVariable = UnfixedPreventionHandle
+   , UnfixedVariable
    , doStacklebergFlag = false
    , AllowWrites = true
    , CalculationType = { FLOW: "FLOW", CASCADE: "CASCADE" }
@@ -202,6 +204,8 @@ var dmz =
    ;
 
 (function () {
+   UnfixedVariable = UnfixedPreventionHandle;
+   unfixedBudgetLabelMessage.send(dmz.data.wrapString("Prevention Budget"));
    var ix;
    for (ix = 0; ix <= barCount; ix += 1) {
       bars[ix] = dmz.object.create("na_objective_bar");
@@ -725,7 +729,7 @@ weightBetweenness = {
                   list = [{object: root}];
                   visited = [];
                   findBetweenness(list, target, visited);
-                  if (list[0]) {
+                  if (list[0].found) {
                      addToNodeBetweennessCounter(root);
                   }
                }
@@ -1024,6 +1028,14 @@ stackleberg = function () {
             }
          }
 
+         if (object.updateC && object.allocR) {
+            calcResponseAllocation(object);
+            currC = calcConsequence(object);
+            if (Math.abs((currC - object.reducedC) / object.reducedC) <= Threshold) {
+               object.updateC = false;
+            }
+         }
+
          if (object.updateT && object.allocA) {
             calcAttackAllocation(object);
             currT = calcThreat(object);
@@ -1032,13 +1044,6 @@ stackleberg = function () {
             }
          }
 
-         if (object.updateC && object.allocR) {
-            calcResponseAllocation(object);
-            currC = calcConsequence(object);
-            if (Math.abs((currC - object.reducedC) / object.reducedC) <= Threshold) {
-               object.updateC = false;
-            }
-         }
 
          if (currV !== -1) { object.reducedV = currV; }
          if (currT !== -1) { object.reducedT = currT; }
@@ -1560,6 +1565,7 @@ dmz.object.flag.observe(self, ObjectiveVulnerabilityHandle, updateSimulatorFlag)
 dmz.object.flag.observe(self, ObjectiveConsequenceHandle, updateSimulatorFlag);
 
 updateFixedObjectiveFlag = function (handle, attr, value) {
+   var ix;
    if (value) {
       UnfixedVariable = attr;
       switch (attr) {
@@ -1572,6 +1578,12 @@ updateFixedObjectiveFlag = function (handle, attr, value) {
          case UnfixedResponseHandle:
             unfixedBudgetLabelMessage.send(dmz.data.wrapString("Response Budget"));
             break;
+      }
+
+
+      for (ix = 0; ix <= barCount; ix += 1) {
+         dmz.object.counter(bars[ix], ObjectiveBarValueHandle, 0);
+         dmz.object.text(bars[ix], ObjectiveBarLabel, "");
       }
 
       doGraph();
@@ -1622,6 +1634,11 @@ dmz.object.state.observe(self, LinkFlowHandle, function (object) {
       doRank();
    }
    doGraph();
+});
+
+updateObjectiveGraphLabelMessage.subscribe(self, function() {
+
+
 });
 
 simulationTypeMessage.subscribe(self, function (data) {

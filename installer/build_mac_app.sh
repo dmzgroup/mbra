@@ -20,7 +20,7 @@ cp $DEPTH/depend/v8/lib/libv8.dylib $DEPTH/MBRA.app/Contents/Frameworks/v8
 if [ -d $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib ] ; then
 cp -R $DEPTH/depend/QtGui.framework/Versions/4/Resources/qt_menu.nib $DEPTH/MBRA.app/Contents/Resources
 fi
-TARGET=$DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
+TARGET=$DEPTH/MBRA-`cat $DEPTH/tmp/macos-opt/mbraapp/versionnumber.txt`-`cat $DEPTH/tmp/macos-opt/mbraapp/buildnumber.txt`.dmg
 hdiutil create -srcfolder $DEPTH/MBRA.app $TARGET
 hdiutil internet-enable -yes -verbose $TARGET
 rm -rf $DEPTH/MBRA.app/

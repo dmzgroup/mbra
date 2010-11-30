@@ -66,7 +66,6 @@ var dmz =
    , getLogicState
    , newObject
    , updateVulnerabilityReduced
-   , buildIndex
    , riskSub
    , riskXor
    , vulnerabilityAnd
@@ -288,7 +287,7 @@ getLogicState = function (node) {
      , logicState
      ;
    if (logicTable) {
-      logicState = dmz.object.state(logicTable[1]);
+      logicState = dmz.object.state(logicTable[0]);
       if (logicState) {
          if (logicState.contains(AndMask)) {
             logic = AndState;
@@ -627,7 +626,7 @@ logDefenderTerm = function (object) {
 logDefender = function (object) {
    var result = object.threat * object.consequence * object.vulnerability *
       object.gamma;
-   if (result > 0) {
+   if (notZero(result) && notZero(object.cost)) {
       result = Math.log(object.cost / result);
    }
    else {
