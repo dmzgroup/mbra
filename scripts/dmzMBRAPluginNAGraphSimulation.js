@@ -94,7 +94,7 @@ var dmz =
    , updateGraphDelay = 50
    , allowLinks = true
    , GraphHasSource = false
-   , flowError
+   , flowError = false
 
    , cascadeFailureSimulation
    , dataUpdated
@@ -122,6 +122,7 @@ var dmz =
 (function () {
    var ix;
    errorMessage.send(dmz.data.wrapString(""));
+   flowError = false;
    for (ix = 0; ix < barCount; ix += 1) {
       bars[ix] = dmz.object.create("na_simulation_bar");
       dmz.object.counter(bars[ix], BarNumberHandle, ix + 1);
@@ -656,6 +657,7 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
          errorMessage.send(
             dmz.data.wrapString("Error: Graph must have a \"sink\" node."));
          self.log.error("Error: Graph must have a \"sink\" node.");
+         flowError = true;
          result = -1;
       }
    }
@@ -664,6 +666,7 @@ calculateNetworkFlow = function (capacityMatrix, currFail) {
          errorMessage.send(
             dmz.data.wrapString("Error: Graph must have a \"source\" node."));
          self.log.error("Error: Graph must have a \"source\" node.");
+         flowError = true;
          result = -1;
       }
    }
@@ -736,15 +739,16 @@ GraphType.FLOW.calculate = function () {
      ;
 
      errorMessage.send(dmz.data.wrapString(""));
-     flowError = null;
+     flowError = false;
    if (GraphType.FLOW.dataReset) {
       if (dataReset) { graphInit(); }
 
       if (graphHasBiLinks()) {
          errorMessage.send(
             dmz.data.wrapString(
-               "Error: Graph may not contain bidirectional links."));
-         self.log.error("Error: Graph may not contain bidirectional links.");
+               "Cannot simulate flow of networks with bidirectional links."));
+         self.log.error("Error: Flow analysis cannot be performed on networks containing bidirectional links.");
+         flowError = true;
       }
       else {
          capacityMatrix = calculateCapacityMatrix();
@@ -767,6 +771,7 @@ GraphType.FLOW.calculate = function () {
                      dmz.data.wrapString(
                         "Warning: Graph contains link(s) or node(s) with negative flow"
                         + " consequence."));
+                  flowError = true;
                }
                dmz.object.scalar(
                   parseInt(key),
@@ -789,6 +794,7 @@ GraphType.FLOW.calculate = function () {
                      dmz.data.wrapString(
                         "Warning: Graph contains link(s) or node(s) with negative flow"
                         + " consequence."));
+                  flowError = true;
                }
                dmz.object.scalar(
                   linkObjectList[key].attr,
@@ -806,22 +812,28 @@ GraphType.FLOW.fnc = function () {
      , consequence = 0
      ;
 
-   if (GraphType.FLOW.dataReset) { GraphType.FLOW.calculate(); }
+   if (flowError) { dmz.time.cancelTimer(self, GraphType.FLOW.fnc); }
+   else {
 
-   failure = objectFromCDF();
-   if (failure.attr) {
-      consequence = dmz.object.scalar(parseInt(failure.attr), FlowConsequenceHandle);
+      if (GraphType.FLOW.dataReset) { GraphType.FLOW.calculate(); }
+
+      failure = objectFromCDF();
+      if (failure.attr) {
+         consequence = dmz.object.scalar(parseInt(failure.attr), FlowConsequenceHandle);
+      }
+      else { consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle); }
+
+      if (GraphType.FLOW.origFlow > 0) {
+         consequence = Math.round(consequence / GraphType.FLOW.origFlow * 100);
+      }
+      else { consequence = 0; }
+
+      GraphType.FLOW.pdf[consequence] += 1;
+      GraphType.FLOW.count += 1;
+      if ((GraphType.FLOW.count % updateGraphDelay) === 0) {
+         updateGraph(GraphType.FLOW);
+      }
    }
-   else { consequence = dmz.object.scalar(parseInt(failure), FlowConsequenceHandle); }
-
-   if (GraphType.FLOW.origFlow > 0) {
-      consequence = Math.round(consequence / GraphType.FLOW.origFlow * 100);
-   }
-   else { consequence = 0; }
-
-   GraphType.FLOW.pdf[consequence] += 1;
-   GraphType.FLOW.count += 1;
-   if ((GraphType.FLOW.count % updateGraphDelay) === 0) { updateGraph(GraphType.FLOW); }
 };
 
 updateGraph = function (graphType) {
@@ -891,6 +903,8 @@ simulationTypeMessage.subscribe(self, function (data) {
       for (ix = 0; ix < barCount; ix += 1) {
          dmz.object.counter(bars[ix], BarValueHandle, 0);
       }
+      errorMessage.send(dmz.data.wrapString(""));
+      flowError = false;
    }
 });
 
