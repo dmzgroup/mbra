@@ -40,7 +40,7 @@
       <plugin
          name="dmzMBRAPluginPropertyTable"
          unique="NetworkAnalysisPropertyTable"
-         scope="na-link-properties"
+         scope="na-node-properties"
       >
          <additional-scope name="na"/>
       </plugin>
