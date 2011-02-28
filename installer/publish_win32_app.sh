@@ -14,7 +14,7 @@ INSTALLER=$DEPTH/installers/$UPDATE.exe
 
 echo "publishing $INSTALLER..."
 
-echo "scp $VERSION_XML dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL/MBRA.xml"
+echo "scp $VERSION_XML update.dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL/MBRA.xml"
 scp $VERSION_XML update.dmzdev.org:/home/update.dmzdev.org/public/latest/win32-$CHANNEL/MBRA.xml
 
 echo "scp ./changelog.html update.dmzdev.org:/home/update.dmzdev.org/public/downloads/$UPDATE.html"
