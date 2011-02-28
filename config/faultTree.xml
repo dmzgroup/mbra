@@ -64,7 +64,6 @@
             attribute="FT_Threat_Value"
             default="1.0"
             scale="100"
-            decimals="0"
             min="0"
             max="100"
             step="5"
@@ -75,7 +74,6 @@
             name="Vulnerability"
             attribute="FT_Vulnerability_Value"
             scale="100"
-            decimals="0"
             min="0"
             max="100"
             step="5"
@@ -95,7 +93,6 @@
             type="scalar-label"
             name="Risk Initial"
             attribute="FT_Risk_Value"
-            decimals="2"
          />
          <property
             type="scalar-label"
@@ -107,14 +104,12 @@
             name="Vulnerability Reduced"
             attribute="FT_Vulnerability_Reduced_Value"
             scale="100"
-            decimals="0"
             suffix="%"
          />
          <property
             type="scalar-label"
             name="Risk Reduced"
             attribute="FT_Risk_Reduced_Value"
-            decimals="2"
          />
          <property
             type="line-label"

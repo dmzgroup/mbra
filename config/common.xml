@@ -95,6 +95,45 @@
          <object-type name="na_simulation_bar"/>
       </object-type-set>
       <attribute name="Last_Network_Value" contains="True"/>
+      <attribute name="NA_Objective_Var_Prevention">
+         <mask name="flag"/>
+      </attribute>
+      <attribute name="NA_Objective_Var_Response">
+         <mask name="flag"/>
+      </attribute>
+      <attribute name="NA_Objective_Var_Attack">
+         <mask name="flag"/>
+      </attribute>
+      <attribute name="NA_Weight_Degrees">
+         <mask name="flag"/>
+      </attribute>
+      <attribute name="NA_Weight_Betweenness">
+         <mask name="flag"/>
+      </attribute> 
+      <attribute name="NA_Weight_Height">
+         <mask name="flag"/>
+      </attribute>       
+      <attribute name="NA_Weight_Contagiousness">
+         <mask name="flag"/>
+      </attribute> 
+      <attribute name="NA_Objective_None">
+         <mask name="flag"/>
+      </attribute>       
+      <attribute name="NA_Objective_Risk">
+         <mask name="flag"/>
+      </attribute>
+      <attribute name="NA_Objective_TxV">
+         <mask name="flag"/>
+      </attribute> 
+      <attribute name="NA_Objective_Threat">
+         <mask name="flag"/>
+      </attribute>   
+      <attribute name="NA_Objective_Vulnerability">
+         <mask name="flag"/>
+      </attribute> 
+      <attribute name="NA_Objective_Consequence">
+         <mask name="flag"/>
+      </attribute>       
       <attribute name="NA_Node_Rank">
          <mask name="text"/>
       </attribute>

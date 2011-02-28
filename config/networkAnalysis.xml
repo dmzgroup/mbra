@@ -275,7 +275,6 @@
             attribute="NA_Node_Threat"
             default="1.0"
             scale="100"
-            decimals="0"
             min="0"
             max="100"
             step="5"
@@ -287,7 +286,6 @@
             attribute="NA_Node_Vulnerability"
             default="1.0"
             scale="100"
-            decimals="0"
             min="0"
             max="100"
             step="5"
@@ -353,7 +351,7 @@
             name="Vulnerability Reduced"
             attribute="NA_Node_Vulnerability_Reduced"
             scale="100"
-            decimals="0"
+            decimals="2"
             suffix="%"
          />
          <property
@@ -367,7 +365,7 @@
             name="Calculated Threat"
             attribute="NA_Node_Threat_Calculated"
             scale="100"
-            decimals="0"
+            decimals="2"
             suffix="%"
          />
          <property
