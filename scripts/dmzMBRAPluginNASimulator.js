@@ -154,6 +154,7 @@ var dmz =
    , AllowWrites = true
    , CalculationType = { FLOW: "FLOW", CASCADE: "CASCADE" }
    , currentCalculationType = CalculationType.CASCADE
+   , resetBetweennessCalculation = true
 
    , updateObjectiveGraph
    , weighObject
@@ -534,7 +535,7 @@ weightDegrees = {
          }
       });
    },
-   
+
    calc: function (object) {
       var result = 0
         , value = object.degree
@@ -716,26 +717,33 @@ weightBetweenness = {
         , list
         , visited
         ;
-      maxBetweenness = 0;
-      Object.keys(objects).forEach(function (key) {
-         dmz.object.counter(objects[key].handle, BetweennessHandle, 0);
-      });
-      Object.keys(objects).forEach(function (key) {
-         root = objects[key].handle;
-         if (dmz.object.type(root).isOfType(NodeType)) {
-            Object.keys(objects).forEach(function (index) {
-               target = objects[index].handle;
-               if (root !== target && dmz.object.type(target).isOfType(NodeType)) {
-                  list = [{object: root}];
-                  visited = [];
-                  findBetweenness(list, target, visited);
-                  if (list[0].found) {
-                     addToNodeBetweennessCounter(root);
+
+      if (resetBetweennessCalculation) {
+
+         maxBetweenness = 0;
+         Object.keys(objects).forEach(function (key) {
+            dmz.object.counter(objects[key].handle, BetweennessHandle, 0);
+         });
+         Object.keys(objects).forEach(function (key) {
+            root = objects[key].handle;
+            if (dmz.object.type(root).isOfType(NodeType)) {
+               Object.keys(objects).forEach(function (index) {
+                  target = objects[index].handle;
+                  if (root !== target && dmz.object.type(target).isOfType(NodeType)) {
+                     list = [{object: root}];
+                     visited = [];
+                     findBetweenness(list, target, visited);
+                     if (list[0].found) {
+                        addToNodeBetweennessCounter(root);
+                     }
                   }
-               }
-            });
-         }
-      });
+               });
+            }
+         });
+
+         resetBetweennessCalculation = false;
+      }
+
    },
 
    calc: function (object) {
@@ -1346,7 +1354,7 @@ vinfinityMessage.subscribe(self, function (data) {
       vinf = data.number("value", 0);
       if (!vinf) {
          vinf = 0.05;
-      }    
+      }
       Object.keys(objects).forEach (function (index) {
          objects[index].gamma = -Math.log(vinf / objects[index].vul);
          if (objects[index].gamma < 0) {
@@ -1384,6 +1392,8 @@ dmz.object.create.observe(self, function (handle, objType, varity) {
    var object;
    if (objType) {
       if (objType.isOfType(NodeType) || objType.isOfType(NodeLinkType)) {
+
+         resetBetweennessCalculation = true;
          object = { handle: handle };
          object.vul = dmz.object.scalar(handle, VulnerabilityHandle);
          if (!object.vul || (object.vul <= 0)) {
@@ -1597,6 +1607,7 @@ dmz.object.flag.observe(self, UnfixedResponseHandle, updateFixedObjectiveFlag);
 
 dmz.object.destroy.observe(self, function (handle) {
    var updateRank = false;
+   resetBetweennessCalculation = true;
    if (visible && objects[handle]) {
       updateRank = true;
    }
@@ -1608,6 +1619,7 @@ dmz.object.destroy.observe(self, function (handle) {
 });
 
 dmz.object.link.observe(self, LinkHandle, function (link, attr, Super, sub) {
+   resetBetweennessCalculation = true;
    if (visible && objects[Super]) {
       doRank();
    }
@@ -1615,6 +1627,7 @@ dmz.object.link.observe(self, LinkHandle, function (link, attr, Super, sub) {
 });
 
 dmz.object.unlink.observe(self, LinkHandle, function (link, attr, Super, sub) {
+   resetBetweennessCalculation = true;
    if (visible && objects[Super]) {
       doRank();
    }
@@ -1623,6 +1636,7 @@ dmz.object.unlink.observe(self, LinkHandle, function (link, attr, Super, sub) {
 
 dmz.object.linkAttributeObject.observe(self, LinkHandle,
 function (link, attr, Super, sub, object) {
+   resetBetweennessCalculation = true;
    if (visible && object && objects[object]) {
       doRank();
    }
@@ -1630,15 +1644,11 @@ function (link, attr, Super, sub, object) {
 });
 
 dmz.object.state.observe(self, LinkFlowHandle, function (object) {
+   resetBetweennessCalculation = true;
    if (visible && object && objects[object]) {
       doRank();
    }
    doGraph();
-});
-
-updateObjectiveGraphLabelMessage.subscribe(self, function() {
-
-
 });
 
 simulationTypeMessage.subscribe(self, function (data) {
